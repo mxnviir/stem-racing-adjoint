@@ -2,46 +2,42 @@
  "stage": 0,
  "runs": {
   "evolve:cma:original:s1": {
-   "used": 24,
-   "illegal": 7,
-   "best": 0.7594112585314344
+   "used": 39,
+   "illegal": 8,
+   "best": 0.7559567990880703
   }
  },
  "inflight": {
-  "c00026": {
+  "c00042": {
    "run": "evolve:cma:original:s1",
    "stage": "evolve"
   },
-  "c00027": {
+  "c00043": {
    "run": "evolve:cma:original:s1",
    "stage": "evolve"
   },
-  "c00028": {
+  "c00045": {
    "run": "evolve:cma:original:s1",
    "stage": "evolve"
   },
-  "c00029": {
+  "c00046": {
    "run": "evolve:cma:original:s1",
    "stage": "evolve"
   },
-  "c00030": {
+  "c00047": {
    "run": "evolve:cma:original:s1",
    "stage": "evolve"
   },
-  "c00031": {
+  "c00048": {
    "run": "evolve:cma:original:s1",
    "stage": "evolve"
   },
-  "c00032": {
-   "run": "evolve:cma:original:s1",
-   "stage": "evolve"
-  },
-  "c00033": {
+  "c00049": {
    "run": "evolve:cma:original:s1",
    "stage": "evolve"
   }
  },
- "n": 34,
+ "n": 50,
  "log": [],
  "ref:evolve": "c00012",
  "ref:evolve_old_mesh": "c00000"
