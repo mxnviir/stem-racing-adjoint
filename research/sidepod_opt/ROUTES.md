@@ -993,6 +993,27 @@ external topology case was **not found** in their material (that is not proof it
     for sub-mm shape changes (the nudged copies, 16:05–18:25): a milling-tolerance question for any pod.
   - Earlier medium figures that used nudged copies (10:00–14:15: σ 1.52, groove −3.9, design 8 −3.5) are
     superseded by this table.
+- **2026-11-21 21:45, medium mesh complete: the valley and the windows.**
+
+  | design (medium, production) | drag | vs team pod (178.74, 4 clean meshes) | coarse said |
+  |---|---|---|---|
+  | no pod | 204.23 | +25.5 | +25.8 |
+  | 50 % blend | 210.98 | +32.2 | +31.9 |
+  | 75 % blend | 196.52 | +17.8 | +20.7 |
+  | 3 windows | 180.93 | +2.2 | +2.4 |
+  | 5 windows | 180.75 | +2.0 | +6.6 |
+  | groove (3 clean) | 175.15 | −3.6 ± 0.5 | −5.0 |
+  | design 8 (3 clean) | 177.95 | −0.8 ± 0.6 | −9.9 |
+
+  - **C2 valley: holds on medium.** 50 % blend − no pod = +6.8 mN (single meshes, SE ≈ 1.1: 6 SE). Growing a
+    pod from nothing makes the car slower first; a local run from "no pod" can't cross it (selected route,
+    point 4: several different starts).
+  - **C4 windows: hold on medium** (+2.0 to +2.2 mN, not better), with the caveat that medium puts 1–2
+    cells across a 3 mm rib; the fine/resolved runs decide.
+  - The coarse mesh got the big differences right (pod vs none, valley, windows' sign) and the fine ones
+    wrong (design 8, the size of the 5-window penalty).
+  - **Next, on this machine:** gate 1 of the selected route, the `fine` mesh, stage 0 first (team pod:
+    cells, memory, time), then the key designs.
 
 ## Sources
 
