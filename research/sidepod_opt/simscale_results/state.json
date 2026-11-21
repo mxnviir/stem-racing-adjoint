@@ -8,31 +8,7 @@
   }
  },
  "inflight": {
-  "c00042": {
-   "run": "evolve:cma:original:s1",
-   "stage": "evolve"
-  },
-  "c00043": {
-   "run": "evolve:cma:original:s1",
-   "stage": "evolve"
-  },
   "c00045": {
-   "run": "evolve:cma:original:s1",
-   "stage": "evolve"
-  },
-  "c00046": {
-   "run": "evolve:cma:original:s1",
-   "stage": "evolve"
-  },
-  "c00047": {
-   "run": "evolve:cma:original:s1",
-   "stage": "evolve"
-  },
-  "c00048": {
-   "run": "evolve:cma:original:s1",
-   "stage": "evolve"
-  },
-  "c00049": {
    "run": "evolve:cma:original:s1",
    "stage": "evolve"
   }
