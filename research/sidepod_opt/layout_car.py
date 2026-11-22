@@ -5,7 +5,8 @@ Part 1's parametric body (param_body: the halo-canister loft through eight stati
 to the rear face, sidepods, the cartridge bore, the halo pocket and ballast container, milled
 top and bottom with the 3.175 mm ball, 3 mm walls), Part 4's nose cone, front and rear wings,
 the official halo and the team's wheels, and Part 5's referee. Wheel supports and tether guides
-are left off (user, 2026-11-22: added later), and so is the T4.2 virtual cargo (team rule).
+are left off (user, 2026-11-22: added later); the tether guides and the T4.2 virtual cargo are on,
+the cargo where the genes put it (front to back, wide end forward or rearward).
 
 The body is built at a fixed skin (no mass sizing loop): what it weighs is what it weighs, and
 below the 48.2 g floor the rest is lead in the T1.22 container under the halo (as in the
@@ -36,7 +37,7 @@ CARTRIDGE_SHELL_G = 21.15       # Part 2's car_weight_kg includes the empty cart
 CARTRIDGE_OUT_MM = 12.5         # shortest cartridge 64.5 - 52 mm bore: how far it sticks out
 CHAMBER_Z_MM = 31.0             # Part 1's chamber axis (geometry_contract.CHAMBER_AXIS_Z_MM)
 # Rules waived because the parts are not on the car yet (user, 2026-11-22) or by team rule
-WAIVED_PREFIXES = ("T6.", "T7.12", "T4.2", "P4.T6", "T3.6_mass")   # T3.6 is met by the lead below
+WAIVED_PREFIXES = ("T7.12", "T3.6_mass")   # supports added later (user); T3.6 is met by the lead below
 LEAD_CAP_G = None               # read from Part 1's ballast.capacity_kg("lead") at run time
 
 
@@ -44,7 +45,8 @@ def run_car_args(d: dict, out: Path) -> list[str]:
     bp = LG.body_params(d)
     return [sys.executable, "-W", "ignore", str(P5 / "run_car.py"), "--out", str(out), "--gate-only",
             "--W", str(d["W"]), "--x-front", str(d["x_front"]), "--d-halo", str(d["d_halo"]),
-            "--rear-mm", str(d["rear"]), "--no-supports", "--no-tethers", "--no-cargo", "--skin-mm", "0",
+            "--rear-mm", str(d["rear"]), "--no-supports", "--no-joints", "--skin-mm", str(d["skin_mm"]),
+            "--cargo-json", json.dumps(d["cargo"]), "--tether-json", json.dumps(list(d["tethers"])),
             "--body-json", json.dumps(bp), "--nose-json", json.dumps(d["nose"]),
             "--fwing-json", json.dumps(d["fwing"]), "--rwing-json", json.dumps(d["rwing"])]
 
@@ -113,14 +115,14 @@ def mass(S, d) -> dict:
 
 def export_cfd(out: Path, d) -> dict:
     """body_full.stl (body + nose + halo + wings, whole car, m, car frame) and wheelF/wheelR.stl (+y wheels)
-    for simscale_step_domain.build, plus the wheel centres."""
+    for simscale_step_domain.build (tether guides included, as in Part 2's CFD), plus the wheel centres."""
     import manifold3d as mf
     import trimesh
     sys.path.insert(0, str(HERE))
     import cadio as CI
     out = Path(out)
     asm = json.loads((out / "parts" / "assembly.json").read_text())
-    halves = [out / "body_half.stl"] + [out / "parts" / f"{n}.stl" for n in ("nose", "halo", "fwing", "rwing")
+    halves = [out / "body_half.stl"] + [out / "parts" / f"{n}.stl" for n in ("nose", "halo", "fwing", "rwing", "tethers")
                                         if (out / "parts" / f"{n}.stl").exists()]
     whole = None
     for p in halves:

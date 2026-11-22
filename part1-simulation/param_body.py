@@ -249,7 +249,8 @@ def mode_field(bp, X, Y, Z, x_ref_a, x_rear):
 def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
           target_body_kg: float | None = None, machinable: bool = True,
           skin_offset_mm: float | None = None, field_mm=None,
-          rear_len_mm: float | None = None, with_cargo: bool = True):
+          rear_len_mm: float | None = None, with_cargo: bool = True,
+          cargo_placement: dict | None = None):
     """UnifiedGeometry whose body is `bp`, with every rule mask applied.
 
     field_mm: a body given as a signed distance field on this car's grid (mm, negative
@@ -261,7 +262,9 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
     rear_len_mm: rear axle -> rear face (mm). None keeps the default rear face, Ref B + 40
       (T9.4.2's overhang limit, the longest body). Shorter moves the face, and with it the
       52 mm cartridge bore, forward (the layout search, research/sidepod_opt/layout_car.py).
-    with_cargo: False drops the T4.2 virtual cargo (team rule for the layout search, 2026-11).
+    with_cargo: False drops the T4.2 virtual cargo.
+    cargo_placement: {"x_start_m", "z_base_m", "flip"} (virtual_cargo.build_virtual_cargo_solid_mask);
+      None lets Part 1 pick (corridor centre, wide end forward).
     target_body_kg: no ballast, so the body itself carries the mass the T3.6
       floor needs. The drawn shape is offset by a uniform skin (grown or
       thinned, the design intent kept) until the machined body weighs this.
@@ -269,7 +272,7 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
     import unified_phi as up
     from phi_updater import reinitialise_sdf
     import machining
-    ugk = {"with_cargo": with_cargo}
+    ugk = {"with_cargo": with_cargo, "cargo_placement": cargo_placement}
     if rear_len_mm is not None:
         from dataclasses import replace as _replace
         from bounding_volumes import default_rule_envelope

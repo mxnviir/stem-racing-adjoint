@@ -1,0 +1,207 @@
+# Layout search: every parameter of the car
+
+137 parameters, 47 evolved, 90 fixed. The search reads `layout_params.json`; change a `mode` there (`evolve` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
+
+x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, Ref B = rear axle + 16.
+
+## layout (3 of 3 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `W` | **evolve** | 120.3 | 120.0 - 140.0 mm | wheelbase, front axle -> rear axle | T7.3 120.0-140.0 | the main layout lever: drag, mass, and where the thrust and COM sit against the axles |
+| `rear` | **evolve** | 56.0 | 36.0 - 56.0 mm | rear axle -> body rear face (the cartridge bore moves with it) | T9.4.2 <= 40 behind Ref B (= 56); below ~35 the rear wing has no body under it (T5.6 keeps 12.5 mm behind the face clear) | shorter tail: less foam and wetted area, thrust point moves forward |
+| `halo_rear` | **evolve** | 148.6 | 102.0 - 196.0 mm | halo pocket FRONT edge -> body rear face (pocket 50 mm long) | pocket front on/behind the front axle; pocket rear ahead of the rear axle and of the 52 mm bore (the decoder keeps it inside these for each W and rear) | moves the halo, the 25 g halo + ballast container, and the loft's peak |
+
+## cargo (2 of 2 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `cargo_x` | **evolve** | 0.5 | 0.0 - 1.0 0-1 | virtual cargo front -> back: 0 = its front on the front axle line, 1 = its back on the rear axle line | T4.2 wholly between the axle lines; may share the ballast container, not the halo pocket (z 14-24 vs 24+: never overlaps) | where the body must keep 55 mm of width at z 14-24: shapes the sidepods' minimum |
+| `cargo_flip` | **evolve** | 0.0 | 0.0 - 1.0 0/1 | orientation: below 0.5 wide (55 mm) end forward, above 0.5 wide end rearward | T4.2 either way | the wide end sets where the body is widest |
+
+## body loft (24 of 26 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `st_b0` | **evolve** | 10.0 | 6.0 - 24.0 mm | half-width at u = 0.0 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
+| `st_b1` | **evolve** | 13.24 | 6.0 - 24.0 mm | half-width at u = 0.08 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
+| `st_b2` | **evolve** | 16.53 | 6.0 - 24.0 mm | half-width at u = 0.2 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
+| `st_b3` | **evolve** | 18.0 | 6.0 - 24.0 mm | half-width at u = 0.35 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
+| `st_b4` | **evolve** | 17.79 | 6.0 - 24.0 mm | half-width at u = 0.5 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
+| `st_b5` | **evolve** | 17.15 | 6.0 - 24.0 mm | half-width at u = 0.65 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
+| `st_b6` | **evolve** | 15.91 | 6.0 - 24.0 mm | half-width at u = 0.82 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
+| `st_b7` | **evolve** | 14.0 | 6.0 - 24.0 mm | half-width at u = 1.0 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
+| `st_zt0` | **evolve** | 20.0 | 12.0 - 50.0 mm | top height at u = 0.0 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
+| `st_zt1` | **evolve** | 24.86 | 14.0 - 50.0 mm | top height at u = 0.08 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
+| `st_zt2` | **evolve** | 29.8 | 16.0 - 50.0 mm | top height at u = 0.2 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
+| `st_zt3` | **evolve** | 32.0 | 18.0 - 50.0 mm | top height at u = 0.35 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
+| `st_zt4` | **evolve** | 32.85 | 20.0 - 50.0 mm | top height at u = 0.5 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
+| `st_zt5` | **evolve** | 35.41 | 22.0 - 50.0 mm | top height at u = 0.65 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
+| `st_zt6` | **evolve** | 40.37 | 24.0 - 50.0 mm | top height at u = 0.82 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
+| `st_zt7` | **evolve** | 48.0 | 26.0 - 50.0 mm | top height at u = 1.0 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
+| `st_zb0` | **evolve** | 6.0 | 3.0 - 24.0 mm | bottom height at u = 0.0 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
+| `st_zb1` | **evolve** | 5.6 | 3.0 - 24.0 mm | bottom height at u = 0.08 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
+| `st_zb2` | **evolve** | 5.18 | 3.0 - 24.0 mm | bottom height at u = 0.2 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
+| `st_zb3` | **evolve** | 5.0 | 3.0 - 24.0 mm | bottom height at u = 0.35 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
+| `st_zb4` | **evolve** | 5.8 | 3.0 - 24.0 mm | bottom height at u = 0.5 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
+| `st_zb5` | **evolve** | 8.2 | 3.0 - 24.0 mm | bottom height at u = 0.65 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
+| `st_zb6` | **evolve** | 12.84 | 3.0 - 24.0 mm | bottom height at u = 0.82 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
+| `st_zb7` | **evolve** | 20.0 | 3.0 - 24.0 mm | bottom height at u = 1.0 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
+| `p` | **fixed** | 2.6 | 2.0 - 4.0 - | section squareness (2 ellipse, larger boxier), all stations |  | one number for every section: fix unless the loft looks wrong |
+| `blend_mm` | **fixed** | 3.0 | 1.0 - 6.0 mm | fillet where fuselage meets sidepods | 3.175 ball cutter | manufacturing detail |
+
+## sidepods (5 of 7 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `s_b` | **evolve** | 28.0 | 14.0 - 32.5 mm | sidepod half-width | T3.4 width; the block 65 wide |  |
+| `s_zt` | **evolve** | 27.0 | 14.0 - 27.175 mm | sidepod top | team: nothing above 27.175 in the sidepods |  |
+| `s_zb` | **evolve** | 12.0 | 3.0 - 16.0 mm | sidepod bottom | T3.7 >= 1.5 |  |
+| `s_x0u` | **evolve** | 0.3 | 0.0 - 0.6 0-1 | sidepod start, as a fraction of Ref A -> rear face |  |  |
+| `s_lenu` | **evolve** | 0.4 | 0.15 - 0.8 0-1 | sidepod length, same fraction |  |  |
+| `s_taper` | **fixed** | 12.0 | 2.0 - 25.0 mm | ease-in/out length at each end |  | shape detail |
+| `s_p` | **fixed** | 3.0 | 2.0 - 5.0 - | sidepod section squareness |  | shape detail |
+
+## underfloor tunnel (0 of 5 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `ft_h` | **fixed** | 0.0 | 0.0 - 8.0 mm | tunnel height (0 = no tunnel) | T3.7; the 6 mm block slot | off: Part 2's adjoint never found it worth it; try later as one evolve gene |
+| `ft_w` | **fixed** | 8.0 | 3.0 - 15.0 mm | tunnel half-width |  |  |
+| `ft_x0` | **fixed** | 50.0 | 40.0 - 120.0 mm | tunnel inlet x |  |  |
+| `ft_x1` | **fixed** | 170.0 | 120.0 - 230.0 mm | tunnel outlet x |  |  |
+| `ft_ramp` | **fixed** | 25.0 | 5.0 - 40.0 mm | ramp length at each end |  |  |
+
+## sculpt modes (fuselage) (0 of 32 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `mode0` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.06, 15 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode1` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.06, 60 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode2` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.06, 120 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode3` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.06, 165 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode4` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.18, 15 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode5` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.18, 60 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode6` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.18, 120 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode7` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.18, 165 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode8` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.3, 15 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode9` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.3, 60 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode10` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.3, 120 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode11` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.3, 165 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode12` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.42, 15 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode13` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.42, 60 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode14` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.42, 120 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode15` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.42, 165 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode16` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.54, 15 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode17` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.54, 60 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode18` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.54, 120 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode19` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.54, 165 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode20` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.66, 15 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode21` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.66, 60 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode22` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.66, 120 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode23` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.66, 165 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode24` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.78, 15 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode25` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.78, 60 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode26` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.78, 120 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode27` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.78, 165 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode28` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.9, 15 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode29` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.9, 60 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode30` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.9, 120 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+| `mode31` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at u = 0.9, 165 deg from the top |  | 56 local tweaks: too many for ~110 runs; a fine-tuning stage later |
+
+## sculpt modes (sidepods) (0 of 24 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `mode32` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.0, 20 deg from the top |  | as above |
+| `mode33` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.0, 60 deg from the top |  | as above |
+| `mode34` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.0, 100 deg from the top |  | as above |
+| `mode35` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.0, 150 deg from the top |  | as above |
+| `mode36` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.2, 20 deg from the top |  | as above |
+| `mode37` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.2, 60 deg from the top |  | as above |
+| `mode38` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.2, 100 deg from the top |  | as above |
+| `mode39` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.2, 150 deg from the top |  | as above |
+| `mode40` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.4, 20 deg from the top |  | as above |
+| `mode41` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.4, 60 deg from the top |  | as above |
+| `mode42` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.4, 100 deg from the top |  | as above |
+| `mode43` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.4, 150 deg from the top |  | as above |
+| `mode44` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.6, 20 deg from the top |  | as above |
+| `mode45` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.6, 60 deg from the top |  | as above |
+| `mode46` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.6, 100 deg from the top |  | as above |
+| `mode47` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.6, 150 deg from the top |  | as above |
+| `mode48` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.8, 20 deg from the top |  | as above |
+| `mode49` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.8, 60 deg from the top |  | as above |
+| `mode50` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.8, 100 deg from the top |  | as above |
+| `mode51` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 0.8, 150 deg from the top |  | as above |
+| `mode52` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 1.0, 20 deg from the top |  | as above |
+| `mode53` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 1.0, 60 deg from the top |  | as above |
+| `mode54` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 1.0, 100 deg from the top |  | as above |
+| `mode55` | **fixed** | 0.0 | -4.0 - 4.0 mm | bump/dent at sidepod u = 1.0, 150 deg from the top |  | as above |
+
+## body mass (0 of 1 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `skin_mm` | **fixed** | 0.0 | -1.0 - 1.0 mm | uniform skin offset of the drawn body (0 = as drawn); lead fills the car to 48.2 g | T3.6 >= 48.0 g; T1.22 lead only in the container under the halo | the shape genes already set the foam |
+
+## nose (3 of 7 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `nose_len` | **evolve** | 30.0 | 20.0 - 40.0 mm | nose tip ahead of Ref A (sets x_front = 16 + this) | T8.2 <= 40 (whole nose assembly) |  |
+| `nose_k` | **evolve** | 0.5 | 0.3 - 1.2 - | section growth along the nose (0.5 elliptic, 1 conical) | T8.5.1 |  |
+| `nose_p` | **fixed** | 2.5 | 2.0 - 4.0 - | nose section squareness | T8.5.1 half-width <= 15 | shape detail |
+| `nose_tip_z` | **evolve** | 10.0 | 4.0 - 20.0 mm | tip height above the track | T8.5.1 <= 25; T3.7 |  |
+| `nose_blend` | **fixed** | 1.0 | 0.5 - 10.0 mm | root station behind Ref A where it takes the body's section |  | run_car's choice |
+| `nose_root_scale` | **fixed** | 1.0 | 0.9 - 1.0 - | root section vs the body's |  |  |
+| `nose_wall` | **fixed** | 1.0 | 0.8 - 2.0 mm | printed shell wall | print minimum | mass only |
+
+## front wing (6 of 15 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `fw_chord` | **evolve** | 15.3 | 10.0 - 17.0 mm | main element chord | T8.6.2 15-25 total incl. flap |  |
+| `fw_t_frac` | **fixed** | 0.15 | 0.13 - 0.4 - | thickness / chord | T8.6.3 2-6 mm |  |
+| `fw_camber` | **fixed** | 0.0 | 0.0 - 0.08 - | camber |  | try later |
+| `fw_aoa` | **evolve** | 6.0 | -5.0 - 15.0 deg | angle of attack | T8.5.2 <= 20 high outboard |  |
+| `fw_half_span` | **evolve** | 38.5 | 25.5 - 45.0 mm | half span | T8.6.1 >= 50 (or 2 x 25 if split) |  |
+| `fw_z` | **evolve** | 8.0 | 4.0 - 14.0 mm | chord line height | T8.7 5 mm clear air to the track; T8.5.2 |  |
+| `fw_gap_to_wheel` | **fixed** | 5.5 | 5.0 - 12.0 mm | gap ahead of the front wheel | T7.9.1, T8.7 |  |
+| `fw_endplate_h` | **fixed** | 0.0 | 0.0 - 15.0 mm | end plate height (0 = none) | T8.5.3 | off for now |
+| `fw_endplate_w` | **fixed** | 2.0 | 1.0 - 10.0 mm | end plate width | T8.5.3 <= 10 |  |
+| `fw_mount_t` | **fixed** | 3.0 | 2.0 - 6.0 mm | mount thickness |  | structure |
+| `fw_flap_chord` | **evolve** | 8.0 | 0.0 - 8.0 mm | flap chord (0 = single element) | T8.6.2, up to 3 elements |  |
+| `fw_flap_t_frac` | **fixed** | 0.29 | 0.25 - 0.6 - | flap thickness / chord | T8.6.3 |  |
+| `fw_flap_aoa` | **evolve** | 30.0 | 0.0 - 40.0 deg | flap angle | T8.5.2 |  |
+| `fw_flap_overlap` | **fixed** | 1.0 | 0.0 - 3.0 mm | flap overlap | T8.6.2 elements overlap |  |
+| `fw_flap_gap` | **fixed** | 0.5 | 0.3 - 2.0 mm | slot gap |  |  |
+
+## rear wing (4 of 9 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `rw_chord` | **evolve** | 15.3 | 15.0 - 25.0 mm | chord | T9.5.2 15-25 |  |
+| `rw_t_frac` | **fixed** | 0.15 | 0.13 - 0.4 - | thickness / chord | T9.5.3 2-6 mm |  |
+| `rw_camber` | **fixed** | 0.0 | 0.0 - 0.08 - | camber |  | try later |
+| `rw_aoa` | **evolve** | 0.0 | -5.0 - 15.0 deg | angle of attack | T9.4.3, T9.6 |  |
+| `rw_half_span` | **evolve** | 26.0 | 25.5 - 45.0 mm | half span | T9.5.1 >= 50 |  |
+| `rw_x_le` | **evolve** | 3.5 | 0.0 - 20.0 mm | leading edge behind Ref B | T9.4.1 behind Ref B, T9.4.2 <= 40 |  |
+| `rw_clear_air_margin` | **fixed** | 0.5 | 0.2 - 2.0 mm | margin over the 5 mm clear air | T9.6 |  |
+| `rw_pylon_t` | **fixed** | 2.0 | 1.5 - 4.0 mm | pylon thickness |  | structure |
+| `rw_pylon_chord` | **fixed** | 10.0 | 6.0 - 20.0 mm | pylon chord |  | structure |
+
+## tether guides (0 of 2 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `tether_front` | **fixed** | 5.0 | 0.0 - 10.0 mm | front guide ahead of the front axle | T6.1 within 10 | aero-tiny; affects the guide-friction lever only |
+| `tether_rear` | **fixed** | 5.0 | 0.0 - 10.0 mm | rear guide behind the rear axle | T6.1 within 10 |  |
+
+## fixed by the build (0 of 4 evolved)
+
+| name | mode | value | range | what | rule | why |
+| --- | --- | --- | --- | --- | --- | --- |
+| `chamber_z` | **fixed** | 31.0 | 30.0 - 40.0 mm | cartridge axis height = thrust line | T5.2 30-40 | a Part 1 constant (CHAMBER_AXIS_Z_MM): making it a gene needs a Part 1 change; ask if wanted |
+| `wheels` | **fixed** | team_stl |  | the team's measured wheels (front 13.25, rear 17.25 wide) | T7.4, T7.5 | printed parts you already have |
+| `wheel_inner_y` | **fixed** | Part 1 |  | wheel track (inner faces) | T7.2 gaps >= 38 / 30, T3.4 | a Part 1 constant used by every mask |
+| `supports` | **fixed** | none |  | wheel supports | T7.12 | user: added later |

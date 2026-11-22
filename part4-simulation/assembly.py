@@ -128,7 +128,8 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
           front: wg.FrontWing = wg.FrontWing(), rear: wg.RearWing = wg.RearWing(),
           rotate_wheels: bool = True, nose: "ns.NoseCone | None" = None,
           support: "bsm.BeamSupport | None" = None, support_modes: dict | None = None,
-          supports: bool = True, tethers: bool = True, rear_face_mm: float | None = None) -> dict:
+          supports: bool = True, tethers: bool = True, rear_face_mm: float | None = None,
+          tether_offsets_mm: tuple = (5.0, 5.0)) -> dict:
     """support: None = the team's v2 CAD supports (reference), or a BeamSupport.
     supports / tethers False: no wheel supports / tether guides at all (the layout search,
     research/sidepod_opt/layout_car.py, adds them later); the wheels then float in the CFD.
@@ -248,7 +249,7 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
 
     # -- tether guides (T6) -------------------------------------------------
     tg = []
-    for x in ((x_front_mm - 5.0, x_rear + 5.0) if tethers else ()):
+    for x in ((x_front_mm - tether_offsets_mm[0], x_rear + tether_offsets_mm[1]) if tethers else ()):
         m, meta = tether_guide(x)
         # A guide must be held by something (T6.3): where the floor is above the ring,
         # a stalk takes it up into the body.
@@ -264,8 +265,8 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
         _export_half(trimesh.util.concatenate(tg), out / "tethers.stl")
         surfaces.append({"name": "tethers", "stl": str(out / "tethers.stl"), "rotating": None})
         parts_mass["tethers"] = _full_mass_com(tg, cc.DENSITY_G_CM3[PART_MATERIAL])
-        gates["T6.1_front_guide"] = cc.TETHER_FROM_AXLE_MAX - 5.0
-        gates["T6.1_rear_guide"] = cc.TETHER_FROM_AXLE_MAX - 5.0
+        gates["T6.1_front_guide"] = cc.TETHER_FROM_AXLE_MAX - tether_offsets_mm[0]
+        gates["T6.1_rear_guide"] = cc.TETHER_FROM_AXLE_MAX - tether_offsets_mm[1]
         gates["T6.2_id_min"] = cc.TETHER_GUIDE_ID - cc.TETHER_ID_MIN
         gates["T6.2_id_max"] = cc.TETHER_ID_MAX - cc.TETHER_GUIDE_ID
         gates["T3.7_tether_clearance"] = cc.TETHER_GUIDE_BOTTOM_Z - cc.TRACK_CLEARANCE_MIN

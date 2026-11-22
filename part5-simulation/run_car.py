@@ -65,7 +65,8 @@ def build_body(a, out: Path):
     g = pb.build(a.W, a.x_front, a.d_halo, bp,
                  target_body_kg=getattr(a, "_body_target_kg", None),
                  skin_offset_mm=getattr(a, "skin_mm", None), field_mm=field,
-                 rear_len_mm=getattr(a, "rear_mm", None), with_cargo=not getattr(a, "no_cargo", False))
+                 rear_len_mm=getattr(a, "rear_mm", None), with_cargo=not getattr(a, "no_cargo", False),
+                 cargo_placement=json.loads(a.cargo_json) if getattr(a, "cargo_json", None) else None)
     return g, {"param_body": bp.as_dict(), "spacing_mm": a.cfd_mm,
                "build": getattr(g, "build_report", {})}
 
@@ -108,6 +109,15 @@ def parts_and_joints(a, out: Path, geom, body_stl: Path, parts_dir: str, **p4kw)
     asm = p4.build(a.W, a.x_front, a.d_halo, str(body_stl), str(out / parts_dir), **p4kw)
     asm["_dir"] = str(out / parts_dir)
     asm["ballast_g"] = getattr(a, "ballast_g", 0.0)
+    if getattr(a, "no_joints", False):
+        # Search builds (research/sidepod_opt/layout_car.py): no pockets or glue joints (joints.make_all's
+        # Minkowski sliver pass takes 20+ minutes on the halo mesh). The car's mass is the drawn body's
+        # foam plus the printed parts as drawn; a finalist is rebuilt with the joints.
+        import unified_phi as up
+        body_g = sum(c.mass_kg for c in up.compute_mass_com(geom)) * 1e3
+        asm["joints"] = {"manufactured_g": body_g + sum(asm["parts_mass_g"].values()), "mass_delta_kg": {},
+                         "manufactured": {}, "skipped": True}
+        return asm
     import trimesh
     lm = geom.landmarks
     jr = joints.make_all(trimesh.load(str(body_stl), force="mesh"), asm,
@@ -226,6 +236,8 @@ def part4_kwargs(a) -> dict:
         nk.update(json.loads(a.nose_json))
     kw = {"support": sup, "nose": ns.NoseCone(**nk),
           "supports": not getattr(a, "no_supports", False), "tethers": not getattr(a, "no_tethers", False)}
+    if getattr(a, "tether_json", None):
+        kw["tether_offsets_mm"] = tuple(json.loads(a.tether_json))
     if getattr(a, "rear_mm", None) is not None:
         kw["rear_face_mm"] = a.x_front + a.W + a.rear_mm
     if getattr(a, "fwing_json", None):
@@ -436,8 +448,11 @@ def parse_args(argv=None):
     ap.add_argument("--rear-mm", type=float, default=None,
                     help="rear axle -> body rear face, mm (default Ref B + 40 = 56)")
     ap.add_argument("--no-supports", action="store_true", help="no wheel supports (layout search)")
+    ap.add_argument("--no-joints", action="store_true", help="skip the glue joints / pockets (search builds; mass as drawn)")
     ap.add_argument("--no-tethers", action="store_true", help="no tether guides (layout search)")
     ap.add_argument("--no-cargo", action="store_true", help="no T4.2 virtual cargo (team rule, layout search)")
+    ap.add_argument("--cargo-json", default=None, help='T4.2 cargo placement {"x_start_m", "z_base_m", "flip"}')
+    ap.add_argument("--tether-json", default=None, help="[front guide ahead of the front axle, rear guide behind the rear axle], mm (T6.1 <= 10)")
     ap.add_argument("--support", choices=("cad", "beam"), default="beam",
                     help="beam = the team's architecture, parametric; cad = the v2 CAD supports (reference)")
     ap.add_argument("--support-json", default=None, help="BeamSupport parameters as JSON")
