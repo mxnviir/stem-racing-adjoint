@@ -34,7 +34,6 @@ from __future__ import annotations
 import argparse
 import json
 import sys
-import tempfile
 import time
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
@@ -69,6 +68,56 @@ def surface_deviation(a, b, n=20000) -> dict:
     return {"mean_mm": round(float(d.mean()), 4), "p99_mm": round(float(np.percentile(d, 99)), 4), "max_mm": round(float(d.max()), 4)}
 
 
+def air_volume(car_mm, wheel_boxes, out, domain=None):
+    """The half wind tunnel with the car cut out, as STEP (mm), faces named for the boundary conditions.
+    The car is the faceted solid (it crosses the symmetry plane, so the cut there is clean); the wheels are
+    exact cylinders the size and place of the car's own wheel files: wheels given as triangles made the
+    mesher fail on their faces (both reference cars, 2026-11-22), and the sidepod route's wheels are exact too."""
+    import simscale_step_domain as SD
+    from OCP.BRepAlgoAPI import BRepAlgoAPI_Cut
+    from OCP.BRepPrimAPI import BRepPrimAPI_MakeBox, BRepPrimAPI_MakeCylinder
+    from OCP.OCP.collections import List_TopoDS_Shape
+    from OCP.TopAbs import TopAbs_SOLID
+    from OCP.TopExp import TopExp_Explorer
+    from OCP.TopoDS import TopoDS
+    from OCP.gp import gp_Ax2, gp_Dir, gp_Pnt
+    car_s = SD.stl_solid(car_mm)
+    wheel_s, zmin, wvol = {}, [], 0.0
+    for name, b in wheel_boxes.items():
+        (x0, y0, z0), (x1, y1, _) = b
+        R = 0.5 * (x1 - x0)
+        wheel_s[name] = BRepPrimAPI_MakeCylinder(gp_Ax2(gp_Pnt(0.5 * (x0 + x1), y0, z0 + R), gp_Dir(0, 1, 0)), R, y1 - y0).Shape()
+        zmin.append(z0); wvol += np.pi * R * R * (y1 - y0)
+    (x0, y0, _), (x1, y1, z1) = domain or SD.DOMAIN_MM
+    z0 = min(zmin) - SD.ROAD_GAP_MM
+    dom = ((x0, y0, z0), (x1, y1, z1))
+    box = BRepPrimAPI_MakeBox(gp_Pnt(x0, y0, z0), gp_Pnt(x1, y1, z1)).Shape()
+    cut = BRepAlgoAPI_Cut()
+    args, tools = List_TopoDS_Shape(), List_TopoDS_Shape()
+    args.Append(box)
+    for sh in [car_s, *wheel_s.values()]:
+        tools.Append(sh)
+    cut.SetArguments(args); cut.SetTools(tools); cut.SetFuzzyValue(1e-5); cut.Build()
+    if not cut.IsDone():
+        raise SE.GeometryError("air-volume Boolean failed")
+    fluid = cut.Shape()
+    sols = []
+    ex = TopExp_Explorer(fluid, TopAbs_SOLID)
+    while ex.More():
+        sols.append(TopoDS.Solid(ex.Current())); ex.Next()
+    sealed = 0.0
+    if len(sols) > 1:                                               # air sealed inside the car: no flow reaches it
+        vols = [SD.volume(x) for x in sols]
+        k = int(np.argmax(vols)); sealed = float(sum(vols) - vols[k]); fluid = sols[k]
+    removed = (x1 - x0) * (y1 - y0) * (z1 - z0) - SD.volume(fluid) - sealed
+    labels = SD.label_faces(fluid, cut, wheel_s, dom)
+    SD.write_step(fluid, labels, out)
+    counts = {}
+    for n in labels.values():
+        counts[n] = counts.get(n, 0) + 1
+    return {"removed_share": removed / (0.5 * car_mm.volume + wvol), "sealed_mm3": sealed, "faces": counts}
+
+
 class LayoutEvaluator(SE.SimScaleStepEvaluator):
     """The sidepod evaluator with the whole generated car as the geometry and per-car wheel centres."""
 
@@ -98,15 +147,18 @@ class LayoutEvaluator(SE.SimScaleStepEvaluator):
         if dev["p99_mm"] > DEV_P99_MAX_MM or dev["max_mm"] > DEV_MAX_MM:
             raise SE.GeometryError(f"faceted car too far from the built one: {dev}")
         out = folder / f"domain_{faces}.step"
-        with tempfile.TemporaryDirectory() as td:
-            td = Path(td)
-            dec.export(td / "body_full.stl")
-            for w in ("wheelF", "wheelR"):
-                (td / f"{w}.stl").write_bytes((folder / f"{w}.stl").read_bytes())
-            try:
-                rep = SD.build(td, out)
-            except Exception as e:                                   # noqa: BLE001
-                raise SE.GeometryError(f"air volume build: {e!r}") from e
+        dec.apply_scale(1e3)                                         # mm for the CAD kernel
+        boxes = {}
+        for wname in ("wheelF", "wheelR"):
+            b = trimesh.load(folder / f"{wname}.stl", force="mesh").bounds * 1e3
+            boxes[wname] = b
+        try:
+            rep = air_volume(dec, boxes, out)
+        except SE.GeometryError:
+            raise
+        except Exception as e:                                       # noqa: BLE001
+            raise SE.GeometryError(f"air volume build: {e!r}") from e
+        self.st["cases"][cid]["faceting"][str(faces)].update(removed_share=round(rep["removed_share"], 4), sealed_air_mm3=round(rep["sealed_mm3"], 1))
         if not 0.97 < rep["removed_share"] < 1.03:
             raise SE.GeometryError(f"air volume: removed {rep['removed_share']:.3f} of the car's volume")
         return out
