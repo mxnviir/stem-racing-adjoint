@@ -50,12 +50,13 @@ Keep `NP` the same for every run of one comparison, and record it (it is written
 
 ## The 18 forward runs per mesh
 
-team ×3, groove ×3, adjoint design 8 ×3, 3 windows ×2, no pod ×2, blend 50 % ×2, blend 75 % ×2, 5 windows ×1 (18 runs).
-On medium the groove and design 8 each read either ~174.5 or ~178 mN depending on the mesh (two flow
-states); two meshes can't reveal that, so the three designs that matter most get three.
-The `_p05` / `_m05` copies are the same design shifted by ±0.05 mm, so each gets its own mesh: the
-mesh-to-mesh scatter is measured for every design (on medium the team pod repeats to 0.4 mN while
-design 8 swung by 4 mN).
+team ×3, groove ×3, adjoint design 8 ×3, 3 windows ×2, no pod ×2, blend 50 % ×2, blend 75 % ×2, 5 windows ×1.
+A repeat is the **identical car** on a mesh whose frame is shifted by k × 0.37 mm in x (tag `<design>~k`,
+`GATE_DOMAIN_DX_MM`): the mesher cuts different cells around the same surface, so mesh-to-mesh noise is measured
+for each design. (The `_p05` / `_m05` cars that `make_cars.py` also writes nudge the design field by 0.05 mm;
+through the 1 mm voxel builder that moves parts of the surface by 0.2–1.5 mm, so they are different designs, not
+repeats: ROUTES.md 2026-11-21 16:05. They are kept only to reproduce the earlier medium runs.)
+Clean medium noise: σ = 0.75 mN.
 
 ## Pass marks (fixed in ROUTES.md 2026-11-21 13:00, before any fine or resolved result)
 

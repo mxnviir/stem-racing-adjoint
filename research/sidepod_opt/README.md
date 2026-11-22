@@ -1,6 +1,6 @@
 # sidepod_opt: organic sidepod search, production version
 
-**Current plan and status of the free-form (topology) search: [ROUTES.md](ROUTES.md). Hand-off for a local agent that runs it on Codespaces: [HANDOFF_LOCAL.md](HANDOFF_LOCAL.md).**
+**Start here: [HANDOVER.md](HANDOVER.md) (whole project, current state) and [DECISIONS.md](DECISIONS.md).** Lab log of the free-form search: [ROUTES.md](ROUTES.md). Hand-off for a local agent that runs it on Codespaces: [HANDOFF_LOCAL.md](HANDOFF_LOCAL.md).**
 
 Finds the fastest **sidepod** for a fixed car: you give the STEP and the region, it searches
 organic shapes, makes each one exactly as the CNC would, times it with real CFD, and scores it on

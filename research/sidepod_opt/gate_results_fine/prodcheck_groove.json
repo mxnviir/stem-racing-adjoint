@@ -1,0 +1,20 @@
+{
+ "D20_half_N": 0.17852014664257043,
+ "wall_s": 17588.2,
+ "converged": true,
+ "residual_p": 0.0009235153368782366,
+ "force_osc": 0.017233952764534148,
+ "force_drift": 0.001108583654705102,
+ "run_dir": "",
+ "force_mean_stderr": 0.0007716569454407302,
+ "morph_fallback": false,
+ "folder": "/home/user/esp32-line-follower/research/sidepod_opt/runs/fine_cars/groove/car",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "fine",
+ "iterations": 2000,
+ "n_proc": 4,
+ "y_plus_min": 0.5083133008380406,
+ "y_plus_max": 86.85706282095427,
+ "n_cells": 3377075
+}

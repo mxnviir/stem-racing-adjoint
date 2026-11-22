@@ -4,9 +4,10 @@
     python fine_campaign/make_cars.py --check        rebuild into a temp dir, compare with runs/ here
 
 Every recipe is the one used on 2026-11-20/21 (ROUTES.md): the shape-loop seeds, the blends, the window
-cut, design 8 of run cloud_original (its field is in git), and the "_p05 / _m05" copies shifted by
-+/-0.05 mm (a physical change < 0.01 mN by the adjoint) so each gets its own mesh: the mesh-to-mesh
-scatter of every design is measured, not assumed.
+cut, design 8 of run cloud_original (its field is in git), and the "_p05 / _m05" copies whose field is
+nudged by +/-0.05 mm. Those copies are NOT repeat meshes: through the 1 mm voxel builder the nudge moves parts
+of the surface by 0.2-1.5 mm (the script prints the distance for each). Repeat meshes use the unchanged car
+with the meshing frame shifted: campaign tags "<design>~k" (ROUTES.md 2026-11-21 16:05).
 """
 import sys
 from pathlib import Path

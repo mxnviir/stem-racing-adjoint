@@ -45,7 +45,9 @@ neural-network predictor). The status log keeps the history.
 
 **Gates before the loop runs (in order)**
 1. **Scoring mesh:** medium must rank designs like the fine and 5 M meshes (`fine_campaign/`, marks
-   M1–C5). The coarse mesh is out: it invented ~10 mN of body drag. Running now: clean medium repeats.
+   M1–C5). The coarse mesh is out: it invented ~10 mN of body drag. Medium (clean repeats, 2026-11-21 20:05)
+   agrees on big effects; the fine mesh (2026-11-22) puts the groove at +2.5 mN where medium says −3.6, so
+   medium may not rank 3–5 mN features. Running now: fine clean repeats.
 2. **Which adjoint:** the normal (ESI) adjoint on the coarse mesh without wall layers got signs right
    but only 2–25 % of the size. Ruled out as causes: turbulence, Reynolds number, grid terms. Leading
    suspect: no boundary-layer cells. Decisive test: `esi/run_resolved_test.sh` on the owner's PC
@@ -1029,6 +1031,68 @@ external topology case was **not found** in their material (that is not proof it
     over-reads the body's drag. The rest of M1 (do the design *differences* match?) waits for the fine
     groove, no pod, blend 50 and design 8, now running.
   - Cost on this machine: 4.5 h per run on 4 cores, peak 6.2 GB; y+ max 87 (wall functions, no layers).
+- **2026-11-22 09:40, fine mesh: the groove is WORSE than the team pod (+2.5 mN); medium said −3.6.**
+
+  | half car, mN | team, fine | groove, fine | team, medium | groove, medium |
+  |---|---|---|---|---|
+  | total | 176.04 | 178.52 | 179.86 | 174.86 |
+  | body (pressure part) | 18.6 (2.6) | 23.6 (8.1) | 22.0 (8.4) | 23.7 (10.9) |
+  | wheels | 157.5 | 154.9 | 157.8 | 151.1 |
+
+  - On the fine mesh the team pod's body pressure drag drops to 2.6 mN, while the groove's stays at 8.1;
+    the groove's wheel benefit shrinks from −6.7 to −2.5 mN. Net: groove +2.5 mN on fine, against −3.6 on
+    medium. The groove's fine block means still creep up (177.9 → 178.6): not fully flat.
+  - Single fine meshes so far; fine mesh noise is unmeasured (medium: 0.75 mN). A 6 mN swing between meshes
+    is 8× medium's noise, so it is very likely real, but it is not established until the repeats land.
+  - **If it holds, mark M1 fails:** medium does not rank sidepod details correctly (it got pod vs no pod
+    and the valley right, but not a 3–5 mN feature), and the selected route's loop would have to be scored on
+    the fine mesh (4.5 h per run on 4 cores here) or finer, since the body drag is still moving between medium
+    and fine.
+  - Queue reordered: team~1, groove~1 (clean repeats, frame shifted), then design 8, no pod, blend 50.
+- **2026-11-22 11:00, weight rule changed (owner): 48.0 g legal minimum, no sizing to it; the model chooses the balance; > 50 g = model suspect.**
+  - `geometry.CarSpec.floor_g` 48.2 → **48.0** (T3.6 minimum, no margin). The old 48.2 also estimated the
+    non-body parts (the STEP has no masses); that stays as `drawn_car_g = 48.2` (ASSUMED), so other parts are
+    still 22.52 g.
+  - Nothing sizes a car to the floor any more: lead tops up only to 48.0 g; above it the race model charges
+    every gram (7.5 ms/g). **Ballast is now the race model's choice** (`objective.best_ballast`): any lead from
+    the legal minimum to the halo container's capacity, picked by race time (mass vs COM, no CFD needed: the
+    lead sits inside the container). The shape loop scores every design with it.
+  - **Flag:** any design whose car (without cartridge) is above 50 g is marked `mass_suspect` and printed as
+    `MASS_SUSPECT` (owner: weight is among the most important factors, so a best car above 50 g means the model
+    is wrong).
+  - Check on four cars (medium clean drags, lift 0.16 N): team 48.20 g (its real mass, 0.2 g over the minimum,
+    now charged), groove 48.00 g (1.45 g lead), no pod 48.00 g (9.97 g lead), design 8 48.26 g; in every case the
+    model chose the minimum lead (extra ballast never paid for itself here).
+  - **Not yet changed:** Part 1 / Part 5's whole-car builders still size cars to 48.2 g (`part5-simulation/run_car.py`,
+    `pattern.py`, `solver.py`; `part1-simulation/ballast.py`); to change when the whole-car work starts.
+- **2026-11-22 14:45, fine mesh: the identical team pod reads 176.04 and 179.86 mN on two meshes. The "groove is worse on fine" reading of 09:40 is NOT established.**
+
+  | fine mesh, half car | total | body pressure | wheels | lift |
+  |---|---|---|---|---|
+  | team (frame 0) | 176.04 | 2.6 | 157.5 | 65.0 |
+  | team~1 (frame +0.37 mm) | 179.86 | 5.3 | 159.1 | 56.7 |
+  | groove (frame 0) | 178.52 | 8.1 | 154.9 | 44.6 |
+
+  - Both team runs are settled (200-iteration block means flat within ±0.3 mN), 3.8 mN apart: two different
+    converged states of the same car. The groove's 178.52 lies between them.
+  - **This is known in Part 2** (`PROOF.md`, "the reference case has two flow states ~1.3 ms apart"; 1.3–1.4 ms
+    is ≈ 3.6–3.9 mN half car at 0.18 ms/mN). Part 2's answer ("method A") is to time every car from **both**
+    states and average. Cold starts on fresh meshes, as used here, land in one state or the other.
+  - **What this changes:**
+    - A single fine run can't rank designs closer than ~8 mN; the fine mesh is *noisier* than medium for single
+      runs (less numerical damping, more distinct states).
+    - On medium the same thing shows as a swinging body/wheel split: team pod body pressure 8.4, 10.4, 11.7,
+      11.1 and wheels 157.8, 154.2, 152.9, 154.4 over its four clean meshes (totals 177.7–179.9). The
+      single-run splits quoted on 2026-11-21 (e.g. "team body pressure 8.4", "groove works through the wheels
+      −6.7") were one draw each. Means over repeats: team wheels 154.8 / body pressure 10.4; groove 150.6 / 11.6.
+    - "Body pressure drag keeps falling with the mesh" (19.8 → 8.4 → 2.6) becomes 19.8 → 10.4 (mean of 4) →
+      3.9 (mean of 2): still falling, less steeply, fine uncertain.
+    - Medium with 3–4 clean repeats per design (groove −3.6 ± 0.5) stays the best-established ranking so far.
+  - **Queue changed:** after groove~1 (running): team~2, groove~2, then no pod, design 8, blend 50.
+  - **Mark, fixed now:** with 3 fine meshes each, groove vs team is "better" if the difference of means is below
+    −3 SE, "worse" if above +3 SE (SE from the pooled sd), otherwise "not resolved by 3 fine meshes each", and
+    then gate 1 needs state-controlled scoring (both states per design, Part 2's method A) or more repeats on a
+    bigger machine.
 
 ## Sources
 

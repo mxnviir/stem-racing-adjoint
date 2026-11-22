@@ -1,0 +1,20 @@
+{
+ "D20_half_N": 0.17986430317231836,
+ "wall_s": 18371.1,
+ "converged": true,
+ "residual_p": 0.0010044752605237095,
+ "force_osc": 0.03262233980204513,
+ "force_drift": 0.0021780160408661695,
+ "run_dir": "",
+ "force_mean_stderr": 0.0011466911194806424,
+ "morph_fallback": false,
+ "folder": "/home/user/esp32-line-follower/research/sidepod_opt/runs/fine_cars/team/car",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "fine",
+ "iterations": 2000,
+ "n_proc": 4,
+ "y_plus_min": 0.5178079876738155,
+ "y_plus_max": 84.95815815227273,
+ "n_cells": 3364739
+}

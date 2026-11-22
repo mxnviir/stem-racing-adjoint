@@ -51,13 +51,28 @@ class RaceModel:
         return float(T), {n: float(g[i]) for i, n in enumerate(R.PARAM_NAMES)}
 
 
+def best_ballast(rm, car, body_mesh, D20, L20, n: int = 25):
+    """The race model's own choice of ballast: lead from the legal minimum to the container's capacity,
+    the one with the lowest race time (mass vs COM). No CFD needed: the lead sits inside the halo
+    container, so the outer shape and the aero don't change. Returns (T, mass dict)."""
+    m0 = car.mass(body_mesh)
+    best = None
+    for lead in np.linspace(m0["lead_min_g"], max(m0["lead_min_g"], m0["lead_cap_g"]), n):
+        m = car.mass(body_mesh, lead_g=float(lead))
+        T, _ = rm(D20, L20, m)
+        if best is None or T < best[0] - 1e-12:
+            best = (T, m)
+    return best
+
+
 def mass_cell_gradient(car, m, slopes):
     """dT (s) per mm^3 of foam added at each cell, through mass, lead swap and COM (exact).
     m: car.mass(body mesh) of the car the gradient is taken at."""
     s = car.s
     rho = 1e-3 * 0.163                                         # g per mm^3
     tot = m["race_mass_g"]
-    lead_active = m["lead_g"] > 0
+    # foam swaps for lead only while lead is held AT the legal minimum (extra, chosen lead stays put)
+    lead_active = m["lead_g"] > 0 and m["lead_g"] <= m.get("lead_min_g", m["lead_g"]) + 1e-9
     dm = 0.0 if lead_active else rho                           # lead absorbs foam while there is lead
     # COM shift from +rho g at the cell and -rho g of lead at the container (if active)
     xc, zc = s.x_nose_mm - car.X, car.Z

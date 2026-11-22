@@ -1,1 +1,1 @@
-{"stage": "all", "relaunched": 9}
+{"stage":"all","link":2,"max_links":8,"ckpt_run":"45006738017","sites":["pod_rear", "pod_rear_m", "pod_front_low", "pod_front_low_m", "pod_rear_top", "pod_rear_top_m"],"turbs":["frozen", "sst"],"NP":"4"}

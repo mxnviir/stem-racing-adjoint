@@ -1,7 +1,8 @@
 """Free-form sidepod search: level-set shape optimisation driven by the DAFoam adjoint, real walls.
 
 Route A of ROUTES.md. Objective: RACE TIME (Part 2's race model): drag from CFD, plus the exact
-mass of the design (foam beyond the weight floor costs 1.22 ms per cm3; below it lead tops up).
+mass of the design (foam beyond the 48.0 g legal minimum costs 1.22 ms per cm3; below it lead tops up,
+and the race model may choose extra ballast for the COM: objective.best_ballast).
 
 v2 (2026-11-20). A dry run of v1 with the real gradient moved 18 voxels per step, for three reasons,
 all fixed here:
@@ -266,7 +267,7 @@ def step_field(car, f, B, gD, mass, slopes, step_mm, sigma_mm) -> tuple[np.ndarr
     # the multiplier lam below (it has a kink at the weight floor). Lift has no adjoint here: its
     # slope is ~1 % of drag's (-0.002 vs 0.188 s/N) and the NACA 0015 wings sit at zero incidence.
     from objective import mass_cell_gradient
-    lead_active = mass["lead_g"] > 0
+    lead_active = mass["lead_g"] > 0 and mass["lead_g"] <= mass.get("lead_min_g", mass["lead_g"]) + 1e-9
     com_part = mass_cell_gradient(car, mass, slopes) - (0.0 if lead_active else price)
     com_part = np.where(surf, com_part * h ** 3 / h, 0.0)             # s per mm of outward move (cell face area h^2)
 
@@ -457,8 +458,13 @@ def cmd_run(a):
             rec.update(cfd)
             T = None
             if cfd.get("D20_N") is not None:
-                T, _ = rm(cfd["D20_N"], cfd["L20_N"], b["mass"])
-                rec.update(T_s=T)
+                from objective import best_ballast
+                T, mbest = best_ballast(rm, car, b["mesh"], cfd["D20_N"], cfd["L20_N"])   # the model picks the ballast
+                b["mass"] = mbest
+                rec.update(T_s=T, lead_g=mbest["lead_g"], lead_min_g=mbest["lead_min_g"], car_g=mbest["car_g"],
+                           mass_suspect=mbest["mass_suspect"])
+                if mbest["mass_suspect"]:
+                    print(f"MASS_SUSPECT: design weighs {mbest['car_g']:.2f} g (> 50 g): check the model", flush=True)
                 if st["T_current"] is not None:
                     rec.update(dT_ms=(T - st["T_current"]) * 1e3, dD_mN=(cfd["D20_N"] - st["D_current"]) * 1e3)
             first = st["T_current"] is None
