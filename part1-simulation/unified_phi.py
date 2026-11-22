@@ -634,10 +634,25 @@ def build_unified_geometry(
                 cargo, hard_air, region, bv.ref_plane_A_m, d_halo_mm)
             return requested > 0 and eaten / requested <= CARGO_MAX_ERODED_FRACTION
 
-        placement = cargo_placement or find_cargo_placement(
-            x_front_mm, W_mm, bv.ref_plane_A_m, d_halo_mm, re.z_floor_m,
-            is_valid=_cargo_fits,
-        )
+        if cargo_placement and cargo_placement.get("prefer"):
+            # A preference, not a placement (the layout search's genes): the legal (position, flip)
+            # nearest the wanted start, keeping the wanted orientation whenever any position allows it.
+            # A finer scan than the default 9 positions, so the gene moves the cargo smoothly.
+            import virtual_cargo as _vc
+            want_x, want_flip = cargo_placement["x_start_m"], bool(cargo_placement.get("flip", False))
+            n0, _vc.N_CANDIDATE_POSITIONS = _vc.N_CANDIDATE_POSITIONS, int(cargo_placement.get("n_scan", 41))
+            try:
+                placement = find_cargo_placement(
+                    x_front_mm, W_mm, bv.ref_plane_A_m, d_halo_mm, re.z_floor_m, is_valid=_cargo_fits,
+                    score_fn=lambda x, f: abs(x - want_x) + (1.0 if f != want_flip else 0.0))
+            finally:
+                _vc.N_CANDIDATE_POSITIONS = n0
+            placement = dict(placement, wanted_x_start_m=want_x, wanted_flip=want_flip)
+        else:
+            placement = cargo_placement or find_cargo_placement(
+                x_front_mm, W_mm, bv.ref_plane_A_m, d_halo_mm, re.z_floor_m,
+                is_valid=_cargo_fits,
+            )
         # Clamp the cargo base to the grid floor. find_cargo_placement derives
         # z_base from the rule envelope's z_floor + margin (0.001 m), but the
         # grid ORIGIN is at z_floor itself (0.0015 m), so an unclamped base sat

@@ -119,7 +119,9 @@ def decode(x) -> dict:
     fwing = {k: float(val) for k, val in fwing.items()}
     rwing = {k: float(val) for k, val in rwing.items()}
     cargo_x0 = x_front + float(v["cargo_x"]) * (W - CARGO_LEN_MM)
-    cargo = {"x_start_m": cargo_x0 / 1e3, "z_base_m": CARGO_Z_BASE_MM / 1e3, "flip": bool(float(v["cargo_flip"]) >= 0.5)}
+    # a preference: Part 1 puts the cargo at the legal position nearest it (unified_phi, "prefer")
+    cargo = {"x_start_m": cargo_x0 / 1e3, "z_base_m": CARGO_Z_BASE_MM / 1e3, "flip": bool(float(v["cargo_flip"]) >= 0.5),
+             "prefer": True}
     tethers = (float(v["tether_front"]), float(v["tether_rear"]))
     return dict(W=W, rear=rear, halo_rear=halo_rear, x_front=x_front, d_halo=round(d_halo, 2),
                 s_x0u=s_x0u, s_x1u=s_x1u, body=body, nose=nose, fwing=fwing, rwing=rwing, cargo=cargo,
