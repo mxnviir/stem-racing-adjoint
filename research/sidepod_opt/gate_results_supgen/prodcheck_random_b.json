@@ -1,0 +1,21 @@
+{
+ "D20_half_N": 0.21044656461188527,
+ "wall_s": 1289.1,
+ "converged": true,
+ "residual_p": 0.0025407142477160546,
+ "force_osc": 0.037113614741366284,
+ "force_drift": 0.00017193230433003645,
+ "run_dir": "",
+ "force_mean_stderr": 0.0015374281171522798,
+ "morph_fallback": false,
+ "folder": "runs/support_gen/random_b/car",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "coarse",
+ "iterations": 2000,
+ "n_proc": 2,
+ "y_plus_min": 0.44077701178464607,
+ "y_plus_max": 192.49963454787627,
+ "n_cells": 131982,
+ "run_dir_kept": "/home/user/esp32-line-follower/research/sidepod_opt/gate/supgen_cases/random_b"
+}
