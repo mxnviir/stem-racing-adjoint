@@ -89,9 +89,13 @@ decided), *withdrawn*.
 
 ## D8. Scoring mesh (open)
 - **Question:** is the medium mesh (~520 k cells) enough to rank sidepod designs?
-- **Evidence so far:** medium agrees with coarse and fine on large effects (pod vs none +25 mN; the valley).
-  For a 3–5 mN feature it may not: the groove is −3.6 ± 0.5 mN on medium but +2.5 mN on one fine mesh
-  (3.36 M cells); body pressure drag is still falling between medium and fine. Fine repeats are running.
+- **Evidence so far:** medium agrees with coarse on large effects (pod vs none +25 mN; the valley). On medium
+  with 3–4 clean repeats the groove is −3.6 ± 0.5 mN. On the fine mesh (3.36 M cells) single runs can't rank
+  it: the identical team pod reads 176.04 and 179.86 mN on two meshes (two converged flow states, the ones
+  Part 2 documents as ~1.3 ms apart), and the groove's single 178.52 lies between them. Fine repeats are running.
+- **Consequence for the method:** the steady solver has more than one converged state per car, so small
+  differences need either several clean repeats per design or Part 2's "method A" (each car from both states,
+  averaged). Single cold runs are valid only for differences well above ~4 mN (medium) / ~8 mN (fine).
 - **Decision rule (fixed 2026-11-21 13:00, mark M1):** medium is adequate only if the team pod's body drag is
   within 3 mN of the finer mesh and every design difference within max(2 mN, 3 SE).
 - **Next evidence:** fine clean repeats (team, groove), fine design 8 / no pod / blend 50; the 5 M-cell

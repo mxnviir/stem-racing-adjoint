@@ -146,7 +146,7 @@ Friction terms (`mu_guide` 0.25, rolling 0.010) are placeholders until the team 
 | 13 | Clean medium verdict | Groove −3.6 ± 0.5 (real), adjoint design −0.8 ± 0.6 (not established), σ = 0.75 mN, valley and windows confirmed | Medium agrees with coarse on big effects |
 | 14 | ESI adjoint re-tested fairly on the coarse steady flow | Signs 3/3, r 0.98, but 2–25 % of the size; frozen = full turbulence; grid terms made it worse; undamped wall term crashed it | Not turbulence, not Reynolds number; suspect the wall mesh (no layers) |
 | 15 | Wall-resolved test on the coarse mesh | Impossible: layers formed on 0 of 5,666 faces | The wall-resolved question needs the ~5 M mesh (running on the owner's PC) |
-| 16 | Fine mesh (3.36 M) | Team pod 176.0; groove **178.5 (worse)**; body pressure drag 19.8 → 8.4 → 2.6 mN across coarse/medium/fine | Medium may not rank 3–5 mN features; repeats running |
+| 16 | Fine mesh (3.36 M) | The identical team pod reads 176.0 and 179.9 on two meshes (two converged flow states, known in Part 2 as ~1.3 ms apart); groove 178.5 lies between | Single fine runs can't rank designs closer than ~8 mN; small differences need several clean repeats or both-state scoring (Part 2 "method A") |
 | — | **Route C** (sharp surface on a fixed grid, immersed boundary) | Never built: no ready turbulent framework | — |
 | — | **Route E/G** ideas rejected by the owner: a parts kit with shape "recipes" and quality-diversity search; a neural-network drag predictor | Not built | Parameters can't describe organic shapes; every candidate must be CFD'd |
 | — | **Route F** idea: a CFD-scored search over the layout numbers (BO/TuRBO) around the shaping loop | Not rejected, not agreed: the layout method is still open (section 6, point 5) | — |
@@ -176,7 +176,7 @@ DECISIONS.md D5).
 
 | Gate | Question | State |
 |---|---|---|
-| 1. Scoring mesh | Does the mesh rank designs like finer meshes do? | **Open.** Coarse: no. Medium: yes for big effects, doubtful for 3–5 mN features (fine groove flipped sign). Fine repeats running in the cloud session |
+| 1. Scoring mesh | Does the mesh rank designs like finer meshes do? | **Open.** Coarse: no. Medium: yes for big effects; groove −3.6 ± 0.5 with 3–4 clean repeats. Fine: single runs too noisy to say (same car 176.0 vs 179.9). Fine repeats running in the cloud session |
 | 2. Adjoint | Is the normal adjoint accurate on a wall-resolved mesh? | **Open.** Test running on the owner's PC (section 8). Fallback: DAFoam on the largest mesh that fits memory, or steps without a gradient |
 | 3. Steady flow | Does the first-order model settle on that mesh? | Part of the PC test (mark A1) |
 
@@ -198,15 +198,16 @@ closed outer skin; one closing check on the final car's lead. Hubcap later (D14)
 
 **Running in the cloud session** (4 cores, 15 GB; see section 11 for how to keep it alive):
 `gate/fine_here2.sh` → fine mesh, production model, 2,000 iterations, ~4.5 h per run, in this order:
-`team~1` (due ~14:40 UTC 22 Nov), `groove~1`, `adjoint8`, `nopod`, `blend50`. Results land in
+`groove~1` (due ~19:10 UTC 22 Nov), then `team~2`, `groove~2`, `nopod`, `adjoint8`, `blend50` (`gate/fine_here3.sh`). Results land in
 `gate_results_fine/prodcheck_<tag>.json`; `python fine_campaign/summarize.py fine` prints the table and marks.
 
 **Running on the owner's PC:** `esi/run_resolved_test.sh` (~5 M cells). Nothing from it is on the branch yet
 (checked 13:05 UTC 22 Nov).
 
 **Open questions, in priority order**
-1. Fine repeats: is the groove really worse on fine (gate 1)? If yes, medium can't score pod details and the
-   loop must be scored on fine or finer (4.5 h per run on 4 cores).
+1. Fine repeats: with 3 fine meshes each, is the groove better or worse than the team pod (gate 1)? The solver
+   has two converged states per car (~3.8 mN apart on fine), so single runs don't answer it. If 3 repeats don't
+   either, score each design from both states (Part 2's method A: `stopwatch.py`, `campaign.py make-refs`).
 2. The PC verdict on the normal adjoint (gate 2).
 3. With both answered: run the loop from the three starts on the chosen mesh with the chosen adjoint.
 4. Topological-derivative step and tunnel candidates: designed, not yet coded.
@@ -350,17 +351,17 @@ Git-ignored: `runs/` and `gate/` (use `git add -f` for files that must be kept),
 
 | Design | Coarse (105 k) | Medium (520 k, clean) | Fine (3.36 M) |
 |---|---|---|---|
-| Team pod | 180.9 | 178.74 (4 meshes, sd 0.91) | 176.04 |
+| Team pod | 180.9 | 178.74 (4 meshes, sd 0.91) | 176.04, 179.86 (2 meshes) |
 | Groove (`channel`) | 175.4 | 175.15 (3, sd 0.37) | 178.52 |
 | Adjoint design 8 | 170.5 | 177.95 (3, sd 0.75) | running |
 | 3 windows / 5 windows | 182.8 / 187.0 | 180.93 / 180.75 | — |
 | No pod | 206.2 | 204.23 | running |
 | Blend 50 % / 75 % | 212.3 / 201.1 | 210.98 / 196.52 | 50 % queued |
 | Block | 251.8 | — | — |
-| Team pod body pressure drag | 19.8 | 8.4 | 2.6 |
-| Team pod wheels | 147.7 | 157.8 | 157.5 |
+| Team pod body pressure drag | 19.8 | 10.4 (mean of 4: 8.4–11.7) | 2.6, 5.3 |
+| Team pod wheels | 147.7 | 154.8 (mean of 4: 152.9–157.8) | 157.5, 159.1 |
 
-Mesh noise (clean repeats): medium σ = 0.75 mN; fine not yet measured. Cost on 4 cores: coarse 5–6 min,
+Mesh noise (clean repeats): medium σ = 0.75 mN; fine: one pair 3.8 mN apart (two flow states). Cost on 4 cores: coarse 5–6 min,
 medium ~35 min, fine ~4.5 h (6.2 GB), DAFoam adjoint on coarse 27 min and ~15 GB.
 Adjoint accuracy on the coarse steady flow (predicted/measured at pod_rear, pod_front_low, pod_rear_top):
 DAFoam 1.09 / 0.66 / 0.97; ESI 0.09 / 0.02 / 0.24.

@@ -1065,6 +1065,34 @@ external topology case was **not found** in their material (that is not proof it
     model chose the minimum lead (extra ballast never paid for itself here).
   - **Not yet changed:** Part 1 / Part 5's whole-car builders still size cars to 48.2 g (`part5-simulation/run_car.py`,
     `pattern.py`, `solver.py`; `part1-simulation/ballast.py`); to change when the whole-car work starts.
+- **2026-11-22 14:45, fine mesh: the identical team pod reads 176.04 and 179.86 mN on two meshes. The "groove is worse on fine" reading of 09:40 is NOT established.**
+
+  | fine mesh, half car | total | body pressure | wheels | lift |
+  |---|---|---|---|---|
+  | team (frame 0) | 176.04 | 2.6 | 157.5 | 65.0 |
+  | team~1 (frame +0.37 mm) | 179.86 | 5.3 | 159.1 | 56.7 |
+  | groove (frame 0) | 178.52 | 8.1 | 154.9 | 44.6 |
+
+  - Both team runs are settled (200-iteration block means flat within ±0.3 mN), 3.8 mN apart: two different
+    converged states of the same car. The groove's 178.52 lies between them.
+  - **This is known in Part 2** (`PROOF.md`, "the reference case has two flow states ~1.3 ms apart"; 1.3–1.4 ms
+    is ≈ 3.6–3.9 mN half car at 0.18 ms/mN). Part 2's answer ("method A") is to time every car from **both**
+    states and average. Cold starts on fresh meshes, as used here, land in one state or the other.
+  - **What this changes:**
+    - A single fine run can't rank designs closer than ~8 mN; the fine mesh is *noisier* than medium for single
+      runs (less numerical damping, more distinct states).
+    - On medium the same thing shows as a swinging body/wheel split: team pod body pressure 8.4, 10.4, 11.7,
+      11.1 and wheels 157.8, 154.2, 152.9, 154.4 over its four clean meshes (totals 177.7–179.9). The
+      single-run splits quoted on 2026-11-21 (e.g. "team body pressure 8.4", "groove works through the wheels
+      −6.7") were one draw each. Means over repeats: team wheels 154.8 / body pressure 10.4; groove 150.6 / 11.6.
+    - "Body pressure drag keeps falling with the mesh" (19.8 → 8.4 → 2.6) becomes 19.8 → 10.4 (mean of 4) →
+      3.9 (mean of 2): still falling, less steeply, fine uncertain.
+    - Medium with 3–4 clean repeats per design (groove −3.6 ± 0.5) stays the best-established ranking so far.
+  - **Queue changed:** after groove~1 (running): team~2, groove~2, then no pod, design 8, blend 50.
+  - **Mark, fixed now:** with 3 fine meshes each, groove vs team is "better" if the difference of means is below
+    −3 SE, "worse" if above +3 SE (SE from the pooled sd), otherwise "not resolved by 3 fine meshes each", and
+    then gate 1 needs state-controlled scoring (both states per design, Part 2's method A) or more repeats on a
+    bigger machine.
 
 ## Sources
 
