@@ -1014,6 +1014,21 @@ external topology case was **not found** in their material (that is not proof it
     wrong (design 8, the size of the 5-window penalty).
   - **Next, on this machine:** gate 1 of the selected route, the `fine` mesh, stage 0 first (team pod:
     cells, memory, time), then the key designs.
+- **2026-11-22 02:10, fine mesh, stage 0 (team pod): 3.36 M cells, 176.04 mN. Body drag still falling with the mesh.**
+
+  | team pod, half car | coarse (105 k) | medium (520 k, 4 clean) | fine (3.36 M) |
+  |---|---|---|---|
+  | total drag | 180.4 | 178.7 | 176.0 |
+  | body | 33.2 | 22.2 | 18.6 |
+  | of which pressure | 19.8 | 8.4 | 2.6 |
+  | wheels | 147.7 | 157.8 | 157.5 |
+
+  - The wheels converged between medium and fine (157.8 → 157.5); the **body's pressure drag has not**
+    (19.8 → 8.4 → 2.6 mN). Pod shape works through exactly that drag, so this is the number that matters.
+  - **Mark M1 (team body drag within 3 mN of medium): fails, narrowly** (18.6 vs 22.2: −3.6). Medium
+    over-reads the body's drag. The rest of M1 (do the design *differences* match?) waits for the fine
+    groove, no pod, blend 50 and design 8, now running.
+  - Cost on this machine: 4.5 h per run on 4 cores, peak 6.2 GB; y+ max 87 (wall functions, no layers).
 
 ## Sources
 
