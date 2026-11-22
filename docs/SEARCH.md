@@ -22,7 +22,9 @@ So the work is split by what each number is:
 
 At equal drag the layout changes race time by only ~0.15 ms over its whole legal range (the car is
 always ballasted to 48.2 g), while 1 % of drag is ~0.7 ms: the layout matters through drag, which is
-why it needs CFD at all, and why the CFD noise (measured by the reference twice) sets what can be ranked.
+why it needs CFD at all, and why the CFD noise sets what can be ranked. The noise is measured by
+timing the reference twice with two different facetings of the same car (surface rebuilt on 0.3 and
+0.25 mm grids).
 
 The weakness: stage 1 ranks layouts with the default body. If the top layouts are within the noise,
 take each into stage 2 rather than pick one.

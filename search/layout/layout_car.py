@@ -151,7 +151,7 @@ FLOATING_MAX_MM3 = 2.0          # loose specks tolerated in the merged car (drop
 WRAP_PITCH_MM = 0.3             # grid the CFD surface is rebuilt on
 
 
-def export_cfd(out: Path, d) -> dict:
+def export_cfd(out: Path, d, pitch_mm: float | None = None) -> dict:
     """ONE closed solid of the whole car for the CFD, and the wheels.
 
     The parts as built only touch (the halo sits in its pocket, the rear wing's pylon stands on the
@@ -249,10 +249,11 @@ def export_cfd(out: Path, d) -> dict:
     # only touch; the CAD importer rejects those, and nothing thinner than a cell survives the rebuild,
     # so no slit or void is left either.
     import layout_wrap as LW
-    w = LW.wrap(M, WRAP_PITCH_MM)
+    w = LW.wrap(M, pitch_mm or WRAP_PITCH_MM)
     q = LW.quality(w)
     pts, _ = trimesh.sample.sample_surface(w, 20000, seed=0)
     _, dist, _ = trimesh.proximity.closest_point(CI.from_manifold(M), pts)              # mm, wrap -> merged solid
+    rep["wrap_pitch_mm"] = pitch_mm or WRAP_PITCH_MM
     rep.update(cfd_faces=q["faces"], car_volume_mm3=round(float(w.volume)), merged_volume_mm3=round(float(M.volume())),
                wrap_p99_mm=round(float(np.percentile(dist, 99)), 3), wrap_max_mm=round(float(dist.max()), 3),
                one_piece=rep["floating_mm3"] <= FLOATING_MAX_MM3,

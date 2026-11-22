@@ -384,6 +384,24 @@ class Campaign:
         self.st["refs"] = refs
         self.save()
 
+    def submit_noise_reference(self, ev, pitch_mm=0.25):
+        """The reference car again with its CFD surface rebuilt on another grid: a different faceting of
+        the same car, so the two results differ by the route's noise alone (the two reference copies at
+        two triangle counts can both fall back onto the same rung of the ladder, as on 2026-11-22)."""
+        import shutil
+        cid = f"REFP{int(round(pitch_mm * 100)):02d}"
+        dst = self.root / "cars" / cid
+        shutil.copytree(self.root / "cars" / "REF", dst, dirs_exist_ok=True)
+        rec = json.loads((dst / "layout_car.json").read_text())
+        rec.update(LC.export_cfd(dst.resolve(), rec["decoded"], pitch_mm=pitch_mm))
+        (dst / "layout_car.json").write_text(json.dumps(rec, indent=1, default=float))
+        if not (rec["cfd"]["one_piece"] and rec["cfd"]["watertight"]):
+            raise SystemExit(f"noise reference not one closed solid: {rec['cfd']}")
+        ev.submit([{"id": cid, "folder": str(dst.resolve())}])
+        self.st.setdefault("refs", {})[cid] = None
+        self.save()
+        return cid
+
     def collect(self, ev):
         """Results back from the CFD: race time with each car's own layout and mass, logged, files pruned."""
         st = self.st
@@ -410,7 +428,8 @@ class Campaign:
     def tick(self, ev):
         st = self.st
         if "refs" not in st:
-            self.submit_reference(ev)
+            self.submit_reference(ev, ladder=(0,))
+            self.submit_noise_reference(ev)
         # 1) the next batch, when the last one is all back
         if not st["batch"] and not st.get("pending_build") and st["used"] < self.cfg["budget"] and ev.capacity() > 0:
             xs, info = self.ask(min(self.cfg["batch"], self.cfg["budget"] - st["used"]))
@@ -489,7 +508,7 @@ def init(root, budget, seed_keys_from=str(repo_paths.ROOT / "runs" / "sidepod" /
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=("init", "ref", "run", "tick", "status"))
+    ap.add_argument("cmd", choices=("init", "ref", "noise", "run", "tick", "status"))
     ap.add_argument("root")
     ap.add_argument("--budget", type=int, default=48)
     a = ap.parse_args()
@@ -498,6 +517,10 @@ def main():
     if a.cmd == "ref":
         return reference(a.root)
     c = Campaign(a.root)
+    if a.cmd == "noise":                  # stop `run` first: both write the state files
+        ev = c.evaluator()
+        print("submitted", c.submit_noise_reference(ev))
+        return
     if a.cmd == "status":
         ev = c.evaluator()
         print(json.dumps({"state": {k: v for k, v in c.st.items() if k != "pending_build"}, "eval": ev.status()}, indent=1, default=str))

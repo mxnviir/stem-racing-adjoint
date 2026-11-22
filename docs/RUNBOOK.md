@@ -33,8 +33,10 @@ setsid nohup python -W ignore search/layout/simscale_layout.py run runs/layout >
 python search/layout/simscale_layout.py status runs/layout
 ```
 
-The first tick submits the reference (the team layout, at two triangle counts) and builds the first 8
-cars. `run` ticks once a minute: builds the batch it asked for, moves every SimScale case along, logs
+The first tick submits the reference (the team layout) twice: as is, and with its CFD surface rebuilt on
+a 0.25 mm grid instead of 0.3 mm (a different faceting of the same car), so the difference between the
+two is the route's noise; then it builds the first 8 cars. `simscale_layout.py noise runs/layout` adds
+another such copy (stop `run` first). `run` ticks once a minute: builds the batch it asked for, moves every SimScale case along, logs
 results, and asks the next batch once the last one is back. Stop it at any time (`pkill -f
 simscale_layout.py`) and start it again: everything is in `runs/layout/state.json`,
 `simscale_state.json` and `designs.jsonl`. A batch whose builds were interrupted is rebuilt.
