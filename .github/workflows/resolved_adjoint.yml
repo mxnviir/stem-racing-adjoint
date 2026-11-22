@@ -171,7 +171,6 @@ jobs:
           mkdir -p /tmp/case && tar -xf /tmp/ckpt/case.tar -C /tmp/case
           echo "P2_RESUME_CASE=/tmp/case/run" >> "$GITHUB_ENV"
       - name: export the exact CAD (gate/original)
-        if: needs.init.outputs.ckpt_run == ''
         working-directory: research/sidepod_opt
         run: |
           python -W ignore - <<'PY'
@@ -660,7 +659,10 @@ jobs:
     needs: [init, proda, bumps, adjoint]
     if: >-
       always() && needs.init.outputs.stage != 'none' &&
-      (needs.init.outputs.stage != 'all' || needs.proda.outputs.chained != 'true')
+      (needs.init.outputs.stage == 'bumps' || needs.init.outputs.stage == 'adjoint' ||
+       needs.init.outputs.stage == 'verdict' ||
+       (needs.init.outputs.stage == 'all' && needs.proda.result == 'success' &&
+        needs.proda.outputs.chained != 'true'))
     runs-on: ubuntu-24.04
     timeout-minutes: 40
     steps:
