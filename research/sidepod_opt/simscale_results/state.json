@@ -9,44 +9,41 @@
   "evolve:cma_scratch:lean:s1": {
    "used": 8,
    "illegal": 0,
+   "best": 0.7658480928162781
+  },
+  "evolve:cma_scratch2:lean:s1": {
+   "used": 6,
+   "illegal": 2,
    "best": null
   }
  },
  "inflight": {
-  "c00122": {
-   "run": "evolve:cma_scratch:lean:s1",
+  "c00130": {
+   "run": "evolve:cma_scratch2:lean:s1",
    "stage": "evolve"
   },
-  "c00123": {
-   "run": "evolve:cma_scratch:lean:s1",
+  "c00131": {
+   "run": "evolve:cma_scratch2:lean:s1",
    "stage": "evolve"
   },
-  "c00124": {
-   "run": "evolve:cma_scratch:lean:s1",
+  "c00132": {
+   "run": "evolve:cma_scratch2:lean:s1",
    "stage": "evolve"
   },
-  "c00125": {
-   "run": "evolve:cma_scratch:lean:s1",
+  "c00133": {
+   "run": "evolve:cma_scratch2:lean:s1",
    "stage": "evolve"
   },
-  "c00126": {
-   "run": "evolve:cma_scratch:lean:s1",
+  "c00135": {
+   "run": "evolve:cma_scratch2:lean:s1",
    "stage": "evolve"
   },
-  "c00127": {
-   "run": "evolve:cma_scratch:lean:s1",
-   "stage": "evolve"
-  },
-  "c00128": {
-   "run": "evolve:cma_scratch:lean:s1",
-   "stage": "evolve"
-  },
-  "c00129": {
-   "run": "evolve:cma_scratch:lean:s1",
+  "c00136": {
+   "run": "evolve:cma_scratch2:lean:s1",
    "stage": "evolve"
   }
  },
- "n": 130,
+ "n": 138,
  "log": [],
  "ref:evolve": "c00012",
  "ref:evolve_old_mesh": "c00000"
