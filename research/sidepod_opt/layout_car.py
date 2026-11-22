@@ -139,6 +139,7 @@ CARTRIDGE_R_MM = 9.0             # Appendix vi: 18 mm cartridge; the bore is 18.
 CARTRIDGE_LEN_MM = 64.5         # the shortest legal cartridge
 POCKET_MM = (50.0, 25.0, 3.175)  # Appendix ix: halo pocket, length x width x depth; floor at z = 24
 FLOATING_MAX_MM3 = 2.0          # loose specks tolerated in the merged car (dropped); more is a refusal
+WRAP_PITCH_MM = 0.3             # grid the CFD surface is rebuilt on
 
 
 def export_cfd(out: Path, d) -> dict:
@@ -151,7 +152,8 @@ def export_cfd(out: Path, d) -> dict:
     container under it are filled, the cartridge is in the chamber (a plain cylinder, 12.5 mm out),
     the rear wing and the guides are sunk / stalked into the body, everything is unioned, enclosed
     cavities are removed, and the result must be one closed piece or the car is refused.
-    Writes body_full.stl (m, car frame), wheelF/wheelR.stl (+y wheels), wheels.json."""
+    Writes body_full.stl (m, car frame; body_wrap_mm.stl is the same in mm), wheelF/wheelR.stl
+    (+y wheels), wheels.json."""
     import manifold3d as mf
     import trimesh
     sys.path.insert(0, str(HERE))
@@ -229,32 +231,22 @@ def export_cfd(out: Path, d) -> dict:
     rep["cavity_mm3"] = round(float(sum(-q.volume() for q in pcs[1:] if q.volume() < 0)), 2)
     M = pcs[0].simplify(0.02)                                   # no edge under 20 um (Boolean slivers)
 
-    def write(Mx):
-        t = CI.from_manifold(Mx); t.apply_scale(1e-3)
-        t.export(str(out / "body_full.stl"))
-        return trimesh.load(str(out / "body_full.stl"), force="mesh")       # corners welded by position
-
-    def pinches(back):
-        """Mid-points (mm) of edges of the file as read back that are not shared by exactly two faces:
-        two surfaces meeting along a line with air on both sides (zero wall there)."""
-        u, c = np.unique(back.edges_sorted, axis=0, return_counts=True)
-        return back.vertices[u[c != 2]].mean(1) * 1e3
-
-    rep["pinch_edges_welded"] = 0
-    back = write(M)
-    for _ in range(4):                                          # a 0.15 mm bead of solid on each pinch
-        mids = pinches(back)
-        if not len(mids):
-            break
-        rep["pinch_edges_welded"] += int(len(mids))
-        for q in np.unique(mids.round(2), axis=0):
-            M += mf.Manifold.cube([0.15, 0.15, 0.15], True).translate([float(v) for v in q])
-        M = sorted(M.decompose(), key=lambda q: -q.volume())[0].simplify(0.02)
-        back = write(M)
-    rep.update(cfd_faces=int(len(back.faces)), car_volume_mm3=round(float(M.volume())), genus=int(M.genus()),
-               one_piece=rep["floating_mm3"] <= FLOATING_MAX_MM3)
-    # as any reader sees the file: corners welded by position, every edge shared by exactly two faces
-    rep["watertight"] = bool(back.is_watertight and back.is_winding_consistent and back.volume > 0)
+    # The surface the CFD gets: the merged solid rebuilt from its own occupancy on a 0.3 mm grid
+    # (layout_wrap.py). The union carries needle triangles, 0.03 mm ledges and edges where two surfaces
+    # only touch; the CAD importer rejects those, and nothing thinner than a cell survives the rebuild,
+    # so no slit or void is left either.
+    import layout_wrap as LW
+    w = LW.wrap(M, WRAP_PITCH_MM)
+    q = LW.quality(w)
+    pts, _ = trimesh.sample.sample_surface(w, 20000, seed=0)
+    _, dist, _ = trimesh.proximity.closest_point(CI.from_manifold(M), pts)              # mm, wrap -> merged solid
+    rep.update(cfd_faces=q["faces"], car_volume_mm3=round(float(w.volume)), merged_volume_mm3=round(float(M.volume())),
+               wrap_p99_mm=round(float(np.percentile(dist, 99)), 3), wrap_max_mm=round(float(dist.max()), 3),
+               one_piece=rep["floating_mm3"] <= FLOATING_MAX_MM3,
+               watertight=bool(q["closed"] and w.volume > 0 and abs(w.volume / M.volume() - 1) < 0.01))
+    w.export(str(out / "body_wrap_mm.stl"))
+    wm = w.copy(); wm.apply_scale(1e-3)
+    wm.export(str(out / "body_full.stl"))
     wheels = {}
     for s in asm["extra_surfaces"]:
         if s["name"] in ("wheelF", "wheelR"):

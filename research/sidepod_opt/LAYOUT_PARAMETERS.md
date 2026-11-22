@@ -1,6 +1,6 @@
 # Layout search: every parameter of the car
 
-137 parameters, 37 evolved, 100 fixed. The search reads `layout_params.json`; change a `mode` there (`evolve` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
+137 parameters, 10 evolved, 127 fixed. The search reads `layout_params.json`; change a `mode` there (`evolve` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
 
 x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, Ref B = rear axle + 16.
 
@@ -19,46 +19,46 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `cargo_x` | **evolve** | 0.5 | 0.0 - 1.0 0-1 | virtual cargo front -> back: 0 = its front on the front axle line, 1 = its back on the rear axle line | T4.2 wholly between the axle lines; may share the ballast container, not the halo pocket (z 14-24 vs 24+: never overlaps) | where the body must keep 55 mm of width at z 14-24: shapes the sidepods' minimum |
 | `cargo_flip` | **evolve** | 0.0 | 0.0 - 1.0 0/1 | orientation: below 0.5 wide (55 mm) end forward, above 0.5 wide end rearward | T4.2 either way | the wide end sets where the body is widest |
 
-## body loft (24 of 26 evolved)
+## body loft (0 of 26 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
-| `st_b0` | **evolve** | 10.0 | 6.0 - 24.0 mm | half-width at u = 0.0 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
-| `st_b1` | **evolve** | 13.24 | 6.0 - 24.0 mm | half-width at u = 0.08 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
-| `st_b2` | **evolve** | 16.53 | 6.0 - 24.0 mm | half-width at u = 0.2 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
-| `st_b3` | **evolve** | 18.0 | 6.0 - 24.0 mm | half-width at u = 0.35 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
-| `st_b4` | **evolve** | 17.79 | 6.0 - 24.0 mm | half-width at u = 0.5 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
-| `st_b5` | **evolve** | 17.15 | 6.0 - 24.0 mm | half-width at u = 0.65 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
-| `st_b6` | **evolve** | 15.91 | 6.0 - 24.0 mm | half-width at u = 0.82 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
-| `st_b7` | **evolve** | 14.0 | 6.0 - 24.0 mm | half-width at u = 1.0 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | fuselage plan shape |
-| `st_zt0` | **evolve** | 20.0 | 12.0 - 50.0 mm | top height at u = 0.0 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
-| `st_zt1` | **evolve** | 24.86 | 14.0 - 50.0 mm | top height at u = 0.08 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
-| `st_zt2` | **evolve** | 29.8 | 16.0 - 50.0 mm | top height at u = 0.2 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
-| `st_zt3` | **evolve** | 32.0 | 18.0 - 50.0 mm | top height at u = 0.35 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
-| `st_zt4` | **evolve** | 32.85 | 20.0 - 50.0 mm | top height at u = 0.5 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
-| `st_zt5` | **evolve** | 35.41 | 22.0 - 50.0 mm | top height at u = 0.65 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
-| `st_zt6` | **evolve** | 40.37 | 24.0 - 50.0 mm | top height at u = 0.82 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
-| `st_zt7` | **evolve** | 48.0 | 26.0 - 50.0 mm | top height at u = 1.0 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | the halo-canister loft's top line |
-| `st_zb0` | **evolve** | 6.0 | 3.0 - 24.0 mm | bottom height at u = 0.0 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
-| `st_zb1` | **evolve** | 5.6 | 3.0 - 24.0 mm | bottom height at u = 0.08 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
-| `st_zb2` | **evolve** | 5.18 | 3.0 - 24.0 mm | bottom height at u = 0.2 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
-| `st_zb3` | **evolve** | 5.0 | 3.0 - 24.0 mm | bottom height at u = 0.35 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
-| `st_zb4` | **evolve** | 5.8 | 3.0 - 24.0 mm | bottom height at u = 0.5 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
-| `st_zb5` | **evolve** | 8.2 | 3.0 - 24.0 mm | bottom height at u = 0.65 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
-| `st_zb6` | **evolve** | 12.84 | 3.0 - 24.0 mm | bottom height at u = 0.82 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
-| `st_zb7` | **evolve** | 20.0 | 3.0 - 24.0 mm | bottom height at u = 1.0 | T3.7 >= 1.5 above the track; the 6 mm block slot | underside rake / floor height |
+| `st_b0` | **fixed** | 11.0 | 6.0 - 24.0 mm | half-width at u = 0.0 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | set so the body front meets the nose (T8.5.1 caps the nose at 25 mm): the 7 mm step at the joint becomes ~3 mm; shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_b1` | **fixed** | 13.24 | 6.0 - 24.0 mm | half-width at u = 0.08 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_b2` | **fixed** | 16.53 | 6.0 - 24.0 mm | half-width at u = 0.2 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_b3` | **fixed** | 18.0 | 6.0 - 24.0 mm | half-width at u = 0.35 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_b4` | **fixed** | 17.79 | 6.0 - 24.0 mm | half-width at u = 0.5 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_b5` | **fixed** | 17.15 | 6.0 - 24.0 mm | half-width at u = 0.65 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_b6` | **fixed** | 15.91 | 6.0 - 24.0 mm | half-width at u = 0.82 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_b7` | **fixed** | 14.0 | 6.0 - 24.0 mm | half-width at u = 1.0 | T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zt0` | **fixed** | 24.5 | 12.0 - 50.0 mm | top height at u = 0.0 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | set so the body front meets the nose (T8.5.1 caps the nose at 25 mm): the 7 mm step at the joint becomes ~3 mm; shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zt1` | **fixed** | 27.2 | 14.0 - 50.0 mm | top height at u = 0.08 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | set so the body front meets the nose (T8.5.1 caps the nose at 25 mm): the 7 mm step at the joint becomes ~3 mm; shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zt2` | **fixed** | 29.8 | 16.0 - 50.0 mm | top height at u = 0.2 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zt3` | **fixed** | 32.0 | 18.0 - 50.0 mm | top height at u = 0.35 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zt4` | **fixed** | 32.85 | 20.0 - 50.0 mm | top height at u = 0.5 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zt5` | **fixed** | 35.41 | 22.0 - 50.0 mm | top height at u = 0.65 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zt6` | **fixed** | 40.37 | 24.0 - 50.0 mm | top height at u = 0.82 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zt7` | **fixed** | 48.0 | 26.0 - 50.0 mm | top height at u = 1.0 | T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zb0` | **fixed** | 3.5 | 3.0 - 24.0 mm | bottom height at u = 0.0 | T3.7 >= 1.5 above the track; the 6 mm block slot | set so the body front meets the nose (T8.5.1 caps the nose at 25 mm): the 7 mm step at the joint becomes ~3 mm; shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zb1` | **fixed** | 3.5 | 3.0 - 24.0 mm | bottom height at u = 0.08 | T3.7 >= 1.5 above the track; the 6 mm block slot | set so the body front meets the nose (T8.5.1 caps the nose at 25 mm): the 7 mm step at the joint becomes ~3 mm; shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zb2` | **fixed** | 5.18 | 3.0 - 24.0 mm | bottom height at u = 0.2 | T3.7 >= 1.5 above the track; the 6 mm block slot | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zb3` | **fixed** | 5.0 | 3.0 - 24.0 mm | bottom height at u = 0.35 | T3.7 >= 1.5 above the track; the 6 mm block slot | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zb4` | **fixed** | 5.8 | 3.0 - 24.0 mm | bottom height at u = 0.5 | T3.7 >= 1.5 above the track; the 6 mm block slot | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zb5` | **fixed** | 8.2 | 3.0 - 24.0 mm | bottom height at u = 0.65 | T3.7 >= 1.5 above the track; the 6 mm block slot | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zb6` | **fixed** | 12.84 | 3.0 - 24.0 mm | bottom height at u = 0.82 | T3.7 >= 1.5 above the track; the 6 mm block slot | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `st_zb7` | **fixed** | 20.0 | 3.0 - 24.0 mm | bottom height at u = 1.0 | T3.7 >= 1.5 above the track; the 6 mm block slot | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
 | `p` | **fixed** | 2.6 | 2.0 - 4.0 - | section squareness (2 ellipse, larger boxier), all stations |  | one number for every section: fix unless the loft looks wrong |
 | `blend_mm` | **fixed** | 3.0 | 1.0 - 6.0 mm | fillet where fuselage meets sidepods | 3.175 ball cutter | manufacturing detail |
 
-## sidepods (5 of 7 evolved)
+## sidepods (0 of 7 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
-| `s_b` | **evolve** | 28.0 | 14.0 - 32.5 mm | sidepod half-width | T3.4 width; the block 65 wide |  |
-| `s_zt` | **evolve** | 27.0 | 14.0 - 27.175 mm | sidepod top | team: nothing above 27.175 in the sidepods |  |
-| `s_zb` | **evolve** | 12.0 | 3.0 - 16.0 mm | sidepod bottom | T3.7 >= 1.5 |  |
-| `s_x0u` | **evolve** | 0.3 | 0.0 - 0.6 0-1 | sidepod start, as a fraction of Ref A -> rear face |  |  |
-| `s_lenu` | **evolve** | 0.4 | 0.15 - 0.8 0-1 | sidepod length, same fraction |  |  |
+| `s_b` | **fixed** | 28.0 | 14.0 - 32.5 mm | sidepod half-width | T3.4 width; the block 65 wide | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `s_zt` | **fixed** | 27.0 | 14.0 - 27.175 mm | sidepod top | team: nothing above 27.175 in the sidepods | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `s_zb` | **fixed** | 12.0 | 3.0 - 16.0 mm | sidepod bottom | T3.7 >= 1.5 | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `s_x0u` | **fixed** | 0.3 | 0.0 - 0.6 0-1 | sidepod start, as a fraction of Ref A -> rear face |  | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
+| `s_lenu` | **fixed** | 0.4 | 0.15 - 0.8 0-1 | sidepod length, same fraction |  | shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body |
 | `s_taper` | **fixed** | 12.0 | 2.0 - 25.0 mm | ease-in/out length at each end |  | shape detail |
 | `s_p` | **fixed** | 3.0 | 2.0 - 5.0 - | sidepod section squareness |  | shape detail |
 
@@ -156,7 +156,7 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `nose_root_scale` | **fixed** | 1.0 | 0.9 - 1.0 - | root section vs the body's |  |  |
 | `nose_wall` | **fixed** | 1.0 | 0.8 - 2.0 mm | printed shell wall | print minimum | mass only |
 
-## front wing (0 of 15 evolved)
+## front wing (1 of 15 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -165,7 +165,7 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `fw_camber` | **fixed** | 0.0 | 0.0 - 0.08 - | camber |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `fw_aoa` | **fixed** | 0.0 | -5.0 - 15.0 deg | angle of attack | T8.5.2 <= 20 high outboard | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `fw_half_span` | **fixed** | 25.5 | 25.5 - 45.0 mm | half span (the builder widens it to the legal minimum: 25 mm clear of the nose each side, T8.6.1) | T8.6.1 >= 50 (or 2 x 25 if split) | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_z` | **fixed** | 8.0 | 4.0 - 14.0 mm | chord line height | T8.7 5 mm clear air to the track; T8.5.2 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
+| `fw_z` | **evolve** | 8.0 | 6.5 - 18.0 mm | chord line height | T8.7 5 mm clear air to the track (chord line >= 6.2); T8.5.2 <= 20 high outboard (chord line <= 18.8) | user 2026-11-22: front wing height is a parameter (wheel wake, ground effect) |
 | `fw_gap_to_wheel` | **fixed** | 5.5 | 5.0 - 12.0 mm | gap ahead of the front wheel | T7.9.1, T8.7 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `fw_endplate_h` | **fixed** | 0.0 | 0.0 - 15.0 mm | end plate height (0 = none) | T8.5.3 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `fw_endplate_w` | **fixed** | 2.0 | 1.0 - 10.0 mm | end plate width | T8.5.3 <= 10 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
@@ -176,7 +176,7 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `fw_flap_overlap` | **fixed** | 1.0 | 0.0 - 3.0 mm | flap overlap | T8.6.2 elements overlap | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `fw_flap_gap` | **fixed** | 0.5 | 0.3 - 2.0 mm | slot gap |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 
-## rear wing (0 of 9 evolved)
+## rear wing (1 of 9 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -185,7 +185,7 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `rw_camber` | **fixed** | 0.0 | 0.0 - 0.08 - | camber |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `rw_aoa` | **fixed** | 0.0 | -5.0 - 15.0 deg | angle of attack | T9.4.3, T9.6 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `rw_half_span` | **fixed** | 25.5 | 25.5 - 45.0 mm | half span | T9.5.1 >= 50 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `rw_x_le` | **fixed** | 3.5 | 0.0 - 20.0 mm | leading edge behind Ref B | T9.4.1 behind Ref B, T9.4.2 <= 40 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
+| `rw_x_le` | **evolve** | 3.5 | 0.0 - 20.0 mm | leading edge behind Ref B | T9.4.1 behind Ref B; T9.4.2 <= 40 behind Ref B; T5.6 nothing round the cartridge behind the rear face (the gates check each car) | user 2026-11-22: rear wing position is a parameter |
 | `rw_clear_air_margin` | **fixed** | 0.5 | 0.2 - 2.0 mm | margin over the 5 mm clear air | T9.6 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `rw_pylon_t` | **fixed** | 2.0 | 1.5 - 4.0 mm | pylon thickness |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `rw_pylon_chord` | **fixed** | 10.0 | 6.0 - 20.0 mm | pylon chord |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |

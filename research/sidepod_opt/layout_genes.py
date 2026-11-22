@@ -76,6 +76,16 @@ def x_default():
     return np.array([_start(p) for p in GENES])
 
 
+def x_of(**values):
+    """Gene vector with the named genes set (physical values; halo_rear as its 0..1 fraction of the
+    legal interval), the rest at their defaults. For tests and hand-picked cars."""
+    x = x_default()
+    for k, v in values.items():
+        i = NAMES.index(k)
+        x[i] = float(v) if k == "halo_rear" else (float(v) - LO[i]) / (HI[i] - LO[i])
+    return np.clip(x, 0.0, 1.0)
+
+
 def decode(x) -> dict:
     """[0, 1]^DIM (clipped) -> layout + Part 1 / Part 4 parameters. Always a legal layout."""
     x = np.clip(np.asarray(x, float), 0.0, 1.0)

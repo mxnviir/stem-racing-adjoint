@@ -64,14 +64,14 @@
   {
    "group": "body loft",
    "name": "st_b0",
-   "value": 10.0,
+   "value": 11.0,
    "lo": 6.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "half-width at u = 0.0",
    "rule": "T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide",
-   "why": "fuselage plan shape"
+   "why": "set so the body front meets the nose (T8.5.1 caps the nose at 25 mm): the 7 mm step at the joint becomes ~3 mm; shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -79,11 +79,11 @@
    "value": 13.24,
    "lo": 6.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "half-width at u = 0.08",
    "rule": "T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide",
-   "why": "fuselage plan shape"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -91,11 +91,11 @@
    "value": 16.53,
    "lo": 6.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "half-width at u = 0.2",
    "rule": "T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide",
-   "why": "fuselage plan shape"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -103,11 +103,11 @@
    "value": 18.0,
    "lo": 6.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "half-width at u = 0.35",
    "rule": "T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide",
-   "why": "fuselage plan shape"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -115,11 +115,11 @@
    "value": 17.79,
    "lo": 6.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "half-width at u = 0.5",
    "rule": "T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide",
-   "why": "fuselage plan shape"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -127,11 +127,11 @@
    "value": 17.15,
    "lo": 6.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "half-width at u = 0.65",
    "rule": "T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide",
-   "why": "fuselage plan shape"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -139,11 +139,11 @@
    "value": 15.91,
    "lo": 6.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "half-width at u = 0.82",
    "rule": "T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide",
-   "why": "fuselage plan shape"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -151,35 +151,35 @@
    "value": 14.0,
    "lo": 6.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "half-width at u = 1.0",
    "rule": "T8.5.1 <= 15 half-width ahead of Ref A (the nose); T3.4 car width; the block 65 wide",
-   "why": "fuselage plan shape"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
    "name": "st_zt0",
-   "value": 20.0,
+   "value": 24.5,
    "lo": 12.0,
    "hi": 50.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "top height at u = 0.0",
    "rule": "T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway",
-   "why": "the halo-canister loft's top line"
+   "why": "set so the body front meets the nose (T8.5.1 caps the nose at 25 mm): the 7 mm step at the joint becomes ~3 mm; shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
    "name": "st_zt1",
-   "value": 24.86,
+   "value": 27.2,
    "lo": 14.0,
    "hi": 50.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "top height at u = 0.08",
    "rule": "T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway",
-   "why": "the halo-canister loft's top line"
+   "why": "set so the body front meets the nose (T8.5.1 caps the nose at 25 mm): the 7 mm step at the joint becomes ~3 mm; shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -187,11 +187,11 @@
    "value": 29.8,
    "lo": 16.0,
    "hi": 50.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "top height at u = 0.2",
    "rule": "T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway",
-   "why": "the halo-canister loft's top line"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -199,11 +199,11 @@
    "value": 32.0,
    "lo": 18.0,
    "hi": 50.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "top height at u = 0.35",
    "rule": "T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway",
-   "why": "the halo-canister loft's top line"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -211,11 +211,11 @@
    "value": 32.85,
    "lo": 20.0,
    "hi": 50.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "top height at u = 0.5",
    "rule": "T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway",
-   "why": "the halo-canister loft's top line"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -223,11 +223,11 @@
    "value": 35.41,
    "lo": 22.0,
    "hi": 50.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "top height at u = 0.65",
    "rule": "T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway",
-   "why": "the halo-canister loft's top line"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -235,11 +235,11 @@
    "value": 40.37,
    "lo": 24.0,
    "hi": 50.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "top height at u = 0.82",
    "rule": "T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway",
-   "why": "the halo-canister loft's top line"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -247,35 +247,35 @@
    "value": 48.0,
    "lo": 26.0,
    "hi": 50.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "top height at u = 1.0",
    "rule": "T3.5 <= 65; the halo pocket floor (24) and the chamber wall (axis 31 + 9.25 + 3) are forced solid by Part 1 anyway",
-   "why": "the halo-canister loft's top line"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
    "name": "st_zb0",
-   "value": 6.0,
+   "value": 3.5,
    "lo": 3.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "bottom height at u = 0.0",
    "rule": "T3.7 >= 1.5 above the track; the 6 mm block slot",
-   "why": "underside rake / floor height"
+   "why": "set so the body front meets the nose (T8.5.1 caps the nose at 25 mm): the 7 mm step at the joint becomes ~3 mm; shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
    "name": "st_zb1",
-   "value": 5.6,
+   "value": 3.5,
    "lo": 3.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "bottom height at u = 0.08",
    "rule": "T3.7 >= 1.5 above the track; the 6 mm block slot",
-   "why": "underside rake / floor height"
+   "why": "set so the body front meets the nose (T8.5.1 caps the nose at 25 mm): the 7 mm step at the joint becomes ~3 mm; shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -283,11 +283,11 @@
    "value": 5.18,
    "lo": 3.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "bottom height at u = 0.2",
    "rule": "T3.7 >= 1.5 above the track; the 6 mm block slot",
-   "why": "underside rake / floor height"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -295,11 +295,11 @@
    "value": 5.0,
    "lo": 3.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "bottom height at u = 0.35",
    "rule": "T3.7 >= 1.5 above the track; the 6 mm block slot",
-   "why": "underside rake / floor height"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -307,11 +307,11 @@
    "value": 5.8,
    "lo": 3.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "bottom height at u = 0.5",
    "rule": "T3.7 >= 1.5 above the track; the 6 mm block slot",
-   "why": "underside rake / floor height"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -319,11 +319,11 @@
    "value": 8.2,
    "lo": 3.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "bottom height at u = 0.65",
    "rule": "T3.7 >= 1.5 above the track; the 6 mm block slot",
-   "why": "underside rake / floor height"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -331,11 +331,11 @@
    "value": 12.84,
    "lo": 3.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "bottom height at u = 0.82",
    "rule": "T3.7 >= 1.5 above the track; the 6 mm block slot",
-   "why": "underside rake / floor height"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -343,11 +343,11 @@
    "value": 20.0,
    "lo": 3.0,
    "hi": 24.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "bottom height at u = 1.0",
    "rule": "T3.7 >= 1.5 above the track; the 6 mm block slot",
-   "why": "underside rake / floor height"
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "body loft",
@@ -379,11 +379,11 @@
    "value": 28.0,
    "lo": 14.0,
    "hi": 32.5,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "sidepod half-width",
    "rule": "T3.4 width; the block 65 wide",
-   "why": ""
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "sidepods",
@@ -391,11 +391,11 @@
    "value": 27.0,
    "lo": 14.0,
    "hi": 27.175,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "sidepod top",
    "rule": "team: nothing above 27.175 in the sidepods",
-   "why": ""
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "sidepods",
@@ -403,11 +403,11 @@
    "value": 12.0,
    "lo": 3.0,
    "hi": 16.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "sidepod bottom",
    "rule": "T3.7 >= 1.5",
-   "why": ""
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "sidepods",
@@ -415,11 +415,11 @@
    "value": 0.3,
    "lo": 0.0,
    "hi": 0.6,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "0-1",
    "what": "sidepod start, as a fraction of Ref A -> rear face",
    "rule": "",
-   "why": ""
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "sidepods",
@@ -427,11 +427,11 @@
    "value": 0.4,
    "lo": 0.15,
    "hi": 0.8,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "0-1",
    "what": "sidepod length, same fraction",
    "rule": "",
-   "why": ""
+   "why": "shape, not layout: held while the layout is searched; the free-form stage on the best layout reshapes the body"
   },
   {
    "group": "sidepods",
@@ -1349,13 +1349,13 @@
    "group": "front wing",
    "name": "fw_z",
    "value": 8.0,
-   "lo": 4.0,
-   "hi": 14.0,
-   "mode": "fixed",
+   "lo": 6.5,
+   "hi": 18.0,
+   "mode": "evolve",
    "unit": "mm",
    "what": "chord line height",
-   "rule": "T8.7 5 mm clear air to the track; T8.5.2",
-   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
+   "rule": "T8.7 5 mm clear air to the track (chord line >= 6.2); T8.5.2 <= 20 high outboard (chord line <= 18.8)",
+   "why": "user 2026-11-22: front wing height is a parameter (wheel wake, ground effect)"
   },
   {
    "group": "front wing",
@@ -1531,11 +1531,11 @@
    "value": 3.5,
    "lo": 0.0,
    "hi": 20.0,
-   "mode": "fixed",
+   "mode": "evolve",
    "unit": "mm",
    "what": "leading edge behind Ref B",
-   "rule": "T9.4.1 behind Ref B, T9.4.2 <= 40",
-   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
+   "rule": "T9.4.1 behind Ref B; T9.4.2 <= 40 behind Ref B; T5.6 nothing round the cartridge behind the rear face (the gates check each car)",
+   "why": "user 2026-11-22: rear wing position is a parameter"
   },
   {
    "group": "rear wing",
