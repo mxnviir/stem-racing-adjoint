@@ -12,11 +12,11 @@ Three searches share one car builder, one CFD route and one race model.
                           |   runs car/build/run_car.py (a subprocess per car)
                           v
    car/body   param_body.build: rule masks + loft (+ lattice) -> milled with the 3.175 mm ball, 3 mm walls
-   car/parts  assembly.build: wheels, halo, nose cone, wings, tether guides (no supports yet)
+   car/parts  assembly.build: wheels, halo, nose cone, wings, tether guides, wheel supports (support_engine)
    car/build  legality.check: every rule with its margin -> summary.json
                           |
    layout_car.judge   waivers (below), mass + lead to 48.2 g, COM
-   layout_car.export_cfd   ONE closed solid of the whole car (cfd/layout_wrap.py)
+   layout_car.export_cfd   ONE closed solid of the whole car with its supports (cfd/layout_wrap.py)
                           |
    cfd/   simscale_layout.LayoutEvaluator: reduce to N triangles -> air volume with exact wheels (STEP)
           -> SimScale import -> mesh -> k-omega SST, 1000 iterations -> drag and lift
@@ -51,7 +51,21 @@ is stage 2's free-form change. Mass from the cells (0.163 g/cm3 foam).
 ### car/parts (was Part 4)
 `assembly.build(...)`: the team's wheels (their measured files), the official halo in its pocket, the
 nose cone lofted onto the body's front section, NACA 0015 front and rear wings at the minimum legal size,
-tether guides on stalks, the wheel supports (switched off by `supports=False`), and Part 4's own gates.
+tether guides on stalks, the wheel supports, and Part 4's own gates.
+
+`support_engine.py` designs the searches' wheel supports for each car from that car's body (run_car
+`--support engine`). One printed part per axle: a **saddle** flush with the underside (the body's lowest
+`saddle_h` over a chord at the axle, milled away from below and printed instead; it follows steps in the
+floor such as the front's centre channel, and wraps the body's rounded edge where less than 3 mm of foam
+would be left), an **arm** lofted from the body's side to the wheel (chord, thickness, exponent, taper, height
+at the disc), a concave **transition** into the **disc**, and the **axle** stub with its hubcap (the disc and
+the axle are `beam_support.py`'s). The slot's ceiling is computed column by column and opened by the 3.175 mm
+ball, so it is what the cutter can mill from below. Every rule and load is measured on the result:
+T7.12.1 (inside the wheels' cylinder), T7.13 (claw band clear), T3.7, arm / saddle / stub / disc stress
+and bearing sag (3 N radial, 1.2 N side, ABS 20 MPa allowed, 0.15 mm), foam bearing, 3 mm of foam over
+the slot or none, slot cut from below, one closed solid. Thicknesses grow until the loads pass. Each car
+folder gets `supports.png` (`search/layout/support_render.py`) to inspect the design.
+`beam_support.py` (Part 4's pod/plate/strip support) is kept for the team's own car (`--support beam`).
 `joints.make_all` cuts pockets for the printed parts and writes the manufacturing files (skipped in
 searches with `--no-joints`; rebuild finalists without it).
 
@@ -89,7 +103,6 @@ A search car is not refused for:
 
 | rule | why |
 | --- | --- |
-| T7.12 wheel supports | the supports are designed later (user, 2026-11-22); their 5.9 g is counted at the axles |
 | T3.6 48.0 g | met by lead in the T1.22 container (up to its 15.8 g capacity, else refused) |
 | T5.1 chamber diameter | the bore is the block's own drilled 18.1 mm; the 1 mm build grid draws it 0.6 mm small. Finalists are measured on the fine grid |
 
@@ -99,5 +112,5 @@ T9.4.2 (40 mm behind Ref B) is measured on the rear wing and its support only (t
 ## Files a car folder holds
 
 `summary.json` (every check, mass), `layout_car.json` (genes, decoded numbers, verdict, mass with lead,
-CFD solid report), `body_half.stl`, `parts/*.stl` + `assembly.json`, `body_full.stl` (the merged solid,
+the supports' sizes, CFD solid report), `supports.png` (the supports, close up), `body_half.stl`, `parts/*.stl` + `assembly.json`, `body_full.stl` (the merged solid,
 metres; reduced to 60k faces once timed), `wheelF.stl`/`wheelR.stl`/`wheels.json`, `run_car.log`.

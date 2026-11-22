@@ -171,13 +171,15 @@ def write_md(params):
     for p in params:
         groups.setdefault(p["group"], []).append(p)
     n_e = sum(p["mode"] == E for p in params)
+    n_s = sum(p["mode"] == "shape" for p in params)
     lines = ["# Layout search: every parameter of the car", "",
-             f"{len(params)} parameters, {n_e} evolved, {len(params) - n_e} fixed. The search reads "
-             "`layout_params.json`; change a `mode` there (`evolve` / `fixed`), a `value` (used when fixed, "
+             f"{len(params)} parameters, {n_e} evolved in stage 1 (the layout search), {n_s} in stage 2 (`shape`: "
+             f"the shape search, with the body's lattice), {len(params) - n_e - n_s} fixed. The searches read "
+             "`layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, "
              "and the start when evolved) or a range, then run `python layout_catalogue.py --md`.", "",
              "x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, Ref B = rear axle + 16.", ""]
     for g, ps in groups.items():
-        lines += [f"## {g} ({sum(p['mode'] == E for p in ps)} of {len(ps)} evolved)", "",
+        lines += [f"## {g} ({sum(p['mode'] in (E, 'shape') for p in ps)} of {len(ps)} evolved)", "",
                   "| name | mode | value | range | what | rule | why |", "| --- | --- | --- | --- | --- | --- | --- |"]
         for p in ps:
             rng = "" if p["lo"] is None else f"{p['lo']} - {p['hi']} {p['unit']}"

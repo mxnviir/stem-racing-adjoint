@@ -185,9 +185,12 @@ def build_car(a, out: Path, **p4kw):
 def part4_kwargs(a) -> dict:
     import beam_support as bsm
     kind = getattr(a, "support", "beam")
-    sup = {"cad": None, "beam": bsm.BeamSupport()}[kind]
+    sup = {"cad": None, "beam": bsm.BeamSupport(), "engine": None}[kind]
     if kind == "beam" and getattr(a, "support_json", None):
         sup = bsm.BeamSupport(**json.loads(a.support_json))
+    if kind == "engine":                      # the searches' own supports (car/parts/support_engine.py)
+        import support_engine as se
+        sup = se.SupportDesign(**json.loads(getattr(a, "support_json", None) or "{}"))
     # The body ends at Ref A; the nose cone is a printed SLS PA12 shell (team
     # spec 2026-09-27) whose root takes the body's section 1 mm aft of Ref A.
     import nose as ns
@@ -292,8 +295,9 @@ def parse_args(argv=None):
     ap.add_argument("--cargo-json", default=None, help='T4.2 cargo placement {"x_start_m", "z_base_m", "flip"}')
     ap.add_argument("--lattice-json", default=None, help="free-form body change (param_body.build lattice=)")
     ap.add_argument("--tether-json", default=None, help="[front guide ahead of the front axle, rear guide behind the rear axle], mm (T6.1 <= 10)")
-    ap.add_argument("--support", choices=("cad", "beam"), default="beam",
-                    help="beam = the team's architecture, parametric; cad = the v2 CAD supports (reference)")
+    ap.add_argument("--support", choices=("cad", "beam", "engine"), default="beam",
+                    help="beam = the team's architecture, parametric; cad = the v2 CAD supports (reference); "
+                         "engine = generated from the body (support_engine.py, the searches)")
     ap.add_argument("--support-json", default=None, help="BeamSupport parameters as JSON")
     ap.add_argument("--nose-json", default=None, help="NoseCone parameters as JSON (parametric body)")
     ap.add_argument("--fwing-json", default=None, help="FrontWing parameters as JSON")

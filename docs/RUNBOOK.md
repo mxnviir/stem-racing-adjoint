@@ -21,9 +21,14 @@ python search/layout/layout_car.py /tmp/car                 # the team layout (e
 python search/layout/layout_render.py /tmp/car /tmp/car.png --cfd   # pictures of the solid that goes to CFD
 ```
 
-`/tmp/car/layout_car.json` says whether it is legal, what failed, its mass with lead, and the CFD solid
-report (`one_piece`, `watertight`, distance from the built car). `run_car.log` and `summary.json` hold
-every check with its margin.
+`/tmp/car/layout_car.json` says whether it is legal, what failed, its mass with lead, the wheel supports'
+sizes, and the CFD solid report (`one_piece`, `watertight`, distance from the built car). `run_car.log`
+and `summary.json` hold every check with its margin. `supports.png` shows the car's wheel supports close
+up (section through each axle, along the arm, from below, and the part alone):
+
+```
+python search/layout/support_render.py /tmp/car /tmp/supports.png
+```
 
 ## Stage 1: the layout search
 

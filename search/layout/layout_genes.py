@@ -35,6 +35,7 @@ HERE = Path(__file__).resolve().parent
 PARAMS = json.loads((HERE / "layout_params.json").read_text())["params"]
 BY = {p["name"]: p for p in PARAMS}
 GENES = [p for p in PARAMS if p["mode"] == "evolve"]
+SHAPE_GENES = [p for p in PARAMS if p["mode"] == "shape"]    # held at value here; evolved by stage 2 (search/shape)
 NAMES = [p["name"] for p in GENES]
 LO = np.array([p["lo"] for p in GENES], float)
 HI = np.array([p["hi"] for p in GENES], float)
@@ -162,9 +163,28 @@ def decode(x) -> dict:
     cargo = {"x_start_m": cargo_x0 / 1e3, "z_base_m": CARGO_Z_BASE_MM / 1e3, "flip": bool(float(v["cargo_flip"]) >= 0.5),
              "prefer": True}
     tethers = (float(v["tether_front"]), float(v["tether_rear"]))
+    support = support_design(v)
     return dict(W=W, rear=rear, halo_rear=halo_rear, x_front=x_front, d_halo=round(d_halo, 2),
                 s_x0u=s_x0u, s_x1u=s_x1u, body=body, nose=nose, fwing=fwing, rwing=rwing, cargo=cargo,
-                tethers=tethers, skin_mm=float(v["skin_mm"]), legal_layout=layout_legal(W, rear, halo_rear))
+                tethers=tethers, support=support, skin_mm=float(v["skin_mm"]), legal_layout=layout_legal(W, rear, halo_rear))
+
+
+def support_design(v=None) -> dict:
+    """support_engine.SupportDesign's numbers from parameter values (the catalogue's values by default)."""
+    v = v or {p["name"]: p["value"] for p in PARAMS}
+    return dict(chord_mm=float(v["sup_chord"]), t_mm=float(v["sup_t"]), taper=float(v["sup_taper"]),
+                dz_mm=float(v["sup_dz"]), p=float(v["sup_p"]), fillet_mm=float(v["sup_fillet"]),
+                saddle_h_mm=float(v["sup_saddle_h"]), disc_r_mm=float(v["sup_disc_r"]),
+                disc_recess_mm=float(v["sup_disc_recess"]))
+
+
+def support_from_unit(u) -> dict:
+    """Stage 2: the shape genes from CMA's numbers, one per SHAPE_GENES entry: 0 is the catalogue's value,
+    -1 its lo, +1 its hi (clipped), linear on each side."""
+    v = {p["name"]: p["value"] for p in PARAMS}
+    for p, ui in zip(SHAPE_GENES, np.clip(np.asarray(u, float), -1.0, 1.0)):
+        v[p["name"]] = p["value"] + ui * ((p["hi"] - p["value"]) if ui > 0 else (p["value"] - p["lo"]))
+    return support_design(v)
 
 
 def body_params(d):

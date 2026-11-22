@@ -60,22 +60,28 @@ WHEEL_FILLET_MM = 1.0                                        # rim rounding of t
 SMALL_FEATURE_MM = 0.8
 
 
-def cfd_setup(faces, pitch_mm):
+def cfd_setup(faces, pitch_mm, supports=None):
     """What a result depends on besides the car: compared only within one setup."""
     return {"small_feature_mm": SMALL_FEATURE_MM, "wheel_fillet_mm": WHEEL_FILLET_MM, "faces": int(faces),
-            "wrap_pitch_mm": pitch_mm, "cartridge": CARTRIDGE}
+            "wrap_pitch_mm": pitch_mm, "cartridge": CARTRIDGE, "supports": SUPPORTS if supports is None else supports}
 
 
 CARTRIDGE = "official"          # the official cartridge's shape (layout_car.cartridge); "cylinder" before 2026-11-22 17:50
+SUPPORTS = "engine1"            # the wheel supports in the CFD car (support_engine.py); "none": a car built before them
 
 
 def setup_key(su):
     """The part of a CFD setup that shifts every car alike: results compare only within one key."""
     su = su or {}
-    return (su.get("small_feature_mm"), su.get("wheel_fillet_mm"), su.get("cartridge", "cylinder"))
+    return (su.get("small_feature_mm"), su.get("wheel_fillet_mm"), su.get("cartridge", "cylinder"),
+            su.get("supports", "none"))
 
 
-CURRENT_SETUP = (SMALL_FEATURE_MM, WHEEL_FILLET_MM, CARTRIDGE)
+CURRENT_SETUP = (SMALL_FEATURE_MM, WHEEL_FILLET_MM, CARTRIDGE, SUPPORTS)
+# Setups that differ from the current one only in parts that every car carries alike (the cartridge, the
+# supports) are brought over by the difference between their reference runs (data()); the mesh settings
+# are not (they move cars differently).
+OFFSET_OK = 2                   # setup_key[:OFFSET_OK] must match
 BUILD_WORKERS = 3                                            # one Parts 1-5 build peaks at ~5.5 GB
 
 
@@ -199,8 +205,10 @@ class LayoutEvaluator(SE.SimScaleStepEvaluator):
         except Exception as e:                                       # noqa: BLE001
             raise SE.GeometryError(f"air volume build: {e!r}") from e
         self.st["cases"][cid]["faceting"][str(faces)].update(removed_share=round(rep["removed_share"], 4), sealed_air_mm3=round(rep["sealed_mm3"], 1))
-        pitch = json.loads((folder / "layout_car.json").read_text()).get("cfd", {}).get("wrap_pitch_mm", 0.3)
-        self.st["cases"][cid]["setup"] = cfd_setup(faces, pitch)
+        cfd = json.loads((folder / "layout_car.json").read_text()).get("cfd", {})
+        # the car's own record says whether its solid carries the supports (a car built before them does not)
+        self.st["cases"][cid]["setup"] = cfd_setup(faces, cfd.get("wrap_pitch_mm", 0.3),
+                                                   SUPPORTS if cfd.get("supports_mm3") else "none")
         if not 0.97 < rep["removed_share"] < 1.03:
             raise SE.GeometryError(f"air volume: removed {rep['removed_share']:.3f} of the car's volume")
         return out
@@ -261,9 +269,9 @@ def race_time(rec, D20, L20):
 
 
 def _build_one(args):
-    x, folder, lattice = (tuple(args) + (None,))[:3]
+    x, folder, lattice, support = (tuple(args) + (None, None))[:4]
     try:
-        return LC.build(np.asarray(x), Path(folder), lattice=lattice)
+        return LC.build(np.asarray(x), Path(folder), lattice=lattice, support=support)
     except Exception as e:                                           # noqa: BLE001
         return {"legal": False, "why": f"builder crashed: {e!r}"[:500], "genes": list(map(float, x))}
 
@@ -294,8 +302,9 @@ class Campaign:
         X, y, bad = [], [], []
         rows = self.designs()
         # The reference's race time under each setup: a setup that differs from the current one only in the
-        # cartridge (the same part on every car) is brought over by the difference between its reference and
-        # the current one; any other setup is not comparable and is left out.
+        # cartridge or the supports (parts every car carries) is brought over by the difference between its
+        # reference and the current one; any other setup is not comparable and is left out. With the supports
+        # the shift is only approximately the same for every layout: rows brought over are `provisional`.
         ref = {}
         for row in rows:
             if row.get("kind") == "ref" and row.get("T") is not None:
@@ -307,7 +316,7 @@ class Campaign:
                 k = setup_key(row.get("setup"))
                 if k == CURRENT_SETUP:
                     off = 0.0
-                elif k[:2] == CURRENT_SETUP[:2] and k in ref and CURRENT_SETUP in ref:
+                elif k[:OFFSET_OK] == CURRENT_SETUP[:OFFSET_OK] and k in ref and CURRENT_SETUP in ref:
                     off = ref[CURRENT_SETUP] - ref[k]
                     self.offsets[str(k)] = round(off * 1e3, 3)
                 else:
@@ -442,6 +451,32 @@ class Campaign:
         self.save()
         return cid
 
+    def submit_fresh_reference(self, ev, name):
+        """The team's layout built afresh with the current code (a new CFD setup: the supports) and timed
+        as a reference: what brings the earlier setup's results over (data())."""
+        dst = self.root / "cars" / name
+        rec = LC.build(LG.x_default(), dst.resolve())
+        self.log({"id": name, "kind": "ref", "genes": None, "legal": rec.get("legal"), "layout": rec.get("layout"),
+                  "failed": rec.get("failed"), "why": rec.get("why"), "mass": rec.get("mass"), "cfd": rec.get("cfd"),
+                  "support": rec.get("support")})
+        if not rec.get("legal"):
+            raise SystemExit(f"reference car is not legal: {rec.get('failed')} {rec.get('why')}")
+        ev.submit([{"id": name, "folder": str(dst.resolve())}])
+        self.st.setdefault("refs", {})[name] = None
+        self.save()
+        return name
+
+    def rerun(self, ids):
+        """Cars timed on an earlier setup built again with the current code and timed (new ids, budget
+        counted): how far the setup's shift differs from car to car."""
+        rows = {r["id"]: r for r in self.designs() if r.get("genes") is not None and r.get("kind") != "ref"}
+        pb = self.st.setdefault("pending_build", {}) or {}
+        for i in ids:
+            pb[self.new_id()] = {"x": rows[i]["genes"], "rerun_of": i}
+        self.st["pending_build"] = pb
+        self.save()
+        return list(pb)
+
     def collect(self, ev):
         """Results back from the CFD: race time with each car's own layout and mass, logged, files pruned."""
         st = self.st
@@ -488,12 +523,15 @@ class Campaign:
         # 2) build what is pending (in parallel); the legal cars go to CFD
         pb = st.get("pending_build") or {}
         if pb:
-            jobs = [(v["x"], str((self.root / "cars" / cid).resolve()), v.get("lattice")) for cid, v in pb.items()]
+            jobs = [(v["x"], str((self.root / "cars" / cid).resolve()), v.get("lattice"), v.get("support"))
+                    for cid, v in pb.items()]
             with ProcessPoolExecutor(BUILD_WORKERS) as pool:
                 recs = list(pool.map(_build_one, jobs))
             cases = []
             for (cid, v), rec in zip(pb.items(), recs):
-                self.log({"id": cid, "batch": st["g"], "genes": rec.get("genes") or v["x"], "lattice": v.get("lattice"), "legal": bool(rec.get("legal")),
+                self.log({"id": cid, "batch": st["g"], "genes": rec.get("genes") or v["x"], "lattice": v.get("lattice"),
+                          "v": v.get("v"), "support": rec.get("support"), "rerun_of": v.get("rerun_of"),
+                          "legal": bool(rec.get("legal")),
                           "layout": rec.get("layout"), "failed": rec.get("failed"), "why": rec.get("why"),
                           "mass": rec.get("mass"), "build_s": rec.get("build_s"), "cfd": rec.get("cfd")})
                 if not rec.get("legal"):
@@ -553,11 +591,12 @@ def init(root, budget, seed_keys_from=str(repo_paths.ROOT / "runs" / "sidepod" /
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=("init", "ref", "noise", "run", "tick", "status"))
+    ap.add_argument("cmd", choices=("init", "ref", "noise", "refbuild", "rerun", "run", "tick", "status"))
     ap.add_argument("root")
     ap.add_argument("--budget", type=int, default=48)
     ap.add_argument("--pitch", type=float, default=0.25, help="noise: the grid the copy's surface is rebuilt on, mm")
-    ap.add_argument("--name", default=None, help="noise: the copy's id")
+    ap.add_argument("--name", default=None, help="noise: the copy's id; refbuild: the new reference's id")
+    ap.add_argument("--ids", default="", help="rerun: comma-separated car ids to build and time again")
     a = ap.parse_args()
     if a.cmd == "init":
         return init(a.root, a.budget)
@@ -567,6 +606,13 @@ def main():
     if a.cmd == "noise":                  # stop `run` first: both write the state files
         ev = c.evaluator()
         print("submitted", c.submit_noise_reference(ev, pitch_mm=a.pitch, src=c.REF, name=a.name))
+        return
+    if a.cmd == "refbuild":               # stop `run` first: both write the state files
+        ev = c.evaluator()
+        print("submitted", c.submit_fresh_reference(ev, a.name or "REFS"))
+        return
+    if a.cmd == "rerun":                  # stop `run` first; the next tick builds them
+        print("queued", c.rerun([i for i in a.ids.split(",") if i]))
         return
     if a.cmd == "status":
         ev = c.evaluator()

@@ -18,7 +18,9 @@ So the work is split by what each number is:
 2. **Stage 2, shape (search/shape, CMA-ES).** On the best layout from stage 1, a lattice of 4 x 2 x 3
    control points over the body (mirrored), cubic-interpolated, grows or cuts the drawn body by up to
    +-6 mm per unit before the rule masks and the milling are applied. So every vector is a legal,
-   millable body. CMA-ES, 8 cars a generation, 40 cars.
+   millable body. The same CMA vector carries the wheel supports' six shape genes (`mode: shape` in
+   layout_params.json: arm chord, thickness, taper, height at the disc, section exponent, transition
+   radius), held at their catalogue values in stage 1. CMA-ES, 8 cars a generation, 40 cars.
 
 At equal drag the layout changes race time by only ~0.15 ms over its whole legal range (the car is
 always ballasted to 48.2 g), while 1 % of drag is ~0.7 ms: the layout matters through drag, which is
@@ -36,7 +38,15 @@ between `lo` and `hi`) or `fixed` (held at `value`); `python search/layout/layou
 rewrites [PARAMETERS.md](PARAMETERS.md). Fixed by choice: flat NACA 0015 wings at the minimum legal
 size (low drag, low lift), the loft stations (set so the body meets the nose), the underfloor tunnel
 (off), the 56 sculpt bumps (stage 2's lattice does that job). Fixed by the build: the thrust line
-(31 mm), the team's wheels, the wheel track.
+(31 mm), the team's wheels, the wheel track. The wheel supports are generated for every car
+(car/parts/support_engine.py); what the air sees of them is evolved in stage 2, what it does not (the
+saddle's depth inside the body, the disc inside the wheel) is sized for the loads or fixed.
+
+CFD setups: a result is compared only with results of the same setup (`setup_key` in
+simscale_layout.py: small-feature suppression, wheel rims, cartridge, supports). Cars timed before the
+cartridge or the supports were added are brought over by the difference between the reference car's
+runs with and without (`data()`); for the supports that shift is only approximately the same for every
+layout, so those rows are provisional until a few of them are re-timed with supports.
 
 The layout genes are decoded so that every vector lands inside these analytic limits (the referee still
 judges each built car, and can refuse one: e.g. the rear wing crowding the cartridge, T5.6):

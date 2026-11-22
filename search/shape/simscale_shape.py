@@ -50,7 +50,7 @@ class ShapeCampaign(SL.Campaign):
             return pickle.loads(p.read_bytes())
         import cma
         c = self.cfg["cma"]
-        es = cma.CMAEvolutionStrategy(np.zeros(int(np.prod(self.shape))), c["sigma"],
+        es = cma.CMAEvolutionStrategy(np.zeros(self.dim()), c["sigma"],
                                       {"popsize": c["popsize"], "seed": c.get("seed", 1), "verbose": -9,
                                        "bounds": [-2.0, 2.0]})
         self._save_es(es)
@@ -67,9 +67,17 @@ class ShapeCampaign(SL.Campaign):
         self._save_es(es)
         return xs, {"mode": "cma", "sigma": round(float(es.sigma), 4), "generation": int(es.countiter)}
 
+    def dim(self):
+        """CMA's vector: the lattice's control points, then the wheel supports' shape genes
+        (layout_genes.SHAPE_GENES, 0 = the catalogue's value, -1 / +1 its lo / hi)."""
+        return int(np.prod(self.shape)) + len(SL.LG.SHAPE_GENES)
+
     def job(self, v):
-        return {"x": self.base.tolist(), "v": np.asarray(v).tolist(),
-                "lattice": {"shape": list(self.shape), "values": np.asarray(v).tolist(), "amp_mm": self.amp}}
+        v = np.asarray(v, float)
+        n = int(np.prod(self.shape))
+        return {"x": self.base.tolist(), "v": v.tolist(),
+                "lattice": {"shape": list(self.shape), "values": v[:n].tolist(), "amp_mm": self.amp},
+                "support": SL.LG.support_from_unit(v[n:])}
 
     def batch_done(self, ids):
         """Every car of the generation is back: tell CMA its race times (a car that could not be built,
@@ -80,7 +88,9 @@ class ShapeCampaign(SL.Campaign):
             if row.get("id") in ids:
                 if "T" in row:
                     T[row["id"]] = row["T"]
-                if row.get("lattice"):
+                if row.get("v") is not None:                  # the whole CMA vector (the build's row)
+                    V[row["id"]] = row["v"]
+                elif row.get("lattice") and row["id"] not in V:
                     V[row["id"]] = row["lattice"]["values"]
         vs, ys = [], []
         for cid in ids:

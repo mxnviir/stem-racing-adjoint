@@ -42,6 +42,7 @@ import wheel as wh                # noqa: E402
 import wings as wg                # noqa: E402
 import nose as ns                 # noqa: E402
 import beam_support as bsm        # noqa: E402
+import support_engine as se      # noqa: E402
 
 SPEED_MPS = 20.0
 SINK_MM = 0.3
@@ -165,6 +166,20 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
     support_kg = (1.396e-3, 1.545e-3)
     if not supports:
         sup, support_kg = [], (0.0, 0.0)
+    elif isinstance(support, se.SupportDesign):
+        # the searches' own supports, generated from THIS body at each axle (support_engine.py):
+        # a saddle flush with the underside, a lofted arm, a fillet into the disc, the axle stub
+        hubs = wh.hub_span_mm()
+        res = se.build(support, body, [("front", x_front_mm, R - SINK_MM, R, FY, f.total_width, hubs[0]),
+                                       ("rear", x_rear, R - SINK_MM, R, RY, r.total_width, hubs[1])], out_dir=out)
+        sup = [res["support"]]
+        support_kg = tuple(res["net_kg_each"])               # per side: the part and its hubcap, less the foam it replaces
+        gates.update(res["gates"])
+        info["support_engine"] = dict(res["info"], design=se.params_dict(support))
+        info["support_mode"] = {"front": "engine", "rear": "engine"}
+        for tag, cap in res["hubcaps"].items():
+            cap.export(str(out / f"hubcap_{tag}.stl"))
+            info.setdefault("hubcap_stls", {})[tag] = str(out / f"hubcap_{tag}.stl")
     elif support is None:
         sup = [hg.build_wheel_assembly(a, x)[f"{a}_wheel_support_right"]
                for a, x in (("front", x_front_mm), ("rear", x_rear))]
@@ -285,7 +300,8 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
         "failed_gates": sorted(k for k, v in gates.items() if v < -1e-9),
         "front_wing": wg.params_dict(front), "rear_wing": wg.params_dict(rear),
         "nose": None if nose is None else wg.params_dict(nose),
-        "support": None if support is None else wg.params_dict(support),
+        "support": None if support is None else (se.params_dict(support) if isinstance(support, se.SupportDesign)
+                                                  else wg.params_dict(support)),
         "info": info,
     }
     (out / "assembly.json").write_text(json.dumps(result, indent=2, default=list))

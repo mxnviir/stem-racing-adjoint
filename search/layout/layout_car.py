@@ -38,30 +38,35 @@ FLOOR_G = 48.2                  # T3.6 48.0 + 0.2 margin, as the sidepod search
 CARTRIDGE_SHELL_G = 21.15       # Part 2's car_weight_kg includes the empty cartridge (Appendix vi)
 CARTRIDGE_OUT_MM = 12.5         # shortest cartridge 64.5 - 52 mm bore: how far it sticks out
 CHAMBER_Z_MM = 31.0             # Part 1's chamber axis (geometry_contract.CHAMBER_AXIS_Z_MM)
-# Rules waived because the parts are not on the car yet (user, 2026-11-22) or by team rule
-# Not counted against a search car: T7.12 the supports are added later (user); T3.6 is met by the lead
-# below; T5.1 the chamber is the block's own drilled bore (18.10-18.15 mm), which this 1 mm build grid
-# draws 0.6 mm small -- the finalists are rebuilt on the fine grid, where it is measured properly.
-WAIVED_PREFIXES = ("T7.12", "T3.6_mass", "T5.1_diameter")
+# Not counted against a search car: T3.6 is met by the lead below; T5.1 the chamber is the block's own
+# drilled bore (18.10-18.15 mm), which this 1 mm build grid draws 0.6 mm small -- the finalists are rebuilt
+# on the fine grid, where it is measured properly. The wheel supports are on every car (support_engine.py)
+# and every one of their rules, loads and machining checks counts.
+WAIVED_PREFIXES = ("T3.6_mass", "T5.1_diameter")
 LEAD_CAP_G = None               # read from Part 1's ballast.capacity_kg("lead") at run time
 
 
 def run_car_args(d: dict, out: Path, lattice: dict | None = None) -> list[str]:
     bp = LG.body_params(d)
     extra = ["--lattice-json", json.dumps(lattice)] if lattice else []
+    extra += ["--support", "engine", "--support-json", json.dumps(d["support"])]
     return [sys.executable, "-W", "ignore", str(P5 / "run_car.py"), "--out", str(out),
             "--W", str(d["W"]), "--x-front", str(d["x_front"]), "--d-halo", str(d["d_halo"]),
-            "--rear-mm", str(d["rear"]), "--no-supports", "--no-joints", "--skin-mm", str(d["skin_mm"]),
+            "--rear-mm", str(d["rear"]), "--no-joints", "--skin-mm", str(d["skin_mm"]),
             "--cargo-json", json.dumps(d["cargo"]), "--tether-json", json.dumps(list(d["tethers"])),
             "--body-json", json.dumps(bp), "--nose-json", json.dumps(d["nose"]),
             "--fwing-json", json.dumps(d["fwing"]), "--rwing-json", json.dumps(d["rwing"])] + extra
 
 
-def build(x, out: Path, timeout_s=3600, lattice: dict | None = None) -> dict:
+def build(x, out: Path, timeout_s=3600, lattice: dict | None = None, support: dict | None = None) -> dict:
     """Genes -> a built, checked car in `out`. Returns a record (legal, mass, files, why).
-    lattice: the shape search's free-form change of the body (part1 param_body.build lattice=)."""
+    lattice: the shape search's free-form change of the body (part1 param_body.build lattice=).
+    support: the shape search's wheel-support design (support_engine.SupportDesign numbers), else the
+    catalogue's (layout_genes.support_design)."""
     out = Path(out).resolve(); out.mkdir(parents=True, exist_ok=True)     # absolute: run_car runs in car/build
     d = LG.decode(x)
+    if support:
+        d["support"] = dict(d["support"], **support)
     rec = {"genes": [float(v) for v in np.clip(x, 0, 1)], "layout": {k: d[k] for k in ("W", "rear", "halo_rear", "x_front", "d_halo")},
            "decoded": d, "legal": False, "lattice": lattice}
     env = dict(os.environ, PYTHONPATH=os.pathsep.join([str(ROOT / "car/parts"), os.environ.get("PYTHONPATH", "")]))
@@ -90,7 +95,18 @@ def judge(out: Path, rec: dict, d: dict, rc=0) -> dict:
     rec["mass"] = mass(out, d)
     if rec["mass"]["lead_g"] > rec["mass"]["lead_cap_g"] + 1e-9:
         rec["failed"].append("T1.22_ballast_capacity (lead to reach 48.2 g)")
+    asm = json.loads((out / "parts" / "assembly.json").read_text())
+    se_info = (asm.get("info") or {}).get("support_engine") or {}
+    rec["support"] = {"design": se_info.get("design"),
+                      **{tag: {k: se_info[tag].get(k) for k in ("t_mm", "saddle_h_mm", "chord_used_mm", "net_g_each",
+                                                                 "arm_span_mm", "sag_mm", "sizing_iterations")}
+                         for tag in ("front", "rear") if tag in se_info}}
     rec["legal"] = not rec["failed"]
+    try:                                                    # every car's supports, to inspect by eye
+        import support_render
+        support_render.render(out, out / "supports.png")
+    except Exception as e:                                  # noqa: BLE001  (a picture never fails a car)
+        rec["support_render_error"] = repr(e)[:300]
     if rec["legal"]:
         rec.update(export_cfd(out, d))
         if not (rec["cfd"]["one_piece"] and rec["cfd"]["watertight"]):
@@ -105,15 +121,15 @@ def _save(out, rec):
     return rec
 
 
-SUPPORTS_G = ((2 * 1.396), (2 * 1.545))   # the team's v2 CAD supports, both sides: front, rear (Part 4 assembly)
 FOAM_G_CM3 = 0.163
 
 
 def mass(out: Path, d) -> dict:
     """Race mass and COM (car frame: x from the nose tip, z from the track), from the parts as built:
     the milled body (its mesh's volume x 0.163 g/cm3), the printed nose, wings and guides, the halo,
-    the wheels, the mass of the team's supports at the axles (the supports are added later, but their
-    ~5.9 g will be on the car), lead in the T1.22 container up to 48.2 g, and the cartridge."""
+    the wheels with the wheel supports (support_engine.py: each part less the foam its slot removes, at
+    the axle; Part 4 puts them in the wheels' mass), lead in the T1.22 container up to 48.2 g, and the
+    cartridge."""
     import trimesh
     out = Path(out)
     asm = json.loads((out / "parts" / "assembly.json").read_text())
@@ -126,9 +142,7 @@ def mass(out: Path, d) -> dict:
              ("printed", f["rear_wing_mass_kg"] * 1e3, f["rear_wing_com"][0] * 1e3, f["rear_wing_com"][2] * 1e3),
              ("wheels_front", f["wheels_front_mass_kg"] * 1e3, xf, f["wheels_front_com"][2] * 1e3),
              ("wheels_rear", f["wheels_rear_mass_kg"] * 1e3, xr, f["wheels_rear_com"][2] * 1e3),
-             ("halo", f["halo_mass_kg"] * 1e3, f["halo_com"][0] * 1e3, f["halo_com"][2] * 1e3),
-             ("supports_front", SUPPORTS_G[0], xf, f["wheels_front_com"][2] * 1e3),
-             ("supports_rear", SUPPORTS_G[1], xr, f["wheels_rear_com"][2] * 1e3)]
+             ("halo", f["halo_mass_kg"] * 1e3, f["halo_com"][0] * 1e3, f["halo_com"][2] * 1e3)]
     car_g = sum(i[1] for i in items)
     sys.path.insert(0, str(ROOT / "car/body"))
     import ballast
@@ -172,6 +186,40 @@ def cartridge(rear_face_mm: float):
     return full.mirror([1.0, 0.0, 0.0]).translate([rear_face_mm - BORE_DEPTH_MM + CARTRIDGE_FULL_LEN_MM, 0.0, CHAMBER_Z_MM])
 
 
+SUPPORT_CUT_MM = 0.3            # the support is cut this far short of the wheel's inner face ...
+SUPPORT_INTO_WHEEL_MM = 0.8     # ... and its section there runs this far into the (solid) CFD wheel
+
+
+def cfd_supports(S, asm):
+    """The supports as the CFD sees them (both halves, mm, manifold3d): each axle's part cut SUPPORT_CUT_MM
+    short of its wheels' inner faces, its section there extruded SUPPORT_INTO_WHEEL_MM into the wheel.
+    The disc sits just inside the wheel's face (0.05 mm proud of it at its inner face); kept, it would
+    leave a 0.05 mm ring step on the wheel no mesh can resolve, and the wheels are solid in the CFD."""
+    import manifold3d as mf
+    import trimesh
+    out = None
+    for s in asm["extra_surfaces"]:
+        if s["name"] not in ("wheelF", "wheelR"):
+            continue
+        p = Path(s["stl"])
+        w = trimesh.load(str(p if p.exists() else Path(asm.get("_dir", ".")) / Path(s["stl"]).name), force="mesh")
+        b = w.bounds * 1e3
+        xc, y_in, R = 0.5 * (b[0, 0] + b[1, 0]), float(b[0, 1]), 0.5 * (b[1, 0] - b[0, 0])
+        yc = y_in - SUPPORT_CUT_MM
+        box = mf.Manifold.cube([2 * R + 2, 2 * yc, 80.0]).translate([xc - R - 1, -yc, -1.0])
+        piece = S ^ box
+        # the section just inside the cut, extruded into the wheel (each side)
+        half = S ^ mf.Manifold.cube([2 * R + 2, 60.0, 80.0]).translate([xc - R - 1, 0.0, -1.0])
+        cs = half.warp_batch(lambda V: np.c_[V[:, 2], V[:, 0], V[:, 1]]).slice(yc - 0.05)   # (z, x) at y
+        if cs.area() > 0.01:
+            L = SUPPORT_CUT_MM + 0.05 + SUPPORT_INTO_WHEEL_MM
+            plug = mf.Manifold.extrude(cs, L).translate([0.0, 0.0, yc - 0.05])
+            plug = plug.warp_batch(lambda V: np.c_[V[:, 1], V[:, 2], V[:, 0]])                # back to (x, y, z)
+            piece = piece + plug + plug.mirror([0.0, 1.0, 0.0])
+        out = piece if out is None else out + piece
+    return out if out is not None else mf.Manifold()
+
+
 def export_cfd(out: Path, d, pitch_mm: float | None = None) -> dict:
     """ONE closed solid of the whole car for the CFD, and the wheels.
 
@@ -190,6 +238,7 @@ def export_cfd(out: Path, d, pitch_mm: float | None = None) -> dict:
     import cadio as CI
     out = Path(out)
     asm = json.loads((out / "parts" / "assembly.json").read_text())
+    asm["_dir"] = str(out / "parts")
 
     def full(p):
         m = trimesh.load(str(p), force="mesh"); m.apply_scale(1e3)          # m -> mm (manifold is float32)
@@ -241,6 +290,13 @@ def export_cfd(out: Path, d, pitch_mm: float | None = None) -> dict:
     whole += cyl(rear_face + CARTRIDGE_OUT_MM - CARTRIDGE_LEN_MM - 0.5, rear_face - 0.3, CARTRIDGE_R_MM + 0.5)
     whole += cartridge(rear_face)
     whole += parts["nose"]
+    # the wheel supports (support_engine.py): the saddle is the body's own underside, so it adds only where
+    # the arm and the transition leave the body; inside the wheel's cylinder the CFD wheel is solid, so the
+    # disc, the axle and the hubcap are inside it and the transition's end section runs on into the wheel
+    if (out / "parts" / "supports.stl").exists():
+        sup = cfd_supports(full(out / "parts" / "supports.stl"), asm)
+        rep["supports_mm3"] = round(sup.volume(), 1)
+        whole += sup
     for n in ("fwing", "rwing", "tethers"):
         if n not in parts:
             continue

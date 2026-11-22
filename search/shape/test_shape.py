@@ -39,7 +39,7 @@ class StubEvaluator:
         return out
 
 
-def stub_build(x, out, timeout_s=0, lattice=None):
+def stub_build(x, out, timeout_s=0, lattice=None, support=None):
     out = Path(out); out.mkdir(parents=True, exist_ok=True)
     v = (lattice or {}).get("values") or [0.0]
     if v[0] > 1.0:
@@ -87,6 +87,10 @@ def test_shape_loop(tmp_path, monkeypatch):
     assert any(r.get("legal") is False and "crashed" in (r.get("why") or "") for r in rows)
     assert any(r.get("legal") is False and r.get("failed") for r in rows)
     assert c.st["best"] is not None
+    # CMA moves the lattice and the supports' shape genes together; every car's row carries both
+    built = [r for r in rows if r.get("v") is not None]
+    assert built and all(len(r["v"]) == c.dim() for r in built)
+    assert c.dim() == 24 + len(SL.LG.SHAPE_GENES)
 
 
 class _Serial:

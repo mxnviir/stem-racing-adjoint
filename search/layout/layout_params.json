@@ -1,5 +1,5 @@
 {
- "_comment": "Every parameter of the whole-car builder, for the layout search -- written to layout_params.json.",
+ "_comment": "Every parameter of the whole-car builder, for the layout search -- written to layout_params.json. Mode \"shape\": held at value in stage 1 (the layout search), evolved by stage 2 (search/shape) with the body's lattice.",
  "params": [
   {
    "group": "layout",
@@ -1634,16 +1634,112 @@
    "why": "a Part 1 constant used by every mask"
   },
   {
-   "group": "fixed by the build",
-   "name": "supports",
-   "value": "none",
-   "lo": null,
-   "hi": null,
+   "group": "wheel supports",
+   "name": "sup_chord",
+   "value": 10.0,
+   "lo": 6.0,
+   "hi": 16.0,
+   "mode": "shape",
+   "unit": "mm",
+   "what": "arm chord (x) where it leaves the body; the saddle's is at least this",
+   "rule": "T7.12.1 inside the wheels' cylinder (the engine narrows a saddle that would not fit)",
+   "why": "what the air sees of the support: evolved in stage 2 with the body's shape"
+  },
+  {
+   "group": "wheel supports",
+   "name": "sup_t",
+   "value": 2.0,
+   "lo": 1.2,
+   "hi": 4.0,
+   "mode": "shape",
+   "unit": "mm",
+   "what": "arm thickness (z) where it leaves the body, at least what the loads need",
+   "rule": "loads: 3 N radial, 1.2 N side, 20 MPa, 0.15 mm sag (support_engine.py)",
+   "why": "thicker is stiffer and blunter; the engine grows it until the loads pass"
+  },
+  {
+   "group": "wheel supports",
+   "name": "sup_taper",
+   "value": 0.85,
+   "lo": 0.6,
+   "hi": 1.2,
+   "mode": "shape",
+   "unit": "-",
+   "what": "arm chord and thickness at the disc / at the body",
+   "rule": "",
+   "why": ""
+  },
+  {
+   "group": "wheel supports",
+   "name": "sup_dz",
+   "value": 0.0,
+   "lo": -5.0,
+   "hi": 5.0,
+   "mode": "shape",
+   "unit": "mm",
+   "what": "arm's centre at the disc, above the axle (its underside is level with the body's where it leaves it)",
+   "rule": "T3.7 1.5 mm off the track; T7.13 claw band clear",
+   "why": "where the arm crosses the gap between body and wheel"
+  },
+  {
+   "group": "wheel supports",
+   "name": "sup_p",
+   "value": 2.0,
+   "lo": 1.6,
+   "hi": 3.0,
+   "mode": "shape",
+   "unit": "-",
+   "what": "arm section exponent (2 ellipse, larger boxier, smaller sharper edges)",
+   "rule": "",
+   "why": ""
+  },
+  {
+   "group": "wheel supports",
+   "name": "sup_fillet",
+   "value": 2.5,
+   "lo": 1.0,
+   "hi": 4.0,
+   "mode": "shape",
+   "unit": "mm",
+   "what": "radius of the concave fillet where the arm grows into the disc",
+   "rule": "",
+   "why": ""
+  },
+  {
+   "group": "wheel supports",
+   "name": "sup_saddle_h",
+   "value": 3.0,
+   "lo": 1.05,
+   "hi": 6.0,
    "mode": "fixed",
-   "unit": "",
-   "what": "wheel supports",
-   "rule": "T7.12",
-   "why": "user: added later"
+   "unit": "mm",
+   "what": "saddle depth over the underside (the slot milled from below), at least what the loads need",
+   "rule": "3 mm foam over the slot or none; cut from below by the 3.175 mm ball",
+   "why": "inside the body: the air never sees it, so it is sized, not searched"
+  },
+  {
+   "group": "wheel supports",
+   "name": "sup_disc_r",
+   "value": 12.0,
+   "lo": 8.0,
+   "hi": 12.2,
+   "mode": "fixed",
+   "unit": "mm",
+   "what": "disc radius (beam_support's disc)",
+   "rule": "inside the rim (13.72) less 0.5; T3.7",
+   "why": "inside the wheel: not seen by the CFD"
+  },
+  {
+   "group": "wheel supports",
+   "name": "sup_disc_recess",
+   "value": 1.0,
+   "lo": 0.0,
+   "hi": 2.0,
+   "mode": "fixed",
+   "unit": "mm",
+   "what": "disc's outer face inside the wheel's inner face",
+   "rule": "",
+   "why": ""
   }
  ]
 }
