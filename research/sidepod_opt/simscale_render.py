@@ -5,7 +5,7 @@ import simscale_step_eval as E
 s = importlib.import_module('simscale_sdk')
 ev = E.SimScaleStepEvaluator.__new__(E.SimScaleStepEvaluator); ev.sim = s; ev._clients = {}
 ev.keys = {E.fingerprint(k): k for k in E.keys_from_env()}; api = ev._api(list(ev.keys)[0])
-P = '669525764013223556'
+P = __import__('os').environ.get('RENDER_PROJECT', '669525764013223556')
 OUT = sys.argv[1]
 cases = json.loads(sys.argv[2])            # {name: [sim_id, run_id]}
 V = s.Vector3D
