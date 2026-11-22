@@ -64,7 +64,8 @@ def build_body(a, out: Path):
             field = np.load(a.phi_npy) * 1e3
     g = pb.build(a.W, a.x_front, a.d_halo, bp,
                  target_body_kg=getattr(a, "_body_target_kg", None),
-                 skin_offset_mm=getattr(a, "skin_mm", None), field_mm=field)
+                 skin_offset_mm=getattr(a, "skin_mm", None), field_mm=field,
+                 rear_len_mm=getattr(a, "rear_mm", None), with_cargo=not getattr(a, "no_cargo", False))
     return g, {"param_body": bp.as_dict(), "spacing_mm": a.cfd_mm,
                "build": getattr(g, "build_report", {})}
 
@@ -223,7 +224,10 @@ def part4_kwargs(a) -> dict:
     nk = dict(blend_after_ref_a_mm=1.0, root_scale=1.0, material="ABS", wall_mm=1.0)
     if getattr(a, "nose_json", None):
         nk.update(json.loads(a.nose_json))
-    kw = {"support": sup, "nose": ns.NoseCone(**nk)}
+    kw = {"support": sup, "nose": ns.NoseCone(**nk),
+          "supports": not getattr(a, "no_supports", False), "tethers": not getattr(a, "no_tethers", False)}
+    if getattr(a, "rear_mm", None) is not None:
+        kw["rear_face_mm"] = a.x_front + a.W + a.rear_mm
     if getattr(a, "fwing_json", None):
         import wings as wg
         kw["front"] = wg.FrontWing(**json.loads(a.fwing_json))
@@ -429,6 +433,11 @@ def parse_args(argv=None):
     ap.add_argument("--x-front", type=float, default=46.0)
     ap.add_argument("--d-halo", type=float, default=43.72)
     ap.add_argument("--cfd-mm", type=float, default=1.0)
+    ap.add_argument("--rear-mm", type=float, default=None,
+                    help="rear axle -> body rear face, mm (default Ref B + 40 = 56)")
+    ap.add_argument("--no-supports", action="store_true", help="no wheel supports (layout search)")
+    ap.add_argument("--no-tethers", action="store_true", help="no tether guides (layout search)")
+    ap.add_argument("--no-cargo", action="store_true", help="no T4.2 virtual cargo (team rule, layout search)")
     ap.add_argument("--support", choices=("cad", "beam"), default="beam",
                     help="beam = the team's architecture, parametric; cad = the v2 CAD supports (reference)")
     ap.add_argument("--support-json", default=None, help="BeamSupport parameters as JSON")

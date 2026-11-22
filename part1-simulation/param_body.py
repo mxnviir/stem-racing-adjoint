@@ -248,7 +248,8 @@ def mode_field(bp, X, Y, Z, x_ref_a, x_rear):
 
 def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
           target_body_kg: float | None = None, machinable: bool = True,
-          skin_offset_mm: float | None = None, field_mm=None):
+          skin_offset_mm: float | None = None, field_mm=None,
+          rear_len_mm: float | None = None, with_cargo: bool = True):
     """UnifiedGeometry whose body is `bp`, with every rule mask applied.
 
     field_mm: a body given as a signed distance field on this car's grid (mm, negative
@@ -257,6 +258,10 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
 
     machinable: the team's 3-axis, 6.35 mm (machining.TOOL_R_MM) ball-end, top-and-bottom process
       (machining.make_machinable) is applied to the drawn shape.
+    rear_len_mm: rear axle -> rear face (mm). None keeps the default rear face, Ref B + 40
+      (T9.4.2's overhang limit, the longest body). Shorter moves the face, and with it the
+      52 mm cartridge bore, forward (the layout search, research/sidepod_opt/layout_car.py).
+    with_cargo: False drops the T4.2 virtual cargo (team rule for the layout search, 2026-11).
     target_body_kg: no ballast, so the body itself carries the mass the T3.6
       floor needs. The drawn shape is offset by a uniform skin (grown or
       thinned, the design intent kept) until the machined body weighs this.
@@ -264,7 +269,13 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
     import unified_phi as up
     from phi_updater import reinitialise_sdf
     import machining
-    base = up.build_unified_geometry(W_mm, x_front_mm, d_halo_mm, init_mode="full")
+    ugk = {"with_cargo": with_cargo}
+    if rear_len_mm is not None:
+        from dataclasses import replace as _replace
+        from bounding_volumes import default_rule_envelope
+        # rearpod_max_length_m is measured from Ref B (= rear axle + 16 mm)
+        ugk["rule_envelope"] = _replace(default_rule_envelope(), rearpod_max_length_m=(rear_len_mm - 16.0) / 1e3)
+    base = up.build_unified_geometry(W_mm, x_front_mm, d_halo_mm, init_mode="full", **ugk)
     # Milling runs on one fixed MILL_SPACING_MM grid whatever this car's grid (team lead,
     # 2026-11-09): on the car's own grid the ball's fit flipped with the cell alignment and
     # the same carved body weighed 0.7-1.2 % differently across 1.0 / 0.75 / 0.5 mm. Finer
@@ -273,7 +284,7 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
     mill_base = None
     if machinable and abs(up.GRID_SPACING_M * 1e3 - MILL_SPACING_MM) > 1e-9:
         with _spacing(MILL_SPACING_MM):
-            mill_base = up.build_unified_geometry(W_mm, x_front_mm, d_halo_mm, init_mode="full")
+            mill_base = up.build_unified_geometry(W_mm, x_front_mm, d_halo_mm, init_mode="full", **ugk)
     # Read at call time: sandbox/coarse.use_spacing rewrites the module globals,
     # and an import-time copy drew the body at 0.3 mm on a 1 mm grid.
     r, d = base.region, up.GRID_SPACING_M

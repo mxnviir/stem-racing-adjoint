@@ -84,7 +84,8 @@ def _full_mass_com(half_meshes, density_g_cm3: float):
 
 
 def fixed_hardware_kwargs(W_mm, x_front_mm, d_halo_mm, parts_mass: dict,
-                          wheel_design, support_kg=(1.396e-3, 1.545e-3)) -> dict:
+                          wheel_design, support_kg=(1.396e-3, 1.545e-3),
+                          rear_face_mm: float | None = None) -> dict:
     """Kwargs for Part 2's FixedHardwareSpec from the REAL parts.
 
     The spec has a single "rear_wing" slot; it carries every aero part here
@@ -95,7 +96,7 @@ def fixed_hardware_kwargs(W_mm, x_front_mm, d_halo_mm, parts_mass: dict,
     from geometry_contract import CO2_MASS_KG, R_WHEEL_M
     ref_a = cc.ref_plane_A(x_front_mm) / 1e3
     ref_b = cc.ref_plane_B(x_front_mm, W_mm) / 1e3
-    rear_face = ref_b + 0.040
+    rear_face = ref_b + 0.040 if rear_face_mm is None else rear_face_mm / 1e3
     hw = fh.compute_default_fixed_hardware_inputs(W_mm, x_front_mm, d_halo_mm,
                                                   ref_a, ref_b, rear_face_x_m=rear_face)
     halo = hw["halo_geometry"]
@@ -126,8 +127,12 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
           out_dir: str, wheel_design="team_stl",
           front: wg.FrontWing = wg.FrontWing(), rear: wg.RearWing = wg.RearWing(),
           rotate_wheels: bool = True, nose: "ns.NoseCone | None" = None,
-          support: "bsm.BeamSupport | None" = None, support_modes: dict | None = None) -> dict:
-    """support: None = the team's v2 CAD supports (reference), or a BeamSupport."""
+          support: "bsm.BeamSupport | None" = None, support_modes: dict | None = None,
+          supports: bool = True, tethers: bool = True, rear_face_mm: float | None = None) -> dict:
+    """support: None = the team's v2 CAD supports (reference), or a BeamSupport.
+    supports / tethers False: no wheel supports / tether guides at all (the layout search,
+    research/sidepod_opt/layout_car.py, adds them later); the wheels then float in the CFD.
+    rear_face_mm: the body's rear face when it is not Ref B + 40 (sets the cartridge's mass)."""
     import trimesh
     import hardware_geometry as hg
     out = Path(out_dir)
@@ -157,7 +162,9 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
 
     # -- supports: v2 CAD, or the parametric beam -------------------------
     support_kg = (1.396e-3, 1.545e-3)
-    if support is None:
+    if not supports:
+        sup, support_kg = [], (0.0, 0.0)
+    elif support is None:
         sup = [hg.build_wheel_assembly(a, x)[f"{a}_wheel_support_right"]
                for a, x in (("front", x_front_mm), ("rear", x_rear))]
         # Safety net: the rear CAD bottomed at 1.40 mm before it was fixed.
@@ -193,8 +200,9 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
                 bm["hubcap"].export(str(out / f"hubcap_{tag}.stl"))
                 info.setdefault("hubcap_stls", {})[tag] = str(out / f"hubcap_{tag}.stl")
         support_kg = tuple(support_kg)
-    _export_half(trimesh.util.concatenate(sup), out / "supports.stl")
-    surfaces.append({"name": "supports", "stl": str(out / "supports.stl"), "rotating": None})
+    if sup:
+        _export_half(trimesh.util.concatenate(sup), out / "supports.stl")
+        surfaces.append({"name": "supports", "stl": str(out / "supports.stl"), "rotating": None})
     halo = hg.build_halo(cc.ref_plane_A(x_front_mm) / 1e3, d_halo_mm)["halo_right"]
     _export_half(halo, out / "halo.stl")
     surfaces.append({"name": "halo", "stl": str(out / "halo.stl"), "rotating": None})
@@ -240,7 +248,7 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
 
     # -- tether guides (T6) -------------------------------------------------
     tg = []
-    for x in (x_front_mm - 5.0, x_rear + 5.0):
+    for x in ((x_front_mm - 5.0, x_rear + 5.0) if tethers else ()):
         m, meta = tether_guide(x)
         # A guide must be held by something (T6.3): where the floor is above the ring,
         # a stalk takes it up into the body.
@@ -252,17 +260,18 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
             m = trimesh.boolean.union([m, stalk], engine="manifold")
         tg.append(m)
         info.setdefault("tethers", []).append(meta)
-    _export_half(trimesh.util.concatenate(tg), out / "tethers.stl")
-    surfaces.append({"name": "tethers", "stl": str(out / "tethers.stl"), "rotating": None})
-    parts_mass["tethers"] = _full_mass_com(tg, cc.DENSITY_G_CM3[PART_MATERIAL])
-    gates["T6.1_front_guide"] = cc.TETHER_FROM_AXLE_MAX - 5.0
-    gates["T6.1_rear_guide"] = cc.TETHER_FROM_AXLE_MAX - 5.0
-    gates["T6.2_id_min"] = cc.TETHER_GUIDE_ID - cc.TETHER_ID_MIN
-    gates["T6.2_id_max"] = cc.TETHER_ID_MAX - cc.TETHER_GUIDE_ID
-    gates["T3.7_tether_clearance"] = cc.TETHER_GUIDE_BOTTOM_Z - cc.TRACK_CLEARANCE_MIN
+    if tg:
+        _export_half(trimesh.util.concatenate(tg), out / "tethers.stl")
+        surfaces.append({"name": "tethers", "stl": str(out / "tethers.stl"), "rotating": None})
+        parts_mass["tethers"] = _full_mass_com(tg, cc.DENSITY_G_CM3[PART_MATERIAL])
+        gates["T6.1_front_guide"] = cc.TETHER_FROM_AXLE_MAX - 5.0
+        gates["T6.1_rear_guide"] = cc.TETHER_FROM_AXLE_MAX - 5.0
+        gates["T6.2_id_min"] = cc.TETHER_GUIDE_ID - cc.TETHER_ID_MIN
+        gates["T6.2_id_max"] = cc.TETHER_ID_MAX - cc.TETHER_GUIDE_ID
+        gates["T3.7_tether_clearance"] = cc.TETHER_GUIDE_BOTTOM_Z - cc.TRACK_CLEARANCE_MIN
 
     fhk = fixed_hardware_kwargs(W_mm, x_front_mm, d_halo_mm, parts_mass, wheel_design,
-                                support_kg)
+                                support_kg, rear_face_mm=rear_face_mm)
     info["support_mass_g_each"] = [m * 1e3 for m in support_kg]
     result = {
         "W_mm": W_mm, "x_front_mm": x_front_mm, "d_halo_mm": d_halo_mm,
