@@ -197,7 +197,7 @@ decided), *withdrawn*.
   surface, renders inspected).
 - **Open:** (a) the glue joint is taken as rigid foam: optimistic; a foam/glue strength from the team would
   turn it into a check; (b) surfaces are lumpy at 0.4 mm voxels; (c) mass: this pipeline's 22.52 g of
-  "other parts" vs the SimScale branch's itemised 19.23 g; (d) fine-mesh compatibility: running.
+  "other parts" vs the SimScale branch's itemised 19.23 g; (d) supports are meshed at level (5 5) on every mesh (fine-mesh build checked: Mesh OK, 99.7 % capture).
 - **Overturned if:** the with/without-supports CFD difference is inside mesh noise on a mesh that resolves
   the disc (then supports can stay out of the shape search and be added only for final timing).
 

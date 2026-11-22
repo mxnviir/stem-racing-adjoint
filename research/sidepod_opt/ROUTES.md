@@ -1172,8 +1172,12 @@ external topology case was **not found** in their material (that is not proof it
     the team CAD supports, at 5.33 g vs 5.88 g. Capture 99.6 % of exposed surface (1.4 mm2 stray). The thicker
     rear disc (1.52 mm) now stands 0.5 mm proud of the wheel's inner face, so its face is a supports patch.
     One coarse mesh: a lead to confirm on finer meshes with repeats, not a result.
-  - Running: the fine-mesh compatibility check (fine mesh, 30 iterations, checkMesh, patch capture; gated on
-    8 GB free memory; started 21:07).
+  - **Fine-mesh compatibility: passes.** carved_tie on Part 2's fine mesh (car 4/5, supports 5/5): 3,370,631
+    cells, checkMesh "Mesh OK" (max skewness 3.70), supports patch 3,817 faces, 30 iterations ran; capture
+    99.7 % of exposed surface (1.0 mm2 stray), cleaner disc edge than on coarse. Note: the supports are
+    refined to level (5 5) on EVERY mesh, so "fine" is finer for the body, not for the supports; a finer
+    supports level is one setting (`openfoam_case.py`, `plus_surfaces`) if a mesh study needs it.
+    Memory: started at 9 GB available next to the fine queue's solver; no kill.
 
 ## Sources
 

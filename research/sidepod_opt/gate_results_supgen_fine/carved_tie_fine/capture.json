@@ -1,0 +1,11 @@
+{
+ "case": "gate/supgen_cases/carved_tie_fine",
+ "cfd_area_mm2": 1530.6300647222229,
+ "input_half_area_mm2": 2278.964772690775,
+ "capture_ratio": 0.6716339291699569,
+ "far_faces_area_mm2": 0.9740558680574225,
+ "lost_input_area_mm2": 2.890796061786712,
+ "exposed_input_area_mm2": 1043.4755004278402,
+ "exposed_capture_ratio": 0.9972296464453632,
+ "max_dist_mm": 0.7040009972004657
+}
