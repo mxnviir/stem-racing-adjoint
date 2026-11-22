@@ -189,7 +189,7 @@ jobs:
         timeout-minutes: 325
         run: |
           mkdir -p gate gate_results_resolved
-          export P2_JOB_DEADLINE=$(( $(date +%s) + 280*60 )) P2_CHECKPOINT_FILE=$PWD/../ckpt_path.txt
+          export P2_JOB_DEADLINE=$(( $(date +%s) + 280*60 )) P2_CHECKPOINT_FILE=$PWD/ckpt_path.txt
           export PRODCHECK_WALL_RESOLVED=1 PRODCHECK_RES=resolved PRODCHECK_RESULTS=$PWD/gate_results_resolved \
                  PRODCHECK_KEEP=$PWD/gate/refA_resolved PRODCHECK_ITERS=3000 PRODCHECK_TIMEOUT=18000
           T0=$(date +%s)
@@ -210,7 +210,7 @@ jobs:
           if [ -f gate_results_resolved/prodcheck_stateA.json ]; then
             echo "chained=" >> "$GITHUB_OUTPUT"
             python -c "import json;d=json.load(open('gate_results_resolved/prodcheck_stateA.json'));print('cells %s y+ %s..%s D %.2f mN'%(d.get('n_cells'),d.get('y_plus_min'),d.get('y_plus_max'),d['D20_half_N']*1e3))"
-          elif [ -s ../ckpt_path.txt ]; then
+          elif [ -s ckpt_path.txt ]; then
             echo "chained=true" >> "$GITHUB_OUTPUT"
             echo "solve hit the job budget; case saved for link $(( ${{ needs.init.outputs.link }} + 1 ))"
           else
@@ -220,7 +220,7 @@ jobs:
       - name: save the checkpoint (chained link)
         if: steps.solve.outputs.chained == 'true'
         run: |
-          r=$(cat ckpt_path.txt)
+          r=$(cat research/sidepod_opt/ckpt_path.txt)
           mkdir -p ckpt && tar -cf ckpt/case.tar -C "$(dirname "$r")" --exclude="processor*" --transform "s|^$(basename "$r")|run|" "$(basename "$r")"
       - if: steps.solve.outputs.chained == 'true'
         uses: actions/upload-artifact@v4
@@ -464,7 +464,7 @@ jobs:
           SITE: ${{ matrix.site }}
         timeout-minutes: 325
         run: |
-          export P2_JOB_DEADLINE=$(( $(date +%s) + 250*60 )) P2_CHECKPOINT_FILE=$PWD/../ckpt_path.txt
+          export P2_JOB_DEADLINE=$(( $(date +%s) + 250*60 )) P2_CHECKPOINT_FILE=$PWD/ckpt_path.txt
           export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1500 GATE_TIMEOUT=18000 \
                  CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1
           T0=$(date +%s)
@@ -484,7 +484,7 @@ jobs:
           if [ -f gate_results_resolved_up/bump_"$SITE".json ]; then
             grep -o '"D20_half_N": [0-9.]*\|"morph_fallback": [a-z]*' gate_results_resolved_up/bump_"$SITE".json | tr '\n' ' '; echo
             echo "chained=" >> "$GITHUB_OUTPUT"
-          elif [ -s ../ckpt_path.txt ]; then
+          elif [ -s ckpt_path.txt ]; then
             echo "chained=true" >> "$GITHUB_OUTPUT"
             echo "bump $SITE hit the job budget; case saved"
           else
@@ -494,7 +494,7 @@ jobs:
       - name: save the checkpoint (chained bump)
         if: steps.solve.outputs.chained == 'true'
         run: |
-          r=$(cat ckpt_path.txt)
+          r=$(cat research/sidepod_opt/ckpt_path.txt)
           mkdir -p ckpt && tar -cf ckpt/case.tar -C "$(dirname "$r")" --exclude="processor*" --transform "s|^$(basename "$r")|run|" "$(basename "$r")"
       - if: steps.solve.outputs.chained == 'true'
         uses: actions/upload-artifact@v4
