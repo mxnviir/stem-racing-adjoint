@@ -1,0 +1,21 @@
+{
+ "D20_half_N": 0.1913718147866206,
+ "wall_s": 1239.3,
+ "converged": true,
+ "residual_p": 3.044252298326271e-05,
+ "force_osc": 0.0008259651786465702,
+ "force_drift": 4.3111207111426765e-05,
+ "run_dir": "",
+ "force_mean_stderr": 1.1886132772384186e-05,
+ "morph_fallback": false,
+ "folder": "runs/support_gen/envelope/car",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "coarse",
+ "iterations": 2000,
+ "n_proc": 2,
+ "y_plus_min": 0.290163418023387,
+ "y_plus_max": 197.2287174945576,
+ "n_cells": 123010,
+ "run_dir_kept": "/home/user/esp32-line-follower/research/sidepod_opt/gate/supgen_cases/envelope"
+}
