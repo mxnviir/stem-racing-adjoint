@@ -1025,9 +1025,13 @@ def check(body_half_stl: str, assembly: dict, mass_state: dict | None = None,
     front_part = front_part[int(nwb[:, 0].argmin()) // 2]   # bb stacks 2 rows per mesh
     r["T8.2_nose_overhang"] = _entry(REGS["T8.2_nose_overhang"] - (ref_a - front),
                                      f"{ref_a - front:.1f} mm ahead of Ref A ({front_part})")
-    rear = allb[:, 0].max()
-    r["T9.4.2_rear_overhang"] = _entry(REGS["T9.4.2_rear_overhang"] - (rear - ref_b),
-                                       f"{rear - ref_b:.2f} mm behind Ref B")
+    # T9.4.2 is the rear WING and its support, not the body (team's reading, 2026-11-22: "the rear wing and
+    # wing support structure overhang is a maximum of 40.0mm"; their own car's body ends 47.75 mm behind Ref B).
+    # The body's length is limited by the 223 mm block (block_length). No rear wing: nothing to measure.
+    if "rwing" in parts:
+        rear = float(parts["rwing"].bounds[1, 0]) * 1e3
+        r["T9.4.2_rear_overhang"] = _entry(REGS["T9.4.2_rear_overhang"] - (rear - ref_b),
+                                           f"rear wing and support end {rear - ref_b:.2f} mm behind Ref B")
 
     # Wings measured on their own meshes; the printed nose and the wing mount ahead of Ref A.
     def mm(m):

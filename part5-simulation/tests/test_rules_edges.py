@@ -339,13 +339,14 @@ def test_one_piece_of_foam(tmp_path):
 
 
 def test_block_length(tmp_path):
-    # The body behind Ref A can only pass 223 mm by running past Ref B + 40 as well.
+    # The body behind Ref A is limited by the 223 mm block alone: T9.4.2's 40 mm behind Ref B is the
+    # rear wing and its support (team's reading, 2026-11-22), so a body past Ref B + 40 is legal.
     (tmp_path / "in").mkdir()
     (tmp_path / "out").mkdir()
     bad, _ = fails(tmp_path / "in", W=140.0, rear=34.0 + 222.8)
-    assert bad == {"T9.4.2_rear_overhang"}, bad
+    assert bad == set(), bad
     bad, _ = fails(tmp_path / "out", W=140.0, rear=34.0 + 223.2)
-    assert bad == {"T9.4.2_rear_overhang", "block_length"}, bad
+    assert bad == {"block_length"}, bad
 
 
 @pytest.mark.parametrize("rule,key,inside,outside", [

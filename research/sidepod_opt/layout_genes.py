@@ -7,7 +7,7 @@ build from. The LAYOUT (W, rear, halo_rear) is decoded so every vector is a lega
 
 Layout, mm, x from the nose tip (car frame of Parts 1-5):
   W          wheelbase, front axle -> rear axle                      T7.3: 120.0-140.0
-  rear       rear axle -> body rear face                             36-56 (see layout_params.json)
+  rear       rear axle -> body rear face                             36 .. 207 - W (the 223 mm block)
   halo_rear  halo pocket FRONT edge -> body rear face
   x_front    = 16 + nose length (the nose tip is x = 0, Ref A is x_front - 16)
 
@@ -39,6 +39,12 @@ BLOCK_MM = 223.0
 CARGO_LEN_MM, CARGO_Z_BASE_MM = 60.0, 14.0
 
 
+def rear_range(W):
+    """[lo, hi]: rear axle -> rear face for this wheelbase. The body from Ref A to its rear face must fit the
+    223 mm block (T1.14); T9.4.2's 40 mm behind Ref B is the rear wing and its support only (team, 2026-11-22)."""
+    return BY["rear"]["lo"], min(BY["rear"]["hi"], BLOCK_MM - 16.0 - W)
+
+
 def halo_rear_range(W, rear):
     """(lo, hi]: legal halo pocket front -> rear face distances for this W and rear."""
     return max(rear + 50.0, 102.0), W + rear
@@ -46,15 +52,16 @@ def halo_rear_range(W, rear):
 
 def layout_legal(W, rear, halo_rear) -> bool:
     lo, hi = halo_rear_range(W, rear)
-    return (BY["W"]["lo"] <= W <= BY["W"]["hi"] and BY["rear"]["lo"] <= rear <= BY["rear"]["hi"]
-            and lo < halo_rear <= hi and 16.0 + W + rear <= BLOCK_MM)
+    rlo, rhi = rear_range(W)
+    return (BY["W"]["lo"] <= W <= BY["W"]["hi"] and rlo <= rear <= rhi + 1e-9
+            and lo < halo_rear <= hi and 16.0 + W + rear <= BLOCK_MM + 1e-9)
 
 
 def legal_layouts(step=1.0):
     """Every legal (W, rear, halo_rear) on a `step` mm grid."""
     out = []
     for W in np.arange(BY["W"]["lo"], BY["W"]["hi"] + 1e-9, step):
-        for r in np.arange(BY["rear"]["lo"], BY["rear"]["hi"] + 1e-9, step):
+        for r in np.arange(rear_range(W)[0], rear_range(W)[1] + 1e-9, step):
             lo, hi = halo_rear_range(W, r)
             for h in np.arange(np.floor(lo / step) * step + step, hi + 1e-9, step):
                 if layout_legal(W, r, h):
@@ -64,6 +71,9 @@ def legal_layouts(step=1.0):
 
 def _start(p):
     """A parameter's start value in [0, 1]. halo_rear's gene is the fraction of its legal interval."""
+    if p["name"] == "rear":
+        lo, hi = rear_range(BY["W"]["value"])
+        return float(np.clip((p["value"] - lo) / (hi - lo), 0, 1))
     if p["name"] == "halo_rear":
         W, r = BY["W"]["value"], BY["rear"]["value"]
         lo, hi = halo_rear_range(W, r)
@@ -80,9 +90,19 @@ def x_of(**values):
     """Gene vector with the named genes set (physical values; halo_rear as its 0..1 fraction of the
     legal interval), the rest at their defaults. For tests and hand-picked cars."""
     x = x_default()
+    W = float(values.get("W", BY["W"]["value"]))
     for k, v in values.items():
         i = NAMES.index(k)
-        x[i] = float(v) if k == "halo_rear" else (float(v) - LO[i]) / (HI[i] - LO[i])
+        if k == "halo_rear":
+            x[i] = float(v)
+        elif k == "rear":
+            lo, hi = rear_range(W)
+            x[i] = (float(v) - lo) / (hi - lo)
+        else:
+            x[i] = (float(v) - LO[i]) / (HI[i] - LO[i])
+    if "W" in values and "rear" not in values and "rear" in NAMES:      # keep the default rear length, not its fraction
+        lo, hi = rear_range(W)
+        x[NAMES.index("rear")] = (BY["rear"]["value"] - lo) / (hi - lo)
     return np.clip(x, 0.0, 1.0)
 
 
@@ -92,9 +112,14 @@ def decode(x) -> dict:
     v = {p["name"]: p["value"] for p in PARAMS}
     t = dict(zip(NAMES, x))
     for p, xi in zip(GENES, x):
-        if p["name"] != "halo_rear":
+        if p["name"] not in ("halo_rear", "rear"):
             v[p["name"]] = p["lo"] + xi * (p["hi"] - p["lo"])
-    W, rear = round(float(v["W"]), 1), round(float(v["rear"]), 1)
+    W = round(float(v["W"]), 1)
+    rlo, rhi = rear_range(W)
+    rear = rlo + t["rear"] * (rhi - rlo) if "rear" in t else float(np.clip(v["rear"], rlo, rhi))
+    rear = float(np.floor(rear * 10 + 0.5) / 10)
+    if rear > rhi:
+        rear = float(np.floor(rhi * 10) / 10)
     lo, hi = halo_rear_range(W, rear)
     if "halo_rear" in t:
         halo_rear = round(lo + 0.5 + t["halo_rear"] * (hi - lo - 0.5), 1)    # strictly above lo

@@ -203,15 +203,17 @@ def _assert_com_in_range(
     which would produce race time values of 10^15 seconds (Part 2 audit finding 3.1).
 
     Coordinate system: x=0 at nose tip. rear_axle_m = x_front_m + W_m.
-    Bound includes a 50mm margin aft of the rear axle for rearpod overhang (T9.4.2 max 40mm).
+    Bound: 87 mm aft of the rear axle, the longest tail the 223 mm block allows (16 + W + rear <= 223
+    at W = 120). It was 50 mm while the body was held to Ref B + 40; T9.4.2 is the rear wing and its
+    support only (team, 2026-11-22).
 
     Rules:
-      x in [-0.01, rear_axle_m + 0.05]   within car length
+      x in [-0.01, rear_axle_m + 0.087]  within car length
       y in [-0.05, 0.05]                 within car width
       z in [COM_Z_LOWER_BOUND_M, COM_Z_UPPER_BOUND_M]  physical COM height
     """
     x, y, z = com_m
-    x_max = rear_axle_m + 0.05
+    x_max = rear_axle_m + 0.087
     if not (-0.01 <= x <= x_max):
         raise ValueError(f"{label}: x={x:.6f} outside [-0.01, {x_max:.6f}]")
     if not (-0.05 <= y <= 0.05):

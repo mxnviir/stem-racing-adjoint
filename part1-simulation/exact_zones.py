@@ -181,6 +181,16 @@ def union(fields, d_mm):
     return np.where(lb > 0, np.maximum(lb, est), lb)
 
 
+def _envelope_of(g):
+    """The rule envelope geometry g was built in: the default, with g's own tail length where it carries one
+    (the layout search builds tails shorter and longer than Ref B + 40; the default clipped a longer one)."""
+    from dataclasses import replace
+    from bounding_volumes import default_rule_envelope
+    re = default_rule_envelope()
+    L = g.landmarks.get("rearpod_max_length_m")
+    return re if L is None else replace(re, rearpod_max_length_m=L)
+
+
 def air_field_mm(g, X, Y, Z) -> np.ndarray:
     """All the zones above for geometry g, cell centres X, Y, Z in mm: positive inside any.
     Limits the referee checks (envelope, wheels, T7.9, T8.5.1) carry MARGIN_MM; the pocket,
@@ -191,7 +201,7 @@ def air_field_mm(g, X, Y, Z) -> np.ndarray:
     ref_A = g.landmarks["ref_plane_A_m"] * 1e3
     exact = -1e-6
     return union([
-        envelope_air(X, aY, Z, g.bv, default_rule_envelope(), d) + MARGIN_MM,
+        envelope_air(X, aY, Z, g.bv, _envelope_of(g), d) + MARGIN_MM,
         wheel_columns(X, aY, Z, g.W_mm, g.x_front_mm) + MARGIN_MM,
         t79_zones(X, aY, Z, g.W_mm, g.x_front_mm) + MARGIN_MM,
         t851_cap(X, aY, Z, ref_A) + MARGIN_MM,
@@ -238,7 +248,7 @@ def air_at_points(g, P):
     aY = np.abs(Y)
     ref_A = g.landmarks["ref_plane_A_m"] * 1e3
     return np.maximum.reduce([
-        envelope_air(X, aY, Z, g.bv, default_rule_envelope(), None) + MARGIN_MM,
+        envelope_air(X, aY, Z, g.bv, _envelope_of(g), None) + MARGIN_MM,
         wheel_columns(X, aY, Z, g.W_mm, g.x_front_mm) + MARGIN_MM,
         t79_zones(X, aY, Z, g.W_mm, g.x_front_mm) + MARGIN_MM,
         t851_cap(X, aY, Z, ref_A) + MARGIN_MM,

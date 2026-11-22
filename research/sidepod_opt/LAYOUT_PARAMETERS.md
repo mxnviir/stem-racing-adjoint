@@ -8,9 +8,9 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
-| `W` | **evolve** | 120.3 | 120.0 - 140.0 mm | wheelbase, front axle -> rear axle | T7.3 120.0-140.0 | the main layout lever: drag, mass, and where the thrust and COM sit against the axles |
-| `rear` | **evolve** | 56.0 | 36.0 - 56.0 mm | rear axle -> body rear face (the cartridge bore moves with it) | T9.4.2 <= 40 behind Ref B (= 56); below ~35 the rear wing has no body under it (T5.6 keeps 12.5 mm behind the face clear) | shorter tail: less foam and wetted area, thrust point moves forward |
-| `halo_rear` | **evolve** | 148.6 | 102.0 - 196.0 mm | halo pocket FRONT edge -> body rear face (pocket 50 mm long) | pocket front on/behind the front axle; pocket rear ahead of the rear axle and of the 52 mm bore (the decoder keeps it inside these for each W and rear) | moves the halo, the 25 g halo + ballast container, and the loft's peak |
+| `W` | **evolve** | 138.0 | 120.0 - 140.0 mm | wheelbase, front axle -> rear axle | T7.3 120.0-140.0 | team car: 138.0 (measured on the team's CAD, 2026-11-22). the main layout lever: drag, mass, and where the thrust and COM sit against the axles |
+| `rear` | **evolve** | 63.75 | 36.0 - 87.0 mm | rear axle -> body rear face (the cartridge bore moves with it); the gene is the fraction of 36 .. 207 - W | the 223 mm block: 16 + W + rear <= 223, so rear <= 207 - W (67 at W 140, 87 at W 120). T9.4.2's 40 mm behind Ref B is the rear wing and its support only (team, 2026-11-22). Below ~35 the rear wing has no body under it. | team car: 63.75. shorter tail: less foam and wetted area, thrust point moves forward |
+| `halo_rear` | **evolve** | 194.6 | 102.0 - 227.0 mm | halo pocket FRONT edge -> body rear face (pocket 50 mm long) | pocket front on/behind the front axle; pocket rear ahead of the rear axle and of the 52 mm bore (the decoder keeps it inside these for each W and rear) | team car: 194.6 (pocket front 7 mm behind the front axle). moves the halo, the 25 g halo + ballast container, and the loft's peak |
 
 ## cargo (2 of 2 evolved)
 
@@ -148,7 +148,7 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
-| `nose_len` | **evolve** | 30.0 | 20.0 - 40.0 mm | nose tip ahead of Ref A (sets x_front = 16 + this) | T8.2 <= 40 (whole nose assembly) |  |
+| `nose_len` | **evolve** | 39.4 | 20.0 - 40.0 mm | nose tip ahead of Ref A (sets x_front = 16 + this) | T8.2 <= 40 (whole nose assembly) | team car: 39.4.  |
 | `nose_k` | **evolve** | 0.5 | 0.3 - 1.2 - | section growth along the nose (0.5 elliptic, 1 conical) | T8.5.1 |  |
 | `nose_p` | **fixed** | 2.5 | 2.0 - 4.0 - | nose section squareness | T8.5.1 half-width <= 15 | shape detail |
 | `nose_tip_z` | **evolve** | 10.0 | 4.0 - 20.0 mm | tip height above the track | T8.5.1 <= 25; T3.7 |  |

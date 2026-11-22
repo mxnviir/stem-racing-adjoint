@@ -4,38 +4,38 @@
   {
    "group": "layout",
    "name": "W",
-   "value": 120.3,
+   "value": 138.0,
    "lo": 120.0,
    "hi": 140.0,
    "mode": "evolve",
    "unit": "mm",
    "what": "wheelbase, front axle -> rear axle",
    "rule": "T7.3 120.0-140.0",
-   "why": "the main layout lever: drag, mass, and where the thrust and COM sit against the axles"
+   "why": "team car: 138.0 (measured on the team's CAD, 2026-11-22). the main layout lever: drag, mass, and where the thrust and COM sit against the axles"
   },
   {
    "group": "layout",
    "name": "rear",
-   "value": 56.0,
+   "value": 63.75,
    "lo": 36.0,
-   "hi": 56.0,
+   "hi": 87.0,
    "mode": "evolve",
    "unit": "mm",
-   "what": "rear axle -> body rear face (the cartridge bore moves with it)",
-   "rule": "T9.4.2 <= 40 behind Ref B (= 56); below ~35 the rear wing has no body under it (T5.6 keeps 12.5 mm behind the face clear)",
-   "why": "shorter tail: less foam and wetted area, thrust point moves forward"
+   "what": "rear axle -> body rear face (the cartridge bore moves with it); the gene is the fraction of 36 .. 207 - W",
+   "rule": "the 223 mm block: 16 + W + rear <= 223, so rear <= 207 - W (67 at W 140, 87 at W 120). T9.4.2's 40 mm behind Ref B is the rear wing and its support only (team, 2026-11-22). Below ~35 the rear wing has no body under it.",
+   "why": "team car: 63.75. shorter tail: less foam and wetted area, thrust point moves forward"
   },
   {
    "group": "layout",
    "name": "halo_rear",
-   "value": 148.6,
+   "value": 194.6,
    "lo": 102.0,
-   "hi": 196.0,
+   "hi": 227.0,
    "mode": "evolve",
    "unit": "mm",
    "what": "halo pocket FRONT edge -> body rear face (pocket 50 mm long)",
    "rule": "pocket front on/behind the front axle; pocket rear ahead of the rear axle and of the 52 mm bore (the decoder keeps it inside these for each W and rear)",
-   "why": "moves the halo, the 25 g halo + ballast container, and the loft's peak"
+   "why": "team car: 194.6 (pocket front 7 mm behind the front axle). moves the halo, the 25 g halo + ballast container, and the loft's peak"
   },
   {
    "group": "cargo",
@@ -1204,14 +1204,14 @@
   {
    "group": "nose",
    "name": "nose_len",
-   "value": 30.0,
+   "value": 39.4,
    "lo": 20.0,
    "hi": 40.0,
    "mode": "evolve",
    "unit": "mm",
    "what": "nose tip ahead of Ref A (sets x_front = 16 + this)",
    "rule": "T8.2 <= 40 (whole nose assembly)",
-   "why": ""
+   "why": "team car: 39.4. "
   },
   {
    "group": "nose",

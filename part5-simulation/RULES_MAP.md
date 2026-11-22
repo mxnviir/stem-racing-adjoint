@@ -152,7 +152,7 @@ All limits are absolute (T2.7.1): 48.0 g passes, 47.9 g fails. No rule gives a m
 | T9.2 | 41 | Rear wing has leading and trailing edge | - | NACA section | by construction |
 | T9.3 | 41 | Rigid | - | - | not checkable: judge's call |
 | T9.4.1 | 41 | Whole rear wing and support behind Ref B | - | `T9.4.1_rear_wing_behind_ref_B` | checked |
-| T9.4.2 | 41 | Rear overhang behind Ref B | <= 40.0 mm | `T9.4.2_rear_overhang`; `P4.T9.4.2_overhang` | checked |
+| T9.4.2 | 41 | Rear wing and its support behind Ref B (the body is limited by the block, not by this: team, 2026-11-22) | <= 40.0 mm | `T9.4.2_rear_overhang` (the rear wing's mesh); `P4.T9.4.2_overhang` | checked |
 | T9.4.3 | 41 | Highest point behind Ref B | <= 65.0 mm | `P4.T9.4.3_height`; covered by `T3.5_height` | checked (via T3.5) |
 | T9.5.1 | 42 | Rear span, single unbroken | >= 50.0 mm, PP | `T9.5.1_rear_span` (its own pylon under it does not break it; any other part through it does) | checked |
 | T9.5.2 | 42 | Rear chord, horizontal, throughout span; up to 2 vanes, overlapping | 15.0-25.0 mm, PP | `T9.5.2_rear_chord_min/max`, `T9.5.2_rear_vanes_overlap` | checked |

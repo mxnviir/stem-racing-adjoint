@@ -47,10 +47,10 @@ import layout_genes as LG  # noqa: E402
 import layout_car as LC  # noqa: E402
 import simscale_step_eval as SE  # noqa: E402
 
-CAR_FACES = (24000, 16000, 32000, 20000, 12000, 40000)     # whole-car triangle counts tried in turn
+CAR_FACES = (24000, 32000, 40000, 28000, 20000, 48000)     # whole-car triangle counts tried in turn (16000 meshed too coarse, 2026-11-22)
 SE.FACES = CAR_FACES                                         # the evaluator's retry ladder (this process only)
 BOX_M = ((-0.01, 0.0, -0.001), (0.30, 0.06, 0.07))           # car <= 264 mm with the cartridge; rear wing <= 65 mm
-BUILD_WORKERS = 2                                            # one Parts 1-5 build peaks at ~5.5 GB
+BUILD_WORKERS = 3                                            # one Parts 1-5 build peaks at ~5.5 GB
 
 
 DEV_P99_MAX_MM, DEV_MAX_MM = 0.25, 0.6     # the faceted (timed) surface's distance from the built car
@@ -269,7 +269,7 @@ class Campaign:
         X = rng.random((len(L) * per, LG.DIM))
         Lr = np.repeat(L, per, axis=0)
         X[:, iW] = (Lr[:, 0] - LG.LO[iW]) / (LG.HI[iW] - LG.LO[iW])
-        X[:, iR] = (Lr[:, 1] - LG.LO[iR]) / (LG.HI[iR] - LG.LO[iR])
+        X[:, iR] = (Lr[:, 1] - LG.LO[iR]) / np.maximum(np.minimum(LG.HI[iR], LG.BLOCK_MM - 16.0 - Lr[:, 0]) - LG.LO[iR], 1e-9)
         lo = np.maximum(Lr[:, 1] + 50.0, 102.0); hi = Lr[:, 0] + Lr[:, 1]
         X[:, iH] = np.clip((Lr[:, 2] - lo - 0.5) / np.maximum(hi - lo - 0.5, 1e-9), 0, 1)
         if best_x is not None:                                   # the neighbourhood of the best car
@@ -333,8 +333,54 @@ class Campaign:
         cid = f"L{self.st['n']:04d}"; self.st["n"] += 1
         return cid
 
+    def submit_reference(self, ev, ladder=(0, 1)):
+        """The team's own layout (every number at its default) through this route, once per triangle
+        count in `ladder` (indices into CAR_FACES): the like-for-like reference for the search, and the
+        difference between the two runs is the noise a layout's gain has to beat."""
+        import shutil
+        src = self.root / "cars" / "REF"
+        rec = json.loads((src / "layout_car.json").read_text()) if (src / "layout_car.json").exists() else LC.build(LG.x_default(), src)
+        self.log({"id": "REF", "kind": "ref", "genes": None, "legal": rec.get("legal"), "layout": rec.get("layout"),
+                  "failed": rec.get("failed"), "why": rec.get("why"), "mass": rec.get("mass"), "cfd": rec.get("cfd")})
+        if not rec.get("legal"):
+            raise SystemExit(f"reference car is not legal: {rec.get('failed')} {rec.get('why')}")
+        cases, refs = [], {}
+        for i in ladder:
+            cid = f"REF{CAR_FACES[i]}"
+            shutil.copytree(src, self.root / "cars" / cid, dirs_exist_ok=True)
+            cases.append({"id": cid, "folder": str(self.root / "cars" / cid), "attempt0": i})
+            refs[cid] = None
+        ev.submit(cases)
+        self.st["refs"] = refs
+        self.save()
+
+    def collect(self, ev):
+        """Results back from the CFD: race time with each car's own layout and mass, logged, files pruned."""
+        st = self.st
+        res = ev.collect()
+        for cid, r in res.items():
+            is_ref = cid in st.get("refs", {}) and st["refs"][cid] is None
+            v = st["inflight"].pop(cid, None)
+            if v is None and not is_ref:
+                continue
+            rec = json.loads((self.root / "cars" / cid / "layout_car.json").read_text())
+            T = None
+            if r.get("ok") and r.get("D20_N") is not None:
+                T = race_time(rec, r["D20_N"], r["L20_N"] or 0.0)
+            self.log({"id": cid, "kind": "ref" if is_ref else "car", "genes": rec["genes"], "D20_N": r.get("D20_N"),
+                      "L20_N": r.get("L20_N"), "T": T, "layout": rec.get("layout"), "eval": r.get("info")})
+            prune(self.root / "cars" / cid)
+            if is_ref:
+                st["refs"][cid] = {"D20_N": r.get("D20_N"), "L20_N": r.get("L20_N"), "T": T, "ok": r.get("ok")}
+            elif T is not None and (st["best"] is None or T < st["best"][1]):
+                st["best"] = [cid, T]
+        self.save()
+        return res
+
     def tick(self, ev):
         st = self.st
+        if "refs" not in st:
+            self.submit_reference(ev)
         # 1) the next batch, when the last one is all back
         if not st["batch"] and not st.get("pending_build") and st["used"] < self.cfg["budget"] and ev.capacity() > 0:
             xs, info = self.ask(min(self.cfg["batch"], self.cfg["budget"] - st["used"]))
@@ -367,20 +413,7 @@ class Campaign:
             st["pending_build"] = {}
             self.save()
         # 3) results
-        res = ev.collect()
-        for cid, r in res.items():
-            v = st["inflight"].pop(cid, None)
-            if v is None:
-                continue
-            rec = json.loads((self.root / "cars" / cid / "layout_car.json").read_text())
-            T = None
-            if r.get("ok") and r.get("D20_N") is not None:
-                T = race_time(rec, r["D20_N"], r["L20_N"] or 0.0)
-            self.log({"id": cid, "genes": rec["genes"], "D20_N": r.get("D20_N"), "L20_N": r.get("L20_N"), "T": T,
-                      "layout": rec.get("layout"), "eval": r.get("info")})
-            prune(self.root / "cars" / cid)
-            if T is not None and (st["best"] is None or T < st["best"][1]):
-                st["best"] = [cid, T]
+        res = self.collect(ev)
         # 4) the batch is done when none of it is still out
         if st["batch"] and not st.get("pending_build") and not any(i in st["inflight"] for i in st["batch"]):
             st["g"] += 1; st["batch"] = []
@@ -388,43 +421,19 @@ class Campaign:
         return res
 
 
-def reference(root, tolerances=(0, 1)):
-    """The team-layout car (every gene at its default) through this route, once per facet tolerance
-    in `tolerances` (indices into CAR_FACES): the like-for-like reference for the search, and the
-    difference between the runs is the noise a layout's gain has to beat."""
+def reference(root):
+    """Only the reference cars (see Campaign.submit_reference), then stop."""
     c = Campaign(root)
     ev = c.evaluator()
-    refs = c.st.setdefault("refs", {})
-    if not refs:
-        src = c.root / "cars" / "REF"
-        rec = LC.build(LG.x_default(), src) if not (src / "layout_car.json").exists() else json.loads((src / "layout_car.json").read_text())
-        c.log({"id": "REF", "kind": "ref", "genes": None, "legal": rec.get("legal"), "layout": rec.get("layout"), "failed": rec.get("failed"),
-               "why": rec.get("why"), "mass": rec.get("mass"), "cfd": rec.get("cfd")})
-        if not rec.get("legal"):
-            raise SystemExit(f"reference car is not legal: {rec.get('failed')} {rec.get('why')}")
-        import shutil
-        cases = []
-        for i in tolerances:
-            cid = f"REF{CAR_FACES[i]}"
-            shutil.copytree(src, c.root / "cars" / cid, dirs_exist_ok=True)
-            cases.append({"id": cid, "folder": str(c.root / "cars" / cid), "attempt0": i})
-            refs[cid] = None
-        ev.submit(cases); c.save()
-    while any(v is None for v in refs.values()):
-        for cid, r in ev.collect().items():
-            if cid in refs and refs[cid] is None:
-                rec = json.loads((c.root / "cars" / cid / "layout_car.json").read_text())
-                T = race_time(rec, r["D20_N"], r["L20_N"] or 0.0) if r.get("ok") and r.get("D20_N") is not None else None
-                refs[cid] = {"D20_N": r.get("D20_N"), "L20_N": r.get("L20_N"), "T": T, "ok": r.get("ok")}
-                c.log({"id": cid, "kind": "ref", "genes": LG.x_default().tolist(), "D20_N": r.get("D20_N"), "L20_N": r.get("L20_N"),
-                       "T": T, "eval": r.get("info")})
-                prune(c.root / "cars" / cid)
-        c.save()
-        print(time.strftime("%H:%M:%S"), "reference", {k: (v and v.get("T")) for k, v in refs.items()},
+    if "refs" not in c.st:
+        c.submit_reference(ev)
+    while any(v is None for v in c.st["refs"].values()):
+        c.collect(ev)
+        print(time.strftime("%H:%M:%S"), "reference", {k: (v and v.get("T")) for k, v in c.st["refs"].items()},
               {cid: (cc.get("phase"), cc.get("attempt"), cc.get("tries"), cc.get("last_error")) for cid, cc in ev.st["cases"].items()}, flush=True)
-        if any(v is None for v in refs.values()):
+        if any(v is None for v in c.st["refs"].values()):
             time.sleep(60)
-    print("reference done:", json.dumps(refs))
+    print("reference done:", json.dumps(c.st["refs"]))
 
 
 def init(root, budget, seed_keys_from="runs/simscale/simscale_state.json"):

@@ -778,6 +778,8 @@ def build_unified_geometry(
             "rear_axle_m": mm_to_m(x_front_mm) + mm_to_m(W_mm),
             "rear_face_m": min(bv.rearpod.x_max_m(), bv.ref_plane_B_m + re.rearpod_max_length_m),   # exact: the cells overran Ref B + 40 by 0.08 mm (2026-11-11)
             "cargo_placement": placement if with_cargo else None,
+            # the envelope this car was built in (a non-default tail length), for exact_zones
+            "rearpod_max_length_m": re.rearpod_max_length_m,
         },
         bv=bv,
         W_mm=W_mm,
