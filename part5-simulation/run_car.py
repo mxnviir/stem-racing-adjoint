@@ -549,7 +549,9 @@ def main(argv=None):
     asm["cargo_placement"] = geom.landmarks.get("cargo_placement")
 
     log("3 LEGAL")
-    chk = legality.check(str(out / "body_half.stl"), asm, S["mass"], S["body"]["field_bodies"],
+    # --no-joints: the referee judges the body and the parts as drawn (no manufacturing files to read)
+    asm_ref = {k: v for k, v in asm.items() if k != "joints"} if asm["joints"].get("skipped") else asm
+    chk = legality.check(str(out / "body_half.stl"), asm_ref, S["mass"], S["body"]["field_bodies"],
                          machined_stl=asm["joints"].get("machined_body_half_stl"))
     S["legality"] = {"checks": chk, "summary": legality.summary(chk)}
     sha = lambda p: __import__("hashlib").sha256(Path(p).read_bytes()).hexdigest()

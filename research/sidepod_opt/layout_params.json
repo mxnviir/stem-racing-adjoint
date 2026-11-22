@@ -1291,11 +1291,11 @@
    "value": 15.3,
    "lo": 10.0,
    "hi": 17.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
-   "what": "main element chord",
+   "what": "chord, single element (T8.6.2 min 15.0; thickness 0.15 x 15.3 = 2.3 mm, T8.6.3 min 2.0)",
    "rule": "T8.6.2 15-25 total incl. flap",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
@@ -1307,7 +1307,7 @@
    "unit": "-",
    "what": "thickness / chord",
    "rule": "T8.6.3 2-6 mm",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
@@ -1319,31 +1319,31 @@
    "unit": "-",
    "what": "camber",
    "rule": "",
-   "why": "try later"
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
    "name": "fw_aoa",
-   "value": 6.0,
+   "value": 0.0,
    "lo": -5.0,
    "hi": 15.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "deg",
    "what": "angle of attack",
    "rule": "T8.5.2 <= 20 high outboard",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
    "name": "fw_half_span",
-   "value": 38.5,
+   "value": 25.5,
    "lo": 25.5,
    "hi": 45.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
-   "what": "half span",
+   "what": "half span (the builder widens it to the legal minimum: 25 mm clear of the nose each side, T8.6.1)",
    "rule": "T8.6.1 >= 50 (or 2 x 25 if split)",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
@@ -1351,11 +1351,11 @@
    "value": 8.0,
    "lo": 4.0,
    "hi": 14.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "chord line height",
    "rule": "T8.7 5 mm clear air to the track; T8.5.2",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
@@ -1367,7 +1367,7 @@
    "unit": "mm",
    "what": "gap ahead of the front wheel",
    "rule": "T7.9.1, T8.7",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
@@ -1379,7 +1379,7 @@
    "unit": "mm",
    "what": "end plate height (0 = none)",
    "rule": "T8.5.3",
-   "why": "off for now"
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
@@ -1391,7 +1391,7 @@
    "unit": "mm",
    "what": "end plate width",
    "rule": "T8.5.3 <= 10",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
@@ -1403,19 +1403,19 @@
    "unit": "mm",
    "what": "mount thickness",
    "rule": "",
-   "why": "structure"
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
    "name": "fw_flap_chord",
-   "value": 8.0,
+   "value": 0.0,
    "lo": 0.0,
    "hi": 8.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
-   "what": "flap chord (0 = single element)",
+   "what": "flap chord: 0 = no flap, single element",
    "rule": "T8.6.2, up to 3 elements",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
@@ -1427,19 +1427,19 @@
    "unit": "-",
    "what": "flap thickness / chord",
    "rule": "T8.6.3",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
    "name": "fw_flap_aoa",
-   "value": 30.0,
+   "value": 0.0,
    "lo": 0.0,
    "hi": 40.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "deg",
    "what": "flap angle",
    "rule": "T8.5.2",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
@@ -1451,7 +1451,7 @@
    "unit": "mm",
    "what": "flap overlap",
    "rule": "T8.6.2 elements overlap",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "front wing",
@@ -1463,7 +1463,7 @@
    "unit": "mm",
    "what": "slot gap",
    "rule": "",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "rear wing",
@@ -1471,11 +1471,11 @@
    "value": 15.3,
    "lo": 15.0,
    "hi": 25.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "chord",
    "rule": "T9.5.2 15-25",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "rear wing",
@@ -1487,7 +1487,7 @@
    "unit": "-",
    "what": "thickness / chord",
    "rule": "T9.5.3 2-6 mm",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "rear wing",
@@ -1499,7 +1499,7 @@
    "unit": "-",
    "what": "camber",
    "rule": "",
-   "why": "try later"
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "rear wing",
@@ -1507,23 +1507,23 @@
    "value": 0.0,
    "lo": -5.0,
    "hi": 15.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "deg",
    "what": "angle of attack",
    "rule": "T9.4.3, T9.6",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "rear wing",
    "name": "rw_half_span",
-   "value": 26.0,
+   "value": 25.5,
    "lo": 25.5,
    "hi": 45.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "half span",
    "rule": "T9.5.1 >= 50",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "rear wing",
@@ -1531,11 +1531,11 @@
    "value": 3.5,
    "lo": 0.0,
    "hi": 20.0,
-   "mode": "evolve",
+   "mode": "fixed",
    "unit": "mm",
    "what": "leading edge behind Ref B",
    "rule": "T9.4.1 behind Ref B, T9.4.2 <= 40",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "rear wing",
@@ -1547,7 +1547,7 @@
    "unit": "mm",
    "what": "margin over the 5 mm clear air",
    "rule": "T9.6",
-   "why": ""
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "rear wing",
@@ -1559,7 +1559,7 @@
    "unit": "mm",
    "what": "pylon thickness",
    "rule": "",
-   "why": "structure"
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "rear wing",
@@ -1571,7 +1571,7 @@
    "unit": "mm",
    "what": "pylon chord",
    "rule": "",
-   "why": "structure"
+   "why": "user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched"
   },
   {
    "group": "tether guides",
