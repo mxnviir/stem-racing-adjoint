@@ -246,11 +246,23 @@ def mode_field(bp, X, Y, Z, x_ref_a, x_rear):
     return out
 
 
+def lattice_field(lat: dict, X, Y, Z, x_ref_a: float, x_rear: float):
+    """mm the body grows by at each cell: amp x the cubic interpolation of the control points (see build)."""
+    from scipy import ndimage
+    shape = tuple(int(n) for n in lat["shape"])
+    g = np.asarray(lat["values"], dtype=float).reshape(shape)
+    x0, x1, ym, z0, z1 = lat.get("box") or (x_ref_a, x_rear, 36.0, 0.0, 52.0)
+    coords = [(X - x0) / (x1 - x0) * (shape[0] - 1), np.abs(Y) / ym * (shape[1] - 1), (Z - z0) / (z1 - z0) * (shape[2] - 1)]
+    coords = [np.clip(c, 0, n - 1) for c, n in zip(coords, shape)]
+    up = ndimage.map_coordinates(g, [c.ravel() for c in coords], order=3, mode="nearest").reshape(X.shape)
+    return float(lat.get("amp_mm", 6.0)) * up
+
+
 def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
           target_body_kg: float | None = None, machinable: bool = True,
           skin_offset_mm: float | None = None, field_mm=None,
           rear_len_mm: float | None = None, with_cargo: bool = True,
-          cargo_placement: dict | None = None):
+          cargo_placement: dict | None = None, lattice: dict | None = None):
     """UnifiedGeometry whose body is `bp`, with every rule mask applied.
 
     field_mm: a body given as a signed distance field on this car's grid (mm, negative
@@ -263,6 +275,11 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
       (T9.4.2's overhang limit, the longest body). Shorter moves the face, and with it the
       52 mm cartridge bore, forward (the layout search, research/sidepod_opt/layout_car.py).
     with_cargo: False drops the T4.2 virtual cargo.
+    lattice: free-form change of the drawn body (the shape search, research/.../shape): {"shape": [nx, ny, nz],
+      "values": nx*ny*nz numbers, "amp_mm": A, "box": [x0, x1, y_max, z0, z1] (mm; default Ref A .. rear face,
+      0 .. 36, 0 .. 52)}. The values are control points over the +y half of the box (mirrored to -y),
+      cubic-interpolated; the body grows by A x the value there (shrinks where negative), before the rule
+      masks and the milling, so every rule still holds whatever the values.
     cargo_placement: {"x_start_m", "z_base_m", "flip"} (virtual_cargo.build_virtual_cargo_solid_mask);
       None lets Part 1 pick (corridor centre, wide end forward).
     target_body_kg: no ballast, so the body itself carries the mass the T3.6
@@ -305,6 +322,8 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
         # the field is the body: its tunnel (ft_h > 0) is cut from the skinned field in make()
     else:
         phi0 = phi_mm(bp, X, Y, Z, x_ref_a, x_rear_mm)
+    if lattice:
+        phi0 = phi0 - lattice_field(lattice, X, Y, Z, x_ref_a, x_rear_mm)
     # The rules every body obeys (Ref A end, T8.5.1 cap, nose stub, halo floor and pocket
     # bridge) are forced in build_unified_geometry (unified_phi.apply_build_rules), so a
     # carved body gets them too. The stub's section is reused below to join a split front.

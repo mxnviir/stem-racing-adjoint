@@ -219,9 +219,9 @@ def race_time(rec, D20, L20):
 
 
 def _build_one(args):
-    x, folder = args
+    x, folder, lattice = (tuple(args) + (None,))[:3]
     try:
-        return LC.build(np.asarray(x), Path(folder))
+        return LC.build(np.asarray(x), Path(folder), lattice=lattice)
     except Exception as e:                                           # noqa: BLE001
         return {"legal": False, "why": f"builder crashed: {e!r}"[:500], "genes": list(map(float, x))}
 
@@ -329,6 +329,13 @@ class Campaign:
                                fineness=6, box_mm=e.get("box_mm", 1.5), iters=e.get("iters", 1000),
                                sizing=e.get("sizing"), max_cost=e.get("max_cost"))
 
+    def job(self, x):
+        """What to build for one asked vector (the shape search builds a lattice on a fixed layout)."""
+        return {"x": np.asarray(x).tolist()}
+
+    def batch_done(self, ids):
+        """Called once a whole batch is back (the shape search tells CMA here)."""
+
     def new_id(self):
         cid = f"L{self.st['n']:04d}"; self.st["n"] += 1
         return cid
@@ -386,7 +393,7 @@ class Campaign:
             xs, info = self.ask(min(self.cfg["batch"], self.cfg["budget"] - st["used"]))
             st["pending_build"] = {}
             for x in xs:
-                st["pending_build"][self.new_id()] = {"x": np.asarray(x).tolist()}
+                st["pending_build"][self.new_id()] = self.job(x)
             st["batch"] = list(st["pending_build"])
             st["ask"] = info
             print(time.strftime("%H:%M:%S"), "batch", st["g"], json.dumps(info), flush=True)
@@ -394,7 +401,7 @@ class Campaign:
         # 2) build what is pending (in parallel); the legal cars go to CFD
         pb = st.get("pending_build") or {}
         if pb:
-            jobs = [(v["x"], str(self.root / "cars" / cid)) for cid, v in pb.items()]
+            jobs = [(v["x"], str((self.root / "cars" / cid).resolve()), v.get("lattice")) for cid, v in pb.items()]
             with ProcessPoolExecutor(BUILD_WORKERS) as pool:
                 recs = list(pool.map(_build_one, jobs))
             cases = []
@@ -405,7 +412,7 @@ class Campaign:
                 if not rec.get("legal"):
                     prune(self.root / "cars" / cid)
                 if rec.get("legal"):
-                    cases.append({"id": cid, "folder": str(self.root / "cars" / cid)})
+                    cases.append({"id": cid, "folder": str((self.root / "cars" / cid).resolve())})
                     st["inflight"][cid] = v
                     st["used"] += 1
             if cases:
@@ -416,6 +423,7 @@ class Campaign:
         res = self.collect(ev)
         # 4) the batch is done when none of it is still out
         if st["batch"] and not st.get("pending_build") and not any(i in st["inflight"] for i in st["batch"]):
+            self.batch_done(st["batch"])
             st["g"] += 1; st["batch"] = []
         self.save()
         return res

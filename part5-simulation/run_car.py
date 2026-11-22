@@ -66,7 +66,8 @@ def build_body(a, out: Path):
                  target_body_kg=getattr(a, "_body_target_kg", None),
                  skin_offset_mm=getattr(a, "skin_mm", None), field_mm=field,
                  rear_len_mm=getattr(a, "rear_mm", None), with_cargo=not getattr(a, "no_cargo", False),
-                 cargo_placement=json.loads(a.cargo_json) if getattr(a, "cargo_json", None) else None)
+                 cargo_placement=json.loads(a.cargo_json) if getattr(a, "cargo_json", None) else None,
+                 lattice=json.loads(a.lattice_json) if getattr(a, "lattice_json", None) else None)
     return g, {"param_body": bp.as_dict(), "spacing_mm": a.cfd_mm,
                "build": getattr(g, "build_report", {})}
 
@@ -452,6 +453,7 @@ def parse_args(argv=None):
     ap.add_argument("--no-tethers", action="store_true", help="no tether guides (layout search)")
     ap.add_argument("--no-cargo", action="store_true", help="no T4.2 virtual cargo (team rule, layout search)")
     ap.add_argument("--cargo-json", default=None, help='T4.2 cargo placement {"x_start_m", "z_base_m", "flip"}')
+    ap.add_argument("--lattice-json", default=None, help="free-form body change (param_body.build lattice=)")
     ap.add_argument("--tether-json", default=None, help="[front guide ahead of the front axle, rear guide behind the rear axle], mm (T6.1 <= 10)")
     ap.add_argument("--support", choices=("cad", "beam"), default="beam",
                     help="beam = the team's architecture, parametric; cad = the v2 CAD supports (reference)")

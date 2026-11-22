@@ -44,31 +44,38 @@ WAIVED_PREFIXES = ("T7.12", "T3.6_mass", "T5.1_diameter")
 LEAD_CAP_G = None               # read from Part 1's ballast.capacity_kg("lead") at run time
 
 
-def run_car_args(d: dict, out: Path) -> list[str]:
+def run_car_args(d: dict, out: Path, lattice: dict | None = None) -> list[str]:
     bp = LG.body_params(d)
+    extra = ["--lattice-json", json.dumps(lattice)] if lattice else []
     return [sys.executable, "-W", "ignore", str(P5 / "run_car.py"), "--out", str(out),
             "--W", str(d["W"]), "--x-front", str(d["x_front"]), "--d-halo", str(d["d_halo"]),
             "--rear-mm", str(d["rear"]), "--no-supports", "--no-joints", "--skin-mm", str(d["skin_mm"]),
             "--cargo-json", json.dumps(d["cargo"]), "--tether-json", json.dumps(list(d["tethers"])),
             "--body-json", json.dumps(bp), "--nose-json", json.dumps(d["nose"]),
-            "--fwing-json", json.dumps(d["fwing"]), "--rwing-json", json.dumps(d["rwing"])]
+            "--fwing-json", json.dumps(d["fwing"]), "--rwing-json", json.dumps(d["rwing"])] + extra
 
 
-def build(x, out: Path, timeout_s=3600) -> dict:
-    """Genes -> a built, checked car in `out`. Returns a record (legal, mass, files, why)."""
-    out = Path(out); out.mkdir(parents=True, exist_ok=True)
+def build(x, out: Path, timeout_s=3600, lattice: dict | None = None) -> dict:
+    """Genes -> a built, checked car in `out`. Returns a record (legal, mass, files, why).
+    lattice: the shape search's free-form change of the body (part1 param_body.build lattice=)."""
+    out = Path(out).resolve(); out.mkdir(parents=True, exist_ok=True)     # absolute: run_car runs in part5-simulation
     d = LG.decode(x)
     rec = {"genes": [float(v) for v in np.clip(x, 0, 1)], "layout": {k: d[k] for k in ("W", "rear", "halo_rear", "x_front", "d_halo")},
-           "decoded": d, "legal": False}
+           "decoded": d, "legal": False, "lattice": lattice}
     env = dict(os.environ, PYTHONPATH=os.pathsep.join([str(ROOT / "part4-simulation"), os.environ.get("PYTHONPATH", "")]))
     t0 = time.time()
     with open(out / "run_car.log", "w") as log:
         try:
-            p = subprocess.run(run_car_args(d, out), cwd=P5, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=timeout_s)
+            p = subprocess.run(run_car_args(d, out, lattice), cwd=P5, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=timeout_s)
             rc = p.returncode
         except subprocess.TimeoutExpired:
             rc = "timeout"
     rec["build_s"] = round(time.time() - t0)
+    return judge(out, rec, d, rc)
+
+
+def judge(out: Path, rec: dict, d: dict, rc=0) -> dict:
+    """The referee's verdict, the mass with lead, and the CFD solid, from a finished run_car folder."""
     sp = out / "summary.json"
     if rc != 0 or not sp.exists():
         tail = (out / "run_car.log").read_text()[-600:] if (out / "run_car.log").exists() else ""
@@ -165,7 +172,11 @@ def export_cfd(out: Path, d) -> dict:
         m = trimesh.load(str(p), force="mesh"); m.apply_scale(1e3)          # m -> mm (manifold is float32)
         # 20 um across the centre plane, so the two halves overlap: halves that only share the
         # plane's face leave zero-thickness leftovers there (edges shared by four faces)
-        h = CI.to_manifold(CI.clean(m)).translate([0.0, -0.02, 0.0])
+        try:                                                    # as written; cleaning can break a good one
+            h = CI.to_manifold(m)                               # (dropping 2 zero-area faces did, car L0005)
+        except ValueError:
+            h = CI.to_manifold(CI.clean(m))
+        h = h.translate([0.0, -0.02, 0.0])
         return h + h.mirror([0.0, 1.0, 0.0])
 
     def box(x0, x1, y, z0, z1):
