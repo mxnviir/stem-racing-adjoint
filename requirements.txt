@@ -7,6 +7,7 @@ pillow
 scikit-image
 scikit-learn          # stage 1 surrogate (Gaussian process)
 cma                   # sidepod search and stage 2
+numba                 # the voxeliser's ray-parity kernel (cfd/_parity.py)
 jax
 jaxlib                # race-time model
 trimesh==5.2.0

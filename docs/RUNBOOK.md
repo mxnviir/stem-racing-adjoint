@@ -93,8 +93,9 @@ a run: watch for a pattern.
 ## Tests
 
 ```
-python -m pytest car/race/tests car/parts/tests car/build/tests car/body/tests search/sidepod -q
-python cfd/test_simscale.py        # the SimScale state machine against a fake API
+python -m pytest car/race/tests car/parts/tests car/build/tests car/body/tests search/sidepod cfd -q
 ```
 
-Part of `car/build/tests` builds whole cars and takes an hour or more.
+Part of `car/build/tests` and `car/parts/tests` builds whole cars and takes an hour or more.
+`cfd/test_simscale.py` checks the SimScale route without SimScale: a toy car through the surface
+rebuild and the air volume, the diverged-force filter, and key retirement.

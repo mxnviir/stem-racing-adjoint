@@ -27,6 +27,7 @@ jobs:
           - { dir: car/parts/tests, shard: 0, of: 1 }
           - { dir: car/build/tests, shard: 0, of: 1 }
           - { dir: search/sidepod, shard: 0, of: 1 }
+          - { dir: cfd, shard: 0, of: 1 }
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
