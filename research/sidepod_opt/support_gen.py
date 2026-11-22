@@ -171,8 +171,14 @@ def loads(G: AxleGrid, M: np.ndarray, fx: dict) -> dict:
     h, a = G.h, G.ax
     Fr, Fa, E = bsm.LOAD_RADIAL_N, bsm.LOAD_AXIAL_N, bsm.ABS_E_MPA
     allow = bsm.ABS_STRENGTH_MPA / bsm.SAFETY
+    # where the part is held: its outermost glue contact with the body (the foam taken as rigid there: an
+    # OPTIMISTIC assumption, foam is weak), else the centre plane (one part wheel to wheel, held by its mirror)
+    contact = M & ndimage.binary_dilation(G.body)
+    y_fix = float(G.Y[contact].max()) if contact.any() else 0.0
     sig, curv, ys = [], [], []
     for j, y in enumerate(G.y):
+        if y < y_fix - h / 2:
+            continue
         if y > fx["y_disc_in"] - h / 2:                              # the last legal slice (rules() stops here)
             break
         s = M[:, j, :]
@@ -188,13 +194,15 @@ def loads(G: AxleGrid, M: np.ndarray, fx: dict) -> dict:
         sig.append(Mo * c / I + Fa / A)
         curv.append(Mo / (E * I))
     ys, sig, curv = np.array(ys), np.array(sig), np.array(curv)
+    if len(ys) < 2:                                                   # held right at the disc
+        ys, sig, curv = np.array([y_fix, y_fix + h]), np.array([0.0, 0.0]), np.array([0.0, 0.0])
     if not np.isfinite(curv).all():
         return {"ok": False, "stress_mpa": float("inf"), "allow_mpa": allow, "why": "a slice with no material"}
     slope = np.concatenate([[0.0], np.cumsum(0.5 * (curv[1:] + curv[:-1]) * np.diff(ys))])
     defl = float(np.sum(0.5 * (slope[1:] + slope[:-1]) * np.diff(ys)))
     sag = defl + slope[-1] * (fx["y_bear"] - ys[-1]) + fx["stub_struct"]["sag_mm"]
     i = int(np.argmax(sig))
-    out = {"stress_mpa": float(sig[i]), "at_y_mm": float(ys[i]), "allow_mpa": allow, "sag_mm": float(sag),
+    out = {"held_at_y_mm": y_fix, "stress_mpa": float(sig[i]), "at_y_mm": float(ys[i]), "allow_mpa": allow, "sag_mm": float(sag),
            "sag_max_mm": bsm.SAG_MAX_MM, "stub_stress_mpa": fx["stub_struct"]["stress_mpa"],
            "disc_stress_mpa": float(fx["disc_stress_mpa"])}
     out["ok"] = bool(sig.max() <= allow and sag <= bsm.SAG_MAX_MM and out["stub_stress_mpa"] <= allow
@@ -335,6 +343,24 @@ def load_flow(G, M, fx) -> np.ndarray:
     return np.where(M, np.sqrt(g), 0.0)
 
 
+def bending_score(G, M, fx) -> np.ndarray:
+    """|bending stress| per voxel (beam theory per slice), outboard of where the part is held."""
+    import beam_support as bsm
+    contact = M & ndimage.binary_dilation(G.body)
+    y_fix = G.Y[contact].max() if contact.any() else 0.0
+    out = np.zeros(M.shape)
+    for j, y in enumerate(G.y):
+        s = M[:, j, :]
+        if y < y_fix - G.h / 2 or not s.any():
+            continue
+        z = G.Z[:, j, :]
+        zc = z[s].mean()
+        I = ((z[s] - zc) ** 2).sum() * G.h ** 2 + s.sum() * G.h ** 4 / 12
+        Mo = bsm.LOAD_RADIAL_N * (fx["y_bear"] - y) + bsm.LOAD_AXIAL_N * G.ax["R"]
+        out[:, j, :] = np.where(s, np.abs(Mo * (z - zc)) / I, 0.0)
+    return out
+
+
 def f_carved(G, fx, frac: float = 0.08, min_frac: float = 0.004, max_iter: int = 200):
     """Load-carved from the full envelope: repeatedly remove the material that carries the least of the
     wheel's load (load_flow), keeping the rules and the load estimate. A step that fails is undone and retried
@@ -344,8 +370,11 @@ def f_carved(G, fx, frac: float = 0.08, min_frac: float = 0.004, max_iter: int =
     best = M.copy()
     for _ in range(max_iter):
         flow = load_flow(G, best, fx)
-        cut = np.quantile(flow[best], frac)
-        M, rep = rules(G, np.where(best & (flow > cut), 1.0, -1.0), fx)
+        bend = bending_score(G, best, fx)
+        q = lambda a: np.quantile(a[best], 0.95) or 1.0               # noqa: E731
+        score = np.maximum(flow / q(flow), bend / q(bend))
+        cut = np.quantile(score[best], frac)
+        M, rep = rules(G, np.where(best & (score > cut), 1.0, -1.0), fx)
         if rep["refused"] or not loads(G, M, fx)["ok"]:
             frac /= 2
             if frac < min_frac:
@@ -355,7 +384,7 @@ def f_carved(G, fx, frac: float = 0.08, min_frac: float = 0.004, max_iter: int =
     return np.where(best, 1.0, -1.0)
 
 
-DEMO = {"envelope": f_envelope, "carved": f_carved,
+DEMO = {"envelope": f_envelope, "carved": f_carved, "carved2": f_carved,
         "random_a": f_random(1, 2.0, 0.55), "random_b": f_random(2, 3.0, 0.45), "random_c": f_random(3, 1.5, 0.6),
         "broken": f_broken}
 
