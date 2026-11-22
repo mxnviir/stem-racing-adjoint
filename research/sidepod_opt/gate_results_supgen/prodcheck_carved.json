@@ -1,0 +1,21 @@
+{
+ "D20_half_N": 0.20921666474733056,
+ "wall_s": 1596.3,
+ "converged": true,
+ "residual_p": 0.001511643826919049,
+ "force_osc": 0.04259534089502829,
+ "force_drift": 0.014132589044803467,
+ "run_dir": "",
+ "force_mean_stderr": 0.001398939578225617,
+ "morph_fallback": false,
+ "folder": "runs/support_gen/carved/car",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "coarse",
+ "iterations": 2000,
+ "n_proc": 2,
+ "y_plus_min": 0.834519326012436,
+ "y_plus_max": 187.73240974733366,
+ "n_cells": 128395,
+ "run_dir_kept": "/home/user/esp32-line-follower/research/sidepod_opt/gate/supgen_cases/carved"
+}
