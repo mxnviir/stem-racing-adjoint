@@ -1029,6 +1029,24 @@ external topology case was **not found** in their material (that is not proof it
     over-reads the body's drag. The rest of M1 (do the design *differences* match?) waits for the fine
     groove, no pod, blend 50 and design 8, now running.
   - Cost on this machine: 4.5 h per run on 4 cores, peak 6.2 GB; y+ max 87 (wall functions, no layers).
+- **2026-11-22 09:40, fine mesh: the groove is WORSE than the team pod (+2.5 mN); medium said −3.6.**
+
+  | half car, mN | team, fine | groove, fine | team, medium | groove, medium |
+  |---|---|---|---|---|
+  | total | 176.04 | 178.52 | 179.86 | 174.86 |
+  | body (pressure part) | 18.6 (2.6) | 23.6 (8.1) | 22.0 (8.4) | 23.7 (10.9) |
+  | wheels | 157.5 | 154.9 | 157.8 | 151.1 |
+
+  - On the fine mesh the team pod's body pressure drag drops to 2.6 mN, while the groove's stays at 8.1;
+    the groove's wheel benefit shrinks from −6.7 to −2.5 mN. Net: groove +2.5 mN on fine, against −3.6 on
+    medium. The groove's fine block means still creep up (177.9 → 178.6): not fully flat.
+  - Single fine meshes so far; fine mesh noise is unmeasured (medium: 0.75 mN). A 6 mN swing between meshes
+    is 8× medium's noise, so it is very likely real, but it is not established until the repeats land.
+  - **If it holds, mark M1 fails:** medium does not rank sidepod details correctly (it got pod vs no pod
+    and the valley right, but not a 3–5 mN feature), and the selected route's loop would have to be scored on
+    the fine mesh (4.5 h per run on 4 cores here) or finer, since the body drag is still moving between medium
+    and fine.
+  - Queue reordered: team~1, groove~1 (clean repeats, frame shifted), then design 8, no pod, blend 50.
 
 ## Sources
 
