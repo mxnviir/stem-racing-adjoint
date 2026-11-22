@@ -91,7 +91,9 @@ SLS PA12 / PLA (owner: ABS, 0.2 mm nozzle), and these files are still set to the
 - Half car with a symmetry plane, 20 m/s, air; k-ω SST RANS; rolling road; rotating wheels; steady solver
   (`simpleFoam`), drag = mean of the last 20 % of iterations ("D20"). Whole-car drag = 2 × half car.
 - **What is in the CFD car today:** the milled body (`car`) and four wheels as closed spinning discs (`wheelF`,
-  `wheelR`). No wings, nose cone or supports. So "wheels carry ~90 % of drag" describes this stripped trial car;
+  `wheelR`). No wings, nose cone or supports: at both axles there is open air under the body where the printed
+  support pod sits on the real car (`supports.py` adds them as an opt-in patch; a car with supports is a new
+  baseline). So "wheels carry ~90 % of drag" describes this stripped trial car;
   `research/APPROACH.md` quotes 64–75 % for a full car.
 - Meshes (`resolution=`): `coarse` ~105 k cells, `medium` ~520 k, `fine` ~3.36 M, `resolved` ~4–5 M with a
   wall-layer stack (y+ ≤ 2). **Coarse, medium and fine have no boundary-layer cells** (the search settings
@@ -201,8 +203,15 @@ closed outer skin; one closing check on the final car's lead. Hubcap later (D14)
 `groove~1` (due ~19:10 UTC 22 Nov), then `team~2`, `groove~2`, `nopod`, `adjoint8`, `blend50` (`gate/fine_here3.sh`). Results land in
 `gate_results_fine/prodcheck_<tag>.json`; `python fine_campaign/summarize.py fine` prints the table and marks.
 
-**Running on the owner's PC:** `esi/run_resolved_test.sh` (~5 M cells). Nothing from it is on the branch yet
-(checked 13:05 UTC 22 Nov).
+**The wall-resolved adjoint test** runs as a GitHub Actions workflow on this branch
+(`.github/workflows/resolved_adjoint.yml`, set up by the owner's agent; `ubuntu-24.04` hosted runners, chained
+links, "all runs 1,000 iterations" protocol; state in `.github/resolved_adjoint_state.json`). On 22 Nov ~16:00
+UTC it was still on the production base (link 4). Its verdict arrives as a ROUTES entry plus
+`gate_results_resolved*/` on this branch; watch the Actions tab for progress.
+
+**Another session works on branch `ccr-a4f3e46d-23atrh`:** the repo reorganised into `car/`, `cfd/`, `search/`,
+SimScale-scored sidepod evolution (CMA) and a whole-car layout search. Its results: ROUTES.md 2026-11-22 19:00.
+It still tops cars up to 48.2 g and places the team's CAD supports.
 
 **Open questions, in priority order**
 1. Fine repeats: with 3 fine meshes each, is the groove better or worse than the team pod (gate 1)? The solver
@@ -218,7 +227,9 @@ closed outer skin; one closing check on the final car's lead. Hubcap later (D14)
 
 ## 8. How to check the PC's adjoint test (the latest decision on the normal adjoint)
 
-The test, its marks and its setup are in `esi/RESOLVED_TEST.md`. Results live **on the PC** unless it was
+The test, its marks and its setup are in `esi/RESOLVED_TEST.md`. It currently runs as the `resolved_adjoint`
+GitHub Actions workflow (section 7): there, read the run's job logs and wait for its ROUTES entry. The commands
+below are for a run on a PC with `esi/run_resolved_test.sh`, where results live **on the PC** unless it was
 started with `PUSH=1`.
 
 **On the PC (repo root):**
@@ -303,6 +314,7 @@ dated entry to `ROUTES.md` and update D9 in `DECISIONS.md`.
 | `objective.py` | `RaceModel` (race time and slopes), `best_ballast` (the model picks the lead), `mass_cell_gradient` |
 | `shape_loop.py` | The shaping loop v2: `seeds`, `build_design`, `solve`, `adjoint`, `grid_gradient`, `step_field`, `init/run/show` |
 | `run_loop_here.sh` | Restart-proof wrapper: one loop iteration at a time, commit and push each |
+| `supports.py` | Wheel supports for a car folder: `add <folder> --kind cad|beam` (team CAD solids or Part 4's parametric engine) → `supports.stl` wall patch, mass, COM, gates; `compare` checks them against `cad/example_car.step` |
 | `prodcheck.py` | One production-model CFD run of a car folder on any mesh (`PRODCHECK_RES/ITERS/TIMEOUT/KEEP/RESULTS/WALL_RESOLVED`) |
 | `prodchain.py` | Production check of a loop run along one morphed-mesh lineage |
 | `gate.py` | Bump geometry (`bumps`, `variant`), base state, bump solves, ESI adjoint judge; `kw()` holds the mesh settings (`GATE_RES`, `GATE_DOMAIN_DX_MM`, `GATE_WALL_RESOLVED`) |

@@ -1108,6 +1108,39 @@ external topology case was **not found** in their material (that is not proof it
   wall faces)) because a grep of the final snappy retry pass printed "Extruding 0 ... (0%)" on this mesh, whose true coverage
   is ~44.5k of 72.3k wall faces (~61 %). CI mesh measured: 2,132,871 cells (the doc's 4-5 M estimate not met), y+ car avg 1.43
   / max 49.8, wheels avg ~1.05; flagged to the owner.
+- **2026-11-22 19:00, wheel supports (owner's example car, `cad/example_car.step`) and the SimScale branch.**
+  - **Finding: this pipeline's CFD car never had wheel supports.** The trial car's body is the raised spine at
+    both axles (floor at z 17.2–17.5 mm, half-width 10.8–12.5 mm); the lower body there is the printed support's
+    hollow pod (14.4 × 20 mm section front, 14.1 × 21.9 mm rear, wheel to wheel), which was missing: open air
+    between the wheels below the body. Every coarse/medium/fine number so far is for that stripped car.
+  - **The architecture** (owner): pod flush with the body → short neck/flare → flat disc covering the wheel's
+    inner side (r ≈ 12.6 mm, ~1 mm) → boss fillet → stub axle (3 mm front, 4 mm rear) with the bearing.
+    One ABS part per axle: 2.79 g front, 3.09 g rear (5.88 g).
+  - **Engines already in the repo:** the team's support solids (`part1-simulation/hardware_cad/`, identical to
+    the example's by section, table in `python supports.py compare`) and Part 4's parametric, load-sized
+    `beam_support.py`. New thin adapter **`supports.py`** (opt-in; no default changed): `add <car folder>
+    --kind cad|beam` writes `supports.stl` as a fixed wall patch plus `supports.json` (mass, COM, gates).
+  - `cad` on the team car: 5.88 g, T3.7 margin 0.00 / 0.01 mm, inside the wheels' cylinder by 1.1–1.2 mm, 292 mm³
+    embedded in the foam. The example STEP's rear support bottoms at **1.40 mm** (T3.7 asks 1.5); the repo's copy
+    was already corrected. `beam` on the same body falls back to a solid rod (7.14 g): the STEP body is already
+    milled away at the axles, so the engine finds no lower body to make a pod from. To generate the pod, the
+    free-form field has to own the lower body at the axles (follow-up).
+  - **Queued (medium, production, cold, 2,000 its):** the team car WITH supports on two clean meshes
+    (`team_sup_cad`, `~1`). Reading fixed now: against the team car without supports (178.74, 4 meshes, σ 0.75),
+    a change beyond ±2.3 mN (3σ of a pair mean vs the 4-mesh mean ≈ 3 × 0.65) means the supports matter to the
+    scale of the pod effects, and every pod comparison has to be redone on the car with supports. Meshes of
+    1.4–2.8 mm don't resolve the 1 mm disc, so the number is indicative only.
+  - **Mass bookkeeping gap:** the SimScale branch itemises non-foam parts at 19.23 g (printed 7.28, wheels 5.00,
+    supports 5.88, halo 1.07); this pipeline assumes 22.52 g. With 19.23 g the team pod car carries ~3.3 g of
+    lead instead of none. To settle with a weigh-in; affects D2 and D13.
+  - **SimScale results on `ccr-a4f3e46d-23atrh` (another session):** sidepod CMA from the team pod: batch best
+    765.6 → 755.8 ms, batch mean 773.8 → 758.0 ms over 96 timed cars; best 755.80 ms, still 2.6 ms slower than
+    the team car there (753.16 ms). From no pod: best 762.33 ms. Layout batch 0: best 753.8 vs reference 756.4 ms
+    (single runs; two mesh setups 8.8 ms apart on the same reference). Their mesh check: team car 382 / 358 /
+    363 mN on three settings. Masses: all topped up to 48.2 g there; one car above 50 g (50.59 g, 785 ms).
+  - **The adjoint test** is running as `.github/workflows/resolved_adjoint.yml` on this branch (owner's agent),
+    on `ubuntu-24.04` GitHub-hosted runners, chained past the 6 h limit, under an "all runs 1,000 iterations"
+    protocol. Its verdict will arrive as a ROUTES entry and results on this branch.
 
 ## Sources
 

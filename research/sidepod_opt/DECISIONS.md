@@ -23,7 +23,8 @@ decided), *withdrawn*.
 | D12 | Pass marks are fixed in writing before each result | settled |
 | D13 | The wheel is optimised separately for inertia and durability, with one closing check | provisional |
 | D14 | The hubcap is a separate, later decision (axle-mounted, non-rotating) | provisional |
-| D15 | Compute runs only on machines the team owns or rents | settled |
+| D15 | Compute runs only on machines the team owns or rents | settled (see note) |
+| D16 | Wheel supports: the team's architecture, from the repo's two engines through one adapter | provisional |
 
 ---
 
@@ -175,7 +176,27 @@ decided), *withdrawn*.
   be large.
 - **Needs:** a rule check that a fixed cap is legal; CFD with and without, on the scoring mesh.
 
+## D16. Wheel supports
+- **Decision:** every car carries the team's support architecture: per axle one printed ABS part, wheel to
+  wheel: a hollow pod that is the car's lower body at the axle (flush), a short neck, a flat disc covering the
+  wheel's inner side, a boss fillet and the stub axle with the bearing. Geometry comes from `supports.py`:
+  `cad` (the team's solids, exact for the current layout) or `beam` (Part 4's parametric, load-sized engine, for
+  other layouts and bodies).
+- **Why:** the support is part of the real car's shape and mass; the CFD car in this work had none (open air
+  under the body at both axles), so its drag split and the pod's surroundings were not the real car's.
+- **Evidence:** the repo's CAD solids match the owner's example car section by section (2.79 g + 3.09 g);
+  the adapter builds, exports and gates them (T3.7, T7.12.1). CFD with supports: queued (medium, 2 meshes).
+- **Open:** (a) the parametric engine falls back to a solid rod on the STEP body, because that body is
+  already milled away at the axles: generating the pod needs the free-form field to own the lower body there;
+  (b) mass: this pipeline's 22.52 g of "other parts" is an assumption; the itemised sum on the SimScale branch
+  is 19.23 g (supports 5.88 g of it); (c) 1 mm discs are below the mesh size of every mesh used so far.
+- **Overturned if:** the with/without-supports CFD difference is inside mesh noise on a mesh that resolves
+  the disc (then supports can stay out of the shape search and be added only for final timing).
+
 ## D15. Compute
 - **Decision:** CFD runs on machines the team owns or rents (PC, cloud), not on GitHub-hosted runners.
 - **Why:** GitHub's terms limit hosted runners to building and testing the repository's software; an earlier
   project lost four accounts this way.
+- **Note (2026-11-22):** the wall-resolved adjoint test is nevertheless running as a chained workflow on
+  GitHub-hosted runners (`.github/workflows/resolved_adjoint.yml`, set up by the owner's own agent). That was
+  the owner's call; the risk above applies to it.
