@@ -1168,8 +1168,12 @@ external topology case was **not found** in their material (that is not proof it
     The rod part of carved_tie is the protected tie path, i.e. chosen by the path rule, not by the load carve.
   - **Provenance:** "carved" (CFD'd above) was built at 18:58 by the code of a299a6c (centre-plane clamp);
     the current `demo --only carved` would build a different part.
-  - Running: coarse CFD of carved_tie, then the fine-mesh compatibility check (fine mesh, 30 iterations,
-    checkMesh, patch capture; gated on 8 GB free memory).
+  - **carved_tie, coarse CFD: 185.66 mN** (120,868 cells, converged): +5 mN over no supports, against +19 for
+    the team CAD supports, at 5.33 g vs 5.88 g. Capture 99.6 % of exposed surface (1.4 mm2 stray). The thicker
+    rear disc (1.52 mm) now stands 0.5 mm proud of the wheel's inner face, so its face is a supports patch.
+    One coarse mesh: a lead to confirm on finer meshes with repeats, not a result.
+  - Running: the fine-mesh compatibility check (fine mesh, 30 iterations, checkMesh, patch capture; gated on
+    8 GB free memory; started 21:07).
 
 ## Sources
 

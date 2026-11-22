@@ -1,0 +1,21 @@
+{
+ "D20_half_N": 0.1856620748992799,
+ "wall_s": 952.5,
+ "converged": true,
+ "residual_p": 8.439436476363517e-05,
+ "force_osc": 0.0034965160486571533,
+ "force_drift": 0.000156971402534536,
+ "run_dir": "",
+ "force_mean_stderr": 0.00014664054154487353,
+ "morph_fallback": false,
+ "folder": "runs/support_gen/carved_tie/car",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "coarse",
+ "iterations": 2000,
+ "n_proc": 2,
+ "y_plus_min": 0.9160470027064882,
+ "y_plus_max": 184.42197474730273,
+ "n_cells": 120868,
+ "run_dir_kept": "/home/user/esp32-line-follower/research/sidepod_opt/gate/supgen_cases/carved_tie"
+}
