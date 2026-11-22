@@ -1,5 +1,5 @@
 {
- "stage": 0,
+ "stage": 1,
  "runs": {
   "evolve:cma:original:s1": {
    "used": 105,
@@ -12,23 +12,20 @@
    "best": 0.7658480928162781
   },
   "evolve:cma_scratch2:lean:s1": {
-   "used": 29,
-   "illegal": 11,
-   "best": 0.7623252122689047
+   "used": 32,
+   "illegal": 18,
+   "best": 0.7621744245927722
   }
  },
- "inflight": {
-  "c00163": {
-   "run": "evolve:cma_scratch2:lean:s1",
-   "stage": "evolve"
-  },
-  "c00169": {
-   "run": "evolve:cma_scratch2:lean:s1",
-   "stage": "evolve"
+ "inflight": {},
+ "n": 180,
+ "log": [
+  {
+   "t": 1795373926.652699,
+   "stage": "evolve",
+   "done": true
   }
- },
- "n": 170,
- "log": [],
+ ],
  "ref:evolve": "c00012",
  "ref:evolve_old_mesh": "c00000"
 }

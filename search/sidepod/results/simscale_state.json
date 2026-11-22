@@ -1,77 +1,26 @@
 {
- "keys": {
-  "2f32c2d544": {
-   "runs": 10,
-   "project": "669525764013223556",
-   "box": "20ec6925-3540-4c3e-a098-c943271532b4",
-   "retired": null
-  },
-  "c303ee8756": {
-   "runs": 82,
-   "project": "1399685146673566431",
-   "box": "aac748ae-ea23-45dc-bec1-4eb944857f51",
-   "retired": "ApiException: (403)\nReason: \nHTTP response headers: HTTPHeaderDict({'Content-Type': 'application/json', 'Content-Length': '226', 'Connection': 'keep-alive', 'Date': 'Sun, 22 Nov 2026 08:30:21 GMT', 'E"
-  },
-  "ce2eea9b8d": {
-   "runs": 47,
-   "project": "666738949348988974",
-   "box": "3619f5a7-ee88-4567-a813-8f55237e8c08",
-   "retired": null
-  },
-  "be9071a4be": {
-   "runs": 0,
-   "project": null,
-   "box": null,
-   "retired": null
+ "cases": {},
+ "done": {
+  "c00178": {
+   "D20_N": 0.4607793436560988,
+   "L20_N": 0.0929594839618964,
+   "ok": true,
+   "info": {
+    "simscale_sim": "ccec7ad2-c72e-4104-9bf0-b933af61c236",
+    "run": "13fc60d0-3060-4f26-998c-ef6c76ada502",
+    "project": "666738949348988974",
+    "key": "ce2eea9b8d",
+    "cost_estimate": 25.84,
+    "pod_faces": 3900,
+    "cells": 3675874,
+    "wall_s": 2855.329772233963,
+    "iters": 1000,
+    "force_columns": "total",
+    "Fx_window_std": 0.0015912928570396044,
+    "Fx_prev_window_mean": 0.22925747462572868
+   }
   }
  },
- "cases": {
-  "c00163": {
-   "folder": "runs/sidepod/cars/c00163",
-   "phase": "run",
-   "fp": "ce2eea9b8d",
-   "t0": 1795362004.668889,
-   "attempt": 5,
-   "import_id": "519d68fa-fb4e-4788-8c90-c72e3ed636e5",
-   "project": "666738949348988974",
-   "tries": [
-    "4500: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "5200: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "3900: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "6000: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE985. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Setti",
-    "4200: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']"
-   ],
-   "geometry_id": "ae1f7218-9c67-482b-8a28-628013c35506",
-   "sim_id": "c5ca0ee3-ff11-415c-9bbd-a4bfb6e057fc",
-   "mesh_op": "e52538fa-54f7-4799-b3f7-c9c076e7a3c1",
-   "mesh_done": true,
-   "cells": 3937061,
-   "run_id": "f67d5bae-4f13-4594-92b7-6b3b1338ef98",
-   "cost_estimate": 16.85,
-   "progress": 0.10400000214576721
-  },
-  "c00169": {
-   "folder": "runs/sidepod/cars/c00169",
-   "phase": "run",
-   "fp": "ce2eea9b8d",
-   "t0": 1795362004.6688948,
-   "attempt": 1,
-   "import_id": "0328bae2-4ee4-4fa7-ba51-8b1f679a6bf4",
-   "project": "666738949348988974",
-   "geometry_id": "9e562c80-7aaa-4694-85d0-8c46b4f6c58c",
-   "sim_id": "bb00012a-f012-4a8e-b5ae-f236d39d1661",
-   "mesh_op": "0dc73097-fd5e-4d32-851c-be9228e27c95",
-   "tries": [
-    "4500: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE13. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Settin"
-   ],
-   "mesh_done": true,
-   "cells": 3801764,
-   "run_id": "52a2892c-438e-41a2-aa38-1c08e84ac203",
-   "cost_estimate": 17.09,
-   "progress": 0.9559999704360962
-  }
- },
- "done": {},
  "events": [
   {
    "t": 1795336221.8093867,
