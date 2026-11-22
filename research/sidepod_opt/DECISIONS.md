@@ -177,19 +177,27 @@ decided), *withdrawn*.
 - **Needs:** a rule check that a fixed cap is legal; CFD with and without, on the scoring mesh.
 
 ## D16. Wheel supports
-- **Decision:** every car carries the team's support architecture: per axle one printed ABS part, wheel to
-  wheel: a hollow pod that is the car's lower body at the axle (flush), a short neck, a flat disc covering the
-  wheel's inner side, a boss fillet and the stub axle with the bearing. Geometry comes from `supports.py`:
-  `cad` (the team's solids, exact for the current layout) or `beam` (Part 4's parametric, load-sized engine, for
-  other layouts and bodies).
-- **Why:** the support is part of the real car's shape and mass; the CFD car in this work had none (open air
-  under the body at both axles), so its drag split and the pod's surroundings were not the real car's.
-- **Evidence:** the repo's CAD solids match the owner's example car section by section (2.79 g + 3.09 g);
-  the adapter builds, exports and gates them (T3.7, T7.12.1). CFD with supports: queued (medium, 2 meshes).
-- **Open:** (a) the parametric engine falls back to a solid rod on the STEP body, because that body is
-  already milled away at the axles: generating the pod needs the free-form field to own the lower body there;
-  (b) mass: this pipeline's 22.52 g of "other parts" is an assumption; the itemised sum on the SimScale branch
-  is 19.23 g (supports 5.88 g of it); (c) 1 mm discs are below the mesh size of every mesh used so far.
+- **Decision:** every car carries wheel supports of the team's architecture: per axle one printed ABS part,
+  wheel to wheel, from the body (flush, glued, or pocketed into the foam) through a neck to a flat disc on the
+  wheel's inner side, with the stub axle and bearing. The disc and stub are Part 4's (sized by its load case);
+  **everything between the body and the disc is generated** by `support_gen.py` from a free-form solid/air
+  field, not drawn and not parametric. The team's CAD supports (`supports.py --kind cad`) remain the
+  reference.
+- **Why:** the support is part of the real car's shape and mass; the CFD car had none (open air under the
+  body at both axles). Coarse CFD: supports add 10-30 mN (180.7 without; 191-211 with), the size of the
+  sidepod effects, so they cannot be left out of the shape search.
+- **How a support is made legal:** legal volume (inside the wheels' cylinder T7.12.1, 1.5 mm off the track
+  T3.7, clear of the T7.13 claw band, inboard of the disc); 1.05 mm minimum wall (opening); only face-connected
+  pieces carrying load from the disc to the body/centre plane; one part wheel to wheel; >= 10 mm2 glue contact;
+  beam-theory load check (stress, sag at the bearing, disc per foot) on the voxels and again on the as-built
+  mesh; gates on the final mesh (one piece, watertight, claw points free). The load-carve removes the
+  least-loaded material until the next step fails, never cutting the wheel-to-wheel tie path, and stops when
+  thinner disc feet would cost more disc than they save. First result: 5.33 g for both axles (team: 5.88 g).
+- **Evidence:** ROUTES.md 2026-11-22 21:00 (CFD of five support sets, mesh capture >= 99.6 % of exposed
+  surface, renders inspected).
+- **Open:** (a) the glue joint is taken as rigid foam: optimistic; a foam/glue strength from the team would
+  turn it into a check; (b) surfaces are lumpy at 0.4 mm voxels; (c) mass: this pipeline's 22.52 g of
+  "other parts" vs the SimScale branch's itemised 19.23 g; (d) fine-mesh compatibility: running.
 - **Overturned if:** the with/without-supports CFD difference is inside mesh noise on a mesh that resolves
   the disc (then supports can stay out of the shape search and be added only for final timing).
 

@@ -1142,6 +1142,35 @@ external topology case was **not found** in their material (that is not proof it
     on `ubuntu-24.04` GitHub-hosted runners, chained past the 6 h limit, under an "all runs 1,000 iterations"
     protocol. Its verdict will arrive as a ROUTES entry and results on this branch.
 
+- **2026-11-22 21:00, wheel-support generator (`support_gen.py`): tested on coarse CFD, renders inspected, carve fixed.**
+  The generator makes its OWN support geometry (everything except the disc and the stub axle) from a solid/air
+  field per axle, legal and load-checked; CFD export trimmed 0.3 mm short of the wheels.
+  - **Coarse CFD (plumbing only, D6; 1 mesh each, 2000 it, all converged; supports refined to level 5):**
+    no supports 180.7 mN · envelope (43.7 g) 191.4 · team CAD 199.7 · carved (20.1 g) 209.2 · random_b (19.2 g)
+    210.5. Supports cost 10-30 mN here, of the order of the sidepod effects: they belong in the shape loop.
+  - **Mesh capture** (`render_cfd_patch.py`: the CFD 'supports' patch against the part's exposed surface,
+    i.e. not glued to, pocketed into or symmetric with the body, not at the wheel): envelope 100 %, random_b
+    99.9 %, carved 99.6 %, team CAD 99.7 %; stray faces 0-6 mm2 at the body joint. A first reading of
+    "lost" surface was the pocketed part inside the foam (by design, booked as foam displaced), not a fault.
+  - **Carve stall fixed.** The load-carve stopped at ~20 g because every further step broke the one-part
+    (wheel-to-wheel) tie, not the load check (sag 0.01-0.03 of 0.15 mm). Now the cheapest centre-plane-to-disc
+    path through the material (along the floor where it can) is never cut. A first run went to 3.57 g, which
+    exposed three holes in the load model: the disc assumed two feet sharing the stub moment (a single 2 mm
+    foot carries all of it, plus the axial load over its distance from the axle), separate pieces in a section
+    were counted as one beam, and nothing re-checked the smoothed part. All three fixed (disc sized per foot;
+    per-piece section stiffness; load check repeated on the as-built mesh); the carve now refuses a step whose
+    thinner feet cost more disc than it saves. **Result: carved_tie, 5.33 g both axles (team 5.88 g), all
+    gates and both load checks pass.** Commit 8b23ec1. The 3.57 g design is superseded (kept as
+    `runs/support_gen/carved_tie_v1`).
+  - **What still looks off:** lumpy, voxel-textured surfaces (smoothing 0.6 cell); a few speck "feet" on the
+    rear disc (0.4-2 mm) that make the disc sizing conservative (rear disc at its allowable, 1.52 mm); the
+    load model still treats the glue joint as rigid foam (no foam/glue strength number: the team's to give).
+    The rod part of carved_tie is the protected tie path, i.e. chosen by the path rule, not by the load carve.
+  - **Provenance:** "carved" (CFD'd above) was built at 18:58 by the code of a299a6c (centre-plane clamp);
+    the current `demo --only carved` would build a different part.
+  - Running: coarse CFD of carved_tie, then the fine-mesh compatibility check (fine mesh, 30 iterations,
+    checkMesh, patch capture; gated on 8 GB free memory).
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)

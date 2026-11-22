@@ -92,8 +92,9 @@ SLS PA12 / PLA (owner: ABS, 0.2 mm nozzle), and these files are still set to the
   (`simpleFoam`), drag = mean of the last 20 % of iterations ("D20"). Whole-car drag = 2 × half car.
 - **What is in the CFD car today:** the milled body (`car`) and four wheels as closed spinning discs (`wheelF`,
   `wheelR`). No wings, nose cone or supports: at both axles there is open air under the body where the printed
-  support pod sits on the real car (`supports.py` adds them as an opt-in patch; a car with supports is a new
-  baseline). So "wheels carry ~90 % of drag" describes this stripped trial car;
+  support pod sits on the real car (`supports.py` adds the team's CAD supports and `support_gen.py` generates
+  new ones, both as an opt-in `supports` patch refined with `GATE_PLUS_SURFACES=supports`; coarse CFD: supports
+  add 10-30 mN, see D16; a car with supports is a new baseline). So "wheels carry ~90 % of drag" describes this stripped trial car;
   `research/APPROACH.md` quotes 64–75 % for a full car.
 - Meshes (`resolution=`): `coarse` ~105 k cells, `medium` ~520 k, `fine` ~3.36 M, `resolved` ~4–5 M with a
   wall-layer stack (y+ ≤ 2). **Coarse, medium and fine have no boundary-layer cells** (the search settings
@@ -315,6 +316,8 @@ dated entry to `ROUTES.md` and update D9 in `DECISIONS.md`.
 | `shape_loop.py` | The shaping loop v2: `seeds`, `build_design`, `solve`, `adjoint`, `grid_gradient`, `step_field`, `init/run/show` |
 | `run_loop_here.sh` | Restart-proof wrapper: one loop iteration at a time, commit and push each |
 | `supports.py` | Wheel supports for a car folder: `add <folder> --kind cad|beam` (team CAD solids or Part 4's parametric engine) → `supports.stl` wall patch, mass, COM, gates; `compare` checks them against `cad/example_car.step` |
+| `support_gen.py` | The wheel-support GENERATOR (D16): per axle a solid/air field on a 0.4 mm grid → rules (legal volume, 1.05 mm wall, load path disc→body, one part wheel to wheel, glue contact) → load check (voxels and as built; disc sized per foot) → marching cubes, union with Part 4's disc and stub → `supports.stl` (CFD-trimmed), `supports_gen.json`, render. `python support_gen.py demo <car folder> --only carved_tie` (run under `ulimit -v 7000000`). Fields: `f_carved` (load-carve, protected tie path), `f_envelope`, `f_random`, `f_broken` (must be refused) |
+| `render_cfd_patch.py` | What the CFD mesh made of the supports: the kept case's `supports` patch over the input part; capture of exposed surface, stray faces |
 | `prodcheck.py` | One production-model CFD run of a car folder on any mesh (`PRODCHECK_RES/ITERS/TIMEOUT/KEEP/RESULTS/WALL_RESOLVED`) |
 | `prodchain.py` | Production check of a loop run along one morphed-mesh lineage |
 | `gate.py` | Bump geometry (`bumps`, `variant`), base state, bump solves, ESI adjoint judge; `kw()` holds the mesh settings (`GATE_RES`, `GATE_DOMAIN_DX_MM`, `GATE_WALL_RESOLVED`) |
