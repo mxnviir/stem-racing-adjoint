@@ -48,6 +48,8 @@ def kw(extra=None):
         k["stage_timeout_s"] = int(os.environ["GATE_TIMEOUT"])
     if os.environ.get("GATE_WALL_RESOLVED") == "1":        # wall-resolved layer stack on any resolution
         k["wall_resolved"] = True
+    if os.environ.get("GATE_PLUS_SURFACES"):               # e.g. "supports": those extra surfaces refined to
+        k["plus_surfaces"] = tuple(os.environ["GATE_PLUS_SURFACES"].split(","))   # level (5 5) on any mesh
     k.update(extra or {})
     # Part 2's SEARCH mesh switches wall layers off (layer_overrides nSurfaceLayers 0), and
     # resolved_layer_controls applies layer_overrides too: a "resolved" run would get NO layer stack
