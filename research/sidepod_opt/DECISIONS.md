@@ -104,7 +104,10 @@ decided), *withdrawn*.
   missing grid terms (adding them made it worse). Suspect: no boundary-layer cells (y+ up to 180).
 - **Decision rule:** the normal adjoint is used only if, on a wall-resolved mesh, r ≥ 0.9, all signs agree and
   predicted/measured lies within 0.5–2 at every site (`esi/RESOLVED_TEST.md`; running on the owner's PC).
-  Otherwise the discrete adjoint on the largest mesh that fits memory.
+  Otherwise the discrete adjoint, but only on a mesh that passes D8 (medium ≈ 128 GB; fine ≈ 500 GB,
+  extrapolated), or steps scored by CFD without a gradient.
+- **Interaction with D8:** the PC test is on the `resolved` mesh (wall layers); D8's evidence is on `fine` (no
+  layers). If the normal adjoint passes, `resolved` becomes the loop mesh and must itself be scored for D8.
 
 ## D10. Steady model for the adjoint
 - **Decision:** the adjoint is taken on a first-order-upwind flow model that settles to a fixed solution;
@@ -147,7 +150,7 @@ decided), *withdrawn*.
   | Mass is free at the optimum (μ = 0) | lead carried by the final car > 0, and ΔT for moving 1 g from the wheels to the lead container | on a test car: groove car, 1.45 g lead, ΔT = 0.000 ms; to repeat on the final car |
   | Worst case if μ were not 0 | (mass of the lowest-inertia wheel − mass of the lightest feasible wheel) × 4 × 7.5 ms/g: an upper bound on the loss | needs the wheel's structural optimisation |
   | The inside does not affect the aero | closed outer skin by construction | design rule |
-  | The inertia value is real | spin-down test of a printed wheel | no (placeholder 1.39e-7 kg·m²) |
+  | The inertia value is real | spin-down test of a printed wheel | no: 1.39e-7 kg·m² per wheel is computed from the wheel CAD (`part4-simulation/wheel.py` gives 1.41e-7), not measured |
   | Loads do not depend on the car | car mass fixed at the 48.0 g minimum, so wheel loads are the same for every car | by D2 |
 
 - **The closing check:** if the final car carries lead, the wheel stands. If it carries none, the wheel is
@@ -163,7 +166,9 @@ decided), *withdrawn*.
 - **Decision:** a non-rotating cap fixed to the axle is evaluated after the wheel and body, as mass (at price
   μ) against its measured drag change.
 - **Why:** fixed to the axle it adds no inertia, so it does not interact with D13; wheels carry ~90 % of
-  half-car drag in CFD (157 of 176 mN, fine mesh), so the drag side may be large.
+  half-car drag in CFD (157 of 176 mN, fine mesh) on the stripped trial car (body + four closed-disc wheels,
+  no wings, nose or supports; a full car is quoted at 64–75 % in `research/APPROACH.md`), so the drag side may
+  be large.
 - **Needs:** a rule check that a fixed cap is legal; CFD with and without, on the scoring mesh.
 
 ## D15. Compute

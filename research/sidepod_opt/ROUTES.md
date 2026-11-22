@@ -45,7 +45,9 @@ neural-network predictor). The status log keeps the history.
 
 **Gates before the loop runs (in order)**
 1. **Scoring mesh:** medium must rank designs like the fine and 5 M meshes (`fine_campaign/`, marks
-   M1–C5). The coarse mesh is out: it invented ~10 mN of body drag. Running now: clean medium repeats.
+   M1–C5). The coarse mesh is out: it invented ~10 mN of body drag. Medium (clean repeats, 2026-11-21 20:05)
+   agrees on big effects; the fine mesh (2026-11-22) puts the groove at +2.5 mN where medium says −3.6, so
+   medium may not rank 3–5 mN features. Running now: fine clean repeats.
 2. **Which adjoint:** the normal (ESI) adjoint on the coarse mesh without wall layers got signs right
    but only 2–25 % of the size. Ruled out as causes: turbulence, Reynolds number, grid terms. Leading
    suspect: no boundary-layer cells. Decisive test: `esi/run_resolved_test.sh` on the owner's PC

@@ -70,10 +70,12 @@ No car has been built or track-tested: every time is a model number.
 | `part1-simulation` | The milled body as one field on a 1 mm grid with every rule as a hard mask; the machining rule; mass and COM | A body is only valid if the mill can make it and the rules hold, so both are applied to the field itself, not checked afterwards |
 | `part2-simulation` | OpenFOAM half-car CFD (`openfoam_case.py`, `cfd_wrapper.py`), the race-time model (`race_objective.py`, JAX, differentiable), the ESI adjoint case (`openfoam_adjoint.py`), noise studies | One trusted "stopwatch": geometry in, drag/lift out, then race time and its slopes |
 | `part3-simulation` | The "compass": turns an aero sensitivity map into a race-time map (`compass.py`); known-answer checks for adjoints | A gradient must pass a test with a known answer before anything follows it |
-| `part4-simulation` | Everything that is not the body: wheels (`wheel.py`, mass and inertia from the team's wheel STLs), wings, nose, supports, joints, print files | Exact parametric parts with rule gates and manufacturing files |
+| `part4-simulation` | Everything that is not the body: wheels (`wheel.py`: the team's wheel STLs, one 3×6×2.5 mm bearing of 0.30 g per wheel, mass and inertia computed from the mesh: 1.41e-7 kg·m² per wheel), wings, nose, supports, joints, print files | Exact parametric parts with rule gates and manufacturing files |
 | `part5-simulation` | One car end to end (`run_car.py`), the referee (`legality.py`, 113 rule rows), the older search (`solver.py`, `pattern.py`) | A scrutineer in code, independent of the code that builds the car |
 
-Still set to the old 48.2 g sizing: `part5-simulation/run_car.py`, `pattern.py`, `solver.py`,
+Each part's `README.md` has a module-by-module table of its files (what every `.py` does); they are current.
+Two mismatches with the owner's rules to fix when the whole-car work starts: Part 4 assumes printed parts in
+SLS PA12 / PLA (owner: ABS, 0.2 mm nozzle), and these files are still set to the old 48.2 g sizing: `part5-simulation/run_car.py`, `pattern.py`, `solver.py`,
 `part1-simulation/ballast.py`. Change when the whole-car work starts (DECISIONS.md D2).
 
 ### `research/` (where the current work lives)
@@ -88,6 +90,9 @@ Still set to the old 48.2 g sizing: `part5-simulation/run_car.py`, `pattern.py`,
 
 - Half car with a symmetry plane, 20 m/s, air; k-ω SST RANS; rolling road; rotating wheels; steady solver
   (`simpleFoam`), drag = mean of the last 20 % of iterations ("D20"). Whole-car drag = 2 × half car.
+- **What is in the CFD car today:** the milled body (`car`) and four wheels as closed spinning discs (`wheelF`,
+  `wheelR`). No wings, nose cone or supports. So "wheels carry ~90 % of drag" describes this stripped trial car;
+  `research/APPROACH.md` quotes 64–75 % for a full car.
 - Meshes (`resolution=`): `coarse` ~105 k cells, `medium` ~520 k, `fine` ~3.36 M, `resolved` ~4–5 M with a
   wall-layer stack (y+ ≤ 2). **Coarse, medium and fine have no boundary-layer cells** (the search settings
   switch layers off; wall functions on bare cells).
@@ -100,7 +105,8 @@ Still set to the old 48.2 g sizing: `part5-simulation/run_car.py`, `pattern.py`,
 `objective.RaceModel` wraps Part 2's `race_objective.py` with this car's axles, thrust line and guides.
 Slopes on the team car: **0.18 ms per mN of drag, 7.5 ms per gram, 7.5 ms per gram of wheel I/r²**, lift
 negligible, centre of mass free inside a flat zone with 4–22 ms cliffs outside it (wheel lift, guide friction).
-Friction terms (`mu_guide` 0.25, rolling 0.010) are placeholders until the team measures them.
+Friction terms (`mu_guide` 0.25, rolling 0.010) are placeholders until the team measures them. The wheel inertia
+(1.39e-7 kg·m² per wheel) comes from the wheel CAD, not from a spin test of a printed wheel.
 
 ---
 
@@ -127,12 +133,12 @@ Friction terms (`mu_guide` 0.25, rolling 0.010) are placeholders until the team 
 |---|---|---|---|
 | 1 | Original pipeline: carve the body along an ESI adjoint "compass" (Parts 1/3/5) | The adjoint failed Part 3's sign tests | A gradient needs a known-answer check |
 | 2 | Low-Reynolds lattice-Boltzmann benches (`research/sidepod_region`, `organic_feasibility`) | Ranked pods wrongly (Re ~2×10³ vs 2.7×10⁵) | Only full-Reynolds RANS counts |
-| 3 | `sidepod_opt` campaign: CMA-ES / BO / SAIL / NEAT / SPSA over lattice, CPPN or level-set shapes (`campaign.py`, `methods.py`, `design.py`), OpenFOAM / Actions / SimScale evaluators | Built and tested; not run at scale | Kept as tooling; lattice/CPPN parameters are not the owner's "free-form" |
-| 4 | Porous-material topology optimisation from an empty region (`topo/`) | Stalled at the seed skin; CMA on the porous model scored a design 18 % better that real-wall CFD found 11 % worse | A porous solid has no boundary layer: it misjudges thin shapes |
+| 3 | **Route D:** `sidepod_opt` campaign: CMA-ES / BO / SAIL / NEAT / SPSA over lattice, CPPN or level-set shapes (`campaign.py`, `methods.py`, `design.py`), OpenFOAM / Actions / SimScale evaluators | Built and tested; not run at scale | Kept as tooling; lattice/CPPN parameters are not the owner's "free-form" |
+| 4 | **Route B:** porous-material topology optimisation from an empty region (`topo/`) | Stalled at the seed skin; CMA on the porous model scored a design 18 % better that real-wall CFD found 11 % worse | A porous solid has no boundary layer: it misjudges thin shapes |
 | 5 | ESI adjoint vs ±1 mm bumps (`gate_results/RESULT.md`) | r = −0.5 | Confounded: adjoint on a 375 k mesh, bumps on 520 k, unsteady flow |
-| 6 | DAFoam discrete adjoint on the production flow | Out of memory on medium; on coarse the solve stalled | An adjoint needs a settled flow; memory ~150 kB per cell |
+| 6 | **Route A** (free surface + real-wall adjoint): DAFoam discrete adjoint on the production flow | Out of memory on medium; on coarse the solve stalled | An adjoint needs a settled flow; memory ~150 kB per cell |
 | 7 | DAFoam on the **steady model**, coarse mesh | **Passed**: predicted/measured 1.09, 0.66, 0.97 at three sites, r = 0.98 | The discrete adjoint is exact for the model it is given |
-| 8 | Shape loop v1 → v2 (`shape_loop.py`), run `cloud_original` from the team pod | −7.4 % in its own (steady, coarse) model in 8 accepted steps | The loop works as an optimiser |
+| 8 | Shape loop v1 → v2 (`shape_loop.py`), run `cloud_original` from the team pod | −7.4 % in its own (steady, coarse) model (accepted steps 1, 3, 4, 6, 7, 8) | The loop works as an optimiser |
 | 9 | Run `cloud_lean` from no pod | Stalled after −2 mN | A local method can't grow a pod from nothing |
 | 10 | Concept probes on coarse: blends, groove, windows, block | Pod vs none 25 mN; half-grown pod worse than none (a valley); groove −5.5; windows worse | Big structure of the design space |
 | 11 | Medium-mesh re-check | The adjoint design's −10.4 mN became ≈ −1 mN | **The coarse mesh invented ~10 mN of body pressure drag and the adjoint optimised that** |
@@ -141,7 +147,9 @@ Friction terms (`mu_guide` 0.25, rolling 0.010) are placeholders until the team 
 | 14 | ESI adjoint re-tested fairly on the coarse steady flow | Signs 3/3, r 0.98, but 2–25 % of the size; frozen = full turbulence; grid terms made it worse; undamped wall term crashed it | Not turbulence, not Reynolds number; suspect the wall mesh (no layers) |
 | 15 | Wall-resolved test on the coarse mesh | Impossible: layers formed on 0 of 5,666 faces | The wall-resolved question needs the ~5 M mesh (running on the owner's PC) |
 | 16 | Fine mesh (3.36 M) | Team pod 176.0; groove **178.5 (worse)**; body pressure drag 19.8 → 8.4 → 2.6 mN across coarse/medium/fine | Medium may not rank 3–5 mN features; repeats running |
-| — | Ideas proposed and dropped by the owner | Parts-kit "recipes" with quality-diversity search; a neural-network drag predictor; bilevel BO over layout | Parameters can't describe organic shapes; every candidate must be CFD'd |
+| — | **Route C** (sharp surface on a fixed grid, immersed boundary) | Never built: no ready turbulent framework | — |
+| — | **Route E/G** ideas rejected by the owner: a parts kit with shape "recipes" and quality-diversity search; a neural-network drag predictor | Not built | Parameters can't describe organic shapes; every candidate must be CFD'd |
+| — | **Route F** idea: a CFD-scored search over the layout numbers (BO/TuRBO) around the shaping loop | Not rejected, not agreed: the layout method is still open (section 6, point 5) | — |
 
 Literature anchors (full list at the end of `ROUTES.md`): body-fitted level-set optimisation (Feppon,
 Allaire, Dapogny), topology-to-shape (Koch), multimodality (Bons; Chernukhin & Zingg), memetic EA + adjoint
@@ -171,6 +179,15 @@ DECISIONS.md D5).
 | 1. Scoring mesh | Does the mesh rank designs like finer meshes do? | **Open.** Coarse: no. Medium: yes for big effects, doubtful for 3–5 mN features (fine groove flipped sign). Fine repeats running in the cloud session |
 | 2. Adjoint | Is the normal adjoint accurate on a wall-resolved mesh? | **Open.** Test running on the owner's PC (section 8). Fallback: DAFoam on the largest mesh that fits memory, or steps without a gradient |
 | 3. Steady flow | Does the first-order model settle on that mesh? | Part of the PC test (mark A1) |
+
+**The two open gates depend on each other:**
+- The PC test runs on the `resolved` mesh (wall layers). Gate 1's evidence is on `fine` (no layers). If the
+  normal adjoint passes there, `resolved` becomes the loop's mesh, and it must then be scored like the others
+  (team, groove, no pod, repeats) before the loop runs on it.
+- If the fine repeats confirm that medium mis-ranks pod details, the fallback "DAFoam on medium" would repeat
+  the coarse-mesh mistake (optimising mesh error). DAFoam on the fine mesh needs roughly 500 GB (3.36 M cells ×
+  ~150 kB, extrapolated). Then the realistic options are the normal adjoint (if it passes) or gradient-free
+  steps scored on the fine mesh.
 
 The wheel is a separate, smaller problem (DECISIONS.md D13): lowest inertia that survives the loads and prints,
 closed outer skin; one closing check on the final car's lead. Hubcap later (D14).
@@ -223,7 +240,19 @@ ls research/sidepod_opt/gate_results_resolved research/sidepod_opt/gate_results_
 git pull origin claude/dazzling-ritchie-3q792g && cat research/sidepod_opt/gate_results_resolved_up/esi/VERDICT.txt
 ```
 
-To get results off the PC, re-run the same command there with `PUSH=1` (finished steps are skipped).
+To get results off the PC, commit them by hand there (re-running with `PUSH=1` only pushes when the test runs to
+the end, and the log is git-ignored):
+
+```bash
+git add research/sidepod_opt/gate_results_resolved research/sidepod_opt/gate_results_resolved_up && git add -f research/sidepod_opt/gate/resolved_test.log && git commit -m "Normal adjoint test on the wall-resolved mesh: results so far" && git pull --no-rebase origin claude/dazzling-ritchie-3q792g && git push origin claude/dazzling-ritchie-3q792g
+```
+
+If the PC started from the first zip (before 15:32 UTC 21 Nov) its log has no layer-coverage line; read it from
+the mesher's log instead:
+
+```bash
+grep "Extruding" research/sidepod_opt/gate/refA_resolved/logs/snappyHexMesh.log | tail -1
+```
 
 **How far it got** (each line appears in the log when the step is reached):
 
@@ -241,8 +270,8 @@ and predicted/measured between 0.5 and 2 at all three sites.
 
 | Outcome | What it decides | Next step |
 |---|---|---|
-| PASS (frozen or sst) | The normal adjoint is usable on wall-resolved meshes (DECISIONS.md D9) | Wire `esi/esi_on_state.py` into `shape_loop.adjoint()`; check the steady→production transfer on that mesh; run the loop |
-| Signs right, sizes off | Wall resolution alone doesn't fix it | Discrete adjoint on the largest mesh that fits memory (medium ≈ 128 GB), or gradient-free steps |
+| PASS (frozen or sst) | The normal adjoint is usable on wall-resolved meshes (DECISIONS.md D9) | Score the `resolved` mesh for gate 1 (`RES=resolved … campaign.sh stage0`, then `forward`); wire `esi/esi_on_state.py` into `shape_loop.adjoint()`; check the steady→production transfer on that mesh; run the loop |
+| Signs right, sizes off | Wall resolution alone doesn't fix it | Discrete adjoint only on a mesh that passes gate 1 (medium ≈ 128 GB, fine ≈ 500 GB), else gradient-free steps |
 | A1 FAIL | The steady model doesn't settle at 5 M cells | No adjoint there; consider a coarser wake region or an unsteady adjoint; report block means |
 | Mark L FAIL | The mesh isn't wall-resolved | Fix the layer settings (Part 2 `resolved_layer_controls`) before any conclusion |
 | ESI crash in `adjointkOmegaSST` | Known (seen twice) | The frozen result stands on its own |
