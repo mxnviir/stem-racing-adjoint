@@ -1,5 +1,8 @@
 # Hand-off: the local agent (Claude Code on your PC)
 
+> **Superseded for status (2026-11-22):** read `HANDOVER.md` first. This file's pitfalls table, Codespace notes and technical reference still hold.
+
+
 You are Claude Code running on the owner's PC (MintyPC, Windows), with the GitHub CLI (`gh`)
 already signed in. A cloud session started this work but cannot reach Codespaces; you can. Your
 job is to run the heavy computing on GitHub Codespaces, fix whatever small problems come up, and
