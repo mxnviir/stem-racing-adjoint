@@ -361,30 +361,71 @@ def bending_score(G, M, fx) -> np.ndarray:
     return out
 
 
+def tie_path(G, M, fx) -> np.ndarray:
+    """The cheapest face-connected path through M from the centre plane to the disc face, preferring voxels
+    that touch the body (a strip glued under the floor), thickened so that the wall rule keeps it. Found from
+    the material, not drawn: it only tells the carve which voxels hold the part together wheel to wheel."""
+    from scipy.sparse import coo_matrix
+    from scipy.sparse.csgraph import dijkstra
+    idx = -np.ones(M.shape, int)
+    n = int(M.sum())
+    idx[M] = np.arange(n)
+    on_body = ndimage.binary_dilation(G.body)[M]
+    w = np.where(on_body, 1.0, 3.0)                                   # cost of entering a voxel
+    rows, cols, ws = [], [], []
+    for ax_ in range(3):
+        a = np.moveaxis(idx, ax_, 0)
+        i, j = a[:-1].ravel(), a[1:].ravel()
+        k = (i >= 0) & (j >= 0)
+        rows += [i[k], j[k]]; cols += [j[k], i[k]]; ws += [w[j[k]], w[i[k]]]
+    A = coo_matrix((np.concatenate(ws), (np.concatenate(rows), np.concatenate(cols))), shape=(n, n)).tocsr()
+    src = idx[:, 0, :][M[:, 0, :]]
+    dst = idx[M & (G.Y >= fx["y_disc_in"] - 1.5 * G.h) & (G.r <= fx["r_disc"])]
+    if not src.size or not dst.size:
+        return np.zeros(M.shape, bool)
+    dist, pred, _ = dijkstra(A, indices=src, min_only=True, return_predecessors=True)
+    t = int(dst[np.argmin(dist[dst])])
+    if not np.isfinite(dist[t]):
+        return np.zeros(M.shape, bool)
+    path = []
+    while t >= 0:
+        path.append(t); t = int(pred[t])
+    flat = np.zeros(n, bool); flat[path] = True
+    P = np.zeros(M.shape, bool); P[M] = flat
+    return ndimage.binary_dilation(P, structure=ball(WALL_MM / 2 / G.h + 2)) & M
+
+
 def f_carved(G, fx, frac: float = 0.08, min_frac: float = 0.004, max_iter: int = 200):
     """Load-carved from the full envelope: repeatedly remove the material that carries the least of the
     wheel's load (load_flow), keeping the rules and the load estimate. A step that fails is undone and retried
     with half the step; it ends when even a tiny step fails. Nothing is drawn: the shape is what the load
-    path leaves."""
+    path leaves. The wheel-to-wheel tie (the cheapest centre-plane-to-disc path through the material, along
+    the floor where it can) is never cut: without it every step after ~20 g broke the one-part rule."""
     M, rep = rules(G, np.ones(G.X.shape), fx)
     best = M.copy()
+    keep_tie = tie_path(G, best, fx)
     for _ in range(max_iter):
         flow = load_flow(G, best, fx)
         bend = bending_score(G, best, fx)
         q = lambda a: np.quantile(a[best], 0.95) or 1.0               # noqa: E731
         score = np.maximum(flow / q(flow), bend / q(bend))
-        cut = np.quantile(score[best], frac)
+        score[keep_tie] = np.inf
+        cut = np.quantile(score[best & ~keep_tie], frac) if (best & ~keep_tie).any() else -1.0
         M, rep = rules(G, np.where(best & (score > cut), 1.0, -1.0), fx)
-        if rep["refused"] or not loads(G, M, fx)["ok"]:
+        ld = loads(G, M, fx) if not rep["refused"] else None
+        if rep["refused"] or not ld["ok"]:
             frac /= 2
             if frac < min_frac:
+                print(f"  carve {G.ax['tag']}: stop at {best.sum() * G.h ** 3:.0f} mm3, last refusal: "
+                      f"{rep['refused'] or 'loads ' + json.dumps({k: round(ld[k], 3) for k in ('stress_mpa', 'sag_mm')})}",
+                      flush=True)
                 break
             continue
         best = M
     return np.where(best, 1.0, -1.0)
 
 
-DEMO = {"envelope": f_envelope, "carved": f_carved, "carved2": f_carved,
+DEMO = {"envelope": f_envelope, "carved": f_carved, "carved2": f_carved, "carved_tie": f_carved,
         "random_a": f_random(1, 2.0, 0.55), "random_b": f_random(2, 3.0, 0.45), "random_c": f_random(3, 1.5, 0.6),
         "broken": f_broken}
 
