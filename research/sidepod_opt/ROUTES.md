@@ -1094,6 +1094,21 @@ external topology case was **not found** in their material (that is not proof it
     then gate 1 needs state-controlled scoring (both states per design, Part 2's method A) or more repeats on a
     bigger machine.
 
+- **2026-11-22, owner's protocol change mid-campaign: all runs at 1000 iterations.** The CI harness
+  measured the wall-resolved production solve's drag flat from ~iteration 250 (block means 181.2-182.8 mN through iter 1857,
+  drift -0.20 mN per 400 iterations), so the owner set every remaining run to 1000 iterations (production 3000, steady 3000,
+  bumps 1500, ESI adjoints 3000 -> 1000 each). The production state A is taken as-is from the link-1 checkpoint (iteration 1858,
+  already past 1000 and converged); the planned continued march to 3000 was scrapped. Marks unchanged: A1 stays "100-iteration
+  block means of drag span <= 0.10 mN over the last 1,000 iterations" (with exactly 1000 run, its window includes the
+  scheme-switch transient). Harness fixes that this forced, all in the GitHub Actions driver only (esi/run_resolved_test.sh
+  untouched): checkpoint tars keep the processed `processor*` dirs (invoke's resume path requires them; excluding them killed
+  the resumed solve), a resumed production state is finalized at its own iteration (endTime set to its latest time; 0 new
+  iterations), the resumed case is copied to gate/refA_resolved by the workflow (prodcheck's PRODCHECK_KEEP misses resume runs),
+  and the layer-coverage reading uses the cumulative added-layer cells ("Added/Layer mesh" vs "Snapped mesh"/(nSurfaceLayers x
+  wall faces)) because a grep of the final snappy retry pass printed "Extruding 0 ... (0%)" on this mesh, whose true coverage
+  is ~44.5k of 72.3k wall faces (~61 %). CI mesh measured: 2,132,871 cells (the doc's 4-5 M estimate not met), y+ car avg 1.43
+  / max 49.8, wheels avg ~1.05; flagged to the owner.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)

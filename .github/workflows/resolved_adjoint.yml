@@ -180,7 +180,24 @@ jobs:
           c = Car(); c.export_car_folder(c.body_mesh, Path('gate/original'), 'original')
           print('exported gate/original')
           PY
-      - name: solve (fresh resolved mesh + 3000 cold iterations)
+      - name: finalize the resumed production state at its own iteration (no extra iterations)
+        if: needs.init.outputs.ckpt_run != ''
+        run: |
+          python3 - <<'PY'
+          import re, pathlib
+          run = pathlib.Path('/tmp/case/run')
+          latest = max(int(p.name) for p in run.iterdir() if p.name.isdigit() and p.name != '0')
+          cd = run / 'system' / 'controlDict'
+          t = cd.read_text()
+          t = re.sub(r'\nendTime\s+[^;\n]+;', f'\nendTime       {latest};', t, count=1)
+          cd.write_text(t)
+          print('resumed production state finalized at iteration', latest)
+          PY
+          if [ ! -d /tmp/case/run/processor0 ]; then
+            bash -c "source /usr/lib/openfoam/openfoam2412/etc/bashrc && cd /tmp/case/run && decomposePar -force -latestTime > logs/decomposePar.log 2>&1" || exit 1
+            echo decomposed the serial checkpoint
+          fi
+      - name: solve (production to the iteration target)
         id: solve
         working-directory: research/sidepod_opt
         env:
@@ -190,7 +207,7 @@ jobs:
           mkdir -p gate gate_results_resolved
           export P2_JOB_DEADLINE=$(( $(date +%s) + 280*60 )) P2_CHECKPOINT_FILE=$PWD/ckpt_path.txt
           export PRODCHECK_WALL_RESOLVED=1 PRODCHECK_RES=resolved PRODCHECK_RESULTS=$PWD/gate_results_resolved \
-                 PRODCHECK_KEEP=$PWD/gate/refA_resolved PRODCHECK_ITERS=3000 PRODCHECK_TIMEOUT=18000
+                 PRODCHECK_KEEP=$PWD/gate/refA_resolved PRODCHECK_ITERS=1000 PRODCHECK_TIMEOUT=18000
           T0=$(date +%s)
           ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
                  i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t ../../part2-simulation/cfd_case_template/runs/*/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
@@ -221,7 +238,7 @@ jobs:
         if: steps.solve.outputs.chained == 'true'
         run: |
           r=$(cat research/sidepod_opt/ckpt_path.txt)
-          mkdir -p ckpt && tar -cf ckpt/case.tar -C "$(dirname "$r")" --exclude="processor*" --transform "s|^$(basename "$r")|run|" "$(basename "$r")"
+          mkdir -p ckpt && tar -cf ckpt/case.tar -C "$(dirname "$r")" --transform "s|^$(basename "$r")|run|" "$(basename "$r")"
       - if: steps.solve.outputs.chained == 'true'
         uses: actions/upload-artifact@v4
         with: { name: ckpt-proda, path: ckpt/case.tar, retention-days: 3 }
@@ -251,6 +268,18 @@ jobs:
             sleep $((2 ** i))
           done
           [ "$ok" = 1 ] || { echo "chain push failed"; exit 1; }
+      - name: keep the resumed production state (prodcheck's keep misses resume runs)
+        if: steps.solve.outputs.chained != 'true' && needs.init.outputs.ckpt_run != ''
+        working-directory: research/sidepod_opt
+        run: |
+          [ -d /tmp/case/run ] || { echo "no resumed case to keep"; exit 1; }
+          rm -rf gate/refA_resolved
+          cp -r /tmp/case/run gate/refA_resolved
+          rm -rf gate/refA_resolved/processor*
+          mkdir -p gate_results_resolved/forces/prodcheck_stateA
+          f=$(ls /tmp/case/run/postProcessing/forces/0/force.dat 2>/dev/null)
+          [ -n "$f" ] && cp "$f" gate_results_resolved/forces/prodcheck_stateA/forces.dat
+          du -sh gate/refA_resolved
       - name: release the state artifacts (mesh + flow + CAD)
         if: steps.solve.outputs.chained != 'true'
         run: |
@@ -360,7 +389,7 @@ jobs:
           ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
                  i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t gate/refA_resolved_up/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
           set +e
-          python -W ignore -u fine_campaign/steady_base.py gate/refA_resolved gate/refA_resolved_up gate_results_resolved_up "$NP" 3000 > gate/steady_link.log 2>&1
+          python -W ignore -u fine_campaign/steady_base.py gate/refA_resolved gate/refA_resolved_up gate_results_resolved_up "$NP" 1000 > gate/steady_link.log 2>&1
           RC=$?
           set -e
           kill $MON 2>/dev/null || true
@@ -378,11 +407,27 @@ jobs:
         working-directory: research/sidepod_opt
         run: |
           SNAP=gate/refA_resolved/logs/snappyHexMesh.log
-          COV=$(grep -oE "Extruding [0-9]+ out of [0-9]+ faces \([0-9.]+%\)" "$SNAP" 2>/dev/null | tail -1)
-          PCT=$(echo "$COV" | grep -oE "[0-9.]+%" | tr -d %); PCT=${PCT%.*}
-          echo "layer coverage: ${COV:-unknown}"
+          PCT=$(python3 - "$SNAP" <<'PY2'
+          import re, sys, json
+          txt = open(sys.argv[1], errors='replace').read()
+          try:
+              sn = int(re.search(r"Snapped mesh : cells:(\d+)", txt).group(1))
+              lc = int(re.findall(r"Layer mesh : cells:(\d+)", txt)[-1])
+              wf = int(re.search(r"out of (\d+) faces", txt).group(1))
+              try: nl = json.load(open('gate/refA_resolved/case_meta.json'))['layer_controls']['nSurfaceLayers']
+              except Exception: nl = 11
+              print(int(round(100 * min(1.0, (lc - sn) / nl / wf))) if lc > sn else 0)
+          except Exception:
+              print(-1)   # unreadable: fall back to the old regex below
+          PY2
+          )
+          if [ "$PCT" = "-1" ]; then
+            COV=$(grep -oE "Extruding [0-9]+ out of [0-9]+ faces \([0-9.]+%\)" "$SNAP" 2>/dev/null | tail -1)
+            PCT=$(echo "$COV" | grep -oE "[0-9.]+%" | tr -d %); PCT=${PCT%.*}
+          fi
+          echo "layer coverage: ${PCT:-unknown} % of wall faces"
           if grep -q "No layers to generate" "$SNAP" 2>/dev/null; then LAYERS=false; echo "mark L FAILED: the mesh has NO wall layers; not a wall-resolved test";
-          elif [ -n "$PCT" ] && [ "$PCT" -lt 50 ]; then LAYERS=false; echo "mark L FAILED: layers on ${PCT} % of wall faces < 50 %";
+          elif [ -n "$PCT" ] && [ "$PCT" -ge 0 ] && [ "$PCT" -lt 50 ]; then LAYERS=false; echo "mark L FAILED: layers on ${PCT} % of wall faces < 50 %";
           else LAYERS=true; fi
           A1=$(python -c "import json;print('true' if json.load(open('gate_results_resolved_up/base.json'))['steady_pass'] else 'false')" 2>/dev/null || echo false)
           echo "a1=$A1" >> "$GITHUB_OUTPUT"
@@ -466,7 +511,7 @@ jobs:
         timeout-minutes: 325
         run: |
           export P2_JOB_DEADLINE=$(( $(date +%s) + 250*60 )) P2_CHECKPOINT_FILE=$PWD/ckpt_path.txt
-          export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1500 GATE_TIMEOUT=18000 \
+          export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1000 GATE_TIMEOUT=18000 \
                  CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1
           T0=$(date +%s)
           ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
@@ -497,7 +542,7 @@ jobs:
         if: steps.solve.outputs.chained == 'true'
         run: |
           r=$(cat research/sidepod_opt/ckpt_path.txt)
-          mkdir -p ckpt && tar -cf ckpt/case.tar -C "$(dirname "$r")" --exclude="processor*" --transform "s|^$(basename "$r")|run|" "$(basename "$r")"
+          mkdir -p ckpt && tar -cf ckpt/case.tar -C "$(dirname "$r")" --transform "s|^$(basename "$r")|run|" "$(basename "$r")"
       - if: steps.solve.outputs.chained == 'true'
         uses: actions/upload-artifact@v4
         with: { name: "ckpt-bump-${{ matrix.site }}", path: ckpt/case.tar, retention-days: 3 }
@@ -608,7 +653,7 @@ jobs:
           ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
                  i=$((i+1)); if [ $((i % 4)) = 0 ]; then echo "PROG $(tail -n3 gate/esi_resolved_"$TURB"/log.adjoint 2>/dev/null | tr '\n' ' ' | cut -c1-160)"; fi; sleep 15; done ) & MON=$!
           set +e
-          python -W ignore -u esi/esi_on_state.py gate/refA_resolved_up gate/esi_resolved_"$TURB" "$TURB" "$NP" 3000 100 > gate/esi_resolved_"$TURB".log 2>&1
+          python -W ignore -u esi/esi_on_state.py gate/refA_resolved_up gate/esi_resolved_"$TURB" "$TURB" "$NP" 1000 100 > gate/esi_resolved_"$TURB".log 2>&1
           RC=$?
           set -e
           kill $MON 2>/dev/null || true
