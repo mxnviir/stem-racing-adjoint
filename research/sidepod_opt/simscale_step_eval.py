@@ -371,6 +371,15 @@ class SimScaleStepEvaluator:
                 self._retire(c["fp"], f"results blocked after {k['runs']} runs: {msg[:120]}")
                 c.update(fp=None, phase="wait", attempt=0, result_blocked=0)
                 return
+            # A run can finish all its iterations without converging (c00068: Fx spread 2.66 N over the
+            # last 15 %, lift 637 N; good runs spread 0.001-0.003 N). That is the mesh, not the design:
+            # mesh it again from another pod triangle count, and fail the design only when none converges.
+            if diverged_forces(Fx, Fz, info):
+                c.setdefault("tries", []).append(f"{FACES[c['attempt']]}: not converged, Fx {Fx:.3g} spread {info.get('Fx_window_std'):.3g}, Fz {Fz:.3g}")
+                if c["attempt"] + 1 < len(FACES):
+                    c.update(attempt=c["attempt"] + 1, phase="step")
+                    return
+                return self._fail(cid, f"not converged: {c['tries']}")
             sc = 2.0 * (20.0 / self.speed) ** 2                           # half car -> whole car, at 20 m/s
             self.st["cases"].pop(cid)
             self._done[cid] = {"D20_N": Fx * sc, "L20_N": Fz * sc, "ok": True,
@@ -390,6 +399,18 @@ def forces(s, api, P, sid, run_id):
     txt = api.rest_client.GET(cand[0]["download"]["url"], headers={"X-API-KEY": api.configuration.api_key["X-API-KEY"]}).data
     txt = txt.decode() if isinstance(txt, bytes) else txt
     return parse_forces(txt)
+
+
+def diverged_forces(Fx, Fz, info, max_spread=0.02, max_force=2.0):
+    """True for a run whose half-car forces did not settle: not finite, an Fx spread over the averaging
+    window above max(max_spread, 10 % of Fx), or forces far outside anything this car makes (N, half car,
+    at the run speed)."""
+    sd = info.get("Fx_window_std")
+    if not (np.isfinite(Fx) and np.isfinite(Fz)) or (sd is not None and not np.isfinite(sd)):
+        return True
+    if abs(Fx) > max_force or abs(Fz) > max_force:
+        return True
+    return sd is not None and sd > max(max_spread, 0.1 * abs(Fx))
 
 
 def parse_forces(txt, tail=0.15):
