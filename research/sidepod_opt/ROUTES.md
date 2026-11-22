@@ -1047,6 +1047,22 @@ external topology case was **not found** in their material (that is not proof it
     the fine mesh (4.5 h per run on 4 cores here) or finer, since the body drag is still moving between medium
     and fine.
   - Queue reordered: team~1, groove~1 (clean repeats, frame shifted), then design 8, no pod, blend 50.
+- **2026-11-22 11:00, weight rule changed (owner): 48.0 g legal minimum, no sizing to it; the model chooses the balance; > 50 g = model suspect.**
+  - `geometry.CarSpec.floor_g` 48.2 → **48.0** (T3.6 minimum, no margin). The old 48.2 also estimated the
+    non-body parts (the STEP has no masses); that stays as `drawn_car_g = 48.2` (ASSUMED), so other parts are
+    still 22.52 g.
+  - Nothing sizes a car to the floor any more: lead tops up only to 48.0 g; above it the race model charges
+    every gram (7.5 ms/g). **Ballast is now the race model's choice** (`objective.best_ballast`): any lead from
+    the legal minimum to the halo container's capacity, picked by race time (mass vs COM, no CFD needed: the
+    lead sits inside the container). The shape loop scores every design with it.
+  - **Flag:** any design whose car (without cartridge) is above 50 g is marked `mass_suspect` and printed as
+    `MASS_SUSPECT` (owner: weight is among the most important factors, so a best car above 50 g means the model
+    is wrong).
+  - Check on four cars (medium clean drags, lift 0.16 N): team 48.20 g (its real mass, 0.2 g over the minimum,
+    now charged), groove 48.00 g (1.45 g lead), no pod 48.00 g (9.97 g lead), design 8 48.26 g; in every case the
+    model chose the minimum lead (extra ballast never paid for itself here).
+  - **Not yet changed:** Part 1 / Part 5's whole-car builders still size cars to 48.2 g (`part5-simulation/run_car.py`,
+    `pattern.py`, `solver.py`; `part1-simulation/ballast.py`); to change when the whole-car work starts.
 
 ## Sources
 

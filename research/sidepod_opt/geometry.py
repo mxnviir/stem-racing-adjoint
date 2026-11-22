@@ -72,10 +72,12 @@ class CarSpec:
     cargo_x: tuple = (76.0, 136.0)       # T4.2 wedge, wide end (55 mm) forward
     cargo_z: tuple = (17.0, 27.0)        # ASSUMED: confirm with the team
     # mass (ASSUMED where the STEP is silent; see README)
-    floor_g: float = 48.2                # T3.6 48.0 + 0.2 margin; no upper limit
+    floor_g: float = 48.0                # T3.6 legal minimum (owner 2026-11-22: no extra margin, no sizing to it)
+    drawn_car_g: float = 48.2            # ASSUMED weight of the drawn trial car as built: only sets other_parts_g
+    mass_suspect_g: float = 50.0         # owner: a best car above this means the model is wrong (flag, not a rule)
     lead_xz: tuple = (130.0, 21.0)       # T1.22 container under the halo, STEP frame
     lead_cap_cm3: float = 1.39
-    other_parts_g: float | None = None   # None: 48.2 g minus the drawn body's foam
+    other_parts_g: float | None = None   # None: drawn_car_g minus the drawn body's foam
     other_parts_xz: tuple | None = None  # None: mid-wheelbase, z 16
     cartridge_shell_g: float = 21.15     # Part 2's car_weight_kg includes it (Appendix vi)
     thrust_z: float = 30.0
@@ -155,7 +157,7 @@ class Car:
         self.kept_M = self.body_M - self.region_M
         # ---- mass bookkeeping (body foam from the exact mesh)
         self.foam0_g = self.body_mesh.volume * 1e-3 * FOAM_G_CM3
-        self.other_g = s.other_parts_g if s.other_parts_g is not None else s.floor_g - self.foam0_g
+        self.other_g = s.other_parts_g if s.other_parts_g is not None else s.drawn_car_g - self.foam0_g
         self.other_xz = s.other_parts_xz or (0.5 * (s.x_front_axle + s.x_rear_axle), 16.0)
 
     @property
@@ -337,11 +339,16 @@ class Car:
         pod_M = CI.to_manifold(m) ^ self.region_Me                  # ^ = intersection in manifold3d
         return CI.clean(CI.from_manifold(self.kept_M + pod_M))     # weld Boolean seams as a reader will
 
-    def mass(self, body_mesh) -> dict:
+    def mass(self, body_mesh, lead_g: float | None = None) -> dict:
+        """Mass and COM. Lead (halo container, T1.22) is at least what the legal minimum needs
+        (floor_g); lead_g asks for more (the race model may want ballast for the COM: objective.best_ballast).
+        Nothing sizes the car TO the floor: above it, the race model charges every gram."""
         s = self.s
         foam = body_mesh.volume * 1e-3 * FOAM_G_CM3
-        lead = max(0.0, s.floor_g - self.other_g - foam)
-        legal = lead <= s.lead_cap_cm3 * LEAD_G_CM3
+        lead_min = max(0.0, s.floor_g - self.other_g - foam)
+        lead_cap = s.lead_cap_cm3 * LEAD_G_CM3
+        lead = lead_min if lead_g is None else max(lead_min, float(lead_g))
+        legal = lead <= lead_cap
         car = foam + self.other_g + lead
         c = body_mesh.center_mass
         mx = foam * c[0] + self.other_g * self.other_xz[0] + lead * s.lead_xz[0]
@@ -350,8 +357,10 @@ class Car:
         tot = car + s.cartridge_shell_g
         mx = (mx + s.cartridge_shell_g * cx) / tot
         mz = (mz + s.cartridge_shell_g * s.thrust_z) / tot
-        return dict(foam_g=float(foam), lead_g=float(lead), car_g=float(car), legal=bool(legal), race_mass_g=float(tot),
-                    com_x_car_mm=float(s.x_nose_mm - mx), com_z_mm=float(mz))
+        return dict(foam_g=float(foam), lead_g=float(lead), lead_min_g=float(lead_min), lead_cap_g=float(lead_cap),
+                    car_g=float(car), legal=bool(legal), race_mass_g=float(tot),
+                    com_x_car_mm=float(s.x_nose_mm - mx), com_z_mm=float(mz),
+                    mass_suspect=bool(car > s.mass_suspect_g))
 
     def build(self, field_mm: np.ndarray, original: bool = False) -> dict:
         """Field -> milled voxels -> checks; the exact mesh and mass only for a car that passes."""
