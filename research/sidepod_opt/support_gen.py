@@ -53,8 +53,20 @@ TEAM_SUPPORTS_G = 5.882             # the team's two supports, already inside ge
 
 
 # ------------------------------------------------------------------ fixed parts (Part 4)
-def fixed_parts(ax: dict, footprint_w_mm: float) -> dict:
-    """Disc + boss + stub for one axle (full width, mm), sized by Part 4's load case."""
+def disc_t(ax: dict, y_bear: float, y_disc_out: float, feet: list) -> tuple[float, float]:
+    """Disc thickness (mm) for these feet, and stress * t^2 (the disc's worst foot)."""
+    import beam_support as bsm
+    M = bsm.LOAD_RADIAL_N * (y_bear - y_disc_out) + bsm.LOAD_AXIAL_N * ax["R"]
+    n = max(len(feet), 1)
+    need = max(6 * (M / n + bsm.LOAD_AXIAL_N / n * d) / max(w, WALL_MM) for w, d in feet) if feet else np.inf
+    return max(WALL_MM, math.sqrt(need / (bsm.ABS_STRENGTH_MPA / bsm.SAFETY))), need
+
+
+def fixed_parts(ax: dict, footprint_w_mm: float, feet: list | None = None) -> dict:
+    """Disc + boss + stub for one axle (full width, mm), sized by Part 4's load case.
+    feet: [(tangential width mm, distance from the axle mm), ...] where the generated part meets the disc.
+    The stub's moment leaves the boss through the disc and is shared by the feet (Part 4 assumes two, up and
+    down: M/2); the axial load also bends the disc strip out of its plane over the distance to each foot."""
     import trimesh
     import beam_support as bsm
     import wheel as wh
@@ -63,9 +75,8 @@ def fixed_parts(ax: dict, footprint_w_mm: float) -> dict:
     y_disc_out = ax["y_in"] + bs.disc_recess_mm
     y_bear = ax["y_in"] + 0.5 * (hub[0] + hub[1])
     y_tip = ax["y_in"] + ax["w"]
-    M = bsm.LOAD_RADIAL_N * (y_bear - y_disc_out) + bsm.LOAD_AXIAL_N * ax["R"]
-    w = max(footprint_w_mm, WALL_MM)
-    t_d = max(WALL_MM, math.sqrt(6 * (M / 2) / (w * bsm.ABS_STRENGTH_MPA / bsm.SAFETY)))
+    feet = feet or [(footprint_w_mm, 0.0), (footprint_w_mm, 0.0)]
+    t_d, need = disc_t(ax, y_bear, y_disc_out, feet)
     r_d = min(bs.disc_r_mm, ax["z"] - TRACK_MM - 0.1, bsm.RIM_INNER_R_MM - 0.5)
     root_d = bsm.sized_root_d_mm(bs, y_disc_out, y_bear, ax["R"])
     line = bsm.stub_outline(bs, y_disc_out, y_bear, y_tip, root_d)
@@ -78,7 +89,7 @@ def fixed_parts(ax: dict, footprint_w_mm: float) -> dict:
     disc.apply_translation([ax["x"], y_disc_out - t_d / 2, ax["z"]])
     return {"disc": disc, "stub": stub, "t_disc": t_d, "r_disc": r_d, "y_disc_out": y_disc_out,
             "y_disc_in": y_disc_out - t_d, "y_bear": y_bear, "stub_struct": st,
-            "disc_stress_mpa": 6 * (M / 2) / (w * t_d ** 2)}
+            "disc_stress_mpa": need / t_d ** 2, "disc_feet": [[round(w, 2), round(d, 2)] for w, d in feet]}
 
 
 # ------------------------------------------------------------------ grid
@@ -162,6 +173,15 @@ def rules(G: AxleGrid, field: np.ndarray, fx: dict) -> tuple[np.ndarray, dict]:
     xs = G.X[fp]
     rep["disc_footprint_w_mm"] = float(xs.max() - xs.min() + h) if xs.size else 0.0
     rep["disc_footprint_mm2"] = float(fp.any(axis=1).sum() * h ** 2)
+    f2 = fp.any(axis=1)                                               # (x, z) cells meeting the disc
+    lab2, n2 = ndimage.label(f2)
+    feet = []
+    for k in range(1, n2 + 1):
+        ii = np.argwhere(lab2 == k)
+        dx, dz = G.x[ii[:, 0]] - G.ax["x"], G.z[ii[:, 1]] - G.ax["z"]
+        rr, th = np.hypot(dx, dz), np.unwrap(np.sort(np.arctan2(dz, dx)))
+        feet.append((float(rr.mean() * (th.max() - th.min()) + h), float(rr.mean())))
+    rep["disc_feet"] = feet
     return M, rep
 
 
@@ -186,10 +206,13 @@ def loads(G: AxleGrid, M: np.ndarray, fx: dict) -> dict:
         ys.append(y)
         if A <= 0:
             sig.append(np.inf); curv.append(np.inf); continue
-        z = G.Z[:, j, :][s]
-        zc = z.mean()
-        I = ((z - zc) ** 2).sum() * h * h + s.sum() * h ** 4 / 12
-        c = np.abs(z - zc).max() + h / 2
+        lab2, n2 = ndimage.label(s)                                  # separate pieces bend about their own
+        I, c = 0.0, 0.0                                               # centroids (no shared section)
+        for k in range(1, n2 + 1):
+            z = G.Z[:, j, :][lab2 == k]
+            zc = z.mean()
+            I += ((z - zc) ** 2).sum() * h * h + z.size * h ** 4 / 12
+            c = max(c, np.abs(z - zc).max() + h / 2)
         Mo = Fr * (fx["y_bear"] - y) + Fa * a["R"]
         sig.append(Mo * c / I + Fa / A)
         curv.append(Mo / (E * I))
@@ -220,7 +243,7 @@ def build_axle(ax: dict, body_half, field_fn, h: float = 0.4) -> dict:
     M, rep = rules(G, field, fx)
     if rep["refused"]:
         return {"ok": False, "report": rep, "grid": G, "voxels": M}
-    fx = fixed_parts(ax, footprint_w_mm=rep["disc_footprint_w_mm"])     # disc sized for its real footprint
+    fx = fixed_parts(ax, footprint_w_mm=rep["disc_footprint_w_mm"], feet=rep["disc_feet"])   # disc sized per foot
     rep["loads"] = loads(G, M, fx)
     # fuse with the disc: the kept cells touching the disc face run on 2 cells into the (solid) disc, so the
     # smoothed surface overlaps it instead of stopping half a cell short
@@ -244,8 +267,11 @@ def build_axle(ax: dict, body_half, field_fn, h: float = 0.4) -> dict:
              "T7.13_claw_points_blocked": blocked,
              "one_piece": len(pieces) == 1, "watertight": bool(half.is_watertight),
              "disc_in_rim_mm": float(13.72 - 0.5 - fx["r_disc"])}
+    # the load check again on the part as printed (smoothed surface, voxelised back onto the grid)
+    Mb = body_occupancy(half, G.x, G.y, G.z) & (G.Y < fx["y_disc_in"] - h / 2)
+    rep["loads_as_built"] = loads(G, Mb, fx)
     ok = (gates["T3.7_clearance_mm"] >= -1e-6 and gates["T7.12.1_in_cylinder_mm"] >= -1e-6 and blocked == 0
-          and gates["one_piece"] and gates["watertight"] and rep["loads"]["ok"])
+          and gates["one_piece"] and gates["watertight"] and rep["loads"]["ok"] and rep["loads_as_built"]["ok"])
     vol_full_mm3 = 2 * half.volume * 1e9
     rep.update(gates=gates, t_disc_mm=fx["t_disc"], r_disc_mm=fx["r_disc"],
                mass_g=float(vol_full_mm3 * ABS_G_CM3 * 1e-3),
@@ -404,6 +430,8 @@ def f_carved(G, fx, frac: float = 0.08, min_frac: float = 0.004, max_iter: int =
     M, rep = rules(G, np.ones(G.X.shape), fx)
     best = M.copy()
     keep_tie = tie_path(G, best, fx)
+    disc_mm3 = lambda feet: math.pi * fx["r_disc"] ** 2 * disc_t(G.ax, fx["y_bear"], fx["y_disc_out"], feet)[0]  # noqa: E731
+    best_cost = disc_mm3(rep["disc_feet"])
     for _ in range(max_iter):
         flow = load_flow(G, best, fx)
         bend = bending_score(G, best, fx)
@@ -413,6 +441,9 @@ def f_carved(G, fx, frac: float = 0.08, min_frac: float = 0.004, max_iter: int =
         cut = np.quantile(score[best & ~keep_tie], frac) if (best & ~keep_tie).any() else -1.0
         M, rep = rules(G, np.where(best & (score > cut), 1.0, -1.0), fx)
         ld = loads(G, M, fx) if not rep["refused"] else None
+        cost = disc_mm3(rep["disc_feet"]) if not rep["refused"] else np.inf
+        if not rep["refused"] and ld["ok"] and (best.sum() - M.sum()) * G.h ** 3 <= cost - best_cost:
+            rep["refused"] = f"thinner feet need {cost - best_cost:.0f} mm3 more disc than the step saves"
         if rep["refused"] or not ld["ok"]:
             frac /= 2
             if frac < min_frac:
@@ -421,7 +452,7 @@ def f_carved(G, fx, frac: float = 0.08, min_frac: float = 0.004, max_iter: int =
                       flush=True)
                 break
             continue
-        best = M
+        best, best_cost = M, cost
     return np.where(best, 1.0, -1.0)
 
 
