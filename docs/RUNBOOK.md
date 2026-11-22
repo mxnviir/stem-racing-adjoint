@@ -73,6 +73,23 @@ file. Each run costs roughly 20-25 core-hours (4-5 M cells).
 - A case retries an import or mesh failure at the next triangle count (`CAR_FACES` in
   `simscale_layout.py`: 24 000, 32 000, 40 000 ...) and is dropped after the ladder.
 
+## Meshing (whole-car searches)
+
+The whole car goes to SimScale as one faceted solid: every triangle is a CAD face and every triangle
+edge a CAD edge. What makes that mesh, found on 2026-11-22:
+
+- **Small-feature suppression 0.8 mm** (`SMALL_FEATURE_MM` in `search/layout/simscale_layout.py`, the
+  smallest cell size). At SimScale's 0.05 mm the mesher failed on 5 of 9 cars ("mesh too coarse",
+  "size smaller than tolerance"), and on the reference at 24 000 and 32 000 triangles; at 0.3 mm too.
+  At 0.8 mm the reference meshed first time (5.0 M cells).
+- **A clean surface** (`cfd/layout_wrap.py`): rebuilt on a 0.3 mm grid, so no slivers, ledges or
+  needle triangles; checked closed and free of self-intersections before upload.
+- **Wheels as exact solids with rounded rims**, 0.15 mm above the road.
+
+If a case still fails, it retries at the next triangle count and is dropped after the ladder; the
+reason is in its `tries`. A run that crashes on its first iterations ("check mesh or numerics") costs
+a run: watch for a pattern.
+
 ## Tests
 
 ```

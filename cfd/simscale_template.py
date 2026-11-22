@@ -138,7 +138,7 @@ def set_air(s, api, P, sid, volume_entities):
     s.SimulationsApi(api).update_simulation(P, sid, spec)
 
 
-SMALL_FEATURE_MM = 0.05                               # faces/edges smaller than this are ignored by the mesher
+SMALL_FEATURE_MM = 0.05     # faces/edges smaller than this are ignored by the mesher (the whole-car searches set 0.8)
 BOX_M = ((-0.01, 0.0, -0.001), (0.30, 0.05, 0.06))   # refinement box around the car (car frame, m)
 
 

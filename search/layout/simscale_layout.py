@@ -53,6 +53,11 @@ CAR_FACES = (24000, 32000, 40000, 28000, 20000, 48000)     # whole-car triangle 
 SE.FACES = CAR_FACES                                         # the evaluator's retry ladder (this process only)
 BOX_M = ((-0.01, 0.0, -0.001), (0.30, 0.06, 0.07))           # car <= 264 mm with the cartridge; rear wing <= 65 mm
 WHEEL_FILLET_MM = 1.0                                        # rim rounding of the CFD wheels
+# The mesher's small-feature suppression for a faceted whole car: every triangle edge is a CAD edge, and
+# at SimScale's 0.05 mm default the 0.15-0.5 mm edges made it fail ("mesh too coarse", "size smaller than
+# tolerance") on 5 of 9 cars and on the reference at every triangle count. At 0.8 mm (the smallest cell)
+# the reference meshed first time (5.0 M cells, 2026-11-22).
+SMALL_FEATURE_MM = 0.8
 BUILD_WORKERS = 3                                            # one Parts 1-5 build peaks at ~5.5 GB
 
 
@@ -341,6 +346,7 @@ class Campaign:
     def evaluator(self):
         import simscale_template as ST
         ST.BOX_M = BOX_M
+        ST.SMALL_FEATURE_MM = float(self.cfg["evaluator"].get("small_feature_mm", SMALL_FEATURE_MM))
         e = self.cfg["evaluator"]
         return LayoutEvaluator(None, self.root / "simscale_state.json", runs_per_key=None, speed_mps=20.0,
                                fineness=6, box_mm=e.get("box_mm", 1.5), iters=e.get("iters", 1000),
@@ -467,7 +473,8 @@ def init(root, budget, seed_keys_from=str(repo_paths.ROOT / "runs" / "sidepod" /
         "_comment": "Layout search (simscale_layout.py): a Gaussian-process model over the numbers marked 'evolve' in "
                     "layout_params.json; every legal layout is scored on it each round, 8 go to CFD.",
         "budget": budget, "batch": 8, "surrogate": {"n_initial": 16, "draws_per_layout": 3, "seed": 1},
-        "evaluator": {"iters": 1000, "box_mm": 1.5, "max_cost": 80.0, "sizing": {"max_mm": 30, "min_mm": 0.8}},
+        "evaluator": {"iters": 1000, "box_mm": 1.5, "max_cost": 80.0, "sizing": {"max_mm": 30, "min_mm": 0.8},
+                      "small_feature_mm": SMALL_FEATURE_MM},
         "rules": "no wheel supports (added later, their mass counted); cargo and tether guides on; milled top and bottom, "
                  "3.175 mm ball, 3 mm walls (Part 1); sidepod top <= 27.175 mm; road 0.15 mm under the wheels; lead to 48.2 g"}, indent=1))
     (root / "state.json").write_text(json.dumps({"n": 0, "g": 0, "used": 0, "batch": [], "inflight": {}, "sobol_used": 0,

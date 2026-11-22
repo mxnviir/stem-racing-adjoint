@@ -137,7 +137,8 @@ def init(root, layout_root, car=None, budget=40, popsize=8, sigma=0.5):
         "base_from": {"run": str(layout_root), "car": cid, "T": T}, "base_genes": genes,
         "lattice": {"shape": list(LATTICE), "amp_mm": AMP_MM},
         "budget": budget, "batch": popsize, "cma": {"popsize": popsize, "sigma": sigma, "seed": 1},
-        "evaluator": {"iters": 1000, "box_mm": 1.5, "max_cost": 80.0, "sizing": {"max_mm": 30, "min_mm": 0.8}}}, indent=1))
+        "evaluator": {"iters": 1000, "box_mm": 1.5, "max_cost": 80.0, "sizing": {"max_mm": 30, "min_mm": 0.8},
+                      "small_feature_mm": SL.SMALL_FEATURE_MM}}, indent=1))
     (root / "state.json").write_text(json.dumps({"n": 0, "g": 0, "used": 0, "batch": [], "inflight": {}, "best": None,
                                                  "pending_build": {}}, indent=1))
     src = Path(layout_root) / "simscale_state.json"

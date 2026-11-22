@@ -74,7 +74,8 @@ layout.
   case per car, restartable from its JSON state; retires a key on 402/403 or a quota message and moves
   its unfinished cases to the next key; flags diverged runs.
 - `simscale_template.py`: the simulation spec (half car, 20 m/s inlet, moving road 0.15 mm under the
-  wheels, rotating wheels, k-omega SST, manual mesh 30 mm far field / 0.8 mm smallest, 1.5 mm refinement box).
+  wheels, rotating wheels, k-omega SST, manual mesh 30 mm far field / 0.8 mm smallest, 1.5 mm refinement box;
+  small-feature suppression 0.05 mm for the sidepod route, 0.8 mm for the whole car, see RUNBOOK "Meshing").
 - `simscale_step_domain.py`: the half wind tunnel with the car cut out, faces named for the boundary
   conditions, written as STEP.
 - `cadio.py`: mesh <-> OpenCASCADE / manifold3d helpers.
