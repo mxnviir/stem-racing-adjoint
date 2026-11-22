@@ -7,7 +7,7 @@
    "retired": null
   },
   "c303ee8756": {
-   "runs": 42,
+   "runs": 55,
    "project": "1399685146673566431",
    "box": "aac748ae-ea23-45dc-bec1-4eb944857f51",
    "retired": null
@@ -26,53 +26,141 @@
   }
  },
  "cases": {
-  "c00056": {
-   "folder": "runs/simscale/cars/c00056",
+  "c00066": {
+   "folder": "runs/simscale/cars/c00066",
    "phase": "run",
    "fp": "c303ee8756",
-   "t0": 1795309409.716694,
-   "attempt": 8,
-   "import_id": "8bc29285-94e8-4ef0-8e4c-b44dfd4750a5",
+   "t0": 1795319027.9166186,
+   "attempt": 3,
+   "import_id": "9cd605ff-78ac-49e8-b00c-5b5486ce1424",
+   "project": "1399685146673566431",
+   "tries": [
+    "4500: import FAILED model-has-invalid-geometry ['fault-face-matching_tessellation_failed', 'fault-face-self_int', 'fault-face-tessellation_failed']",
+    "5200: import FAILED model-has-invalid-geometry ['fault-face-matching_tessellation_failed', 'fault-face-self_int', 'fault-face-tessellation_failed']",
+    "3900: import FAILED model-has-invalid-geometry ['fault-face-self_int', 'fault-face-tessellation_failed']"
+   ],
+   "geometry_id": "d6df0f21-acf2-4888-8a8a-0fbf25372b43",
+   "sim_id": "7eb5fe42-5022-4749-b9c7-15e49dde0029",
+   "mesh_op": "7003c49c-eeb7-49fe-a8ed-222c87c0744a",
+   "mesh_done": true,
+   "cells": 3865043,
+   "run_id": "83acb482-63aa-407d-ad95-d7e16beccf7b",
+   "cost_estimate": 23.27,
+   "progress": 0.0
+  },
+  "c00067": {
+   "folder": "runs/simscale/cars/c00067",
+   "phase": "run",
+   "fp": "c303ee8756",
+   "t0": 1795319027.9166226,
+   "attempt": 2,
+   "import_id": "9b89ecab-c7a5-42ef-990b-6d666ae433c9",
    "project": "1399685146673566431",
    "tries": [
     "4500: import FAILED model-has-invalid-geometry ['fault-face-matching_tessellation_failed', 'fault-face-tessellation_failed']",
-    "5200: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE823. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Setti",
-    "3900: run FAILED at 0.0010000000474974513 ['MSG_OF_CHECK_MESH_OR_NUMERICS']",
-    "6000: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE839. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Setti",
-    "4200: mesh FAILED surface-meshing-size-smaller-than-tolerance-with-position: The meshing failed because the mesh element size is too close to the cad tolerance of the following entities: B1_TE900. Position: [{\"X\":0.07960973948349964,\"Y\":1.2011225347663411E-16,\"Z\":0.00987048250",
-    "6800: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE827. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Setti",
-    "4800: import FAILED model-has-invalid-geometry ['fault-face-matching_tessellation_failed', 'fault-face-tessellation_failed']",
-    "5600: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE840. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Setti"
+    "5200: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE1372. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Sett"
    ],
-   "geometry_id": "5abc941c-cde3-4571-b918-f065c8eba10c",
-   "sim_id": "f1a2fb63-e353-41dd-a022-224da8ab1652",
-   "mesh_op": "8b337b47-4778-4528-b000-3b4ecc22eec4",
+   "geometry_id": "bddf79e9-75e0-4326-b685-0967d8c26c77",
+   "sim_id": "8b2f16c3-3a80-4b81-a4ce-673bc4ab967a",
+   "mesh_op": "ceab0692-ffa4-407e-8086-190e5f9b72ef",
    "mesh_done": true,
-   "cells": 3813784,
-   "run_id": "d8a5a162-49f3-4e94-bd79-f1f954879c0c",
+   "cells": 3843980,
+   "run_id": "b2b753b8-7552-4f09-827a-9d3a38f28b82",
    "cost_estimate": 17.09,
-   "progress": 0.0010000000474974513
+   "progress": 0.210999995470047
   },
-  "c00057": {
-   "folder": "runs/simscale/cars/c00057",
+  "c00068": {
+   "folder": "runs/simscale/cars/c00068",
    "phase": "run",
    "fp": "c303ee8756",
-   "t0": 1795309409.7166948,
-   "attempt": 2,
-   "import_id": "d5760b53-57b0-4bf7-ba25-545243fb15fe",
+   "t0": 1795319027.9166245,
+   "attempt": 3,
+   "import_id": "86ee7765-0d9e-4829-9e2f-0adb8e9dce85",
    "project": "1399685146673566431",
-   "geometry_id": "770bc72b-e7bd-4474-9dac-4a2b200b11d8",
-   "sim_id": "56e76c39-90bf-4e47-8928-029ba38ce76a",
-   "mesh_op": "072e5da0-42b6-4223-8246-fafa5e6abcb5",
-   "mesh_done": true,
-   "cells": 3800851,
-   "run_id": "8ed4ae0b-9ff3-4570-9012-5ab424642015",
-   "cost_estimate": 17.09,
-   "progress": 0.6600000262260437,
    "tries": [
-    "4500: run FAILED at 0.0010000000474974513 ['MSG_OF_CHECK_MESH_OR_NUMERICS']",
-    "5200: run FAILED at 0.0010000000474974513 ['MSG_OF_CHECK_MESH_OR_NUMERICS']"
+    "4500: import FAILED model-has-invalid-geometry ['fault-face-bad_face_face', 'fault-face-matching_tessellation_failed', 'fault-face-tessellation_failed']",
+    "5200: import FAILED model-has-invalid-geometry ['fault-face-bad_face_face', 'fault-face-matching_tessellation_failed', 'fault-face-tessellation_failed']",
+    "3900: import FAILED model-has-invalid-geometry ['fault-face-bad_face_face', 'fault-face-matching_tessellation_failed', 'fault-face-tessellation_failed']"
+   ],
+   "geometry_id": "d0bdd133-8752-4e1e-8579-7d88ae2bd726",
+   "sim_id": "951cf1bb-82d9-45ef-a426-ccf501c2c0af",
+   "mesh_op": "f0e4c5fd-5ed3-45fe-a646-4fcf91a31e3c",
+   "mesh_done": true,
+   "cells": 3897001,
+   "run_id": "620d7782-b99a-4189-bee2-7072de08dac3",
+   "cost_estimate": 14.44,
+   "progress": 0.0
+  },
+  "c00070": {
+   "folder": "runs/simscale/cars/c00070",
+   "phase": "run",
+   "fp": "c303ee8756",
+   "t0": 1795319027.9166265,
+   "attempt": 0,
+   "import_id": "8ba77d17-44aa-4144-909b-ccbe27ee089e",
+   "project": "1399685146673566431",
+   "geometry_id": "6a779403-5bd6-4689-849c-d0d86dd699e7",
+   "sim_id": "34dc87d2-3660-4402-bb21-891815dfeb95",
+   "mesh_op": "6ca03fa7-980b-45b8-bf94-f1a001b2b524",
+   "mesh_done": true,
+   "cells": 3852934,
+   "run_id": "269b428e-dce4-4ba1-b4b1-bc32c86328be",
+   "cost_estimate": 17.09,
+   "progress": 0.7049999833106995
+  },
+  "c00071": {
+   "folder": "runs/simscale/cars/c00071",
+   "phase": "run",
+   "fp": "c303ee8756",
+   "t0": 1795319027.9166286,
+   "attempt": 0,
+   "import_id": "28c1e82e-8e9c-4186-b07f-c563e9ed3149",
+   "project": "1399685146673566431",
+   "geometry_id": "bb4e127b-7eaf-4ec7-bfc4-a46fc7172cf9",
+   "sim_id": "60f48f35-dcd7-4593-9ce4-db654e2a733a",
+   "mesh_op": "15dd92f9-10d3-4022-9755-90b2a7ac88dc",
+   "mesh_done": true,
+   "cells": 3833416,
+   "run_id": "e0bc507a-e617-4ec4-80bb-41aea618d0ee",
+   "cost_estimate": 17.09,
+   "progress": 0.7179999947547913
+  },
+  "c00072": {
+   "folder": "runs/simscale/cars/c00072",
+   "phase": "step",
+   "fp": "c303ee8756",
+   "t0": 1795319027.91663,
+   "attempt": 9,
+   "import_id": "5e0a721d-8263-4d21-a924-2e88950edc1b",
+   "project": "1399685146673566431",
+   "tries": [
+    "4500: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
+    "5200: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
+    "3900: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
+    "6000: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
+    "4200: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
+    "6800: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
+    "4800: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
+    "5600: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
+    "3600: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']"
    ]
+  },
+  "c00073": {
+   "folder": "runs/simscale/cars/c00073",
+   "phase": "run",
+   "fp": "c303ee8756",
+   "t0": 1795319027.916631,
+   "attempt": 0,
+   "import_id": "8371dc14-af81-4a3c-904c-72087d257eb6",
+   "project": "1399685146673566431",
+   "geometry_id": "d060ce0f-1069-4012-8c91-4f39bbfac7b4",
+   "sim_id": "064fc192-7db1-4642-8d48-e4368c79a089",
+   "mesh_op": "4614eec8-08df-4364-9de5-74ad91566b82",
+   "mesh_done": true,
+   "cells": 3841167,
+   "run_id": "9c87e117-72c6-4320-86d7-3fd496164946",
+   "cost_estimate": 17.09,
+   "progress": 0.6600000262260437
   }
  },
  "done": {}
