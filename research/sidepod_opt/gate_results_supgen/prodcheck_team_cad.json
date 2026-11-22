@@ -1,0 +1,21 @@
+{
+ "D20_half_N": 0.2072956328004468,
+ "wall_s": 1552.0,
+ "converged": true,
+ "residual_p": 0.001600933692015133,
+ "force_osc": 0.07937849926262625,
+ "force_drift": 0.008297913397550196,
+ "run_dir": "",
+ "force_mean_stderr": 0.002511573229832743,
+ "morph_fallback": false,
+ "folder": "runs/fine_cars/team_sup_cad/car",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "coarse",
+ "iterations": 2000,
+ "n_proc": 2,
+ "y_plus_min": 1.6289571483388272,
+ "y_plus_max": 179.73448535350835,
+ "n_cells": 132326,
+ "run_dir_kept": "/home/user/esp32-line-follower/research/sidepod_opt/gate/supgen_cases/team_cad"
+}
