@@ -193,7 +193,8 @@ jobs:
           export PRODCHECK_WALL_RESOLVED=1 PRODCHECK_RES=resolved PRODCHECK_RESULTS=$PWD/gate_results_resolved \
                  PRODCHECK_KEEP=$PWD/gate/refA_resolved PRODCHECK_ITERS=3000 PRODCHECK_TIMEOUT=18000
           T0=$(date +%s)
-          ( while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; sleep 15; done ) & MON=$!
+          ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
+                 i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t ../../part2-simulation/cfd_case_template/runs/*/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
           set +e
           python -W ignore -u prodcheck.py gate/original stateA "$NP" cold > gate/prodcheck_link.log 2>&1
           RC=$?
@@ -357,7 +358,8 @@ jobs:
         run: |
           mkdir -p gate_results_resolved_up
           T0=$(date +%s)
-          ( while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; sleep 15; done ) & MON=$!
+          ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
+                 i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t gate/refA_resolved_up/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
           set +e
           python -W ignore -u fine_campaign/steady_base.py gate/refA_resolved gate/refA_resolved_up gate_results_resolved_up "$NP" 3000 > gate/steady_link.log 2>&1
           RC=$?
@@ -468,7 +470,8 @@ jobs:
           export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1500 GATE_TIMEOUT=18000 \
                  CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1
           T0=$(date +%s)
-          ( while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; sleep 15; done ) & MON=$!
+          ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
+                 i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t ../../part2-simulation/cfd_case_template/runs/*/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
           set +e
           python -W ignore -u gate.py bump "$SITE" "$NP" > gate/bump_link.log 2>&1
           RC=$?
@@ -603,7 +606,8 @@ jobs:
         run: |
           mkdir -p gate_results_resolved_up/esi
           T0=$(date +%s)
-          ( while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; sleep 15; done ) & MON=$!
+          ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
+                 i=$((i+1)); if [ $((i % 4)) = 0 ]; then echo "PROG $(tail -n3 gate/esi_resolved_"$TURB"/log.adjoint 2>/dev/null | tr '\n' ' ' | cut -c1-160)"; fi; sleep 15; done ) & MON=$!
           set +e
           python -W ignore -u esi/esi_on_state.py gate/refA_resolved_up gate/esi_resolved_"$TURB" "$TURB" "$NP" 3000 100 > gate/esi_resolved_"$TURB".log 2>&1
           RC=$?
