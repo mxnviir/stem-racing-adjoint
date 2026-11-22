@@ -1,0 +1,20 @@
+{
+ "_comment": "Layout search (simscale_layout.py): a Gaussian-process model over the numbers marked 'evolve' in layout_params.json; every legal layout is scored on it each round, 8 go to CFD.",
+ "budget": 48,
+ "batch": 8,
+ "surrogate": {
+  "n_initial": 16,
+  "draws_per_layout": 3,
+  "seed": 1
+ },
+ "evaluator": {
+  "iters": 1000,
+  "box_mm": 1.5,
+  "max_cost": 80.0,
+  "sizing": {
+   "max_mm": 30,
+   "min_mm": 0.8
+  }
+ },
+ "rules": "no wheel supports (added later, their mass counted); cargo and tether guides on; milled top and bottom, 3.175 mm ball, 3 mm walls (Part 1); sidepod top <= 27.175 mm; road 0.15 mm under the wheels; lead to 48.2 g"
+}

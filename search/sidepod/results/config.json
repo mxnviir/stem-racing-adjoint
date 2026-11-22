@@ -83,24 +83,6 @@
      "amp_mm": 24.0
     }
    }
-  },
-  {
-   "name": "recheck",
-   "type": "pick",
-   "from": [
-    "evolve"
-   ],
-   "how": "best",
-   "n": 4,
-   "fidelity": "medium",
-   "evaluator": {
-    "kind": "actions",
-    "repos": [
-     "OWNER/REPO"
-    ],
-    "res": "medium",
-    "per_job": 1
-   }
   }
  ],
  "_rules": "Design rules (CarSpec switches): no virtual cargo; nothing in the sidepod region above 27.175 mm (the team STEP's sidepod top; also used for the T4.4.2 halo cap, which the STEP itself reaches); milled from top and bottom only (3.175 mm ball); 3 mm minimum walls; no loose pieces; sidepod region only.",

@@ -13,7 +13,7 @@
    "retired": "ApiException: (403)\nReason: \nHTTP response headers: HTTPHeaderDict({'Content-Type': 'application/json', 'Content-Length': '226', 'Connection': 'keep-alive', 'Date': 'Sun, 22 Nov 2026 08:30:21 GMT', 'E"
   },
   "ce2eea9b8d": {
-   "runs": 26,
+   "runs": 47,
    "project": "666738949348988974",
    "box": "3619f5a7-ee88-4567-a813-8f55237e8c08",
    "retired": null
@@ -26,125 +26,49 @@
   }
  },
  "cases": {
-  "c00130": {
-   "folder": "runs/simscale/cars/c00130",
+  "c00163": {
+   "folder": "runs/sidepod/cars/c00163",
    "phase": "run",
    "fp": "ce2eea9b8d",
-   "t0": 1795344014.0375195,
-   "attempt": 0,
-   "import_id": "1f415720-9097-4579-a5c8-ae331c8f9c46",
-   "project": "666738949348988974",
-   "geometry_id": "7598de56-262f-40ef-83ba-843dfcb4d3ab",
-   "sim_id": "7ceaaa1f-3cdc-4375-9f9a-8cfdc52c5bc4",
-   "mesh_op": "da2be7da-af1b-49f2-8156-59ff9c7f4a3e",
-   "mesh_done": true,
-   "cells": 3857713,
-   "run_id": "4e168637-e09e-4dd7-98e4-e83bf033a322",
-   "cost_estimate": 17.09,
-   "progress": 0.621999979019165
-  },
-  "c00131": {
-   "folder": "runs/simscale/cars/c00131",
-   "phase": "import",
-   "fp": "ce2eea9b8d",
-   "t0": 1795344014.0375235,
-   "attempt": 9,
-   "import_id": "aa505781-e0f6-454d-96e2-f52657ae0a6e",
-   "project": "666738949348988974",
-   "tries": [
-    "4500: import FAILED model-has-invalid-geometry ['fault-face-bad_face_face', 'fault-face-tessellation_failed']",
-    "5200: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "3900: import FAILED model-has-invalid-geometry ['fault-face-bad_face_face', 'fault-face-tessellation_failed']",
-    "6000: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "4200: import FAILED model-has-invalid-geometry ['fault-face-bad_face_face', 'fault-face-tessellation_failed']",
-    "6800: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "4800: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "5600: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "3600: import FAILED model-has-invalid-geometry ['fault-face-bad_face_face', 'fault-face-tessellation_failed']"
-   ]
-  },
-  "c00132": {
-   "folder": "runs/simscale/cars/c00132",
-   "phase": "run",
-   "fp": "ce2eea9b8d",
-   "t0": 1795344014.0375254,
-   "attempt": 2,
-   "import_id": "36786b7d-7221-4c88-a676-e2338e810a2c",
+   "t0": 1795362004.668889,
+   "attempt": 5,
+   "import_id": "519d68fa-fb4e-4788-8c90-c72e3ed636e5",
    "project": "666738949348988974",
    "tries": [
     "4500: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "5200: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']"
+    "5200: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
+    "3900: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
+    "6000: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE985. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Setti",
+    "4200: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']"
    ],
-   "geometry_id": "f2aef774-9988-422d-bc27-98189423b42c",
-   "sim_id": "4f1b53f0-f12e-45d6-ad6e-a40ad4f00442",
-   "mesh_op": "4ff8def2-7526-43e6-ae0f-930058ab4700",
+   "geometry_id": "ae1f7218-9c67-482b-8a28-628013c35506",
+   "sim_id": "c5ca0ee3-ff11-415c-9bbd-a4bfb6e057fc",
+   "mesh_op": "e52538fa-54f7-4799-b3f7-c9c076e7a3c1",
    "mesh_done": true,
-   "cells": 3782345,
-   "run_id": "e84c2e16-a732-4336-83b2-99f750d5704b",
-   "cost_estimate": 17.09,
-   "progress": 0.1469999998807907
+   "cells": 3937061,
+   "run_id": "f67d5bae-4f13-4594-92b7-6b3b1338ef98",
+   "cost_estimate": 16.85,
+   "progress": 0.10400000214576721
   },
-  "c00133": {
-   "folder": "runs/simscale/cars/c00133",
+  "c00169": {
+   "folder": "runs/sidepod/cars/c00169",
    "phase": "run",
    "fp": "ce2eea9b8d",
-   "t0": 1795344014.0375276,
-   "attempt": 0,
-   "import_id": "1f8d0885-be6d-4409-89b5-6093ef197230",
+   "t0": 1795362004.6688948,
+   "attempt": 1,
+   "import_id": "0328bae2-4ee4-4fa7-ba51-8b1f679a6bf4",
    "project": "666738949348988974",
-   "geometry_id": "36eeccc3-81bf-4aec-997d-6c56e5a6d88b",
-   "sim_id": "c571928a-f50e-46b3-9fca-ff0fb5065d57",
-   "mesh_op": "e5b2d672-e5fd-445a-b678-54e84c2fc702",
-   "mesh_done": true,
-   "cells": 3678554,
-   "run_id": "833c0f98-5887-4aa5-8e85-494f8195e388",
-   "cost_estimate": 25.84,
-   "progress": 0.5189999938011169
-  },
-  "c00135": {
-   "folder": "runs/simscale/cars/c00135",
-   "phase": "run",
-   "fp": "ce2eea9b8d",
-   "t0": 1795344014.037529,
-   "attempt": 0,
-   "import_id": "facb7255-8b3e-4947-b288-2bce100a5227",
-   "project": "666738949348988974",
-   "geometry_id": "ba64d70f-deeb-458a-bbc7-5742f2b1a089",
-   "sim_id": "b5444e9c-bc54-4836-854c-44b1f09f072a",
-   "mesh_op": "be0be3f1-59e3-4c3f-9afc-93b776b6694b",
-   "mesh_done": true,
-   "cells": 3864828,
-   "run_id": "f67326ed-7055-402c-b5ca-a23fc1c08090",
-   "cost_estimate": 23.27,
-   "progress": 0.36399999260902405
-  },
-  "c00136": {
-   "folder": "runs/simscale/cars/c00136",
-   "phase": "run",
-   "fp": "ce2eea9b8d",
-   "t0": 1795344014.0375297,
-   "attempt": 9,
+   "geometry_id": "9e562c80-7aaa-4694-85d0-8c46b4f6c58c",
+   "sim_id": "bb00012a-f012-4a8e-b5ae-f236d39d1661",
+   "mesh_op": "0dc73097-fd5e-4d32-851c-be9228e27c95",
    "tries": [
-    "4500: air-volume Boolean wrong at every tolerance (removed share 0.8566)",
-    "5200: air-volume Boolean wrong at every tolerance (removed share 0.8566)",
-    "3900: air-volume Boolean wrong at every tolerance (removed share 0.8566)",
-    "6000: air-volume Boolean wrong at every tolerance (removed share 0.8566)",
-    "4200: air-volume Boolean wrong at every tolerance (removed share 0.8566)",
-    "6800: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "4800: air-volume Boolean wrong at every tolerance (removed share 0.8566)",
-    "5600: air-volume Boolean wrong at every tolerance (removed share 0.8566)",
-    "3600: air-volume Boolean wrong at every tolerance (removed share 0.8566)"
+    "4500: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE13. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Settin"
    ],
-   "import_id": "99440757-b24d-43b2-aa52-247a80592086",
-   "project": "666738949348988974",
-   "geometry_id": "a1e96c9c-4880-49b7-a531-d064a4191fda",
-   "sim_id": "8a586666-96d6-4cfc-b904-b1d42a2f6663",
-   "mesh_op": "136ac9d4-dc0b-42b8-a8d8-433c54f9bd65",
    "mesh_done": true,
-   "cells": 3687140,
-   "run_id": "a9cfccbd-7c42-4241-a628-d77224ee2d87",
-   "cost_estimate": 25.84,
-   "progress": 0.0
+   "cells": 3801764,
+   "run_id": "52a2892c-438e-41a2-aa38-1c08e84ac203",
+   "cost_estimate": 17.09,
+   "progress": 0.9559999704360962
   }
  },
  "done": {},

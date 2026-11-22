@@ -12,38 +12,22 @@
    "best": 0.7658480928162781
   },
   "evolve:cma_scratch2:lean:s1": {
-   "used": 6,
-   "illegal": 2,
-   "best": null
+   "used": 29,
+   "illegal": 11,
+   "best": 0.7623252122689047
   }
  },
  "inflight": {
-  "c00130": {
+  "c00163": {
    "run": "evolve:cma_scratch2:lean:s1",
    "stage": "evolve"
   },
-  "c00131": {
-   "run": "evolve:cma_scratch2:lean:s1",
-   "stage": "evolve"
-  },
-  "c00132": {
-   "run": "evolve:cma_scratch2:lean:s1",
-   "stage": "evolve"
-  },
-  "c00133": {
-   "run": "evolve:cma_scratch2:lean:s1",
-   "stage": "evolve"
-  },
-  "c00135": {
-   "run": "evolve:cma_scratch2:lean:s1",
-   "stage": "evolve"
-  },
-  "c00136": {
+  "c00169": {
    "run": "evolve:cma_scratch2:lean:s1",
    "stage": "evolve"
   }
  },
- "n": 138,
+ "n": 170,
  "log": [],
  "ref:evolve": "c00012",
  "ref:evolve_old_mesh": "c00000"
