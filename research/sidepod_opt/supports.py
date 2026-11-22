@@ -117,7 +117,7 @@ def add_to_folder(folder: Path, out: Path | None = None, kind: str = "cad") -> d
         shutil.copytree(folder, out, ignore=shutil.ignore_patterns("_body_half.stl"))
     body = trimesh.load(out / "car_half.stl", force="mesh")
     s = build(body, _wheels(out), kind)
-    s["mesh"].export(out / "supports.stl")
+    _write_ascii(s["mesh"], out / "supports.stl", "supports")       # Part 2 reads ASCII STLs with a named solid
     for tag, cap in s["hubcaps"]:
         cap.export(out / f"hubcap_{tag}.stl")
     a = json.loads((out / "assembly.json").read_text())
@@ -132,6 +132,13 @@ def add_to_folder(folder: Path, out: Path | None = None, kind: str = "cad") -> d
                    "the supports, so do not add this mass on top")
     (out / "supports.json").write_text(json.dumps(rep, indent=1))
     return dict(rep, folder=str(out))
+
+
+def _write_ascii(mesh, path: Path, name: str):
+    import trimesh
+    lines = trimesh.exchange.stl.export_stl_ascii(mesh).splitlines()
+    lines[0], lines[-1] = f"solid {name}", f"endsolid {name}"
+    Path(path).write_text("\n".join(lines) + "\n")
 
 
 def _overlap(body, sup) -> float | None:
