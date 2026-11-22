@@ -279,15 +279,36 @@ def timed_rows(rows, refs=False):
         if row.get("kind") == "ref" and row.get("T") is not None:
             ref.setdefault(setup_key(row.get("setup")), []).append(row["T"])
     ref = {k: float(np.mean(v)) for k, v in ref.items()}
+    off_ref = {k: ref[CURRENT_SETUP] - ref[k] for k in ref
+               if CURRENT_SETUP in ref and k[:OFFSET_OK] == CURRENT_SETUP[:OFFSET_OK]}
+    # Cars timed on an earlier setup and again on the current one (rerun): what the reference shift misses
+    # for the supports. On 2026-11-22 the team layout's shift was 2.65 ms and three re-timed cars' 5.4-6.3:
+    # the supports cost the team layout less than a typical car. The mean miss is added to every setup
+    # without the supports.
+    last = {}
+    for row in rows:
+        if row.get("T") is not None:
+            last[row["id"]] = (row["T"], setup_key(row.get("setup")))
+    miss = []
+    for row in rows:
+        old, new = row.get("rerun_of"), row.get("id")
+        if old and old in last and new in last and last[new][1] == CURRENT_SETUP and last[old][1] in off_ref \
+                and last[old][1][3:] != CURRENT_SETUP[3:]:
+            miss.append(last[new][0] - last[old][0] - off_ref[last[old][1]])
+    corr = float(np.mean(miss)) if miss else 0.0
     offsets, out = {}, []
+    if miss:
+        offsets["supports_pair_correction_ms"] = round(corr * 1e3, 3)
+        offsets["supports_pair_spread_ms"] = round(float(np.std(miss)) * 1e3, 3)
+        offsets["supports_pairs"] = len(miss)
     for row in rows:
         if row.get("T") is None or row.get("genes") is None or (row.get("kind") == "ref" and not refs):
             continue
         k = setup_key(row.get("setup"))
         if k == CURRENT_SETUP:
             off = 0.0
-        elif k[:OFFSET_OK] == CURRENT_SETUP[:OFFSET_OK] and k in ref and CURRENT_SETUP in ref:
-            off = ref[CURRENT_SETUP] - ref[k]
+        elif k in off_ref:
+            off = off_ref[k] + (corr if k[3:] != CURRENT_SETUP[3:] else 0.0)
             offsets[str(k)] = round(off * 1e3, 3)
         else:
             continue

@@ -593,10 +593,26 @@ def build_axle_sized(sd, body_mm, x_axle, z_axle, R, y_inner, wheel_width, hub_m
 
 
 # --------------------------------------------------------------- measured
-def column_check(body_tm, saddle_tm, xs, ys):
+def _intersect(A, B):
+    """Intersection of two sorted lists of (z0, z1) intervals."""
+    out, i, j = [], 0, 0
+    while i < len(A) and j < len(B):
+        lo, hi = max(A[i][0], B[j][0]), min(A[i][1], B[j][1])
+        if hi > lo:
+            out.append((lo, hi))
+        if A[i][1] < B[j][1]:
+            i += 1
+        else:
+            j += 1
+    return out
+
+
+def column_check(body_tm, part_tm, xs, ys):
     """Column by column (vertical rays at the slot's own grid nodes, where its ceiling is defined; between
-    nodes a vertical step is drawn as a 0.2 mm slope): every column of the slot must start at the body's
-    underside (cut from below), and the foam over it must be FOAM_WALL_MM thick or absent.
+    nodes a vertical step is drawn as a 0.2 mm slope): the slot is where the part is inside the body, taken
+    as the overlap of the two solids' own intervals along each ray (no Boolean between them, whose seams
+    can lose a sliver: L0035, 2026-11-22). Every column of the slot must start at the body's underside
+    (cut from below), and the foam over it must be FOAM_WALL_MM thick or absent.
     Returns (worst foam over the slot - wall, foam under the slot (mm), columns tested)."""
     X, Y = np.meshgrid(xs, ys, indexing="ij")
     O = np.c_[X.ravel(), Y.ravel(), np.full(X.size, -5.0)]
@@ -612,9 +628,10 @@ def column_check(body_tm, saddle_tm, xs, ys):
             zs = np.unique(np.round(np.sort(zs), 5))
             out.append([(zs[k], zs[k + 1]) for k in range(0, len(zs) - 1, 2)])
         return out
-    bi, si = intervals(body_tm), intervals(saddle_tm)
+    bi, pi = intervals(body_tm), intervals(part_tm)
     worst_wall, worst_under, n = np.inf, 0.0, 0
-    for b, s in zip(bi, si):
+    for b, p in zip(bi, pi):
+        s = [q for q in _intersect(b, p) if q[1] - q[0] > 1e-3]
         if not b or not s:
             continue
         n += 1
@@ -653,7 +670,7 @@ def gates(r, tag) -> dict:
         out[f"fit_{tag}_hubcap_in_rim"] = bsm.RIM_INNER_R_MM - 0.5 - bsm.BeamSupport().hubcap_r_mm
         out[f"T3.7_{tag}_hubcap_clearance"] = g["z_axle"] - bsm.BeamSupport().hubcap_r_mm - TRACK_MIN_MM
     gx, gy = st.pop("grid_xs"), st.pop("grid_ys")
-    wall, under, n = column_check(_to_trimesh(r["body_local"]), _to_trimesh(r["slot"]), gx, gy[gy <= g["y_side"] + 0.5])
+    wall, under, n = column_check(_to_trimesh(r["body_local"]), part, gx, gy[gy <= g["y_side"] + 0.5])
     out[f"machining_{tag}_foam_over_slot"] = wall
     out[f"machining_{tag}_slot_cut_from_below"] = SLOT_TOL_MM - under
     st["slot_columns_tested"] = n
