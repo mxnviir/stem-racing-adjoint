@@ -316,7 +316,7 @@ def test_D6_adjoint_none_mesh_raises_not_silently_skips():
 
 def test_D7_requirements_txt_exists():
     """requirements.txt must exist in the repo root."""
-    req = Path(__file__).resolve().parent.parent / "requirements.txt"
+    req = Path(__file__).resolve().parents[3] / "requirements.txt"
     assert req.exists(), "requirements.txt missing from repo root"
     content = req.read_text()
     for pkg in ("numpy", "scipy", "scikit-image", "trimesh", "shapely", "mapbox-earcut"):
