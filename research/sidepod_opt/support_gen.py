@@ -414,7 +414,7 @@ def build_car(folder: Path, field_fns: dict, out: Path, h: float = 0.4) -> dict:
     shutil.copytree(folder, out, ignore=shutil.ignore_patterns("_body_half.stl"))
     if all("half" in r for r in res.values()):
         sup = trimesh.util.concatenate([res["front"]["half"], res["rear"]["half"]])
-        SUP._write_ascii(sup, out / "supports.stl", "supports")
+        SUP._write_ascii(SUP.cfd_trim(sup, wheels_of(folder)), out / "supports.stl", "supports")
         a = json.loads((out / "assembly.json").read_text())
         a["extra_surfaces"] = [e for e in a["extra_surfaces"] if e["name"] != "supports"] + \
                               [{"name": "supports", "stl": "supports.stl", "rotating": None}]

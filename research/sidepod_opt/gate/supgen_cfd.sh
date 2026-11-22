@@ -5,7 +5,7 @@ until [ -f runs/support_gen/carved/car/supports.stl ] && ! pgrep -f "support_gen
 source /usr/lib/openfoam/openfoam2412/etc/bashrc 2>/dev/null
 export OMPI_ALLOW_RUN_AS_ROOT=1 OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1 OMPI_MCA_rmaps_base_oversubscribe=1
 OUT=$PWD/gate_results_supgen; mkdir -p $OUT gate/supgen_cases
-for job in "runs/fine_cars/team_sup_cad/car team_cad" "runs/support_gen/carved/car carved" "runs/support_gen/random_b/car random_b" "runs/support_gen/envelope/car envelope"; do
+for job in "runs/fine_cars/team_sup_cad/car team_cad" "runs/support_gen/random_b/car random_b" "runs/support_gen/carved/car carved" "runs/support_gen/envelope/car envelope"; do
   set -- $job
   [ -f $OUT/prodcheck_$2.json ] && continue
   echo "start $2 $(date -u +%T)"

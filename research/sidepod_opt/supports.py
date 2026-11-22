@@ -117,7 +117,7 @@ def add_to_folder(folder: Path, out: Path | None = None, kind: str = "cad") -> d
         shutil.copytree(folder, out, ignore=shutil.ignore_patterns("_body_half.stl"))
     body = trimesh.load(out / "car_half.stl", force="mesh")
     s = build(body, _wheels(out), kind)
-    _write_ascii(s["mesh"], out / "supports.stl", "supports")       # Part 2 reads ASCII STLs with a named solid
+    _write_ascii(cfd_trim(s["mesh"], _wheels(out)), out / "supports.stl", "supports")   # named ASCII solid, trimmed at the wheels
     for tag, cap in s["hubcaps"]:
         cap.export(out / f"hubcap_{tag}.stl")
     a = json.loads((out / "assembly.json").read_text())
@@ -132,6 +132,24 @@ def add_to_folder(folder: Path, out: Path | None = None, kind: str = "cad") -> d
                    "the supports, so do not add this mass on top")
     (out / "supports.json").write_text(json.dumps(rep, indent=1))
     return dict(rep, folder=str(out))
+
+
+def cfd_trim(sup, wheels: dict, gap_mm: float = 0.3):
+    """The supports as the CFD should see them (metres in, metres out): the CFD wheel is a CLOSED spinning
+    cylinder, so everything inside it (disc, stub) is hidden, and a support face within a cell of the wheel's
+    face makes the mesher label parts of the WHEEL's face as the stationary support (seen 2026-11-22: a
+    checkerboard of support faces on the wheel's inner face). Cut the supports back to gap_mm short of each
+    wheel (grown cylinder). Mass and loads keep using the full part."""
+    import math
+    import trimesh
+    import cadio as CI
+    m = CI.to_manifold(sup)
+    for w in wheels.values():
+        c = trimesh.creation.cylinder(radius=(w["R"] + gap_mm) / 1e3, height=(w["w"] + 2 * gap_mm + 2) / 1e3, sections=96)
+        c.apply_transform(trimesh.transformations.rotation_matrix(math.pi / 2, [1, 0, 0]))
+        c.apply_translation([w["x"] / 1e3, (w["y_in"] - gap_mm + (w["w"] + 2 * gap_mm + 2) / 2) / 1e3, w["z_axle"] / 1e3 if "z_axle" in w else w["z"] / 1e3])
+        m = m - CI.to_manifold(c)
+    return CI.from_manifold(m)
 
 
 def _write_ascii(mesh, path: Path, name: str):
