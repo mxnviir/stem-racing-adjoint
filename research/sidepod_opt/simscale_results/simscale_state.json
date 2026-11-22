@@ -7,7 +7,7 @@
    "retired": null
   },
   "c303ee8756": {
-   "runs": 31,
+   "runs": 32,
    "project": "1399685146673566431",
    "box": "aac748ae-ea23-45dc-bec1-4eb944857f51",
    "retired": null
@@ -28,7 +28,7 @@
  "cases": {
   "c00045": {
    "folder": "runs/simscale/cars/c00045",
-   "phase": "mesh",
+   "phase": "run",
    "fp": "c303ee8756",
    "t0": 1795295004.7713168,
    "attempt": 8,
@@ -46,7 +46,12 @@
    ],
    "geometry_id": "9e373fd4-dd5f-4948-96c2-2e9786a67257",
    "sim_id": "75d0daed-377f-43f6-a197-569781e11b4a",
-   "mesh_op": "3db4c2f3-c313-4844-8770-1a3012224060"
+   "mesh_op": "3db4c2f3-c313-4844-8770-1a3012224060",
+   "mesh_done": true,
+   "cells": 3850803,
+   "run_id": "7b01638b-4073-4346-b2c9-54acc53c3c0f",
+   "cost_estimate": 17.09,
+   "progress": 0.0
   }
  },
  "done": {}
