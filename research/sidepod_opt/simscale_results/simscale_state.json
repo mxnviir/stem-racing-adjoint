@@ -7,7 +7,7 @@
    "retired": null
   },
   "c303ee8756": {
-   "runs": 32,
+   "runs": 42,
    "project": "1399685146673566431",
    "box": "aac748ae-ea23-45dc-bec1-4eb944857f51",
    "retired": null
@@ -26,32 +26,53 @@
   }
  },
  "cases": {
-  "c00045": {
-   "folder": "runs/simscale/cars/c00045",
+  "c00056": {
+   "folder": "runs/simscale/cars/c00056",
    "phase": "run",
    "fp": "c303ee8756",
-   "t0": 1795295004.7713168,
+   "t0": 1795309409.716694,
    "attempt": 8,
-   "import_id": "430da16a-aabe-4d64-80e7-48ecc8d10a04",
+   "import_id": "8bc29285-94e8-4ef0-8e4c-b44dfd4750a5",
    "project": "1399685146673566431",
    "tries": [
-    "4500: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "5200: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "3900: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "6000: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "4200: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "6800: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "4800: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']",
-    "5600: import FAILED model-has-invalid-geometry ['fault-face-tessellation_failed']"
+    "4500: import FAILED model-has-invalid-geometry ['fault-face-matching_tessellation_failed', 'fault-face-tessellation_failed']",
+    "5200: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE823. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Setti",
+    "3900: run FAILED at 0.0010000000474974513 ['MSG_OF_CHECK_MESH_OR_NUMERICS']",
+    "6000: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE839. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Setti",
+    "4200: mesh FAILED surface-meshing-size-smaller-than-tolerance-with-position: The meshing failed because the mesh element size is too close to the cad tolerance of the following entities: B1_TE900. Position: [{\"X\":0.07960973948349964,\"Y\":1.2011225347663411E-16,\"Z\":0.00987048250",
+    "6800: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE827. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Setti",
+    "4800: import FAILED model-has-invalid-geometry ['fault-face-matching_tessellation_failed', 'fault-face-tessellation_failed']",
+    "5600: mesh FAILED MSG_MESH_TOO_COARSE: The mesh could not be generated on the following entities B1_TE840. Please try either of the following resolutions (by order of priority): (a) change the small feature suppression under Advanced Setti"
    ],
-   "geometry_id": "9e373fd4-dd5f-4948-96c2-2e9786a67257",
-   "sim_id": "75d0daed-377f-43f6-a197-569781e11b4a",
-   "mesh_op": "3db4c2f3-c313-4844-8770-1a3012224060",
+   "geometry_id": "5abc941c-cde3-4571-b918-f065c8eba10c",
+   "sim_id": "f1a2fb63-e353-41dd-a022-224da8ab1652",
+   "mesh_op": "8b337b47-4778-4528-b000-3b4ecc22eec4",
    "mesh_done": true,
-   "cells": 3850803,
-   "run_id": "7b01638b-4073-4346-b2c9-54acc53c3c0f",
+   "cells": 3813784,
+   "run_id": "d8a5a162-49f3-4e94-bd79-f1f954879c0c",
    "cost_estimate": 17.09,
-   "progress": 0.0
+   "progress": 0.0010000000474974513
+  },
+  "c00057": {
+   "folder": "runs/simscale/cars/c00057",
+   "phase": "run",
+   "fp": "c303ee8756",
+   "t0": 1795309409.7166948,
+   "attempt": 2,
+   "import_id": "d5760b53-57b0-4bf7-ba25-545243fb15fe",
+   "project": "1399685146673566431",
+   "geometry_id": "770bc72b-e7bd-4474-9dac-4a2b200b11d8",
+   "sim_id": "56e76c39-90bf-4e47-8928-029ba38ce76a",
+   "mesh_op": "072e5da0-42b6-4223-8246-fafa5e6abcb5",
+   "mesh_done": true,
+   "cells": 3800851,
+   "run_id": "8ed4ae0b-9ff3-4570-9012-5ab424642015",
+   "cost_estimate": 17.09,
+   "progress": 0.6600000262260437,
+   "tries": [
+    "4500: run FAILED at 0.0010000000474974513 ['MSG_OF_CHECK_MESH_OR_NUMERICS']",
+    "5200: run FAILED at 0.0010000000474974513 ['MSG_OF_CHECK_MESH_OR_NUMERICS']"
+   ]
   }
  },
  "done": {}

@@ -2,18 +2,22 @@
  "stage": 0,
  "runs": {
   "evolve:cma:original:s1": {
-   "used": 39,
+   "used": 47,
    "illegal": 8,
    "best": 0.7559567990880703
   }
  },
  "inflight": {
-  "c00045": {
+  "c00056": {
+   "run": "evolve:cma:original:s1",
+   "stage": "evolve"
+  },
+  "c00057": {
    "run": "evolve:cma:original:s1",
    "stage": "evolve"
   }
  },
- "n": 50,
+ "n": 58,
  "log": [],
  "ref:evolve": "c00012",
  "ref:evolve_old_mesh": "c00000"
