@@ -1,0 +1,83 @@
+# Runbook
+
+All commands from the repo root. Run state lives in `runs/` (not in git).
+
+## Set up
+
+```
+pip install -r requirements.txt
+pip install git+https://github.com/SimScaleGmbH/simscale-python-sdk.git@19.1.0
+export SIMSCALE_API_KEYS='key1,key2,key3'      # never in a file in the repo; used in this order
+```
+
+A whole-car build peaks at ~5.5 GB of memory; the searches build 3 at a time (`BUILD_WORKERS` in
+`search/layout/simscale_layout.py`). The sidepod search needs ~11 GB of disk over a campaign: finished
+cars' CAD files are only needed while their case is on SimScale.
+
+## Build and check one car (no CFD)
+
+```
+python search/layout/layout_car.py /tmp/car                 # the team layout (every gene at its default)
+python search/layout/layout_render.py /tmp/car /tmp/car.png --cfd   # pictures of the solid that goes to CFD
+```
+
+`/tmp/car/layout_car.json` says whether it is legal, what failed, its mass with lead, and the CFD solid
+report (`one_piece`, `watertight`, distance from the built car). `run_car.log` and `summary.json` hold
+every check with its margin.
+
+## Stage 1: the layout search
+
+```
+python search/layout/simscale_layout.py init runs/layout --budget 48
+setsid nohup python -W ignore search/layout/simscale_layout.py run runs/layout >> runs/layout/run.log 2>&1 &
+python search/layout/simscale_layout.py status runs/layout
+```
+
+The first tick submits the reference (the team layout, at two triangle counts) and builds the first 8
+cars. `run` ticks once a minute: builds the batch it asked for, moves every SimScale case along, logs
+results, and asks the next batch once the last one is back. Stop it at any time (`pkill -f
+simscale_layout.py`) and start it again: everything is in `runs/layout/state.json`,
+`simscale_state.json` and `designs.jsonl`. A batch whose builds were interrupted is rebuilt.
+
+## Stage 2: the shape search
+
+```
+python search/shape/simscale_shape.py init runs/shape --from runs/layout [--car L0012] --budget 40
+setsid nohup python -W ignore search/shape/simscale_shape.py run runs/shape >> runs/shape/run.log 2>&1 &
+```
+
+Takes the fastest car of stage 1 (or `--car`), times it once with no change (`BASE`), then runs CMA on
+the lattice.
+
+## The sidepod search
+
+```
+python search/sidepod/campaign.py init runs/sidepod search/sidepod/config.simscale.json
+setsid nohup python -W ignore search/sidepod/campaign.py run runs/sidepod >> runs/sidepod/run.log 2>&1 &
+python search/sidepod/campaign.py status runs/sidepod
+python search/sidepod/campaign.py report runs/sidepod
+```
+
+## Keys
+
+Each search keeps its own key state in `simscale_state.json` (seeded from the sidepod run's, so a
+retired key stays retired). A key is retired when SimScale answers 402/403 or says it is out of
+core-hours; its unfinished cases move to the next key, and an event is written to `events` in that
+file. Each run costs roughly 20-25 core-hours (4-5 M cells).
+
+## Watching a run
+
+- `runs/<search>/run.log`: one line a minute; `batch` lines carry what the model asked and why.
+- `simscale_state.json`: per case `phase` (wait, step, import, mesh, run), `attempt` (which triangle
+  count of the ladder), `tries` (why an attempt failed), `cells`, `cost_estimate`.
+- A case retries an import or mesh failure at the next triangle count (`CAR_FACES` in
+  `simscale_layout.py`: 24 000, 32 000, 40 000 ...) and is dropped after the ladder.
+
+## Tests
+
+```
+python -m pytest car/race/tests car/parts/tests car/build/tests car/body/tests search/sidepod -q
+python cfd/test_simscale.py        # the SimScale state machine against a fake API
+```
+
+Part of `car/build/tests` builds whole cars and takes an hour or more.

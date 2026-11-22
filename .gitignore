@@ -1,0 +1,5 @@
+# run state: cars, CFD files, SimScale cases (big, and local to the machine running the search)
+runs/
+cache/
+__pycache__/
+*.pyc

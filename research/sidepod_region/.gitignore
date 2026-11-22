@@ -1,4 +1,0 @@
-results/state_*.npy
-results/base_state.npy
-__pycache__/
-*.out

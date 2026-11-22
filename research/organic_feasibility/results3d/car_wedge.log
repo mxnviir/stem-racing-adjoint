@@ -1,3 +1,0 @@
-[run_car 08:51:35] 1-2 BODY + PARTS: parametric body sized against the manufactured parts [peak 0.0 GB]
-/usr/local/lib/python3.13/site-packages/trimesh/triangles.py:302: RuntimeWarning: invalid value encountered in divide
-  center_mass = integrated[1:4] / volume

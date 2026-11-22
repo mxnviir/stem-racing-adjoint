@@ -1,0 +1,22 @@
+# Python 3.11+. The car builder, the searches and the tests.
+numpy
+scipy
+pandas
+matplotlib
+pillow
+scikit-image
+scikit-learn          # stage 1 surrogate (Gaussian process)
+cma                   # sidepod search and stage 2
+jax
+jaxlib                # race-time model
+trimesh==5.2.0
+shapely
+rtree==1.4.1
+mapbox-earcut
+manifold3d==3.5.4     # exact Booleans
+fast_simplification==0.2.0
+pymeshlab==2025.7.post1
+cadquery-ocp          # OpenCASCADE: the team STEP, the SimScale air volume
+pytest
+# SimScale's SDK is not on PyPI:
+#   pip install git+https://github.com/SimScaleGmbH/simscale-python-sdk.git@19.1.0

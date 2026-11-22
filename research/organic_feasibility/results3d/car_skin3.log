@@ -1,3 +1,0 @@
-[run_car 08:51:34] 1-2 BODY + PARTS: parametric body sized against the manufactured parts [peak 0.0 GB]
-/home/user/esp32-line-follower/part1-simulation/unified_phi.py:1093: RuntimeWarning: 20 degenerate faces survived Taubin smoothing; dropping them and refilling. If this fires, check whether the smoothing iterations are enough for this geometry.
-  mesh = SE._repair_mesh(SE._marching_cubes(clone, eps_frac), pin_plane_y0=True)

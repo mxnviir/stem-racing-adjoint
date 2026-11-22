@@ -1,0 +1,787 @@
+"""
+param_body.py -- a parametric car body: lofted sections, sidepods and a floor.
+
+The level-set carve (Stage 1) shapes the body for MASS only and the drag adjoint
+cannot steer it (every drag-only step raised D20, 12 of 12, 2026-09-26), so the
+body a designer would draw -- a smooth fuselage, sidepods around the cargo, a
+floor -- was out of reach. This builds that body from ~20 numbers, then hands it
+to the SAME rule machinery as every other body: build_unified_geometry's hard
+masks (T4.2 cargo, T5.5 cartridge wall, halo pocket, ballast slot, T7.9 wheel
+zones, the model-block envelope) are applied on top, so whatever the numbers
+say, the result is as legal as a Stage-1 carve. A CFD search (part5
+body_search.py) picks the numbers.
+
+Shape, all in mm, car coordinates (x nose->tail, z up from the track):
+
+  fuselage   superellipse sections |y/b|^p + |(z-zc)/h|^p <= 1 lofted through
+             eight stations from Ref A to the rear face (half-width, top and
+             bottom at each, monotone-cubic between them). The body ends at
+             Ref A; the nose cone ahead of it is a printed part (Part 4).
+  sidepods   a second, wide and low superellipse loft over [s_x0, s_x1] with
+             `s_taper` mm ease at each end: what encloses the 52 mm T4.2 cargo.
+  modes      32 smooth bumps (+) or dents (-) on the fuselage, mm.
+"""
+from __future__ import annotations
+
+from dataclasses import dataclass, asdict, fields
+import numpy as np
+
+import exact_zones
+
+
+@dataclass(frozen=True)
+class BodyParams:
+    # fuselage: half-width, top and bottom at STATIONS_U (the start car, from
+    # the 2026-09-27 three-station loft n 10/20/6, max 18/32/5 at 0.35, rear 14/48/20)
+    st_b: tuple = (10.0, 13.239184, 16.530612, 18.0, 17.786982, 17.147929, 15.908571, 14.0)
+    st_zt: tuple = (20.0, 24.858776, 29.795918, 32.0, 32.852071, 35.408284, 40.365444, 48.0)
+    st_zb: tuple = (6.0, 5.595102, 5.183673, 5.0, 5.798817, 8.195266, 12.842604, 20.0)
+    p: float = 2.6                # section squareness: 2 ellipse, larger boxier
+    # sidepods
+    s_b: float = 28.0
+    s_zt: float = 27.0
+    s_zb: float = 12.0
+    s_x0: float = 70.0
+    s_x1: float = 142.0
+    s_taper: float = 12.0
+    s_p: float = 3.0
+    # smooth blend radius where fuselage and sidepods meet (mm)
+    blend_mm: float = 3.0
+    # underfloor tunnel (inlet at x0, outlet at x1): a channel cut up into the
+    # body's underside, |y| < ft_w, rising ft_h mm above the local floor in the
+    # middle and easing to nothing over ft_ramp mm at each end. ft_h = 0 is off.
+    ft_h: float = 0.0
+    ft_w: float = 8.0
+    ft_x0: float = 50.0
+    ft_x1: float = 170.0
+    ft_ramp: float = 25.0
+    # sculpt modes: strengths (mm, + grows) of smooth bumps, mirrored left/right:
+    # the first 32 on the fuselage (MODE_U x MODE_ANG_DEG), the rest on the sidepods
+    # (SIDE_MODE_U x SIDE_MODE_ANG_DEG). A shorter list leaves the rest at zero.
+    modes: tuple = (0.0,) * 56
+
+    def as_dict(self) -> dict:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "BodyParams":
+        d = {k: (tuple(v) if isinstance(v, list) else v) for k, v in d.items()
+             if k not in _RETIRED}          # older search files still carry these
+        unknown = set(d) - {f.name for f in fields(cls)}
+        if unknown:
+            raise ValueError(f"unknown body parameters {sorted(unknown)}")
+        return cls(**d)
+
+
+# parameters of the retired three-station loft, nose length and floor plate
+# (2026-09-30): ignored when read, so older search records still load
+_RETIRED = frozenset(("nose_len", "n_b", "n_zt", "n_zb", "x_max_frac", "m_b", "m_zt", "m_zb",
+                      "r_b", "r_zt", "r_zb", "f_b", "f_z", "f_t"))
+
+STATIONS_U = (0.0, 0.08, 0.2, 0.35, 0.5, 0.65, 0.82, 1.0)
+MODE_U = (0.06, 0.18, 0.3, 0.42, 0.54, 0.66, 0.78, 0.9)
+MODE_ANG_DEG = (15.0, 60.0, 120.0, 165.0)      # from the top, down the side
+# On the sidepods too: most of the drag is in the wheels, and the flow onto and off
+# them is shaped here. With fuselage modes only, these surfaces had 8 numbers.
+SIDE_MODE_U = (0.0, 0.2, 0.4, 0.6, 0.8, 1.0)   # along s_x0..s_x1
+SIDE_MODE_ANG_DEG = (20.0, 60.0, 100.0, 150.0)  # from the top, down the side
+N_FUSELAGE_MODES = len(MODE_U) * len(MODE_ANG_DEG)      # 32
+N_MODES = N_FUSELAGE_MODES + len(SIDE_MODE_U) * len(SIDE_MODE_ANG_DEG)   # 56
+MODE_SIGMA_MM = 7.0
+
+
+def _smin(a, b, k):
+    """Polynomial smooth minimum (k = blend radius, mm); k = 0 is min()."""
+    if k <= 0:
+        return np.minimum(a, b)
+    h = np.clip(0.5 + 0.5 * (b - a) / k, 0.0, 1.0)
+    return b * (1 - h) + a * h - k * h * (1 - h)
+
+
+# Search bounds (mm) of the scalar parameters, from the legal envelope
+# (build_unified_geometry: y <= 20 ahead of x~80, <= 32 around the cargo) and
+# the mandatory solids (cargo y +-27.5, z 14-24, 60 mm long, placed where it fits).
+BOUNDS = {
+    "p": (2.0, 4.0),
+    "s_b": (26.5, 31.5), "s_zt": (24.5, 34.0), "s_zb": (4.0, 15.5),
+    "s_x0": (55.0, 77.0), "s_x1": (137.0, 150.0), "s_taper": (4.0, 25.0), "s_p": (2.0, 5.0),
+    # tunnel: 2 * ft_w >= 2 * machining.TOOL_R_MM = 6.35 mm (the ball end cannot cut a narrower slot), and a
+    # ceiling under the T4.2 cargo (z 16) wherever the floor is at 5 mm
+    "ft_h": (0.0, 10.0), "ft_w": (3.2, 14.0), "ft_x0": (30.0, 120.0),
+    "ft_x1": (100.0, 190.0), "ft_ramp": (5.0, 60.0),
+}
+
+
+def _superellipse_phi(y, z, b, zc, h, p):
+    """Approximate signed distance (mm) to |y/b|^p + |(z-zc)/h|^p = 1."""
+    b = np.maximum(b, 1e-3)
+    h = np.maximum(h, 1e-3)
+    r = (np.abs(y) / b) ** p + (np.abs(z - zc) / h) ** p
+    return (r ** (1.0 / p) - 1.0) * np.minimum(b, h)
+
+
+def phi_mm(bp: BodyParams, X, Y, Z, x_ref_a: float, x_rear: float, skin_mm: float = 0.0):
+    """Signed distance field (mm, negative inside) on grids X, Y, Z (mm).
+
+    skin_mm: the body grown by this. The tunnel is cut after the skin, from the skinned
+    floor, so a 3 mm tunnel is 3 mm at any skin. Cut before it, the skin filled the tunnel
+    in: at a 4 mm skin no tunnel under 4 mm existed, and its settings had no slope at all.
+
+    The mandatory solids (T5.5 cartridge wall, halo deck) are NOT drawn here:
+    build() adds them through the hard masks and the machining closing rounds
+    them into the loft (on the start car the wall housing rises from the loft
+    top 41.7 mm at x 150 to 47.8 mm at x 174, measured 2026-09-30). A loft
+    that leaves one as a separate island fails T4.1 in the audit."""
+    b, zt, zb = _fuselage(bp, X, x_ref_a, x_rear)
+    zc, h = 0.5 * (zt + zb), 0.5 * (zt - zb)
+    phi_f = _superellipse_phi(Y, Z, b, zc, h, bp.p)
+    # The machined body ends at Ref A: the nose cone is a separate printed part
+    # (Part 4 nose.py, team spec 2026-09-27). nose_len only rounds the body's
+    # front face now; nothing is left ahead of Ref A.
+    phi_f = np.maximum(phi_f, np.maximum(x_ref_a - X, X - x_rear))
+    # sidepods
+    ts = max(bp.s_taper, 1e-3)
+    w = np.minimum(np.clip((X - bp.s_x0) / ts, 0, 1), np.clip((bp.s_x1 - X) / ts, 0, 1))
+    w = np.sin(0.5 * np.pi * w)                      # smooth ends
+    sb = bp.s_b * w
+    sh = 0.5 * (bp.s_zt - bp.s_zb) * np.maximum(w, 0.35)
+    phi_s = _superellipse_phi(Y, Z, sb, 0.5 * (bp.s_zt + bp.s_zb), sh, bp.s_p)
+    phi_s = np.where(w > 0, phi_s, 1e3)
+    phi = _smin(phi_f, phi_s, bp.blend_mm)
+    if any(bp.modes):
+        phi = phi - mode_field(bp, X, Y, Z, x_ref_a, x_rear)
+    phi = phi - skin_mm
+    if bp.ft_h > 0.0:
+        phi = np.maximum(phi, -_tunnel_phi(bp, X, Y, Z, x_ref_a, x_rear, skin_mm))
+    return phi
+
+
+def _tunnel_phi(bp, X, Y, Z, x_ref_a, x_rear, skin_mm: float = 0.0):
+    """Signed distance (mm, negative inside) of the underfloor tunnel: |y| < ft_w
+    below a ceiling at the local floor + a height that eases in and out over
+    ft_ramp mm, so inlet and outlet are open ramps. Cut from below, so the
+    bottom setup of the team's process reaches all of it."""
+    b, zt, zb = _fuselage(bp, X, x_ref_a, x_rear)
+    r = max(bp.ft_ramp, 1e-3)
+    e = np.minimum(np.clip((X - bp.ft_x0) / r, 0, 1), np.clip((bp.ft_x1 - X) / r, 0, 1))
+    e = np.sin(0.5 * np.pi * e) ** 2
+    # A tunnel never goes through the fuselage: 3 mm of roof and 2.5 mm of side wall are
+    # left. Through a thin body it opened the top and sides, so there was no body left for the
+    # T4.6 decal or the T4.7 number (6 of 7 rejections in 400 random cars, all with a tunnel).
+    ceiling = np.minimum(zb - skin_mm + bp.ft_h * e, zt + skin_mm - 3.0)
+    half_w = np.minimum(bp.ft_w, np.maximum(b + skin_mm - 2.5, 0.0))
+    inside_x = np.maximum(bp.ft_x0 - X, X - bp.ft_x1)
+    return np.maximum.reduce([np.abs(Y) - half_w, Z - ceiling, inside_x, -(bp.ft_h * e)])
+
+
+def _field_tunnel_phi(bp, field, X, Y, Z):
+    """The underfloor tunnel of a carved field (mm, negative inside), cut after the skin like
+    the loft's (_tunnel_phi): |y| < ft_w, ft_x0..ft_x1, up to ft_h above each column's lowest
+    solid, eased over ft_ramp mm. The field has no loft stations, so floor, top and half-width
+    come from the skinned field itself: 3.0 mm (MIN_MACHINED_WALL_MM) of roof under each
+    column's top and of side wall inside the solid's half-width at that x and height are always left.
+    Until 2026-11-17 build() set ft_h = 0 for any field, so Part 3's five floor variables had
+    no effect at all on carved cars."""
+    from geometry_contract import MIN_MACHINED_WALL_MM as t
+    solid = field < 0
+    big = 1e9
+    zb = np.where(solid, Z, big).min(axis=2, keepdims=True)
+    zt = np.where(solid, Z, -big).max(axis=2, keepdims=True)
+    b = np.where(solid, np.abs(Y), -big).max(axis=1, keepdims=True)        # half-width at each x and z
+    r = max(bp.ft_ramp, 1e-3)
+    e = np.minimum(np.clip((X - bp.ft_x0) / r, 0, 1), np.clip((bp.ft_x1 - X) / r, 0, 1))
+    e = np.sin(0.5 * np.pi * e) ** 2
+    ceiling = np.where(zb < big, np.minimum(zb + bp.ft_h * e, zt - t), -big)
+    half_w = np.minimum(bp.ft_w, np.maximum(b - t, 0.0))
+    from machining import TOOL_R_MM
+    half_w = np.where(half_w >= TOOL_R_MM, half_w, 0.0)      # the ball cannot cut a slot under 2 * TOOL_R: none there
+    inside_x = np.maximum(bp.ft_x0 - X, X - bp.ft_x1)
+    return np.maximum.reduce([np.abs(Y) - half_w, Z - ceiling, inside_x, -(bp.ft_h * e)])
+
+
+def _fuselage(bp, X, x_ref_a, x_rear):
+    """(half-width, top, bottom) of the fuselage along X (arrays like X)."""
+    from scipy.interpolate import PchipInterpolator
+    u = np.clip((X - x_ref_a) / (x_rear - x_ref_a), 0.0, 1.0)
+    b, zt, zb = (PchipInterpolator(STATIONS_U, v)(u) for v in (bp.st_b, bp.st_zt, bp.st_zb))
+    return b, zt, np.minimum(zb, zt - 4.0)           # always a section, whatever the numbers
+
+
+def mode_centres(bp, x_ref_a: float, x_rear: float) -> np.ndarray:
+    """(N_MODES, 3) mode centres, mm, on the right half of the fuselage."""
+    xs = np.array([x_ref_a + u * (x_rear - x_ref_a) for u in MODE_U])
+    b, zt, zb = (np.asarray(a, float).ravel() for a in _fuselage(bp, xs, x_ref_a, x_rear))
+    zc, h = 0.5 * (zt + zb), 0.5 * (zt - zb)
+    out = []
+    for i, x in enumerate(xs):
+        for ang in MODE_ANG_DEG:
+            t = np.radians(ang)
+            y = b[i] * abs(np.sin(t)) ** (2 / bp.p)
+            z = zc[i] + h[i] * np.sign(np.cos(t)) * abs(np.cos(t)) ** (2 / bp.p)
+            out.append((x, y, z))
+    zc_s, h_s = 0.5 * (bp.s_zt + bp.s_zb), 0.5 * (bp.s_zt - bp.s_zb)
+    for u in SIDE_MODE_U:
+        x = bp.s_x0 + u * (bp.s_x1 - bp.s_x0)
+        ts = max(bp.s_taper, 1e-3)
+        w = np.sin(0.5 * np.pi * min(np.clip((x - bp.s_x0) / ts, 0, 1), np.clip((bp.s_x1 - x) / ts, 0, 1)))
+        w = max(float(w), 0.5)            # the ends still have a nose and a tail to shape
+        for ang in SIDE_MODE_ANG_DEG:
+            t = np.radians(ang)
+            y = bp.s_b * w * abs(np.sin(t)) ** (2 / bp.s_p)
+            z = zc_s + h_s * np.sign(np.cos(t)) * abs(np.cos(t)) ** (2 / bp.s_p)
+            out.append((x, y, z))
+    return np.array(out)
+
+
+def mode_field(bp, X, Y, Z, x_ref_a, x_rear):
+    """sum_k a_k exp(-|P - c_k|^2 / 2 sigma^2) with |y| (mirrored). It is
+    subtracted from phi, so a positive a_k grows the body ~a_k mm at c_k."""
+    C = mode_centres(bp, x_ref_a, x_rear)
+    Ya = np.abs(Y)
+    out = np.zeros(np.shape(X), dtype=float)
+    s2 = 2 * MODE_SIGMA_MM ** 2
+    for a, (cx, cy, cz) in zip(bp.modes, C):
+        if a:
+            out += a * np.exp(-((X - cx) ** 2 + (Ya - cy) ** 2 + (Z - cz) ** 2) / s2)
+    return out
+
+
+def lattice_field(lat: dict, X, Y, Z, x_ref_a: float, x_rear: float):
+    """mm the body grows by at each cell: amp x the cubic interpolation of the control points (see build)."""
+    from scipy import ndimage
+    shape = tuple(int(n) for n in lat["shape"])
+    g = np.asarray(lat["values"], dtype=float).reshape(shape)
+    x0, x1, ym, z0, z1 = lat.get("box") or (x_ref_a, x_rear, 36.0, 0.0, 52.0)
+    coords = [(X - x0) / (x1 - x0) * (shape[0] - 1), np.abs(Y) / ym * (shape[1] - 1), (Z - z0) / (z1 - z0) * (shape[2] - 1)]
+    coords = [np.clip(c, 0, n - 1) for c, n in zip(coords, shape)]
+    up = ndimage.map_coordinates(g, [c.ravel() for c in coords], order=3, mode="nearest").reshape(X.shape)
+    return float(lat.get("amp_mm", 6.0)) * up
+
+
+def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
+          target_body_kg: float | None = None, machinable: bool = True,
+          skin_offset_mm: float | None = None, field_mm=None,
+          rear_len_mm: float | None = None, with_cargo: bool = True,
+          cargo_placement: dict | None = None, lattice: dict | None = None):
+    """UnifiedGeometry whose body is `bp`, with every rule mask applied.
+
+    field_mm: a body given as a signed distance field on this car's grid (mm, negative
+      inside), e.g. one carved from the block, used instead of `bp`'s loft. It goes through
+      the same rules, machining, joins and mass sizing (the skin offset grows or thins it).
+
+    machinable: the team's 3-axis, 6.35 mm (machining.TOOL_R_MM) ball-end, top-and-bottom process
+      (machining.make_machinable) is applied to the drawn shape.
+    rear_len_mm: rear axle -> rear face (mm). None keeps the default rear face, Ref B + 40
+      (T9.4.2's overhang limit, the longest body). Shorter moves the face, and with it the
+      52 mm cartridge bore, forward (the layout search, search/layout/layout_car.py).
+    with_cargo: False drops the T4.2 virtual cargo.
+    lattice: free-form change of the drawn body (the shape search, research/.../shape): {"shape": [nx, ny, nz],
+      "values": nx*ny*nz numbers, "amp_mm": A, "box": [x0, x1, y_max, z0, z1] (mm; default Ref A .. rear face,
+      0 .. 36, 0 .. 52)}. The values are control points over the +y half of the box (mirrored to -y),
+      cubic-interpolated; the body grows by A x the value there (shrinks where negative), before the rule
+      masks and the milling, so every rule still holds whatever the values.
+    cargo_placement: {"x_start_m", "z_base_m", "flip"} (virtual_cargo.build_virtual_cargo_solid_mask);
+      None lets Part 1 pick (corridor centre, wide end forward).
+    target_body_kg: no ballast, so the body itself carries the mass the T3.6
+      floor needs. The drawn shape is offset by a uniform skin (grown or
+      thinned, the design intent kept) until the machined body weighs this.
+    """
+    import unified_phi as up
+    from phi_updater import reinitialise_sdf
+    import machining
+    ugk = {"with_cargo": with_cargo, "cargo_placement": cargo_placement}
+    if rear_len_mm is not None:
+        from dataclasses import replace as _replace
+        from bounding_volumes import default_rule_envelope
+        # rearpod_max_length_m is measured from Ref B (= rear axle + 16 mm)
+        ugk["rule_envelope"] = _replace(default_rule_envelope(), rearpod_max_length_m=(rear_len_mm - 16.0) / 1e3)
+    base = up.build_unified_geometry(W_mm, x_front_mm, d_halo_mm, init_mode="full", **ugk)
+    # Milling runs on one fixed MILL_SPACING_MM grid whatever this car's grid (team lead,
+    # 2026-11-09): on the car's own grid the ball's fit flipped with the cell alignment and
+    # the same carved body weighed 0.7-1.2 % differently across 1.0 / 0.75 / 0.5 mm. Finer
+    # grids too (the 0.3 mm production car milled on its own grid until 2026-11-11): "every
+    # build" was the rule, and the same mill whatever the grid is what keeps the grids agreeing.
+    mill_base = None
+    if machinable and abs(up.GRID_SPACING_M * 1e3 - MILL_SPACING_MM) > 1e-9:
+        with _spacing(MILL_SPACING_MM):
+            mill_base = up.build_unified_geometry(W_mm, x_front_mm, d_halo_mm, init_mode="full", **ugk)
+    # Read at call time: sandbox/coarse.use_spacing rewrites the module globals,
+    # and an import-time copy drew the body at 0.3 mm on a 1 mm grid.
+    r, d = base.region, up.GRID_SPACING_M
+    xs = (r.origin_m[0] + np.arange(r.shape[0]) * d) * 1e3
+    ys = (r.origin_m[1] + np.arange(r.shape[1]) * d) * 1e3
+    zs = (r.origin_m[2] + np.arange(r.shape[2]) * d) * 1e3
+    X, Y, Z = np.meshgrid(xs, ys, zs, indexing="ij")
+    x_ref_a = base.landmarks["ref_plane_A_m"] * 1e3
+    x_rear_mm = base.landmarks["rear_face_m"] * 1e3
+    if field_mm is not None:
+        if np.shape(field_mm) != X.shape:
+            raise ValueError(f"field_mm has shape {np.shape(field_mm)}, this car's grid is {X.shape}")
+        # The machined body ends at Ref A: ahead of it is the printed nose cone (T1.7).
+        phi0 = np.maximum(np.asarray(field_mm, dtype=float), x_ref_a - X)
+        # the field is the body: its tunnel (ft_h > 0) is cut from the skinned field in make()
+    else:
+        phi0 = phi_mm(bp, X, Y, Z, x_ref_a, x_rear_mm)
+    if lattice:
+        phi0 = phi0 - lattice_field(lattice, X, Y, Z, x_ref_a, x_rear_mm)
+    # The rules every body obeys (Ref A end, T8.5.1 cap, nose stub, halo floor and pocket
+    # bridge) are forced in build_unified_geometry (unified_phi.apply_build_rules), so a
+    # carved body gets them too. The stub's section is reused below to join a split front.
+    stub = (np.abs(Y) <= 4.0) & (Z >= 9.0) & (Z <= 18.0)
+
+    def bars_for(g, min_cells):
+        """4 mm bars, mirrored, from each piece off the main body that holds required solid or
+        has at least min_cells cells, to the main body's nearest cell; None if there is none.
+        A piece with no required solid whose bar's centre line would cross required air is
+        left out (a rule zone parts it from the body: it is dropped)."""
+        from scipy.ndimage import distance_transform_edt, label
+        lab, n = label(g.phi.grid < 0)
+        if n <= 1:
+            return None
+        sizes = np.bincount(lab.ravel())
+        sizes[0] = 0
+        main_id = sizes.argmax()
+        must = set(np.unique(lab[g.phi.hard_mask_solid & (lab > 0)]).tolist())
+        cut = [i for i in sorted(must | set(np.flatnonzero(sizes >= min_cells).tolist())) if i != main_id]
+        if not cut:
+            return None
+        _, idx = distance_transform_edt(lab != main_id, return_indices=True)
+        bar = np.zeros(lab.shape, bool)
+        Ya = np.abs(Y)
+        d_mm = d * 1e3
+        for i in cut:
+            cells = np.argwhere(lab == i)
+            near = idx[:, cells[:, 0], cells[:, 1], cells[:, 2]].T
+            k = np.linalg.norm(cells - near, axis=1).argmin()
+            pa = np.array([X[tuple(cells[k])], abs(Y[tuple(cells[k])]), Z[tuple(cells[k])]])
+            pb = np.array([X[tuple(near[k])], abs(Y[tuple(near[k])]), Z[tuple(near[k])]])
+            v = pb - pa
+            t = np.clip(((X - pa[0]) * v[0] + (Ya - pa[1]) * v[1] + (Z - pa[2]) * v[2])
+                        / max(float(v @ v), 1e-9), 0.0, 1.0)
+            r2 = (X - pa[0] - t * v[0]) ** 2 + (Ya - pa[1] - t * v[1]) ** 2 + (Z - pa[2] - t * v[2]) ** 2
+            if i not in must and (g.phi.hard_mask_air & (r2 <= (0.75 * d_mm) ** 2)).any():
+                continue
+            bar |= r2 <= 2.0 ** 2
+        return bar if bar.any() else None
+
+    # The team's 3.0 mm machined wall (2026-11-14): a skin thinner than this would take the
+    # body's thinnest wall under the limit, so sizing never searches below it. Each build also
+    # measures its own thinnest wall (milling and the stamps act after the skin), and that is
+    # the gate: build_report["min_machined_wall_mm"], refused by cutter.finish under 3.0.
+    from geometry_contract import MIN_MACHINED_WALL_MM
+    from phi_updater import min_wall_mm, min_wall_mm_beyond
+    _f0 = np.asarray(phi0, dtype=np.float64) * 1e-3
+    # WALL_SCOPE "own": a wall the given field already has under 3.0 mm (a rule zone's own design,
+    # stamped into a carved field) does not set the skin floor: with it, skin_lo went positive,
+    # the skin could not thin and the start block stayed 5.14 g heavy (test_cutter finish,
+    # anass 43902774172). The gate is then that sizing makes no wall thinner under 3.0 mm.
+    _w0 = min_wall_mm_beyond(_f0, d, MIN_MACHINED_WALL_MM * 1e-3) if WALL_SCOPE == "own" else min_wall_mm(_f0, d)
+    # ...and with "own" the skin does not THIN within one wall width of such a wall: the weight
+    # _hold is 0 there and ramps to 1 over another wall width (no step in the surface), so a
+    # designed thin wall is left exactly as given and the cut guard's rule holds in sizing too.
+    # The hold depends on how far the skin thins: a skin of -t mm takes 2t off a wall, so every
+    # wall under 3.0 + 2t mm is held. With a fixed hold and the skin floor set by the thinnest
+    # wall, a cleaned block (thinnest wall 3.02 mm) got skin_lo -0.01 mm and stayed 2.13 g heavy
+    # (tests on a6442aa). With "own" the skin floor is the general one; walls set the hold.
+    _h0 = None
+    if WALL_SCOPE == "own":
+        from phi_updater import _wall_half
+        _h0 = _wall_half(_f0, d) * 1e3
+        _r = int(np.ceil(MIN_MACHINED_WALL_MM / (d * 1e3))) + 1
+
+    def _hold_for(t_mm):
+        """1 where the skin may thin by t_mm, 0 on and next to a wall it would take under 3.0 mm."""
+        from scipy.ndimage import binary_dilation, distance_transform_edt
+        zone = binary_dilation(_h0 < MIN_MACHINED_WALL_MM / 2.0 + t_mm, iterations=_r)
+        return np.clip(distance_transform_edt(~zone) / _r, 0.0, 1.0) if zone.any() else 1.0
+
+    skin_lo = -8.0 if WALL_SCOPE == "own" else (max(-8.0, -(_w0 - MIN_MACHINED_WALL_MM) / 2.0) if np.isfinite(_w0) else -8.0)
+
+    def make(offset_mm, bar_to=None, bridges=None, tries=0):
+        import copy
+        from scipy.ndimage import label
+        # A piece hanging on by a neck thinner than a cell is one body on one grid and a loose
+        # island on another. Dropped, the body lost up to 0.9 g on that grid alone (5 of 20
+        # bodies over the 0.5 % grid mark, 2026-11-11). Pieces this big are joined instead.
+        min_cells = int(np.ceil(BRIDGE_MIN_MM3 / (d * 1e3) ** 3))
+        g = copy.deepcopy(base)
+        if field_mm is None and bp.ft_h:
+            field = phi_mm(bp, X, Y, Z, x_ref_a, x_rear_mm, skin_mm=offset_mm)
+        else:
+            field = phi0 - (offset_mm if _h0 is None or offset_mm >= 0 else offset_mm * _hold_for(-offset_mm))
+            if field_mm is not None and bp.ft_h > 0.0:
+                field = np.maximum(field, -_field_tunnel_phi(bp, field, X, Y, Z))
+        # The skin grows the body, not its length: re-cut at Ref A and the rear face after it.
+        # Cut before, the front face moved forward with the skin, 4 mm into the printed nose at
+        # a 4 mm skin, and at exactly 4.00 a whole slab ahead of Ref A turned solid at once
+        # (Part 2: +0.17 g, halo drag -35 %, between skins 3.99 and 4.00, 2026-11-09).
+        field = np.maximum(field, np.maximum(x_ref_a - X, X - x_rear_mm))
+        if bar_to is not None:
+            g.phi.hard_mask_solid |= stub & (X >= x_ref_a) & (X <= bar_to)
+        if bridges is not None:
+            g.phi.hard_mask_solid |= bridges & ~g.phi.hard_mask_air
+        g.phi.grid = (field / 1e3).astype(np.float32)
+        g.phi.apply_hard_constraints()
+        up.enforce_symmetry(g)
+        reinitialise_sdf(g.phi)
+        g.phi.apply_hard_constraints()
+        if not machinable:
+            rep = {}
+        elif mill_base is None:
+            rep = machining.make_machinable(g)
+        else:
+            rep = _mill_on(g, mill_base)
+        up.enforce_symmetry(g)
+        rep["islands_removed_mm3"] = _drop_islands(g, min_cells if tries < 1 else 0) * (d * 1e3) ** 3
+        rep["pinch_cells_filled"] = _close_pinches(g, d)
+        # The stub at Ref A must belong to the main body. Where sculpting, a thin skin or the
+        # cutter leaves the front as its own piece, the mesh keeps only the biggest one, and
+        # the nose loses its root (body from x 52.9 with Ref A at 39.7; 16 of 1010 random
+        # cars, T4.1 or no nose). Then the stub's section runs aft into the main body.
+        if bar_to is None:
+            lab, n = label(g.phi.grid < 0)
+            if n > 1:
+                sizes = np.bincount(lab.ravel())
+                sizes[0] = 0
+                main = lab == sizes.argmax()
+                if not (main & stub & (X <= x_ref_a + 2.0)).any():
+                    reach = main & stub
+                    if reach.any():
+                        return make(offset_mm, bar_to=float(X[reach].min()) + 1.0)
+        # The same for every other piece holding required material (the T5.5 wall round the
+        # chamber came out on its own, smaller, piece and was lost: "0 % of the annulus solid",
+        # 3 of 280 random cars): a 4 mm bar, mirrored, from its cell nearest the main body.
+        # ...and for a piece big enough to matter (see min_cells above).
+        if tries < 1:
+            bar = bars_for(g, min_cells)
+            if bar is not None:
+                return make(offset_mm, bar_to=bar_to, bridges=bar if bridges is None else bridges | bar, tries=1)
+        rep["bore_cells_stamped"] = _stamp_bore(g, X, Y, Z)
+        rep["zone_cells_stamped"] = exact_zones.stamp(g, X, Y, Z)   # last: the zones' true faces
+        # A stamp can cut a thin neck: drop what came loose and close pinches again, or the
+        # field held 4 bodies under a 1-piece mesh (Part 4, 2026-11-09).
+        if tries < 2:                          # a neck the stamp cut: joined, once, the same way
+            bar = bars_for(g, min_cells)
+            if bar is not None:
+                return make(offset_mm, bar_to=bar_to, bridges=bar if bridges is None else bridges | bar, tries=2)
+        rep["islands_after_stamp_mm3"] = _drop_islands(g) * (d * 1e3) ** 3
+        rep["pinch_cells_after_stamp"] = _close_pinches(g, d)
+        if _h0 is not None and g.phi.grid.shape == _f0.shape:
+            # The milling and clean-up after the skin can still thin a wall under 3.0 mm (41 cells
+            # on the 2 mm block, tests on a6442aa): such walls are held at the given field, as the
+            # cut does, inside each build so the mass search sees the body it gets.
+            from phi_updater import wall_guard
+            g2, ok2 = wall_guard(_f0.astype(g.phi.grid.dtype), g.phi.grid, d, MIN_MACHINED_WALL_MM * 1e-3, mode="freeze")
+            if ok2 and g2 is not g.phi.grid:
+                g.phi.grid = g2
+                g.phi.apply_hard_constraints()
+                up.enforce_symmetry(g)
+                rep["wall_held_in_build"] = True
+        g.spacing_m = d
+        g.build_report = dict(rep, skin_offset_mm=offset_mm, join_rounds=tries,
+                              min_machined_wall_mm=min_wall_mm(g.phi.grid, d), skin_lo_mm=skin_lo)
+        return g
+
+    def mass(g):
+        return sum(c.mass_kg for c in up.compute_mass_com(g))
+
+    if skin_offset_mm is not None:           # fixed skin: gradient checks, no mass sizing
+        return make(skin_offset_mm)
+    if target_body_kg is None:
+        return make(0.0)
+    # Secant on the skin offset; mass is monotone in it. 0.05 g is well inside
+    # the voxel-count noise of the mass itself (~0.3 g at 1 mm).
+    a = max(-2.0, skin_lo)
+    b = max(4.0, a + 6.0)
+    ga, gb = make(a), make(b)
+    evals = 2                                # whole builds spent on sizing (BUILD_SPEC: at most 16)
+    fa, fb = mass(ga) - target_body_kg, mass(gb) - target_body_kg
+    # Only the numbers are kept for the bisection, and the one best car: fourteen whole
+    # geometries in memory at a fine grid was too much for a 16 GB machine.
+    tried = [(a, fa), (b, fb)]
+    best = min(((abs(fa), ga), (abs(fb), gb)), key=lambda t: t[0])
+    # ...and the lightest car over the target (the thinnest skin over), kept so the jump
+    # and floor steps below need no rebuild: at most 2 + 6 + 8 = 16 builds.
+    over = next(((o, gg) for o, f, gg in sorted([(a, fa, ga), (b, fb, gb)], key=lambda t: t[0]) if f > 0), None)
+    del ga, gb
+    # Bracket first. A thinned carved body can sit under the target even at +4 mm; the
+    # secant then wandered below and gave up 0.29 g light, under the 48 g floor, with
+    # nothing tried past 4.3 mm while the block reaches 54 g at 15 mm (1 of 200 carved
+    # bodies, 2026-11-09). Step the skin out (or in) until the target is crossed.
+    for out_to, in_to in ((max(8.0, b + 4.0), max(-5.0, skin_lo)), (15.0, skin_lo)):
+        if fa < 0 and fb < 0:
+            c = out_to
+        elif fa > 0 and fb > 0:
+            c = in_to
+        else:
+            break
+        gc = make(c)
+        evals += 1
+        fc = mass(gc) - target_body_kg
+        tried.append((c, fc))
+        if abs(fc) < best[0]:
+            best = (abs(fc), gc)
+        if fc > 0 and (over is None or c < over[0]):
+            over = (c, gc)
+        (a, fa, b, fb) = (b, fb, c, fc) if c > b else (c, fc, a, fa)
+    for _ in range(6):
+        if abs(fb - fa) < 1e-9:
+            break
+        c = float(np.clip(b - fb * (b - a) / (fb - fa), skin_lo, 15.0))
+        evals += 1
+        gc = make(c)
+        fc = mass(gc) - target_body_kg
+        if fc > 0 and (over is None or c < over[0]):
+            over = (c, gc)
+        if abs(fc) < best[0]:
+            best = (abs(fc), gc)
+        if abs(fc) < SIZING_TOL_KG:
+            break
+        a, fa, b, fb = b, fb, c, fc
+        tried.append((c, fc))
+    # Bisection fallback: a skin that grows the body into a rule zone changes
+    # the mass in steps, and the secant can stall there (0.21 g short with the
+    # v2 CAD supports, 2026-09-28). Bisect between the closest evaluated skins
+    # either side of the target.
+    for _ in range(8):
+        if best[0] < SIZING_TOL_KG or evals >= 16:          # BUILD_SPEC: at most 16 builds
+            break
+        # The bracket is in skin, not in error: mass grows with the skin. Ranking by error
+        # stalled on ties (one skin built nine times over, 2026-11-09).
+        lo = max((t for t in tried if t[1] < 0), key=lambda t: t[0], default=None)
+        hi = min((t for t in tried if t[1] > 0), key=lambda t: t[0], default=None)
+        if lo is None or hi is None or hi[0] - lo[0] < 1e-3:
+            break
+        c = 0.5 * (lo[0] + hi[0])
+        gc = make(c)
+        evals += 1
+        fc = mass(gc) - target_body_kg
+        if fc > 0 and (over is None or c < over[0]):
+            over = (c, gc)
+        tried.append((c, fc))
+        if abs(fc) < best[0]:
+            best = (abs(fc), gc)
+    g = best[1]
+    # A jump, not a slope: at one skin the milling fills a pocket (or a join bar appears)
+    # and the mass leaps 0.4 to 0.75 g, so no skin lands within 0.05 g (7 of 20 carved
+    # bodies, 2026-11-09). Take the body just over the jump and shave it by a uniform
+    # inward move, which is smooth in the mass, until it is just over the target.
+    trim_mm, trim_evals = 0.0, 0
+    if best[0] >= SIZING_TOL_KG:
+        if over is not None:
+            # the shave thins every wall by its depth: never past the 3.0 mm limit
+            # ("own": up to 1 mm everywhere but on and next to the walls a 1 mm shave would take
+            #  under 3.0 mm in the body being shaved, which are held)
+            shave_hold = None
+            if WALL_SCOPE == "own":
+                from phi_updater import _wall_half
+                from scipy.ndimage import binary_dilation, distance_transform_edt
+                z_ = binary_dilation(_wall_half(over[1].phi.grid, d) * 1e3 < MIN_MACHINED_WALL_MM / 2.0 + 1.0, iterations=_r)
+                shave_hold = np.clip(distance_transform_edt(~z_) / _r, 0.0, 1.0) if z_.any() else None
+                room = 1.0
+            else:
+                room = (over[1].build_report.get("min_machined_wall_mm", np.inf) - MIN_MACHINED_WALL_MM) / 2.0
+            g_t, trim_mm, trim_evals = _shave_to(over[1], target_body_kg, mass, d, (X, Y, Z), hold=shave_hold,
+                                                 max_mm=float(np.clip(room, 0.0, 1.0)))
+            if g_t is not None:
+                g = g_t
+    # The mass steps as flat faces cross grid cells, and the closest car can be the one
+    # just under: 0.17 g short put the start car at 47.997 g, under the 48 g floor. Legal
+    # comes first, so under the target it takes the lightest car over it, if that is near.
+    if mass(g) - target_body_kg < -SIZING_TOL_KG:
+        if over is not None and mass(over[1]) - target_body_kg < 1e-3:
+            g = over[1]
+    g.build_report["min_machined_wall_mm"] = min_wall_mm(g.phi.grid, d)      # the body as finished (after any shave)
+    if WALL_SCOPE == "own" and g.phi.grid.shape == _f0.shape:
+        from phi_updater import _thinned
+        g.build_report["walls_thinned_under_min"] = int(_thinned(_f0, g.phi.grid, d, MIN_MACHINED_WALL_MM * 1e-3).sum())
+    g.build_report["mass_error_g"] = (mass(g) - target_body_kg) * 1e3
+    g.build_report["sizing_builds"] = evals
+    g.build_report["trim_mm"], g.build_report["trim_evals"] = trim_mm, trim_evals
+    g.build_report["sizing_tried"] = [(round(o, 4), round(e * 1e3, 4)) for o, e in tried]   # (skin mm, error g)
+    g.build_report["mass_bracketed"] = any(t[1] < 0 for t in tried) and any(t[1] > 0 for t in tried)
+    # The bracket topped out: under the target at the thickest skin (the body fills the
+    # envelope: 47.54 g at 8 and 15 mm on a W 121.6 layout, 2026-11-11) or over it at the
+    # thinnest. No skin reaches the target: the layout is refused, never sized.
+    g.build_report["mass_unreachable"] = (all(t[1] < 0 for t in tried) and max(t[0] for t in tried) >= 15.0
+                                          or all(t[1] > 0 for t in tried) and min(t[0] for t in tried) <= skin_lo + 1e-9)
+    # Too light at the thickest skin: the car carries ballast for the rest (user, 2026-11-11);
+    # the layout stays. Part 4 reads this.
+    g.build_report["ballast_needed_g"] = (max(0.0, -g.build_report["mass_error_g"])
+                                          if g.build_report["mass_unreachable"] else 0.0)
+    return g
+
+
+def _stamp_bore(g, X, Y, Z) -> int:
+    """Put the chamber's wall at the bore's exact radius. The bore is forced air cell by cell,
+    so after milling (whose field is +-1 cell either side of the surface) the wall sat half a
+    cell out: a 19 to 20.1 mm chamber against T5.1's 18.5 mm, on every carved car
+    (2026-11-09); Part 4's exact bore cut can only remove, never put that back. Here the
+    bore and the wall cells next to it get the exact signed distance to the bore (radially,
+    and to its closed inner end), so the surface lands on the drawn 18.15 mm. Only cells
+    already solid next to the bore, or inside it, are touched. The T5.5 wall's outer edge had
+    the same staircase (99.4 to 99.8 % of the 3 mm annulus solid on carved cars), so it is
+    unioned with the exact annulus out to 3.05 mm. Returns cells written.
+    X, Y, Z: cell centres in mm."""
+    cyl = getattr(getattr(g, "fixed_hardware", None), "canister_cylinder", None)
+    if cyl is None:
+        return 0
+    d_mm = (X[1, 0, 0] - X[0, 0, 0]) if X.shape[0] > 1 else 1.0
+    R = cyl.radius_m * 1e3
+    rad = np.hypot(Y - cyl.y_center_m * 1e3, Z - cyl.z_center_m * 1e3)
+    x_end = (cyl.x_center_m - cyl.x_half_width_m) * 1e3            # the closed, inner end
+    in_x = np.abs(X - cyl.x_center_m * 1e3) <= cyl.x_half_width_m * 1e3
+    sd = np.minimum(R - rad, X - x_end)                              # + inside the bore
+    x_rear = (cyl.x_center_m + cyl.x_half_width_m) * 1e3 - d_mm    # the car's rear face
+    R_out = R + 3.05                                                 # T5.5, plus a margin
+    # The wall's distance stops at the rear face and the bore's inner end too: run a cell
+    # past the rear face, it stood 181 mm3 outside the official block (Part 4, 2026-11-09).
+    wall_s = np.minimum(np.minimum(R_out - rad, x_rear - X), X - x_end)    # + inside the wall
+    wall = (rad > R) & (wall_s > -1.5 * d_mm)
+    g.phi.grid[wall] = np.minimum(g.phi.grid[wall], (-wall_s[wall] / 1e3).astype(np.float32))
+    zone = in_x & (rad <= R + 1.5 * d_mm) & ((g.phi.grid < 0) | (sd > 0))
+    g.phi.grid[zone] = (sd[zone] / 1e3).astype(np.float32)
+    g.phi.apply_hard_constraints()
+    return int(zone.sum() + wall.sum())
+
+
+def _shave_to(g, target_kg: float, mass, spacing_m: float, XYZ, tol_kg: float | None = None, hold=None,
+              max_mm: float = 1.0, steps: int = 14):
+    """(body, shave mm, evaluations): g moved inward uniformly until it weighs between the
+    target and target + tol_kg, or (None, 0, n) if no shave up to max_mm gets there.
+
+    An inward move keeps the body machinable: concave fillets grow past the ball radius and
+    every new bit of air touches air the tool already reaches. Rule zones are re-applied,
+    then loose bits, sub-cell strips and pinches are cleaned as after any cut."""
+    import copy
+    import unified_phi as up
+
+    def shaved(delta_mm):
+        h = copy.deepcopy(g)
+        # The body continued past its end faces, shaved, then cut again at Ref A and the rear
+        # face: the shave thins the body but must not shorten it (same reason as in make()).
+        X = XYZ[0]
+        xa, xr = h.landmarks["ref_plane_A_m"] * 1e3, h.landmarks["rear_face_m"] * 1e3
+        f = h.phi.grid.astype(np.float64) * 1e3
+        ext = np.minimum(f, np.minimum(X - xa, xr - X))
+        f = np.maximum(ext + (delta_mm if hold is None else delta_mm * hold), np.maximum(xa - X, X - xr))
+        h.phi.grid = (f / 1e3).astype(np.float32)
+        h.phi.apply_hard_constraints()
+        up.enforce_symmetry(h)
+        _drop_islands(h)
+        up.drop_thin_strips(h, spacing_m)
+        _close_pinches(h, spacing_m)
+        up.enforce_symmetry(h)
+        _stamp_bore(h, *XYZ)                   # the shave widened the chamber: put it back
+        exact_zones.stamp(h, *XYZ)
+        _drop_islands(h)
+        _close_pinches(h, spacing_m)
+        return h
+
+    tol_kg = SIZING_TOL_KG if tol_kg is None else tol_kg
+    lo, hi, n = 0.0, max_mm, 1
+    if mass(shaved(hi)) - target_kg >= tol_kg:
+        return None, 0.0, n
+    for _ in range(steps):
+        mid = 0.5 * (lo + hi)
+        h = shaved(mid)
+        n += 1
+        e = mass(h) - target_kg
+        if 0.0 <= e < tol_kg:
+            return h, mid, n
+        lo, hi = (mid, hi) if e >= tol_kg else (lo, mid)
+    return None, 0.0, n
+
+
+# The body is sized to 0.01 g, a fifth of the car's 0.05 g: run_car.build_car sizes the whole
+# car by moving the body target, and a body that may land anywhere within 0.05 g of it left the
+# car +0.059 g off after 8 passes (start car, anass 43723971300, 2026-11-15).
+SIZING_TOL_KG = 1e-5
+# Which walls the 3.0 mm machined limit gates in sizing (see build()): "all" every wall of the
+# finished body (the old rule); "own" only walls sizing makes thinner, the given field's own
+# thin walls reported. Stays "all" until p1_wall_stop_lab shows where the start block's are.
+WALL_SCOPE = "own"               # lab2: the start block's thin walls are an unforced fin (x152 |y|14), cleaned at start
+
+MILL_SPACING_MM = 0.5
+BRIDGE_MIN_MM3 = 30.0        # a loose piece at least this big is joined to the body, not dropped (0.005 g)
+
+
+class _spacing:
+    """with _spacing(mm): the module-wide grid spacing set to mm, restored afterwards."""
+
+    def __init__(self, mm):
+        self.mm = mm
+
+    def __enter__(self):
+        import geometry_contract
+        import coarse
+        self.old = geometry_contract.GRID_SPACING_MM
+        coarse.use_spacing(self.mm)
+
+    def __exit__(self, *exc):
+        import coarse
+        coarse.use_spacing(self.old)
+
+
+def _resample(field, src_region, src_d, dst_region, dst_d):
+    """A field (metres) on one grid, sampled linearly at another grid's cell centres."""
+    from scipy.ndimage import map_coordinates
+    so, do = np.asarray(src_region.origin_m), np.asarray(dst_region.origin_m)
+    idx = np.indices(dst_region.shape, dtype=np.float32)
+    for a in range(3):
+        idx[a] = (do[a] + idx[a] * dst_d - so[a]) / src_d
+    return map_coordinates(field.astype(np.float32), idx, order=1, mode="nearest").astype(np.float32)
+
+
+def _mill_on(g, fine_base) -> dict:
+    """Mill g on fine_base's grid (MILL_SPACING_MM) and bring the result back to g's grid.
+    The rules are re-applied on both grids; g's extra required solids (joining bars) win."""
+    import copy
+    import machining
+    import unified_phi as up
+    from phi_updater import reinitialise_sdf
+    d = up.GRID_SPACING_M
+    with _spacing(MILL_SPACING_MM):
+        h = copy.deepcopy(fine_base)
+        h.phi.grid = _resample(g.phi.grid, g.region, d, h.region, MILL_SPACING_MM / 1e3)
+        h.phi.apply_hard_constraints()
+        reinitialise_sdf(h.phi)
+        h.phi.apply_hard_constraints()
+        rep = machining.make_machinable(h)
+        rep["mill_spacing_mm"] = MILL_SPACING_MM
+    g.phi.grid = _resample(h.phi.grid, h.region, MILL_SPACING_MM / 1e3, g.region, d)
+    # Linear sampling leaves |grad phi| off 1 near edges; the sub-cell mass (0.5 - phi/dx)
+    # then parted from the mesh by 0.19 g (2026-11-09). Redistance on g's own grid.
+    g.phi.apply_hard_constraints()
+    reinitialise_sdf(g.phi)
+    g.phi.apply_hard_constraints()
+    return rep
+
+
+def _close_pinches(geom, spacing_m: float, rounds: int = 4) -> int:
+    import unified_phi as up
+    return up.close_pinches(geom, spacing_m, rounds)
+
+
+def _drop_islands(geom, keep_cells: int = 0) -> int:
+    """Remove solid pieces cut off from the main body that hold no mandatory
+    solid (a swollen skin can poke through a rule zone and leave a sliver
+    behind it, T4.1). keep_cells > 0: pieces of at least that many cells are
+    left for the caller to join. Returns the number of cells removed."""
+    from scipy.ndimage import label
+    S = geom.phi.grid < 0
+    lab, n = label(S)
+    if n <= 1:
+        return 0
+    sizes = np.bincount(lab.ravel())
+    sizes[0] = 0
+    main = sizes.argmax()
+    keep = np.zeros(n + 1, bool)
+    keep[main] = True
+    keep[np.unique(lab[geom.phi.hard_mask_solid & S])] = True
+    if keep_cells > 0:
+        keep[sizes >= keep_cells] = True
+    keep[0] = True
+    drop = ~keep[lab]
+    geom.phi.grid[drop] = abs(geom.phi.grid[drop]) + 1e-4
+    return int(drop.sum())
