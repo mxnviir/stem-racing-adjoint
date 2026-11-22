@@ -24,7 +24,10 @@ jobs:
           - { dir: car/body/tests, shard: 2, of: 4 }
           - { dir: car/body/tests, shard: 3, of: 4 }
           - { dir: car/race/tests, shard: 0, of: 1 }
-          - { dir: car/parts/tests, shard: 0, of: 1 }
+          - { dir: car/parts/tests, shard: 0, of: 4 }
+          - { dir: car/parts/tests, shard: 1, of: 4 }
+          - { dir: car/parts/tests, shard: 2, of: 4 }
+          - { dir: car/parts/tests, shard: 3, of: 4 }
           - { dir: car/build/tests, shard: 0, of: 1 }
           - { dir: search/sidepod, shard: 0, of: 1 }
           - { dir: search/shape, shard: 0, of: 1 }
@@ -39,4 +42,4 @@ jobs:
       - name: pytest
         run: |
           files=$(ls ${{ matrix.dir }}/test_*.py | awk -v s=${{ matrix.shard }} -v n=${{ matrix.of }} 'NR % n == s')
-          python -m pytest $files -q --tb=short
+          python -m pytest $files -q --tb=short --durations=15
