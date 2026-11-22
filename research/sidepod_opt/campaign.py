@@ -161,14 +161,14 @@ class Campaign:
             return m
         rep = self.representation(mname, o)
         rng = np.random.default_rng(seed)
-        kw = {k: v for k, v in o.items() if k not in ("starts", "seeds", "budget", "lattice", "amp_mm", "seed", "rep", "levelset_mm")}
+        kw = {k: v for k, v in o.items() if k not in ("starts", "seeds", "budget", "lattice", "amp_mm", "seed", "rep", "levelset_mm", "method")}
         if mname == "neat":
             self._neat_cfg = self._neat_config()
             m = MT.make("neat", rep, start, rng, cfg_path=self.root / "neat.cfg", seeds=_neat_seeds(start), **kw)
         elif mname == "sail":
             m = MT.make("sail", rep, start, rng, descriptor=lambda x, rep=rep: _descriptor(self.car, rep.field(x)), **kw)
         else:
-            m = MT.make(mname, rep, start, rng, **kw)
+            m = MT.make(o.get("method", mname), rep, start, rng, **kw)   # "method": run a method under another name (a second CMA with its own lattice)
         for pf in s.get("prior_from", []):
             xs, ys = [], []
             for d in self.designs():

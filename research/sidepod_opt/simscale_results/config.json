@@ -36,10 +36,30 @@
     "cma": {
      "popsize": 8,
      "sigma": 0.5,
-     "budget": 400,
+     "budget": 105,
      "batch": 8,
      "lattice": [
       6,
+      3,
+      4
+     ],
+     "amp_mm": 12.0,
+     "starts": [
+      "original"
+     ]
+    },
+    "cma_scratch": {
+     "method": "cma",
+     "starts": [
+      "lean"
+     ],
+     "seed": "lean",
+     "popsize": 8,
+     "sigma": 0.6,
+     "budget": 300,
+     "batch": 8,
+     "lattice": [
+      8,
       3,
       4
      ],
@@ -66,5 +86,6 @@
    }
   }
  ],
- "_rules": "Design rules (CarSpec switches): no virtual cargo; nothing in the sidepod region above 27.175 mm (the team STEP's sidepod top; also used for the T4.4.2 halo cap, which the STEP itself reaches); milled from top and bottom only (3.175 mm ball); 3 mm minimum walls; no loose pieces; sidepod region only."
+ "_rules": "Design rules (CarSpec switches): no virtual cargo; nothing in the sidepod region above 27.175 mm (the team STEP's sidepod top; also used for the T4.4.2 halo cap, which the STEP itself reaches); milled from top and bottom only (3.175 mm ball); 3 mm minimum walls; no loose pieces; sidepod region only.",
+ "_comment_scratch": "cma_scratch (added 2026-11-22): a second CMA from no sidepod at all (seed 'lean'), finer 8x3x4 lattice, so it is not tied to the team's pod shape. The first CMA (from the team's pod) is frozen at 105 runs after plateauing."
 }

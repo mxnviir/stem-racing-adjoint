@@ -13,7 +13,7 @@
    "retired": "ApiException: (403)\nReason: \nHTTP response headers: HTTPHeaderDict({'Content-Type': 'application/json', 'Content-Length': '226', 'Connection': 'keep-alive', 'Date': 'Sun, 22 Nov 2026 08:30:21 GMT', 'E"
   },
   "ce2eea9b8d": {
-   "runs": 0,
+   "runs": 14,
    "project": "666738949348988974",
    "box": "3619f5a7-ee88-4567-a813-8f55237e8c08",
    "retired": null
@@ -26,96 +26,77 @@
   }
  },
  "cases": {
-  "c00106": {
-   "folder": "runs/simscale/cars/c00106",
+  "c00122": {
+   "folder": "runs/simscale/cars/c00122",
    "phase": "import",
    "fp": "ce2eea9b8d",
-   "t0": 1795336010.8327754,
+   "t0": 1795342772.206486,
    "attempt": 0,
-   "import_id": "d99b385e-d5a0-46e2-ac73-240bcc308f8a",
-   "project": "666738949348988974",
-   "tries": [
-    "4500: import FAILED model-has-invalid-geometry ['fault-face-matching_tessellation_failed', 'fault-face-tessellation_failed']"
-   ]
+   "import_id": "c6321333-e73d-4c9e-94fb-49aef31146f4",
+   "project": "666738949348988974"
   },
-  "c00107": {
-   "folder": "runs/simscale/cars/c00107",
-   "phase": "wait",
-   "fp": null,
-   "t0": 1795336010.8327785,
+  "c00123": {
+   "folder": "runs/simscale/cars/c00123",
+   "phase": "import",
+   "fp": "ce2eea9b8d",
+   "t0": 1795342772.20649,
    "attempt": 0,
-   "import_id": "e600b84c-ed69-4016-9c8a-7c8968fceb0f",
-   "project": "1399685146673566431",
-   "last_error": "ApiException: (403)\nReason: \nHTTP response headers: HTTPHeaderDict({'Content-Type': 'application/json', 'Content-Length': '226', 'Connection': 'keep-alive', 'Date': 'Sun, 22 Nov 2026 08:30:21 GMT', 'Expires': 'Thu, 01 Jan 1970 00:00:00 UTC', 'Vary': 'Accept-Encoding, Origin, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization, Origin', 'Trace-Id': '400a2d0e', 'Span-Id': '6"
+   "import_id": "4f2a9552-2805-4612-9018-17db5b8acd51",
+   "project": "666738949348988974"
   },
-  "c00108": {
-   "folder": "runs/simscale/cars/c00108",
-   "phase": "step",
+  "c00124": {
+   "folder": "runs/simscale/cars/c00124",
+   "phase": "import",
    "fp": "ce2eea9b8d",
-   "t0": 1795336010.83278,
-   "attempt": 1,
-   "import_id": "c150e032-2942-4672-b70b-2f4508aa46e5",
-   "project": "1399685146673566431",
-   "tries": [
-    "4500: air volume build: OSError(28, 'No space left on device')"
-   ]
+   "t0": 1795342772.2064917,
+   "attempt": 0,
+   "import_id": "9d4c048b-f430-4ca8-8a92-16bd38cee501",
+   "project": "666738949348988974"
   },
-  "c00109": {
-   "folder": "runs/simscale/cars/c00109",
-   "phase": "step",
+  "c00125": {
+   "folder": "runs/simscale/cars/c00125",
+   "phase": "import",
    "fp": "ce2eea9b8d",
-   "t0": 1795336010.832781,
-   "attempt": 1,
-   "import_id": "bbb4f46d-b248-4c66-9af9-4c6eb44c309b",
-   "project": "1399685146673566431",
-   "tries": [
-    "4500: air volume build: OSError(28, 'No space left on device')"
-   ]
+   "t0": 1795342772.2064927,
+   "attempt": 0,
+   "import_id": "99b88134-d085-4f03-bf51-e32c7cd3801f",
+   "project": "666738949348988974"
   },
-  "c00110": {
-   "folder": "runs/simscale/cars/c00110",
-   "phase": "step",
+  "c00126": {
+   "folder": "runs/simscale/cars/c00126",
+   "phase": "import",
    "fp": "ce2eea9b8d",
-   "t0": 1795336010.8327827,
-   "attempt": 1,
-   "import_id": "2dce8adc-e041-4ddc-910f-354cd1a1ab91",
-   "project": "1399685146673566431",
-   "tries": [
-    "4500: air volume build: OSError(28, 'No space left on device')"
-   ]
+   "t0": 1795342772.2064936,
+   "attempt": 0,
+   "import_id": "0b287c2b-502e-4f97-97cf-d976cf8be936",
+   "project": "666738949348988974"
   },
-  "c00111": {
-   "folder": "runs/simscale/cars/c00111",
-   "phase": "step",
+  "c00127": {
+   "folder": "runs/simscale/cars/c00127",
+   "phase": "import",
    "fp": "ce2eea9b8d",
-   "t0": 1795336010.8327837,
-   "attempt": 1,
-   "import_id": "cd43147a-7aba-406c-a824-e9a2b4bb9d7e",
-   "project": "1399685146673566431",
-   "tries": [
-    "4500: air volume build: OSError(28, 'No space left on device')"
-   ]
+   "t0": 1795342772.2064946,
+   "attempt": 0,
+   "import_id": "dcb6dabf-2867-4f32-942c-b0caf22c5c85",
+   "project": "666738949348988974"
   },
-  "c00112": {
-   "folder": "runs/simscale/cars/c00112",
-   "phase": "step",
+  "c00128": {
+   "folder": "runs/simscale/cars/c00128",
+   "phase": "import",
    "fp": "ce2eea9b8d",
-   "t0": 1795336010.8327844,
-   "attempt": 1,
-   "tries": [
-    "4500: air volume build: OSError(28, 'No space left on device')"
-   ]
+   "t0": 1795342772.2064955,
+   "attempt": 0,
+   "import_id": "e1a9b74e-409d-4979-9051-c1efc1c23c36",
+   "project": "666738949348988974"
   },
-  "c00113": {
-   "folder": "runs/simscale/cars/c00113",
-   "phase": "step",
+  "c00129": {
+   "folder": "runs/simscale/cars/c00129",
+   "phase": "import",
    "fp": "ce2eea9b8d",
-   "t0": 1795336010.832785,
-   "attempt": 1,
-   "tries": [
-    "4500: air volume build: OSError(28, 'No space left on device')",
-    "4500: air volume build: OSError(28, 'No space left on device')"
-   ]
+   "t0": 1795342772.206496,
+   "attempt": 0,
+   "import_id": "1ece63f9-57d0-4a55-8212-361233d2d45a",
+   "project": "666738949348988974"
   }
  },
  "done": {},
