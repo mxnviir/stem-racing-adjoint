@@ -58,6 +58,12 @@ WHEEL_FILLET_MM = 1.0                                        # rim rounding of t
 # tolerance") on 5 of 9 cars and on the reference at every triangle count. At 0.8 mm (the smallest cell)
 # the reference meshed first time (5.0 M cells, 2026-11-22).
 SMALL_FEATURE_MM = 0.8
+
+
+def cfd_setup(faces, pitch_mm):
+    """What a result depends on besides the car: compared only within one setup."""
+    return {"small_feature_mm": SMALL_FEATURE_MM, "wheel_fillet_mm": WHEEL_FILLET_MM, "faces": int(faces),
+            "wrap_pitch_mm": pitch_mm}
 BUILD_WORKERS = 3                                            # one Parts 1-5 build peaks at ~5.5 GB
 
 
@@ -181,6 +187,8 @@ class LayoutEvaluator(SE.SimScaleStepEvaluator):
         except Exception as e:                                       # noqa: BLE001
             raise SE.GeometryError(f"air volume build: {e!r}") from e
         self.st["cases"][cid]["faceting"][str(faces)].update(removed_share=round(rep["removed_share"], 4), sealed_air_mm3=round(rep["sealed_mm3"], 1))
+        pitch = json.loads((folder / "layout_car.json").read_text()).get("cfd", {}).get("wrap_pitch_mm", 0.3)
+        self.st["cases"][cid]["setup"] = cfd_setup(faces, pitch)
         if not 0.97 < rep["removed_share"] < 1.03:
             raise SE.GeometryError(f"air volume: removed {rep['removed_share']:.3f} of the car's volume")
         return out
@@ -249,6 +257,7 @@ def _build_one(args):
 
 
 class Campaign:
+    REF = "REF"                         # the reference car's folder under cars/
     def __init__(self, root):
         self.root = Path(root)
         self.cfg = json.loads((self.root / "config.json").read_text())
@@ -273,6 +282,9 @@ class Campaign:
         X, y, bad = [], [], []
         for row in self.designs():
             if row.get("T") is not None and row.get("genes") is not None:
+                su = row.get("setup") or {}
+                if su.get("small_feature_mm") != SMALL_FEATURE_MM or su.get("wheel_fillet_mm") != WHEEL_FILLET_MM:
+                    continue                                     # timed on another CFD setup: not comparable
                 X.append(row["genes"]); y.append(row["T"])
             elif row.get("legal") is False and row.get("genes") is not None:
                 bad.append(row["genes"])
@@ -384,14 +396,14 @@ class Campaign:
         self.st["refs"] = refs
         self.save()
 
-    def submit_noise_reference(self, ev, pitch_mm=0.25):
+    def submit_noise_reference(self, ev, pitch_mm=0.25, src="REF", name=None):
         """The reference car again with its CFD surface rebuilt on another grid: a different faceting of
         the same car, so the two results differ by the route's noise alone (the two reference copies at
         two triangle counts can both fall back onto the same rung of the ladder, as on 2026-11-22)."""
         import shutil
-        cid = f"REFP{int(round(pitch_mm * 100)):02d}"
+        cid = name or f"{src}P{int(round(pitch_mm * 100)):02d}"
         dst = self.root / "cars" / cid
-        shutil.copytree(self.root / "cars" / "REF", dst, dirs_exist_ok=True)
+        shutil.copytree(self.root / "cars" / src, dst, dirs_exist_ok=True)
         rec = json.loads((dst / "layout_car.json").read_text())
         rec.update(LC.export_cfd(dst.resolve(), rec["decoded"], pitch_mm=pitch_mm))
         (dst / "layout_car.json").write_text(json.dumps(rec, indent=1, default=float))
@@ -405,6 +417,9 @@ class Campaign:
     def collect(self, ev):
         """Results back from the CFD: race time with each car's own layout and mass, logged, files pruned."""
         st = self.st
+        for cid, c in ev.st["cases"].items():                    # setups survive the case leaving the evaluator
+            if c.get("setup"):
+                st.setdefault("setups", {})[cid] = c["setup"]
         res = ev.collect()
         for cid, r in res.items():
             is_ref = cid in st.get("refs", {}) and st["refs"][cid] is None
@@ -415,8 +430,10 @@ class Campaign:
             T = None
             if r.get("ok") and r.get("D20_N") is not None:
                 T = race_time(rec, r["D20_N"], r["L20_N"] or 0.0)
+            setup = (ev.st["cases"].get(cid) or {}).get("setup") or self.st.get("setups", {}).get(cid)
             self.log({"id": cid, "kind": "ref" if is_ref else "car", "genes": rec["genes"], "D20_N": r.get("D20_N"),
-                      "L20_N": r.get("L20_N"), "T": T, "layout": rec.get("layout"), "eval": r.get("info")})
+                      "L20_N": r.get("L20_N"), "T": T, "layout": rec.get("layout"), "eval": r.get("info"),
+                      "setup": setup, "lattice": rec.get("lattice")})
             prune(self.root / "cars" / cid)
             if is_ref:
                 st["refs"][cid] = {"D20_N": r.get("D20_N"), "L20_N": r.get("L20_N"), "T": T, "ok": r.get("ok")}
@@ -429,7 +446,7 @@ class Campaign:
         st = self.st
         if "refs" not in st:
             self.submit_reference(ev, ladder=(0,))
-            self.submit_noise_reference(ev)
+            self.submit_noise_reference(ev, src=self.REF)
         # 1) the next batch, when the last one is all back
         if not st["batch"] and not st.get("pending_build") and st["used"] < self.cfg["budget"] and ev.capacity() > 0:
             xs, info = self.ask(min(self.cfg["batch"], self.cfg["budget"] - st["used"]))
@@ -448,7 +465,7 @@ class Campaign:
                 recs = list(pool.map(_build_one, jobs))
             cases = []
             for (cid, v), rec in zip(pb.items(), recs):
-                self.log({"id": cid, "batch": st["g"], "genes": rec.get("genes") or v["x"], "legal": bool(rec.get("legal")),
+                self.log({"id": cid, "batch": st["g"], "genes": rec.get("genes") or v["x"], "lattice": v.get("lattice"), "legal": bool(rec.get("legal")),
                           "layout": rec.get("layout"), "failed": rec.get("failed"), "why": rec.get("why"),
                           "mass": rec.get("mass"), "build_s": rec.get("build_s"), "cfd": rec.get("cfd")})
                 if not rec.get("legal"):
@@ -511,6 +528,8 @@ def main():
     ap.add_argument("cmd", choices=("init", "ref", "noise", "run", "tick", "status"))
     ap.add_argument("root")
     ap.add_argument("--budget", type=int, default=48)
+    ap.add_argument("--pitch", type=float, default=0.25, help="noise: the grid the copy's surface is rebuilt on, mm")
+    ap.add_argument("--name", default=None, help="noise: the copy's id")
     a = ap.parse_args()
     if a.cmd == "init":
         return init(a.root, a.budget)
@@ -519,7 +538,7 @@ def main():
     c = Campaign(a.root)
     if a.cmd == "noise":                  # stop `run` first: both write the state files
         ev = c.evaluator()
-        print("submitted", c.submit_noise_reference(ev))
+        print("submitted", c.submit_noise_reference(ev, pitch_mm=a.pitch, src=c.REF, name=a.name))
         return
     if a.cmd == "status":
         ev = c.evaluator()

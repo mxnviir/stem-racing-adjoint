@@ -36,6 +36,7 @@ AMP_MM = 6.0                 # a control point at 1.0 grows the body by 6 mm the
 
 
 class ShapeCampaign(SL.Campaign):
+    REF = "BASE"
     def __init__(self, root):
         super().__init__(root)
         self.base = np.asarray(self.cfg["base_genes"], float)
@@ -74,14 +75,18 @@ class ShapeCampaign(SL.Campaign):
         """Every car of the generation is back: tell CMA its race times (a car that could not be built,
         broke a rule or failed in the CFD as the worst of the generation plus 5 ms)."""
         es = self.es()
-        T = {}
+        T, V = {}, {}
         for row in self.designs():
-            if row.get("id") in ids and "T" in row:
-                T[row["id"]] = row["T"]
+            if row.get("id") in ids:
+                if "T" in row:
+                    T[row["id"]] = row["T"]
+                if row.get("lattice"):
+                    V[row["id"]] = row["lattice"]["values"]
         vs, ys = [], []
         for cid in ids:
-            rec = json.loads((self.root / "cars" / cid / "layout_car.json").read_text())
-            vs.append(np.asarray(rec["lattice"]["values"], float))
+            if cid not in V:                         # nothing to tell (should not happen: every build row carries it)
+                continue
+            vs.append(np.asarray(V[cid], float))
             ys.append(T.get(cid))
         good = [y for y in ys if y is not None]
         worst = (max(good) if good else 1.0) + 0.005

@@ -38,13 +38,23 @@ size (low drag, low lift), the loft stations (set so the body meets the nose), t
 (off), the 56 sculpt bumps (stage 2's lattice does that job). Fixed by the build: the thrust line
 (31 mm), the team's wheels, the wheel track.
 
-The layout genes are decoded so that every vector is a legal layout:
+The layout genes are decoded so that every vector lands inside these analytic limits (the referee still
+judges each built car, and can refuse one: e.g. the rear wing crowding the cartridge, T5.6):
 
 - `W` 120-140 (T7.3); `rear` 36 .. 207 - W (the 223 mm block, T1.14);
 - `halo_rear` (pocket front -> rear face) in (max(rear + 50, 102), W + rear]: the pocket front on or
   behind the front axle, its rear ahead of the rear axle and of the 52 mm cartridge bore;
 - `cargo_x` is a preference: Part 1 places the cargo at the legal position nearest it (wheel keep-clear
   zones, bore, halo pocket), keeping the wanted orientation when any position allows it.
+
+## CFD setup
+
+A result depends on the CFD setup as well as the car: small-feature suppression, wheel rim fillet,
+triangle count and the grid the surface was rebuilt on. Each SimScale case records its `setup`, every
+timed row in `designs.jsonl` carries it, and the stage-1 model is fitted only on cars timed at the
+current setup (0.8 mm suppression, 1 mm rim fillet). Cars from batch 0 meshed before the switch
+(0.05 mm, sharp rims; 2026-11-22) are logged but not fitted; the reference was timed under both setups
+(REF24000/REF32000 old, REFN30/REFP25 new), so the shift between setups is measured.
 
 ## The sidepod search (search/sidepod)
 

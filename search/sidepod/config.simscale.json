@@ -1,5 +1,5 @@
 {
- "_comment": "Evolution on SimScale, STEP air-volume route (simscale_step_eval.py). Keys: export SIMSCALE_API_KEYS='k1,k2,...' (never in a file in the repo). Each key runs at most runs_per_key cars, then the next key is used; when all are used the campaign waits (`python campaign.py tick <dir>` reports it). Every car goes through the same route (simscale_step_domain.build_design): the team's exact CAD outside the sidepod region, the pod as ~4500 triangles, seam 0.3 mm off the region, exact wheels, road 0.15 mm under the wheels. The winners are re-timed in our OpenFOAM pipeline on GitHub Actions (stage recheck).",
+ "_comment": "Evolution on SimScale, STEP air-volume route (simscale_step_eval.py). Keys: export SIMSCALE_API_KEYS='k1,k2,...' (never in a file in the repo). Each key runs at most runs_per_key cars, then the next key is used; when all are used the campaign waits (`python campaign.py tick <dir>` reports it). Every car, the team's included, goes through the same route: exact CAD outside the sidepod region, the pod as ~4500 triangles, exact wheels, road 0.15 mm under the wheels. The winners are re-timed in our OpenFOAM pipeline on GitHub Actions (stage recheck).",
  "h_mm": 1.0,
  "car": {
   "cargo": false,
@@ -36,36 +36,56 @@
     "cma": {
      "popsize": 8,
      "sigma": 0.5,
-     "budget": 400,
+     "budget": 105,
      "batch": 8,
      "lattice": [
       6,
       3,
       4
      ],
+     "amp_mm": 12.0,
+     "starts": [
+      "original"
+     ]
+    },
+    "cma_scratch": {
+     "method": "cma",
+     "starts": [
+      "lean"
+     ],
+     "seed": "lean",
+     "popsize": 8,
+     "sigma": 0.6,
+     "budget": 8,
+     "batch": 8,
+     "lattice": [
+      8,
+      3,
+      4
+     ],
      "amp_mm": 12.0
+    },
+    "cma_scratch2": {
+     "method": "cma",
+     "starts": [
+      "lean"
+     ],
+     "seed": "lean",
+     "popsize": 8,
+     "sigma": 0.6,
+     "budget": 32,
+     "batch": 8,
+     "lattice": [
+      8,
+      3,
+      4
+     ],
+     "amp_mm": 24.0
     }
-   }
-  },
-  {
-   "name": "recheck",
-   "type": "pick",
-   "from": [
-    "evolve"
-   ],
-   "how": "best",
-   "n": 4,
-   "fidelity": "medium",
-   "evaluator": {
-    "kind": "actions",
-    "repos": [
-     "OWNER/REPO"
-    ],
-    "res": "medium",
-    "per_job": 1
    }
   }
  ],
  "_rules": "Design rules (CarSpec switches): no virtual cargo; nothing in the sidepod region above 27.175 mm (the team STEP's sidepod top; also used for the T4.4.2 halo cap, which the STEP itself reaches); milled from top and bottom only (3.175 mm ball); 3 mm minimum walls; no loose pieces; sidepod region only.",
- "_comment_sigma": "sigma halved from 1.0 to 0.5 after generation 1 (its designs were lumpy); the running CMA state was rescaled to match"
+ "_comment_scratch": "cma_scratch (2026-11-22): CMA from no sidepod (seed 'lean'), 8x3x4 lattice. With amp 12 it could only grow a skin within ~12 mm of the spine (15-18 g foam), so it stops after its first 8 and cma_scratch2 (amp 24 mm, up to ~22 g, 7/8 legal offline) carries on. The first CMA (from the team's pod) is frozen at 105 runs after plateauing.",
+ "_comment_budget": "2026-11-22 user: the layout evolution gets most of keys 2+3; cma_scratch2 stops at 32 runs (4 generations)."
 }
