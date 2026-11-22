@@ -151,6 +151,27 @@ FLOATING_MAX_MM3 = 2.0          # loose specks tolerated in the merged car (drop
 WRAP_PITCH_MM = 0.3             # grid the CFD surface is rebuilt on
 
 
+CARTRIDGE_STL = ROOT / "car" / "body" / "hardware_cad" / "canister_steel.stl"   # half (y <= 0.95), neck at x = 0
+CARTRIDGE_FULL_LEN_MM = 65.0
+BORE_DEPTH_MM = 52.0            # the block's bore, from the rear face (rules_constants.BLOCK_BORE_DEPTH_MM)
+
+
+def cartridge(rear_face_mm: float):
+    """The official cartridge (whole, mm, manifold3d) seated in a car whose rear face is at x = rear_face_mm:
+    its base at the bottom of the 52 mm bore, its neck out behind the rear face, axis at the chamber height."""
+    import trimesh
+    sys.path.insert(0, str(HERE))
+    import cadio as CI
+    full = None
+    for f in (CARTRIDGE_STL, CARTRIDGE_STL.with_name("canister_co2_charge.stl")):   # the shell, filled with its charge
+        h = CI.to_manifold(trimesh.load(str(f), force="mesh"))
+        h = h + h.mirror([0.0, 1.0, 0.0]) if f == CARTRIDGE_STL else h + h.mirror([0.0, 1.0, 0.0]).translate([0.0, 0.01, 0.0])
+        full = h if full is None else full + h
+    full = max(full.decompose(), key=lambda q: q.volume())          # coincident shell/charge faces leave specks
+    # cartridge x (neck 0 -> base 65) to car x: base at rear_face - bore depth, neck towards +x
+    return full.mirror([1.0, 0.0, 0.0]).translate([rear_face_mm - BORE_DEPTH_MM + CARTRIDGE_FULL_LEN_MM, 0.0, CHAMBER_Z_MM])
+
+
 def export_cfd(out: Path, d, pitch_mm: float | None = None) -> dict:
     """ONE closed solid of the whole car for the CFD, and the wheels.
 
@@ -214,9 +235,11 @@ def export_cfd(out: Path, d, pitch_mm: float | None = None) -> dict:
         return mf.Manifold.cylinder(x1 - x0, r, r, 64).rotate([0.0, 90.0, 0.0]).translate([x0, 0.0, CHAMBER_Z_MM])
 
     # inside the chamber 0.5 mm into the wall (no 0.07 mm crevice round the cartridge), 18 mm where it sticks out
-    cart = cyl(rear_face + CARTRIDGE_OUT_MM - CARTRIDGE_LEN_MM - 0.5, rear_face - 0.3, CARTRIDGE_R_MM + 0.5) \
-        + cyl(rear_face - 1.0, rear_face + CARTRIDGE_OUT_MM, CARTRIDGE_R_MM)
-    whole += cart
+    # the chamber filled 0.5 mm into its wall (no crevice round the cartridge), then the real cartridge in it:
+    # the official shell (Appendix vi; car/body/hardware_cad/canister_steel.stl), base first, its neck out
+    # behind the rear face -- an 18 mm body, an 8.7 mm neck, the shoulder between
+    whole += cyl(rear_face + CARTRIDGE_OUT_MM - CARTRIDGE_LEN_MM - 0.5, rear_face - 0.3, CARTRIDGE_R_MM + 0.5)
+    whole += cartridge(rear_face)
     whole += parts["nose"]
     for n in ("fwing", "rwing", "tethers"):
         if n not in parts:
@@ -254,6 +277,7 @@ def export_cfd(out: Path, d, pitch_mm: float | None = None) -> dict:
     pts, _ = trimesh.sample.sample_surface(w, 20000, seed=0)
     _, dist, _ = trimesh.proximity.closest_point(CI.from_manifold(M), pts)              # mm, wrap -> merged solid
     rep["wrap_pitch_mm"] = pitch_mm or WRAP_PITCH_MM
+    rep["cartridge"] = "official"
     rep.update(cfd_faces=q["faces"], car_volume_mm3=round(float(w.volume)), merged_volume_mm3=round(float(M.volume())),
                wrap_p99_mm=round(float(np.percentile(dist, 99)), 3), wrap_max_mm=round(float(dist.max()), 3),
                one_piece=rep["floating_mm3"] <= FLOATING_MAX_MM3,

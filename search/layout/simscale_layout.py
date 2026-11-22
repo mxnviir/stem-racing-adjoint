@@ -63,7 +63,19 @@ SMALL_FEATURE_MM = 0.8
 def cfd_setup(faces, pitch_mm):
     """What a result depends on besides the car: compared only within one setup."""
     return {"small_feature_mm": SMALL_FEATURE_MM, "wheel_fillet_mm": WHEEL_FILLET_MM, "faces": int(faces),
-            "wrap_pitch_mm": pitch_mm}
+            "wrap_pitch_mm": pitch_mm, "cartridge": CARTRIDGE}
+
+
+CARTRIDGE = "official"          # the official cartridge's shape (layout_car.cartridge); "cylinder" before 2026-11-22 17:50
+
+
+def setup_key(su):
+    """The part of a CFD setup that shifts every car alike: results compare only within one key."""
+    su = su or {}
+    return (su.get("small_feature_mm"), su.get("wheel_fillet_mm"), su.get("cartridge", "cylinder"))
+
+
+CURRENT_SETUP = (SMALL_FEATURE_MM, WHEEL_FILLET_MM, CARTRIDGE)
 BUILD_WORKERS = 3                                            # one Parts 1-5 build peaks at ~5.5 GB
 
 
@@ -280,12 +292,27 @@ class Campaign:
         """(X, T) of every car timed so far (the reference runs included), and X of the cars that
         could not be built or broke a rule."""
         X, y, bad = [], [], []
-        for row in self.designs():
+        rows = self.designs()
+        # The reference's race time under each setup: a setup that differs from the current one only in the
+        # cartridge (the same part on every car) is brought over by the difference between its reference and
+        # the current one; any other setup is not comparable and is left out.
+        ref = {}
+        for row in rows:
+            if row.get("kind") == "ref" and row.get("T") is not None:
+                ref.setdefault(setup_key(row.get("setup")), []).append(row["T"])
+        ref = {k: float(np.mean(v)) for k, v in ref.items()}
+        self.offsets = {}
+        for row in rows:
             if row.get("T") is not None and row.get("genes") is not None:
-                su = row.get("setup") or {}
-                if su.get("small_feature_mm") != SMALL_FEATURE_MM or su.get("wheel_fillet_mm") != WHEEL_FILLET_MM:
+                k = setup_key(row.get("setup"))
+                if k == CURRENT_SETUP:
+                    off = 0.0
+                elif k[:2] == CURRENT_SETUP[:2] and k in ref and CURRENT_SETUP in ref:
+                    off = ref[CURRENT_SETUP] - ref[k]
+                    self.offsets[str(k)] = round(off * 1e3, 3)
+                else:
                     continue                                     # timed on another CFD setup: not comparable
-                X.append(row["genes"]); y.append(row["T"])
+                X.append(row["genes"]); y.append(row["T"] + off)
             elif row.get("legal") is False and row.get("genes") is not None:
                 bad.append(row["genes"])
         return np.array(X, float).reshape(-1, LG.DIM), np.array(y, float), np.array(bad, float).reshape(-1, LG.DIM)
@@ -340,7 +367,8 @@ class Campaign:
         picks, Xa, ya = [], X.copy(), (y - mu0) / sd0
         fixed = GaussianProcessRegressor(gp.kernel_, optimizer=None, normalize_y=False)
         best = ya.min()
-        info = {"mode": "model", "length_scales": {k: round(float(v), 2) for k, v in zip(LG.NAMES, ls)},
+        info = {"mode": "model", "setup_offsets_ms": getattr(self, "offsets", {}), "n_fit": int(len(y)),
+                "length_scales": {k: round(float(v), 2) for k, v in zip(LG.NAMES, ls)},
                 "noise_ms": round(float(np.sqrt(gp.kernel_.k2.noise_level)) * sd0 * 1e3, 3), "candidates": int(len(C)), "predicted": []}
         for _ in range(n):
             fixed.fit(Xa, ya)

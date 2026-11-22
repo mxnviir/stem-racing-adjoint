@@ -50,11 +50,18 @@ judges each built car, and can refuse one: e.g. the rear wing crowding the cartr
 ## CFD setup
 
 A result depends on the CFD setup as well as the car: small-feature suppression, wheel rim fillet,
-triangle count and the grid the surface was rebuilt on. Each SimScale case records its `setup`, every
+the cartridge's shape, triangle count and the grid the surface was rebuilt on. Each SimScale case records its `setup`, every
 timed row in `designs.jsonl` carries it, and the stage-1 model is fitted only on cars timed at the
 current setup (0.8 mm suppression, 1 mm rim fillet). Cars from batch 0 meshed before the switch
 (0.05 mm, sharp rims; 2026-11-22) are logged but not fitted; the reference was timed under both setups
 (REF24000/REF32000 old, REFN30/REFP25 new), so the shift between setups is measured.
+
+The cartridge in the CFD car is the official one (the shell and charge from
+`car/body/hardware_cad`, base first in the 52 mm bore, its shoulder and 8.7 mm neck 13 mm out behind
+the rear face), since 2026-11-22 17:50; before, an 18 mm cylinder. The cartridge is the same part on
+every car, so results timed with the cylinder (at the same suppression and fillet) are brought over by
+the difference between the reference timed both ways (REFN30 cylinder, REFC30 official); results from
+the 0.05 mm setup are not used at all.
 
 ## The sidepod search (search/sidepod)
 
