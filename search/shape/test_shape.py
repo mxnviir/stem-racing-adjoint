@@ -25,7 +25,7 @@ class StubEvaluator:
 
     def submit(self, cases):
         for c in cases:
-            self.st["cases"][c["id"]] = {"folder": c["folder"], "phase": "wait"}
+            self.st["cases"][c["id"]] = {"folder": c["folder"], "phase": "wait", "setup": SL.cfd_setup(24000, 0.3)}
             self.pending[c["id"]] = c["folder"]
 
     def collect(self):
@@ -57,7 +57,9 @@ def stub_build(x, out, timeout_s=0, lattice=None, support=None):
 def test_shape_loop(tmp_path, monkeypatch):
     lay = tmp_path / "layout"; lay.mkdir()
     x = LG.x_default().tolist()
-    (lay / "designs.jsonl").write_text(json.dumps({"id": "L0003", "genes": x, "T": 0.7550}) + "\n")
+    su = SL.cfd_setup(24000, 0.3)
+    (lay / "designs.jsonl").write_text(json.dumps({"id": "L0003", "genes": x, "T": 0.7550, "setup": su}) + "\n"
+                                       + json.dumps({"id": "REFS", "kind": "ref", "genes": x, "T": 0.7560, "setup": su}) + "\n")
     monkeypatch.setattr(SL.LC, "build", stub_build)
     monkeypatch.setattr(SL.LC, "export_cfd", lambda out, d, pitch_mm=None: {"cfd": {"one_piece": True, "watertight": True,
                                                                                   "wrap_pitch_mm": pitch_mm}})

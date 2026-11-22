@@ -161,7 +161,6 @@ def catalogue():
           "T7.4, T7.5", "printed parts you already have"),
         P("fixed by the build", "wheel_inner_y", "Part 1", None, None, F, "mm", "wheel track (inner faces)", "T7.2 gaps >= 38 / 30, T3.4",
           "a Part 1 constant used by every mask"),
-        P("fixed by the build", "supports", "none", None, None, F, "", "wheel supports", "T7.12", "user: added later"),
     ]
     return c
 

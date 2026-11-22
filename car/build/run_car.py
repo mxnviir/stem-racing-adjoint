@@ -11,7 +11,7 @@ run_car.py -- one whole car: build it and judge it.
   3. LEGAL     car/build/legality.py: the scrutineer's checks on the assembled car.
   4. REPORT    report.md + summary.json (mass, COM, every check with its margin).
 
-The searches (search/layout, search/shape) call this per car with --no-supports --no-joints and a
+The searches (search/layout, search/shape) call this per car with --support engine --no-joints and a
 fixed skin, then time the car on SimScale themselves (cfd/). Every stage writes its artefacts to
 --out; the run never hides a failure.
 """

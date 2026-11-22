@@ -170,8 +170,16 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
         # the searches' own supports, generated from THIS body at each axle (support_engine.py):
         # a saddle flush with the underside, a lofted arm, a fillet into the disc, the axle stub
         hubs = wh.hub_span_mm()
+        import manifold3d as mf
+        from geometry_contract import CHAMBER_AXIS_Z_MM, MIN_MACHINED_WALL_MM, MODEL_BLOCK_BORE_DIA_MM, \
+            MODEL_BLOCK_BORE_DEPTH_MM
+        face = rear_face_mm if rear_face_mm is not None else cc.ref_plane_B(x_front_mm, W_mm) + 40.0
+        rk = MODEL_BLOCK_BORE_DIA_MM / 2 + MIN_MACHINED_WALL_MM
+        x0 = face - MODEL_BLOCK_BORE_DEPTH_MM - MIN_MACHINED_WALL_MM
+        chamber = mf.Manifold.cylinder(face - x0, rk, rk, 96).rotate([0.0, 90.0, 0.0]).translate([x0, 0.0, CHAMBER_AXIS_Z_MM])
         res = se.build(support, body, [("front", x_front_mm, R - SINK_MM, R, FY, f.total_width, hubs[0]),
-                                       ("rear", x_rear, R - SINK_MM, R, RY, r.total_width, hubs[1])], out_dir=out)
+                                       ("rear", x_rear, R - SINK_MM, R, RY, r.total_width, hubs[1])], out_dir=out,
+                       keep_out_mm=chamber)
         sup = [res["support"]]
         support_kg = tuple(res["net_kg_each"])               # per side: the part and its hubcap, less the foam it replaces
         gates.update(res["gates"])

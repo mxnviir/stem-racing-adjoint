@@ -123,6 +123,11 @@ class ShapeCampaign(SL.Campaign):
         self.st["refs"] = {cid: None}
         self.save()
 
+    def timed(self):                     # CMA does not need the base car's time to ask a generation
+        out = super().timed()
+        self.ref_ready = True
+        return out
+
     def data(self):                      # the GP of stage 1 is not used here
         raise NotImplementedError
 
@@ -134,14 +139,16 @@ def best_of(layout_root: Path, car: str | None = None):
         if line.strip():
             r = json.loads(line)
             rows.setdefault(r["id"], {}).update(r)
-    timed = {k: r for k, r in rows.items() if r.get("T") is not None and r.get("genes") is not None and r.get("kind") != "ref"}
     if car:
         r = rows[car]
         return car, r["genes"], r.get("T")
-    if not timed:
+    # the fastest on the current CFD setup's scale (raw times of different setups do not compare)
+    lines = [json.loads(l) for l in (layout_root / "designs.jsonl").read_text().splitlines() if l.strip()]
+    t, _, _ = SL.timed_rows(lines)
+    if not t:
         raise SystemExit(f"no timed car in {layout_root}")
-    k = min(timed, key=lambda k: timed[k]["T"])
-    return k, timed[k]["genes"], timed[k]["T"]
+    r, T = min(t, key=lambda q: q[1])
+    return r["id"], rows[r["id"]]["genes"], T
 
 
 def init(root, layout_root, car=None, budget=40, popsize=8, sigma=0.5):

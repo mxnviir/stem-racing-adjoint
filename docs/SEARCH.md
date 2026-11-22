@@ -18,9 +18,9 @@ So the work is split by what each number is:
 2. **Stage 2, shape (search/shape, CMA-ES).** On the best layout from stage 1, a lattice of 4 x 2 x 3
    control points over the body (mirrored), cubic-interpolated, grows or cuts the drawn body by up to
    +-6 mm per unit before the rule masks and the milling are applied. So every vector is a legal,
-   millable body. The same CMA vector carries the wheel supports' six shape genes (`mode: shape` in
-   layout_params.json: arm chord, thickness, taper, height at the disc, section exponent, transition
-   radius), held at their catalogue values in stage 1. CMA-ES, 8 cars a generation, 40 cars.
+   millable body. The same CMA vector carries the wheel supports' seven shape genes (`mode: shape` in
+   layout_params.json: arm chord, thickness, taper, height at the disc front and rear, section exponent,
+   transition radius), held at their catalogue values in stage 1. CMA-ES, 8 cars a generation, 40 cars.
 
 At equal drag the layout changes race time by only ~0.15 ms over its whole legal range (the car is
 always ballasted to 48.2 g), while 1 % of drag is ~0.7 ms: the layout matters through drag, which is

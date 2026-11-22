@@ -173,7 +173,8 @@ def support_design(v=None) -> dict:
     """support_engine.SupportDesign's numbers from parameter values (the catalogue's values by default)."""
     v = v or {p["name"]: p["value"] for p in PARAMS}
     return dict(chord_mm=float(v["sup_chord"]), t_mm=float(v["sup_t"]), taper=float(v["sup_taper"]),
-                dz_mm=float(v["sup_dz"]), p=float(v["sup_p"]), fillet_mm=float(v["sup_fillet"]),
+                dz_mm=float(v["sup_dz"]), dz_rear_mm=float(v["sup_dz_rear"]), p=float(v["sup_p"]),
+                fillet_mm=float(v["sup_fillet"]),
                 saddle_h_mm=float(v["sup_saddle_h"]), disc_r_mm=float(v["sup_disc_r"]),
                 disc_recess_mm=float(v["sup_disc_recess"]))
 

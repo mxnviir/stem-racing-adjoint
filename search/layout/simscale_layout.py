@@ -268,6 +268,33 @@ def race_time(rec, D20, L20):
     return T
 
 
+def timed_rows(rows, refs=False):
+    """([(row, T on the current setup)], offsets ms, whether the current setup's reference is timed) of every
+    car timed so far (the reference runs too if refs): a setup that differs from the current one only in the
+    cartridge or the supports (parts every car carries) is brought over by the difference between its
+    reference and the current one; any other setup, or one whose reference has no time yet, is left out.
+    With the supports the shift is only approximately the same for every layout (rerun measures how far)."""
+    ref = {}
+    for row in rows:
+        if row.get("kind") == "ref" and row.get("T") is not None:
+            ref.setdefault(setup_key(row.get("setup")), []).append(row["T"])
+    ref = {k: float(np.mean(v)) for k, v in ref.items()}
+    offsets, out = {}, []
+    for row in rows:
+        if row.get("T") is None or row.get("genes") is None or (row.get("kind") == "ref" and not refs):
+            continue
+        k = setup_key(row.get("setup"))
+        if k == CURRENT_SETUP:
+            off = 0.0
+        elif k[:OFFSET_OK] == CURRENT_SETUP[:OFFSET_OK] and k in ref and CURRENT_SETUP in ref:
+            off = ref[CURRENT_SETUP] - ref[k]
+            offsets[str(k)] = round(off * 1e3, 3)
+        else:
+            continue
+        out.append((row, row["T"] + off))
+    return out, offsets, CURRENT_SETUP in ref
+
+
 def _build_one(args):
     x, folder, lattice, support = (tuple(args) + (None, None))[:4]
     try:
@@ -296,35 +323,27 @@ class Campaign:
             f.write(json.dumps(row, default=float) + "\n")
 
     # ------------------------------------------------------------------ the surrogate
+    def timed(self, refs=False):
+        """[(row, T on the current setup)] of every car timed so far (timed_rows)."""
+        out, self.offsets, self.ref_ready = timed_rows(self.designs(), refs)
+        return out
+
     def data(self):
-        """(X, T) of every car timed so far (the reference runs included), and X of the cars that
-        could not be built or broke a rule."""
-        X, y, bad = [], [], []
-        rows = self.designs()
-        # The reference's race time under each setup: a setup that differs from the current one only in the
-        # cartridge or the supports (parts every car carries) is brought over by the difference between its
-        # reference and the current one; any other setup is not comparable and is left out. With the supports
-        # the shift is only approximately the same for every layout: rows brought over are `provisional`.
-        ref = {}
-        for row in rows:
-            if row.get("kind") == "ref" and row.get("T") is not None:
-                ref.setdefault(setup_key(row.get("setup")), []).append(row["T"])
-        ref = {k: float(np.mean(v)) for k, v in ref.items()}
-        self.offsets = {}
-        for row in rows:
-            if row.get("T") is not None and row.get("genes") is not None:
-                k = setup_key(row.get("setup"))
-                if k == CURRENT_SETUP:
-                    off = 0.0
-                elif k[:OFFSET_OK] == CURRENT_SETUP[:OFFSET_OK] and k in ref and CURRENT_SETUP in ref:
-                    off = ref[CURRENT_SETUP] - ref[k]
-                    self.offsets[str(k)] = round(off * 1e3, 3)
-                else:
-                    continue                                     # timed on another CFD setup: not comparable
-                X.append(row["genes"]); y.append(row["T"] + off)
-            elif row.get("legal") is False and row.get("genes") is not None:
-                bad.append(row["genes"])
+        """(X, T) of every car timed so far on (or brought over to) the current setup (timed(), the
+        reference runs included), and X of the cars that could not be built or broke a rule."""
+        t = self.timed(refs=True)
+        X = [r["genes"] for r, _ in t]
+        y = [T for _, T in t]
+        bad = [r["genes"] for r in self.designs() if r.get("legal") is False and r.get("genes") is not None]
         return np.array(X, float).reshape(-1, LG.DIM), np.array(y, float), np.array(bad, float).reshape(-1, LG.DIM)
+
+    def best_adjusted(self):
+        """[id, T] of the fastest car on the current setup's scale (raw times of different setups do not compare)."""
+        t = self.timed()
+        if not t:
+            return None
+        r, T = min(t, key=lambda q: q[1])
+        return [r["id"], T]
 
     def designs(self):
         p = self.root / "designs.jsonl"
@@ -500,8 +519,7 @@ class Campaign:
             prune(self.root / "cars" / cid)
             if is_ref:
                 st["refs"][cid] = {"D20_N": r.get("D20_N"), "L20_N": r.get("L20_N"), "T": T, "ok": r.get("ok")}
-            elif T is not None and (st["best"] is None or T < st["best"][1]):
-                st["best"] = [cid, T]
+        st["best"] = self.best_adjusted() or st.get("best")      # on the current setup's scale
         self.save()
         return res
 
@@ -511,7 +529,11 @@ class Campaign:
             self.submit_reference(ev, ladder=(0,))
             self.submit_noise_reference(ev, src=self.REF)
         # 1) the next batch, when the last one is all back
-        if not st["batch"] and not st.get("pending_build") and st["used"] < self.cfg["budget"] and ev.capacity() > 0:
+        # (not before the current CFD setup's reference is timed: until then nothing earlier is comparable
+        # and the model would have no data)
+        self.timed()
+        if not st["batch"] and not st.get("pending_build") and st["used"] < self.cfg["budget"] and ev.capacity() > 0 \
+                and getattr(self, "ref_ready", True):
             xs, info = self.ask(min(self.cfg["batch"], self.cfg["budget"] - st["used"]))
             st["pending_build"] = {}
             for x in xs:

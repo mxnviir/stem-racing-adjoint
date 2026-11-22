@@ -1677,7 +1677,19 @@
    "hi": 5.0,
    "mode": "shape",
    "unit": "mm",
-   "what": "arm's centre at the disc, above the axle (its underside is level with the body's where it leaves it)",
+   "what": "front arm's centre at the disc, above the axle (its underside is level with the body's where it leaves it)",
+   "rule": "T3.7 1.5 mm off the track; T7.13 claw band clear",
+   "why": "where the arm crosses the gap between body and wheel"
+  },
+  {
+   "group": "wheel supports",
+   "name": "sup_dz_rear",
+   "value": 0.0,
+   "lo": -5.0,
+   "hi": 5.0,
+   "mode": "shape",
+   "unit": "mm",
+   "what": "rear arm's centre at the disc, above the axle",
    "rule": "T3.7 1.5 mm off the track; T7.13 claw band clear",
    "why": "where the arm crosses the gap between body and wheel"
   },

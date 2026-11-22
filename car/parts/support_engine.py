@@ -69,7 +69,8 @@ class SupportDesign:
     chord_mm: float = 10.0          # saddle and arm chord (x) at the body
     t_mm: float = 2.0               # arm thickness (z) at the body, at least what the loads need
     taper: float = 0.85             # arm chord and thickness at the disc / at the body
-    dz_mm: float = 0.0              # arm's centre at the disc, above the axle
+    dz_mm: float = 0.0              # arm's centre at the disc, above the axle (front; the rear's too if
+    dz_rear_mm: float | None = None  # this is None)
     p: float = 2.0                  # section exponent: 2 an ellipse, larger boxier, smaller sharper edges
     fillet_mm: float = 2.5          # the transition into the disc: concave fillet radius
     saddle_h_mm: float = 3.0        # saddle depth from the underside, at least what the loads need
@@ -445,7 +446,7 @@ def build_axle(sd: SupportDesign, body_mm, x_axle, z_axle, R, y_inner, wheel_wid
     cut = sec.intersection(LineString([(y_root, -1.0), (y_root, 200.0)]))
     z_bot = float(cut.bounds[1]) if not cut.is_empty else z_lowest
     z_root = z_bot + t0 / 2
-    z_end = z_axle + sd.dz_mm
+    z_end = z_axle + (sd.dz_rear_mm if tag == "rear" and sd.dz_rear_mm is not None else sd.dz_mm)
     ys = y_root + (y_d0 - y_root) * (1 - np.cos(np.linspace(0, np.pi / 2, 48))) ** 1.0
     ys = np.unique(np.r_[np.linspace(y_root, y_d0, 24), ys,
                         y_d0 - sd.fillet_mm * (1 - np.cos(np.linspace(0, np.pi / 2, 16)))])
@@ -659,9 +660,10 @@ def gates(r, tag) -> dict:
     return out
 
 
-def build(sd: SupportDesign, body_half_m, axles, out_dir=None):
+def build(sd: SupportDesign, body_half_m, axles, out_dir=None, keep_out_mm=None):
     """Both axles. body_half_m: the body's right half (trimesh, metres). axles: [(tag, x, z, R, y_inner,
-    wheel_width, hub_mm)]. Returns {"support": trimesh (m, right half, both axles), "hubcaps": {tag: trimesh m},
+    wheel_width, hub_mm)]. keep_out_mm: a solid (manifold, mm) no support may enter (the chamber and its
+    wall: the referee measures the body without the slot, so it would not see a saddle in the wall). Returns {"support": trimesh (m, right half, both axles), "hubcaps": {tag: trimesh m},
     "gates", "info": per axle, "net_kg_each": per axle per side (part + hubcap - foam removed),
     "com_mm": per axle}."""
     import trimesh
@@ -671,6 +673,9 @@ def build(sd: SupportDesign, body_half_m, axles, out_dir=None):
         r = build_axle_sized(sd, body_mm, x, z, R, y_in, w, hub, tag)
         r["_struct"]["disc_r_mm"] = sd.disc_r_mm
         gts.update(gates(r, tag))
+        if keep_out_mm is not None:                # the chamber and its 3 mm wall: foam the saddle may not take
+            v = (r["support"] ^ keep_out_mm).volume()
+            gts[f"fit_{tag}_clear_of_chamber_wall"] = -round(float(v), 4) if v > 1e-3 else 0.0
         st = r["_struct"]
         tm = _to_trimesh(r["support"])
         vol = abs(tm.volume) + (r["hubcap"].volume() if r["hubcap"] is not None else 0.0)
