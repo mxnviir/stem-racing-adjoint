@@ -180,22 +180,32 @@ jobs:
           c = Car(); c.export_car_folder(c.body_mesh, Path('gate/original'), 'original')
           print('exported gate/original')
           PY
-      - name: finalize the resumed production state at its own iteration (no extra iterations)
+      - name: prepare the resumed case (finalize at its iteration, or cold-solve it to the target)
         if: needs.init.outputs.ckpt_run != ''
         run: |
           python3 - <<'PY'
           import re, pathlib
           run = pathlib.Path('/tmp/case/run')
-          latest = max(int(p.name) for p in run.iterdir() if p.name.isdigit() and p.name != '0')
+          times = [int(p.name) for p in run.iterdir() if p.name.isdigit() and p.name != '0']
           cd = run / 'system' / 'controlDict'
           t = cd.read_text()
-          t = re.sub(r'\nendTime\s+[^;\n]+;', f'\nendTime       {latest};', t, count=1)
-          cd.write_text(t)
-          print('resumed production state finalized at iteration', latest)
+          if times:
+              latest = max(times)
+              t = re.sub(r'\nendTime\s+[^;\n]+;', f'\nendTime       {latest};', t, count=1)
+              cd.write_text(t)
+              print(f'production state finalized at iteration {latest} (no new iterations)')
+          elif not (run / 'constant' / 'polyMesh').is_dir() and not (run / 'constant' / 'polyMesh').exists():
+              print('no mesh in the resumed case either: nothing to salvage, fail'); raise SystemExit(1)
+          else:
+              # the saved checkpoint lost its processor dirs (old tar bug): the FLOW is gone,
+              # but the MESH is intact. Cold-solve from 0 to the iteration target on this mesh.
+              t = re.sub(r'\nendTime\s+[^;\n]+;', '\nendTime       1000;', t, count=1)
+              cd.write_text(t)
+              print('mesh salvaged from the checkpoint; cold-solving to 1000 (owner protocol)')
           PY
           if [ ! -d /tmp/case/run/processor0 ]; then
-            bash -c "source /usr/lib/openfoam/openfoam2412/etc/bashrc && cd /tmp/case/run && decomposePar -force -latestTime > logs/decomposePar.log 2>&1" || exit 1
-            echo decomposed the serial checkpoint
+            bash -c "source /usr/lib/openfoam/openfoam2412/etc/bashrc && cd /tmp/case/run && decomposePar -force > logs/decomposePar.log 2>&1" || exit 1
+            echo decomposed the checkpoint case
           fi
       - name: solve (production to the iteration target)
         id: solve
@@ -210,7 +220,7 @@ jobs:
                  PRODCHECK_KEEP=$PWD/gate/refA_resolved PRODCHECK_ITERS=1000 PRODCHECK_TIMEOUT=18000
           T0=$(date +%s)
           ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
-                 i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t ../../part2-simulation/cfd_case_template/runs/*/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
+                 i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t ../../part2-simulation/cfd_case_template/runs/*/postProcessing/forces/*/force.dat /tmp/case/run/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
           set +e
           python -W ignore -u prodcheck.py gate/original stateA "$NP" cold > gate/prodcheck_link.log 2>&1
           RC=$?
@@ -515,7 +525,7 @@ jobs:
                  CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1
           T0=$(date +%s)
           ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
-                 i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t ../../part2-simulation/cfd_case_template/runs/*/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
+                 i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t ../../part2-simulation/cfd_case_template/runs/*/postProcessing/forces/*/force.dat /tmp/case/run/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
           set +e
           python -W ignore -u gate.py bump "$SITE" "$NP" > gate/bump_link.log 2>&1
           RC=$?
