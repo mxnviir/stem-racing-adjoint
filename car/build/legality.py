@@ -826,7 +826,10 @@ def as_drawn_solids(assembly: dict, body_half_stl: str) -> dict:
     out = {"machined_body": full(body_half_stl)}
     front = [full(stl[n]) for n in ("nose", "fwing") if n in stl]
     if front:
-        out["printed_front_assembly"] = trimesh.boolean.union(front, engine="manifold") if len(front) > 1 else front[0]
+        try:
+            out["printed_front_assembly"] = trimesh.boolean.union(front, engine="manifold") if len(front) > 1 else front[0]
+        except ValueError:                       # an open part: as full() does, kept for the checks to report
+            out["printed_front_assembly"] = trimesh.util.concatenate(front)
     if "rwing" in stl:
         out["printed_rwing"] = full(stl["rwing"])
     if "tethers" in stl:

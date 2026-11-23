@@ -251,6 +251,12 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
     return {"wing": wing, "pylons": pyl, "gates": gates, "info": info}
 
 
+def _chunked(f, pts, n=256):
+    """f over the points a few hundred at a time: trimesh's closest point pairs every point with every
+    triangle near it, which on a fine nose ran to 35 million pairs (a 10 GB build killed, gallery G01)."""
+    return np.concatenate([np.asarray(f(pts[i:i + n]), float) for i in range(0, len(pts), n)]) if len(pts) else np.zeros(0)
+
+
 def measure(d, wing, pyl, nose, ref_a, wheel, body_half_m, info) -> dict:
     """Gates (+ = passes, mm) measured on the built wing and pylons (all mm, right halves)."""
     import trimesh
@@ -292,14 +298,16 @@ def measure(d, wing, pyl, nose, ref_a, wheel, body_half_m, info) -> dict:
     xa, y_in, R = wheel
     g["T8.7_fw_wheel"] = (xa - R) - float(b[1, 0]) - CLEAR_MM
     if len(free):
-        dn = np.abs(trimesh.proximity.signed_distance(nose, free)) if nose.is_volume else np.full(len(free), 99.0)
-        inside = trimesh.proximity.signed_distance(nose, free) > 0 if nose.is_volume else np.zeros(len(free), bool)
-        dn = np.where(inside, 0.0, dn)
+        if nose.is_volume:
+            sd = _chunked(lambda q: trimesh.proximity.signed_distance(nose, q), free)
+            dn = np.where(sd > 0, 0.0, np.abs(sd))
+        else:
+            dn = np.full(len(free), 99.0)
         g["T8.7_fw_nose"] = float(dn.min()) - CLEAR_MM
         info["fw_nose_clear_mm"] = float(dn.min())
     if body_half_m is not None:
         body = body_half_m.copy(); body.apply_scale(1e3)
         if len(free):
-            db = trimesh.proximity.closest_point(body, free)[1]
+            db = _chunked(lambda q: trimesh.proximity.closest_point(body, q)[1], free)
             g["T8.7_fw_body"] = float(db.min()) - CLEAR_MM
     return g

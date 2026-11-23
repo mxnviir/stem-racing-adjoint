@@ -125,6 +125,22 @@ def fixed_hardware_kwargs(W_mm, x_front_mm, d_halo_mm, parts_mass: dict,
     }
 
 
+def _union_closed(parts_m):
+    """Union of closed parts (metres) as ONE closed solid: in mm through manifold3d and support_engine's
+    cleanup (Boolean seams leave zero-area flaps; a plain trimesh union of the nose and its pylons came out
+    open, gallery G02, and the referee could not measure it). Not one closed solid: the car is refused."""
+    import manifold3d as mf
+    import support_engine as se
+    Ms = []
+    for p in parts_m:
+        q = p.copy(); q.apply_scale(1e3); Ms.append(se._to_manifold(q))
+    t = se._to_trimesh(mf.Manifold.batch_boolean(Ms, mf.OpType.Add))
+    if not t.is_volume:
+        raise ValueError("illegal car: the nose and its wing pylons do not make one closed solid")
+    t.apply_scale(1e-3)
+    return t
+
+
 def _legacy_front_wing(front, nm, x_front_mm, R, body, out, gates, info, surfaces, parts_mass):
     """Part 4's parametric front wing (wings.FrontWing) through the nose, on its centreline mount."""
     import trimesh
@@ -281,7 +297,7 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
         gates.update({f"P4.{k}" if not k.startswith("P4.") else k: v for k, v in res["gates"].items()})
         info["front_wing_engine"] = {k: v for k, v in res["info"].items()}
         if res["pylons"] is not None:
-            nose_with = trimesh.boolean.union([nm["nose"], res["pylons"]], engine="manifold")
+            nose_with = _union_closed([nm["nose"], res["pylons"]])
             _export_half(nose_with, out / "nose.stl")
             parts_mass["nose"] = _full_mass_com([nose_with], cc.DENSITY_G_CM3[PART_MATERIAL])
         _export_half(res["wing"], out / "fwing.stl")

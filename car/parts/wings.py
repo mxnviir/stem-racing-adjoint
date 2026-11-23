@@ -321,7 +321,8 @@ def rear_wing_gates(rw: RearWing, meshes: dict, x_front_mm: float, W_mm: float,
     pts, _ = __import__("trimesh").sample.sample_surface_even(wing, 800, seed=1)
     lower = pts[pts[:, 2] < wing.bounds[:, 2].mean()]
     import trimesh
-    _, d, _ = trimesh.proximity.closest_point(body_half_mesh, lower if len(lower) else pts)
+    q = lower if len(lower) else pts                     # a few hundred at a time (memory: see front_wing_engine._chunked)
+    d = np.concatenate([trimesh.proximity.closest_point(body_half_mesh, q[i:i + 256])[1] for i in range(0, len(q), 256)])
     # T9.7 front view: nothing ahead of the wing may reach above its underside
     # within its span.
     block = _front_view_top(wing, forward_parts)
