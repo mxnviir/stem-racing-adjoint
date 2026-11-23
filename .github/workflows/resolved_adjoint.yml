@@ -26,7 +26,7 @@ on:
     paths: [".github/resolved_adjoint_state*"]
   workflow_dispatch:
     inputs:
-      stage: { default: "all", description: "all | bumps | adjoint | verdict" }
+      stage: { default: "all", description: "all | kbumps | bumps | adjoint | verdict" }
       link: { default: "1" }
       max_links: { default: "8" }
       ckpt_run: { default: "", description: "run id holding ckpt-proda: continue that link's solve" }
@@ -36,6 +36,7 @@ on:
       turbs: { default: '["frozen","sst"]' }
       verdict_runs: { default: "", description: "run ids holding bump-*/esi-* artifacts (default: this run, then src_run)" }
       NP: { default: "4" }
+      steady_release: { default: "", description: "draft release with the Kaggle steady state (steadystate.tgz.part*) and adjoints (esi-*.tgz)" }
 
 permissions: { contents: write, actions: write }
 
@@ -67,6 +68,7 @@ jobs:
       turbs: ${{ steps.s.outputs.turbs }}
       verdict_runs: ${{ steps.s.outputs.verdict_runs }}
       NP: ${{ steps.s.outputs.NP }}
+      steady_release: ${{ steps.s.outputs.steady_release }}
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }   # merge-commit pushes need the full range; .before must exist for the fallback diff
@@ -83,6 +85,7 @@ jobs:
           I_TURBS: ${{ inputs.turbs }}
           I_VERDICT_RUNS: ${{ inputs.verdict_runs }}
           I_NP: ${{ inputs.NP }}
+          I_STEADY_RELEASE: ${{ inputs.steady_release }}
         run: |
           out() { echo "$1" >> "$GITHUB_OUTPUT"; }
           if [ "$EVENT" = workflow_dispatch ]; then
@@ -90,6 +93,7 @@ jobs:
             out "ckpt_run=$I_CKPT_RUN"; out "bump_ckpt_run=$I_BUMP_CKPT_RUN"; out "src_run=$I_SRC_RUN"
             out "sites=${I_SITES:-[\"pod_rear\",\"pod_rear_m\",\"pod_front_low\",\"pod_front_low_m\",\"pod_rear_top\",\"pod_rear_top_m\"]}"
             out "turbs=${I_TURBS:-[\"frozen\",\"sst\"]}"; out "verdict_runs=$I_VERDICT_RUNS"; out "NP=${I_NP:-4}"
+            out "steady_release=$I_STEADY_RELEASE"
             echo "workflow_dispatch: stage $I_STAGE"
             exit 0
           fi
@@ -129,7 +133,7 @@ jobs:
           v=$(get .link);      out "link=${v:-1}"
           v=$(get .max_links); out "max_links=${v:-8}"
           out "ckpt_run=$(get .ckpt_run)"; out "bump_ckpt_run=$(get .bump_ckpt_run)"; out "src_run=$(get .src_run)"
-          out "verdict_runs=$(get .verdict_runs)"
+          out "verdict_runs=$(get .verdict_runs)"; out "steady_release=$(get .steady_release)"
           v=$(get .NP); out "NP=${v:-4}"
           sc=$(jq -c '.sites // []' "$P" | tr -d '\n')
           [ "$sc" = "[]" ] || [ -z "$sc" ] && sc='["pod_rear","pod_rear_m","pod_front_low","pod_front_low_m","pod_rear_top","pod_rear_top_m"]'
@@ -323,7 +327,10 @@ jobs:
   bumpgeom:
     name: "2 bump geometry (mesh-independent)"
     needs: [init, proda]
-    if: needs.init.outputs.stage == 'all' && needs.proda.outputs.chained != 'true' && needs.proda.result == 'success'
+    if: >-
+      always() && !cancelled() && needs.init.result == 'success' &&
+      (needs.init.outputs.stage == 'kbumps' ||
+       (needs.init.outputs.stage == 'all' && needs.proda.outputs.chained != 'true' && needs.proda.result == 'success'))
     runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
@@ -474,6 +481,7 @@ jobs:
     if: >-
       always() && !cancelled() && needs.init.result == 'success' &&
       (needs.init.outputs.stage == 'bumps' ||
+       (needs.init.outputs.stage == 'kbumps' && needs.bumpgeom.result == 'success') ||
        (needs.init.outputs.stage == 'all' && needs.steady.outputs.a1 == 'true' && needs.steady.outputs.layers == 'true'
         && needs.bumpgeom.result == 'success'))
     strategy:
@@ -501,12 +509,28 @@ jobs:
           test -d /usr/lib/openfoam/openfoam2412/tutorials
           pip install $PY_DEPS
       - name: steady state + bump STLs
+        env:
+          TAG: ${{ needs.init.outputs.steady_release }}
+          STAGE: ${{ needs.init.outputs.stage }}
         run: |
           SRC="${{ needs.init.outputs.src_run || github.run_id }}"
-          gh run download "$SRC" -R "${{ github.repository }}" -n steadystate -D /tmp/ss
+          if [ -n "$TAG" ]; then   # steady state solved on Kaggle, parked in a draft release
+            gh release download "$TAG" -R "${{ github.repository }}" -p 'steadystate.tgz.part*' -D /tmp/ss
+            cat /tmp/ss/steadystate.tgz.part* > /tmp/ss/steadystate.tgz && rm /tmp/ss/steadystate.tgz.part*
+          else
+            gh run download "$SRC" -R "${{ github.repository }}" -n steadystate -D /tmp/ss
+          fi
           tar xzf /tmp/ss/steadystate.tgz -C research/sidepod_opt
-          gh run download "$SRC" -R "${{ github.repository }}" -n bumpgeom -D /tmp/bg
+          BG="$SRC"; [ "$STAGE" = kbumps ] && BG="${{ github.run_id }}"   # kbumps made the bump geometry itself
+          gh run download "$BG" -R "${{ github.repository }}" -n bumpgeom -D /tmp/bg
           tar xzf /tmp/bg/bumpgeom.tgz -C research/sidepod_opt
+          # base.json records the absolute folder of the machine that solved the steady state
+          cd research/sidepod_opt && python3 - <<'PY'
+          import json, pathlib
+          p = pathlib.Path('gate_results_resolved_up/base.json'); d = json.loads(p.read_text())
+          d['run_dir_kept'] = str(pathlib.Path('gate/refA_resolved_up').resolve()); p.write_text(json.dumps(d, indent=1))
+          print('steady state at', d['run_dir_kept'])
+          PY
       - name: continue a checkpointed bump
         if: needs.init.outputs.bump_ckpt_run != ''
         run: |
@@ -564,12 +588,15 @@ jobs:
           SRC_RUN: ${{ needs.init.outputs.src_run }}
           TURBS: ${{ needs.init.outputs.turbs }}
           NP: ${{ needs.init.outputs.NP }}
+          TAG: ${{ needs.init.outputs.steady_release }}
+          STAGE: ${{ needs.init.outputs.stage }}
           REPO: ${{ github.repository }}
           BRANCH: ${{ github.ref_name }}
         run: |
           echo "dispatching bump continuation for $SITE (bump_ckpt_run=$GITHUB_RUN_ID)"
+          S="${SRC_RUN:-$GITHUB_RUN_ID}"; [ "$STAGE" = kbumps ] && S="$GITHUB_RUN_ID"   # where bumpgeom lives
           gh workflow run resolved_adjoint.yml --ref "$BRANCH" -R "$REPO" \
-            -f stage=bumps -f "sites=[\"$SITE\"]" -f src_run="${SRC_RUN:-$GITHUB_RUN_ID}" \
+            -f stage=bumps -f "sites=[\"$SITE\"]" -f src_run="$S" -f steady_release="$TAG" \
             -f bump_ckpt_run="$GITHUB_RUN_ID" -f turbs="$TURBS" -f NP="${NP:-4}"
           echo "bump $SITE continuation dispatched"
           exit 1   # this run's bump did not finish; the triggered run completes it
@@ -706,8 +733,8 @@ jobs:
     needs: [init, proda, bumps, adjoint]
     if: >-
       always() && needs.init.outputs.stage != 'none' &&
-      (needs.init.outputs.stage == 'bumps' || needs.init.outputs.stage == 'adjoint' ||
-       needs.init.outputs.stage == 'verdict' ||
+      ((needs.init.outputs.stage == 'bumps' && needs.init.outputs.steady_release == '') ||
+       needs.init.outputs.stage == 'adjoint' || needs.init.outputs.stage == 'verdict' ||
        (needs.init.outputs.stage == 'all' && needs.proda.result == 'success' &&
         needs.proda.outputs.chained != 'true'))
     runs-on: ubuntu-24.04
@@ -730,6 +757,7 @@ jobs:
           TURBS: ${{ needs.init.outputs.turbs }}
           SRC_RUN: ${{ needs.init.outputs.src_run }}
           VERDICT_RUNS: ${{ needs.init.outputs.verdict_runs }}
+          TAG: ${{ needs.init.outputs.steady_release }}
           REPO: ${{ github.repository }}
           THIS_RUN: ${{ github.run_id }}
         run: |
@@ -749,7 +777,16 @@ jobs:
             for t in $(python3 -c "import json,os;print(' '.join(json.loads(os.environ['TURBS'])))"); do
               gh run download "$R" -R "$REPO" -n "esi-$t" -D "/tmp/gather/e/$R/$t" 2>/dev/null && tar xzf "/tmp/gather/e/$R/$t/esi.tgz" -C . || true
             done
+            [ -d gate/original_rm ] || \
+              { gh run download "$R" -R "$REPO" -n bumpgeom -D "/tmp/gather/bg/$R" 2>/dev/null && tar xzf "/tmp/gather/bg/$R/bumpgeom.tgz" -C . || true; }
           done
+          # Kaggle's half: steady state (base.json) and the adjoints, parked in a draft release
+          if [ -n "$TAG" ]; then
+            gh release download "$TAG" -R "$REPO" -p base.json -D /tmp/gather/rel 2>/dev/null && \
+              { [ -f gate_results_resolved_up/base.json ] || cp /tmp/gather/rel/base.json gate_results_resolved_up/base.json; } || true
+            gh release download "$TAG" -R "$REPO" -p 'esi-*.tgz' -D /tmp/gather/rel 2>/dev/null || true
+            for f in /tmp/gather/rel/esi-*.tgz; do [ -f "$f" ] && tar xzf "$f" -C . && echo "from $TAG: $(basename "$f")"; done
+          fi
           ls gate_results_resolved_up/ 2>/dev/null | head -30 || true
       - name: judge (same marks as the driver) and write the verdict
         if: always()
