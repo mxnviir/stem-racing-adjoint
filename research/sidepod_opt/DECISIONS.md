@@ -112,7 +112,7 @@ decided), *withdrawn*.
 - **Status 2026-11-23:** the test ran (2.13 M cells, layers on 62 % of wall faces, A1 PASS, both adjoints clean) but is
   inconclusive: every registered bump folded the wall layer when morphed, so no bump pair was measured. The
   next step (locate the folded cells, then a direct-field or stepped morph) needs a written amendment to the test first.
-- **Plan B (2026-11-23 18:40, proposed; routes in step 2 wait for the owner's choice):**
+- **Plan B (2026-11-23 18:25, proposed; routes in step 2 wait for the owner's choice):**
   1. Diagnostic, no rule change (PC, morph-only checks, ~1.3 min each): locate the folded cells (`checkMesh -writeSets`)
      for pod_front_low, pod_rear, pod_rear_top_m with the fixed reference; morph pod_front_low and pod_rear_top_m at 0.5 and
      0.25 mm to see whether folds scale with height. Must first reproduce pod_front_low = 9 cells.
