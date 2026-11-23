@@ -2,18 +2,18 @@
 
   pieces      1: one wing across the centre line; 2: a left and a right wing (T8.6.1: two segments of at
               least 25 mm each where another part, the nose or a support, passes through the span).
-  element     a flat NACA 0015 (user 2026-11-22: low drag, low lift), chord 15.3-25 mm (T8.6.2), swept
-              and given dihedral by SHEARING the section along the span, so every vertical cut is the
+  element     a flat NACA 0015 (user 2026-11-22: low drag, low lift), chord 15.3-25 mm (T8.6.2),
+              STRAIGHT (user 2026-11-23: no sweep, no dihedral, no tilt), so every vertical cut is the
               true section (T8.6.2 and T8.6.3 are measured on such cuts).
-  supports    pylons (none, one on the centre line, or two) that run from the wing's surface to the
-              NOSE'S OWN SURFACE, found by casting a ray from the wing at the pylon, so they follow
-              whatever nose the car has. A wing passing through the nose is held by the nose (T8.6.1's
-              figures) and needs none. Pylons are printed with the nose (nose.stl), and T8.5.1 holds them
-              to the 30 mm wide, 25 mm high box ahead of Ref A.
+  supports    lofts (wing_loft.py, like the halo's loft): each grows from a patch of the wing -- anywhere on
+              the span the rules let a support stand, over part or all of the chord -- to the nearest point
+              of the nose, above or below, its outline morphing from the patch's to its foot's; printed with
+              the nose (nose.stl). A wing passing through the nose is held by the nose (T8.6.1's figures).
+              Numbers: width, where on the span, how much of the chord, the foot's scale, the waist.
 
 Legal by construction where that is cheap, measured always (gates()):
-  T8.5.1  pylons inside |y| <= 15, z <= 25, ahead of Ref A.
-  T8.5.2  the wing ahead of Ref A; no higher than 20 mm beyond 15 mm out (dihedral capped).
+  T8.5.1  supports inside |y| <= 15, z <= 25, ahead of Ref A.
+  T8.5.2  the wing ahead of Ref A; no higher than 20 mm beyond 15 mm out (it is level: its height).
   T8.6.1  each element's span from the nose or support that cuts it (or from the centre) >= 25 (the
           tip is pushed out until it is), one piece >= 50.
   T8.6.2/3  chord 15-25, thickness 2-6 (the section: 15 % of a 15.3-25 mm chord).
@@ -44,34 +44,33 @@ N_SPAN = 24                    # sections along an element
 
 
 @dataclass
-class Strut:
-    """A strut pair (one strut on the centre line where it stands there): only continuous numbers."""
-    t_mm: float = 3.0              # under the printer's wall it is not there
-    y_frac: float = 0.5            # where on the span it meets the wing: 0 the centre (or the root), 1 the
-                                   # furthest out a support may stand (T8.5.1: 15 mm)
-    x_frac: float = 0.5            # where along the chord
-    chord_mm: float = 12.0
-    rake_deg: float = 0.0          # lean in side view: the nose end further aft (+)
-    splay_deg: float = 0.0         # lean in front view: the nose end further outboard (+)
+class Support:
+    """A support grown from a patch of the wing to the nose (wing_loft.py): only shape numbers."""
+    width_mm: float = 6.0          # along the span, where it leaves the wing; under the print wall: not there
+    y_frac: float = 0.5            # where on the span: 0 the centre (or a half's root), 1 the furthest out a
+                                   # support may stand (T8.5.1's 15 mm, and 25 mm of span beyond it, T8.6.1)
+    chord_frac: float = 0.6        # how much of the chord it leaves from (centred on the chord)
+    foot_scale: float = 1.0        # its foot's size, times the patch's
+    waist: float = 0.2             # pinched half way by this share
 
 
 @dataclass
 class FrontWingDesign:
+    """STRAIGHT (user 2026-11-23: no tilt, no angling): a level NACA 0015, square to the car."""
     pieces: int = 1                # 1 or 2
     chord_mm: float = 15.3         # T8.6.2 minimum + 0.3 for the print
     te_gap_mm: float = 6.0         # trailing edge this far ahead of Ref A (T8.7: >= 5 to the body)
-    z_mm: float = 8.0              # chord line height at the root
+    z_mm: float = 8.0              # chord line height
     tip_y_mm: float = 36.5         # tip: just outboard of the front wheel by default
     root_y_mm: float = 8.0         # two pieces: where each half starts (inside the support band)
-    sweep_deg: float = 0.0         # leading edge swept back towards the tip (+)
-    dihedral_deg: float = 0.0      # tip up (+)
-    struts: tuple = field(default_factory=lambda: (Strut(), Strut()))
+    supports: tuple = field(default_factory=lambda: (Support(), Support()))
 
 
 def from_dict(d: dict) -> FrontWingDesign:
-    d = {k: v for k, v in dict(d).items() if not k.startswith("pylon")}    # (the old fixed pylons: gone)
-    st = tuple(Strut(**s) if isinstance(s, dict) else s for s in d.pop("struts", ()))
-    return FrontWingDesign(**d, struts=st)
+    keep = {f.name for f in dataclasses.fields(FrontWingDesign)}
+    d = dict(d)
+    sp = tuple(Support(**q) if isinstance(q, dict) else q for q in d.pop("supports", ()))
+    return FrontWingDesign(**{k: v for k, v in d.items() if k in keep and k != "supports"}, supports=sp)
 
 
 def params_dict(d: FrontWingDesign) -> dict:
@@ -97,15 +96,9 @@ def _loft(stations):
 
 
 def element(d: FrontWingDesign, y0, y1, x_le_root, z_root):
-    """One wing element from y0 to y1 (y0 < y1), sheared for sweep and dihedral (manifold, mm)."""
+    """One straight wing element from y0 to y1 (y0 < y1) (manifold, mm)."""
     sec = naca00(d.chord_mm)
-    sw, dh = math.tan(math.radians(d.sweep_deg)), math.tan(math.radians(d.dihedral_deg))
-    ys = np.linspace(y0, y1, N_SPAN)
-    st = []
-    for y in ys:
-        dy = y - max(y0, 0.0) if d.pieces == 2 else y
-        st.append((float(y), np.c_[x_le_root + sw * dy + sec[:, 0], z_root + dh * dy + sec[:, 1]]))
-    return _loft(st)
+    return _loft([(float(y), np.c_[x_le_root + sec[:, 0], z_root + sec[:, 1]]) for y in (y0, y1)])
 
 
 def _loft_z(stations):
@@ -174,25 +167,16 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
     nose = nose_half_m.copy(); nose.apply_scale(1e3)
     info = dict(design=params_dict(d))
     t = T_FRAC * d.chord_mm
-    # the whole wing between the car's front limit (T8.2: 40 mm ahead of Ref A) and te_gap ahead of Ref A:
-    # sweep moves the tip back (or forward), so the root moves forward to make room, and a sweep that
-    # cannot fit in the 40 mm is reduced
-    room = OVERHANG_MM - MARGIN_MM - d.te_gap_mm - d.chord_mm
-    span_sw = max(d.tip_y_mm - (d.root_y_mm if d.pieces == 2 else 0.0), 1.0)
-    sw_lim = math.degrees(math.atan(max(room, 0.0) / span_sw))
-    d = dataclasses.replace(d, sweep_deg=float(np.clip(d.sweep_deg, -sw_lim, sw_lim)))
-    back = max(0.0, math.tan(math.radians(d.sweep_deg)) * span_sw)
-    fwd = max(0.0, -math.tan(math.radians(d.sweep_deg)) * span_sw)
-    x_le = ref_a - d.te_gap_mm - d.chord_mm - back
-    info.update(sweep_used_deg=d.sweep_deg, x_le_root_mm=x_le, front_x_mm=x_le - fwd)
-    # the wing outboard of 15 mm stays under 20 mm: the dihedral is capped, the root height first
+    # the whole wing between the car's front limit (T8.2: 40 mm ahead of Ref A) and te_gap ahead of Ref A
+    gap = float(np.clip(d.te_gap_mm, CLEAR_MM, OVERHANG_MM - MARGIN_MM - d.chord_mm))
+    x_le = ref_a - gap - d.chord_mm
+    info.update(x_le_root_mm=x_le, front_x_mm=x_le, te_gap_used_mm=gap)
+    # level, under 20 mm (T8.5.2 outboard of 15 mm) and 5 mm off the track
     z = float(np.clip(d.z_mm, CLEAR_MM + t / 2 + MARGIN_MM, HIGH_OUTBOARD_MM - t / 2 - MARGIN_MM))
-    dh_max = math.degrees(math.atan((HIGH_OUTBOARD_MM - MARGIN_MM - t / 2 - z) / max(d.tip_y_mm, 1.0)))
-    dh_min = math.degrees(math.atan((CLEAR_MM + MARGIN_MM + t / 2 - z) / max(d.tip_y_mm, 1.0)))
-    d = dataclasses.replace(d, dihedral_deg=float(np.clip(d.dihedral_deg, dh_min, dh_max)), z_mm=z)
-    info.update(z_mm=z, dihedral_used_deg=d.dihedral_deg)
+    d = dataclasses.replace(d, z_mm=z)
+    info.update(z_mm=z)
     # where the nose cuts the span, at the wing's height (its half-width there)
-    xs = np.linspace(x_le, x_le + d.chord_mm + abs(math.tan(math.radians(d.sweep_deg))) * 15.0, 7)
+    xs = np.linspace(x_le, x_le + d.chord_mm, 7)
     cut, cut_min = 0.0, np.inf
     for x in xs:
         s = nose.section(plane_origin=[x, 0, 0], plane_normal=[1, 0, 0])
@@ -226,75 +210,63 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
     inside = trimesh.boolean.intersection([wing, nose], engine="manifold") if nose.is_volume else None
     held = inside is not None and not inside.is_empty and abs(inside.volume) > 1.0
     info["held_by_nose"] = bool(held)
-    # struts, cast from the wing along their lean to the nose (up or down, whichever they meet first)
-    sts = [q for q in d.struts if q.t_mm >= cc.BUILD_WALL_MM]
-    if not sts and not held and d.struts:
-        # nothing holds the wing and every strut is under the print wall: the thickest, at the wall
-        k = int(np.argmax([q.t_mm for q in d.struts]))
-        sts = [dataclasses.replace(d.struts[k], t_mm=cc.BUILD_WALL_MM)]
-        info["strut_thickened_to_wall"] = k
+    # supports: lofts from patches of the wing to the nose (wing_loft.py), printed with the nose
+    import wing_loft as wl
+    sups = [q for q in d.supports if q.width_mm >= cc.BUILD_WALL_MM]
+    if not sups and not held and d.supports:
+        # nothing holds the wing and every support is under the print wall: the widest, at the wall
+        k = int(np.argmax([q.width_mm for q in d.supports]))
+        sups = [dataclasses.replace(d.supports[k], width_mm=cc.BUILD_WALL_MM)]
+        info["support_widened_to_wall"] = k
     pylons, placed = [], []
-    sw_, dh_ = math.tan(math.radians(d.sweep_deg)), math.tan(math.radians(d.dihedral_deg))
-    for i, q in enumerate(sts):
-        c = float(np.clip(q.chord_mm, 2 * cc.BUILD_WALL_MM, 0.8 * d.chord_mm))
-        tt = float(np.clip(q.t_mm, cc.BUILD_WALL_MM, 8.0))
-        y_lo = (max(y0, 0.0) + tt / 2 + 0.5) if d.pieces == 2 else 0.0
-        # a support breaks the span (T8.6.1): one stands no further out than leaves the tip's 25 mm beyond it
-        y_out = min(SUPPORT_BAND_MM, tip - SEGMENT_MIN_MM - MARGIN_MM)
-        y_hi = y_out - tt / 2 - MARGIN_MM
-        yp = y_lo + float(np.clip(q.y_frac, 0.0, 1.0)) * max(y_hi - y_lo, 0.0)
-        if d.pieces == 1 and yp < tt / 2 + 0.5:
-            yp = 0.0                                      # one strut on the centre line
-        dy = (yp - max(y0, 0.0)) if d.pieces == 2 else yp
-        xf = float(np.clip(q.x_frac, 0.1 + c / 2 / d.chord_mm, 0.9 - c / 2 / d.chord_mm))
-        xm = x_le + sw_ * dy + xf * d.chord_mm
-        zw = z + dh_ * dy
-        if nose.is_volume and nose.contains(np.array([[xm, max(yp, 0.05), zw]]))[0]:
-            info.setdefault("struts_in_the_nose", []).append(i)     # the nose holds the wing there itself
+    # a support breaks the span (T8.6.1): none stands further out than leaves the tip's 25 mm beyond it,
+    # and T8.5.1 keeps them inside 15 mm
+    y_out = min(SUPPORT_BAND_MM - MARGIN_MM, tip - SEGMENT_MIN_MM - MARGIN_MM)
+    for i, q in enumerate(sups):
+        w = float(np.clip(q.width_mm, cc.BUILD_WALL_MM, 2 * y_out))
+        y_lo = (max(y0, 0.0) + w / 2) if d.pieces == 2 else 0.0
+        y_hi = y_out - w / 2
+        yc = y_lo + float(np.clip(q.y_frac, 0.0, 1.0)) * max(y_hi - y_lo, 0.0)
+        if d.pieces == 1 and yc < w / 2:
+            yc = 0.0                                      # across the centre line: one support
+        cf = float(np.clip(q.chord_frac, 0.2, 1.0))
+        x0, x1 = x_le + d.chord_mm * (0.5 - cf / 2), x_le + d.chord_mm * (0.5 + cf / 2)
+        o = np.array([0.5 * (x0 + x1), max(yc, 0.05), z])
+        if nose.is_volume and nose.contains(o[None])[0]:
+            info.setdefault("supports_in_the_nose", []).append(i)   # the nose holds the wing there itself
             continue
-        hit = None
-        for k in np.linspace(1.0, 0.0, 6):               # leaned back towards the vertical if it misses
-            rk, sp = math.tan(math.radians(q.rake_deg * k)), math.tan(math.radians(q.splay_deg * k))
-            best = None
-            for sgn in (-1.0, 1.0):
-                h = _ray_hit(nose, np.array([xm, max(yp, 0.05), zw]), np.array([rk, sp if yp > 0 else 0.0, sgn]))
-                if h is not None and (best is None or abs(h[2] - zw) < abs(best[2] - zw)):
-                    best = h
-            if best is not None and abs(best[1]) + tt / 2 <= SUPPORT_BAND_MM - MARGIN_MM and abs(best[2] - zw) < 30.0:
-                hit = best
+        import trimesh as _tm
+        # the foot: the nose straight above or below the patch (the nearer), or its nearest point
+        hits = [h for h in (wl.first_hit(nose, o, np.array([0, 0, -1.0])), wl.first_hit(nose, o, np.array([0, 0, 1.0])))
+                if h is not None]
+        if hits:
+            foot = min(hits, key=lambda h: abs(h[2] - z))
+        else:
+            qq, dist, _ = _tm.proximity.closest_point(nose, o[None])
+            foot = qq[0] if dist[0] <= 30.0 else None
+        if foot is None:
+            info.setdefault("supports_not_placed", []).append(i)
+            continue
+        if yc == 0.0:
+            foot = np.array([foot[0], 0.0, foot[2]])
+        fs = float(np.clip(q.foot_scale, 0.3, 3.0))
+        ok = False
+        for _ in range(12):                               # the foot inside T8.5.1's band and the span rule
+            ok = abs(foot[1]) + 0.5 * w * fs <= y_out and foot[0] + 0.5 * (x1 - x0) * fs <= ref_a - MARGIN_MM
+            if ok:
                 break
-        if hit is None:
-            # nothing of the nose along any lean of it: aimed at the nose's nearest point instead
-            import trimesh as _tm
-            o = np.array([xm, max(yp, 0.05), zw])
-            q_, dist, _ = _tm.proximity.closest_point(nose, o[None])
-            v = q_[0] - o
-            if dist[0] < 30.0:
-                h = _ray_hit(nose, o, v)
-                if h is not None and abs(h[1]) + tt / 2 <= SUPPORT_BAND_MM - MARGIN_MM:
-                    hit = h
-                    info.setdefault("struts_aimed_at_the_nose", []).append(i)
-        if hit is not None and abs(hit[1]) + tt / 2 > y_out:
-            hit = None                                    # leaned out past where the span allows a support
-        if hit is None:
-            info.setdefault("struts_not_placed", []).append(i)
+            fs *= 0.85
+        if not ok:
+            info.setdefault("supports_not_placed", []).append(i)
             continue
-        if yp == 0.0:
-            hit = np.array([hit[0], 0.0, hit[2]])
-        top_down = hit[2] < zw                            # the nose under the wing
-        p_wing = np.array([xm, yp, zw + (t / 2 - 0.2 if top_down else -(t / 2 - 0.2))])
-        v = hit - np.array([xm, yp, zw])
-        p_nose = hit + v / max(np.linalg.norm(v), 1e-9) * EMBED_MM
-        a, b = sorted([(p_wing[2], p_wing), (p_nose[2], p_nose)], key=lambda u: u[0])
-        sec = naca00(c, min(0.4, tt / c)) - np.array([c / 2, 0.0])
-        st = []
-        for zz in np.linspace(a[0], b[0], 8):
-            f = (zz - a[0]) / max(b[0] - a[0], 1e-9)
-            cpt = a[1] + f * (b[1] - a[1])
-            st.append((float(zz), np.c_[cpt[0] + sec[:, 0], cpt[1] + sec[:, 1]]))
-        pylons.append(_loft_z(st))
-        placed.append(dict(index=i, y_mm=round(yp, 2), t_mm=tt, chord_mm=round(c, 2),
-                           nose_mm=[round(float(u), 2) for u in hit], wing_z_mm=round(zw, 2)))
+        m = wl.loft((x0, x1, yc - w / 2, yc + w / 2), z, (foot[0], foot[1]), foot[2], foot_scale=fs,
+                    waist=float(np.clip(q.waist, 0.0, 0.7)), past_mm=EMBED_MM)
+        if m is None:
+            info.setdefault("supports_not_placed", []).append(i)
+            continue
+        pylons.append(se._to_manifold(m))
+        placed.append(dict(index=i, y_mm=round(yc, 2), t_mm=w, width_mm=round(w, 2), chord_frac=round(cf, 3),
+                           nose_mm=[round(float(u), 2) for u in foot], foot_scale=round(fs, 3)))
     info["struts"] = placed
     info["pylon_y_placed_mm"] = [p["y_mm"] for p in placed]
     pyl = None

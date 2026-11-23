@@ -1,12 +1,12 @@
 """The searches' rear wing (rear_wing_engine.py) on a synthetic tail: a spine over the chamber and two
-rearpods. The same few numbers reach every kind of support -- a strut on the chamber's top, a pair splayed
-onto the pods, a slotted root in a pod -- and each built wing passes every gate it measures. A strut aimed
-at nothing is leaned back until it lands or is reported, never dropped silently."""
+rearpods. The wing is straight; its supports are lofts grown from the wing to the body (wing_loft.py), from
+just off the centre line out to the tips. Each built wing passes every gate it measures."""
+import io
+
 import numpy as np
 import pytest
 import trimesh
 
-import component_contract as cc
 import rear_wing_engine as rwe
 
 XF, W = 53.9, 122.0
@@ -23,15 +23,15 @@ def _tail():
 
 
 BODY = _tail()
-S = rwe.Strut
+S = rwe.Support
+OFF = S(width_mm=0.0)
 CASES = {
-    "one strut on the chamber's top": rwe.RearWingDesign(),
-    "a pair splayed onto the pods": rwe.RearWingDesign(half_span_mm=34.0, struts=(S(t_mm=2.5, y_frac=0.55, splay_deg=20.0),)),
-    "a slotted pair in the pods": rwe.RearWingDesign(half_span_mm=34.0, chord_mm=20.0,
-                                                     struts=(S(t_mm=2.5, y_frac=0.75, slot_mm=5.0, chord_mm=8.0),)),
-    "two pairs, swept and inverted": rwe.RearWingDesign(camber=-0.04, aoa_deg=-3.0, sweep_deg=12.0, dihedral_deg=6.0,
-                                                        half_span_mm=33.0,
-                                                        struts=(S(t_mm=2.0), S(t_mm=2.2, y_frac=0.8, rake_deg=10.0))),
+    "the middle of every range": rwe.RearWingDesign(),
+    "a pair near the centre onto the spine": rwe.RearWingDesign(supports=(S(width_mm=4.0, y_frac=0.0), OFF)),
+    "a pair at the tips onto the pods, flared": rwe.RearWingDesign(half_span_mm=34.0, supports=(
+        S(width_mm=8.0, y_frac=1.0, chord_frac=1.0, foot_scale=1.8, waist=0.4), OFF)),
+    "two pairs, a wide chord, a thick wing": rwe.RearWingDesign(chord_mm=22.0, t_mm=4.0, half_span_mm=32.0, lift_mm=4.0,
+                                                               supports=(S(width_mm=3.0, y_frac=0.2), S(width_mm=10.0, y_frac=0.9))),
 }
 
 
@@ -45,74 +45,50 @@ def test_every_gate_passes(built, name):
     r = built[name]
     bad = {k: v for k, v in r["gates"].items() if v < 0}
     assert not bad, (name, bad, r["info"])
-    assert r["info"]["supported"] and not r["info"].get("struts_not_placed")
+    assert r["info"]["supported"] and not r["info"].get("supports_not_placed")
     for m in [r["wing"]] + r["struts"]:
         q = m.copy(); q.apply_scale(1e3)
         assert q.is_volume
+    back = trimesh.load(io.BytesIO(trimesh.util.concatenate([r["wing"]] + r["struts"]).export(file_type="stl_ascii").encode()),
+                        file_type="stl")
+    assert back.is_volume
 
 
-def test_the_pods_hold_the_splayed_pair(built):
-    feet = [s["foot_mm"] for s in built["a pair splayed onto the pods"]["info"]["struts"]]
+def test_the_wing_is_straight(built):
+    w = built["two pairs, a wide chord, a thick wing"]["wing"].copy(); w.apply_scale(1e3)
+    b = [w.section(plane_origin=[0, y, 0], plane_normal=[0, 1.0, 0]).bounds for y in (3.0, 15.0, 30.0)]
+    assert np.allclose(b[0][:, [0, 2]], b[1][:, [0, 2]], atol=1e-3) and np.allclose(b[1][:, [0, 2]], b[2][:, [0, 2]], atol=1e-3)
+
+
+def test_tip_supports_land_on_the_pods(built):
+    feet = [s["foot_mm"] for s in built["a pair at the tips onto the pods, flared"]["info"]["struts"]]
     assert feet and all(f[1] > 13.0 and abs(f[2] - 26.0) < 0.5 for f in feet), feet
 
 
-def test_a_slot_is_cut_where_there_is_foam_for_it(built):
-    r = built["a slotted pair in the pods"]
-    st = r["info"]["struts"]
-    assert st and st[0]["slot_mm"] > 1.0, r["info"]
-    assert r["plugs"] and r["gates"]["rw_slot0_foam"] >= 0
+def test_a_support_meets_the_body_flush_not_inside_it(built):
+    """Its base is cut to the body's surface: no support inside the foam."""
+    r = built["a pair near the centre onto the spine"]
+    s = r["struts"][0].copy(); s.apply_scale(1e3)
+    b = BODY.copy(); b.apply_scale(1e3)
+    i = trimesh.boolean.intersection([s, b], engine="manifold")
+    assert i.is_empty or abs(i.volume) < 0.05
+    assert trimesh.proximity.closest_point(b, s.vertices)[1].min() < 1e-3        # and it touches it
 
 
-def test_a_slot_over_the_chamber_is_glued_instead():
-    """Over the cartridge the body is the T5.5 wall's 3 mm: no slot there, a glued foot instead."""
-    r = rwe.build(rwe.RearWingDesign(struts=(S(t_mm=3.0, slot_mm=4.0),)), BODY, XF, W, WHEEL, forward_parts=[BODY])
-    assert r["info"]["struts"] and r["info"]["struts"][0]["slot_mm"] == 0.0
-    assert r["info"].get("slots_glued_instead") == [0]
+def test_nothing_on_the_centre_line(built):
+    for r in built.values():
+        for s in r["struts"]:
+            assert s.vertices[:, 1].min() * 1e3 >= rwe.CENTRE_CLEAR_MM - 0.06
 
 
-def test_a_strut_aimed_at_nothing_is_reported_not_dropped():
-    """A pair splayed far outboard past the pods lands (leaned back) or is reported; with none placed the
-    wing is not held and the gate says so."""
-    r = rwe.build(rwe.RearWingDesign(half_span_mm=40.0, struts=(S(t_mm=2.0, y_frac=1.0, splay_deg=40.0),)),
-                  BODY, XF, W, WHEEL, forward_parts=[BODY])
-    placed, missed = r["info"]["struts"], r["info"].get("struts_not_placed", [])
-    assert placed or missed == [0]
-    if not placed:
-        assert r["gates"]["rw_supported"] < 0
-    else:
-        assert abs(placed[0]["lean_deg"][1]) < 40.0      # leaned back towards the vertical
+def test_supports_under_the_wall_widen_the_widest():
+    r = rwe.build(rwe.RearWingDesign(supports=(S(width_mm=0.7), S(width_mm=0.5))), BODY, XF, W, WHEEL, forward_parts=[BODY])
+    assert r["info"].get("support_widened_to_wall") == 0 and r["info"]["supported"]
 
 
 def test_limits_are_repaired_into_t9():
-    r = rwe.build(rwe.RearWingDesign(chord_mm=40.0, t_mm=9.0, half_span_mm=10.0, x_le_mm=60.0, sweep_deg=60.0,
-                                     dihedral_deg=60.0), BODY, XF, W, WHEEL, forward_parts=[BODY])
-    for k in ("T9.4.1_rw_behind_ref_B", "T9.4.2_rw_overhang", "T9.5.1_rw_span", "T9.5.2_rw_chord_max",
-              "T9.5.3_rw_thick_max", "T9.5.4_rw_height_change"):
-        assert r["gates"][k] >= 0, (k, r["gates"][k], r["info"])
-
-
-def test_struts_all_under_the_wall_keep_the_thickest_at_the_wall():
-    r = rwe.build(rwe.RearWingDesign(struts=(S(t_mm=0.7), S(t_mm=0.5, y_frac=0.6))), BODY, XF, W, WHEEL,
+    r = rwe.build(rwe.RearWingDesign(chord_mm=40.0, t_mm=9.0, half_span_mm=10.0, x_le_mm=60.0), BODY, XF, W, WHEEL,
                   forward_parts=[BODY])
-    assert r["info"].get("strut_thickened_to_wall") == 0 and r["info"]["supported"]
-    assert r["gates"]["rw_supported"] > 0
-
-
-def test_a_dihedral_over_65_mm_is_reduced_not_refused():
-    """A tall tail and the steepest dihedral: the tip would pass T9.4.3's 65 mm; the dihedral comes down."""
-    tall = trimesh.creation.box(bounds=[[150.0, 0.0, 8.0], [240.0, 14.0, 52.0]])
-    tall.apply_scale(1e-3)
-    r = rwe.build(rwe.RearWingDesign(dihedral_deg=30.0, lift_mm=15.0), tall, XF, W, WHEEL, forward_parts=[tall])
-    assert r["gates"]["T9.4.3_rw_height"] >= 0, r["info"]
-    assert r["info"].get("dihedral_reduced_for_height")
-
-
-def test_coinciding_struts_come_out_as_one_closed_solid():
-    """Both pairs at the same numbers (the middle of every range): one solid, closed through an STL."""
-    import io
-    r = rwe.build(rwe.RearWingDesign(), BODY, XF, W, WHEEL, forward_parts=[BODY])
-    assert len(r["struts"]) == 1
-    m = r["struts"][0]
-    back = trimesh.load(io.BytesIO(trimesh.util.concatenate([r["wing"], m]).export(file_type="stl_ascii").encode()),
-                        file_type="stl")
-    assert back.is_volume
+    for k in ("T9.4.1_rw_behind_ref_B", "T9.4.2_rw_overhang", "T9.5.1_rw_span", "T9.5.2_rw_chord_max",
+              "T9.5.3_rw_thick_max"):
+        assert r["gates"][k] >= 0, (k, r["gates"][k], r["info"])

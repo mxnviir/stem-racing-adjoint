@@ -89,25 +89,19 @@ the slot or none, slot cut from below, one closed solid. Thicknesses grow until 
 folder gets `supports.png` (`search/layout/support_render.py`) to inspect the design.
 `beam_support.py` (Part 4's pod/plate/strip support) is kept for the team's own car (`--support beam`).
 
-`front_wing_engine.py` designs the searches' front wing: one piece across the centre line or a left and
-a right wing (T8.6.1), flat NACA 0015 elements (chord, height, span, sweep, dihedral; swept by shearing so
-every vertical cut is the true section), and its own supports: two strut pairs of continuous numbers
-(thickness -- off under the print wall --, place on span and chord, chord, rake, splay; a pair at the
-centre is one strut), each cast from the wing to the nose's surface, up or down, and printed with the nose;
-a wing the nose runs into is held by it. No preset: every strut number starts at the middle of its range. It repairs
-rather than refuses (sweep within T8.2's 40 mm, segments out to 25 mm, dihedral within T8.5.2 and the
-track's 5 mm, roots into the nose, a wing lowered to keep 5 mm under a nose that does not hold it) and
-measures every T8 rule. The referee measures it again (T8.5-T8.8).
-`rear_wing_engine.py` designs the searches' rear wing and its supports, one representation with no modes
-(user 2026-11-23): a NACA section (camber either way, angle of attack), span, chord, thickness, sweep and
-dihedral, a lift over the lowest height T9.6 and T9.7 allow; and up to two strut pairs (never on the centre
-line: team rule, user 2026-11-23; from just off it out to the tips), each only continuous
-numbers -- thickness (off under the print wall), where on the span and the chord, chord, rake, splay, root
-(glued, or a slot this deep). Each strut is cast from the wing along its lean to whatever body is there (the
-chamber's top, a sidepod, a rearpod); a slot is a plug the ball can cut, above the T5.5 wall with 3 mm of
-foam round it, else glued; a strut that meets nothing is leaned back towards the vertical, else reported.
-A tip swept into T7.9's full-height wheel zones is moved aft. Gates: T9.4.1-3, T9.5.1-4, T9.6 (but 5 mm
-either side of each strut), T9.7, T3.4, the struts' wall, wheel and T7.9 clearance, the slots.
+`front_wing_engine.py` and `rear_wing_engine.py` design the searches' wings and their supports. Every wing is
+STRAIGHT (user 2026-11-23): a level, symmetric NACA section square to the car -- no sweep, dihedral, angle of
+attack or camber. Searched: the front wing one piece or two, chord, gap to Ref A, span, root; the rear wing's
+chord, thickness, half span and height over the lowest T9.6 / T9.7 allow. Their supports are LOFTS
+(`wing_loft.py`, like the halo's loft): each grows from a patch of the wing -- anywhere on the span the rules
+let a support stand, up to the rear wing's tips, over part or all of the chord -- to the nose / body straight
+under it (or, with nothing under it, their nearest point), its outline morphing from the patch's to its
+foot's, flared or narrowed, pinched or not. Numbers per support: width (under the print wall it is not there),
+where on the span, how much of the chord, the foot's scale, the waist -- each starting at the middle of its
+range; where it lands is the geometry's. Front supports are printed with the nose and kept in T8.5.1's band
+and T8.6.1's 25 mm of span beyond them; rear supports are trimmed to the body's surface (a glued joint), never
+on the centre line (team rule, user 2026-11-23), shrunk out of T7.9's zones and the rear wheel. Every T8 / T9
+rule is measured on the result, and again by the referee.
 `joints.make_all` cuts pockets for the printed parts and writes the manufacturing files (skipped in
 searches with `--no-joints`; rebuild finalists without it).
 

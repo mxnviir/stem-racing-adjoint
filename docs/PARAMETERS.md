@@ -1,6 +1,6 @@
 # Layout search: every parameter of the car
 
-166 parameters, 10 evolved in stage 1 (the layout search), 45 in stage 2 (`shape`: the shape search, with the body's lattice), 111 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
+156 parameters, 10 evolved in stage 1 (the layout search), 33 in stage 2 (`shape`: the shape search, with the body's lattice), 113 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
 
 x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, Ref B = rear axle + 16.
 
@@ -156,7 +156,7 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `nose_root_scale` | **fixed** | 1.0 | 0.9 - 1.0 - | root section vs the body's |  |  |
 | `nose_wall` | **fixed** | 1.0 | 0.8 - 2.0 mm | printed shell wall | print minimum | mass only |
 
-## front wing (20 of 20 evolved)
+## front wing (16 of 16 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -166,29 +166,25 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `fw_te_gap` | **shape** | 6.0 | 5.3 - 20.0 mm | trailing edge ahead of Ref A | T8.7 5 mm to the body and the wheels; T8.2 the whole wing within 40 mm of Ref A |  |
 | `fw_tip_y` | **shape** | 36.5 | 26.0 - 42.0 mm | tip, from the centre line (pushed out until each segment is 25 mm) | T8.6.1; T3.4 car width |  |
 | `fw_root_y` | **shape** | 8.0 | 0.5 - 15.0 mm | two pieces: where each half starts (in the nose's side, or over/under it on a pylon) | T8.5.1 support band 15 mm |  |
-| `fw_sweep` | **shape** | 0.0 | -20.0 - 25.0 deg | leading edge swept back towards the tip (+): the root moves forward to make room | T8.2 40 mm; T8.5.2 ahead of Ref A |  |
-| `fw_dihedral` | **shape** | 0.0 | -10.0 - 15.0 deg | tip up (+), capped by T8.5.2's 20 mm outboard and T8.7's 5 mm to the track |  |  |
-| `fws0_t` | **shape** | 3.0 | 0.0 - 6.0 mm | strut pair 0: thickness; under the print wall it is not there | print wall | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `fws0_y` | **shape** | 0.5 | 0.0 - 1.0 - | strut pair 0: where on the span (0 the centre or the root, 1 T8.5.1's 15 mm) | T8.5.1 | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `fws0_x` | **shape** | 0.5 | 0.15 - 0.85 - | strut pair 0: where along the chord |  | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `fws0_chord` | **shape** | 12.0 | 4.0 - 20.0 mm | strut pair 0: chord |  | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `fws0_rake` | **shape** | 0.0 | -30.0 - 30.0 deg | strut pair 0: lean, nose end aft (+) | T8.5.1 ahead of Ref A (gate) | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `fws0_splay` | **shape** | 0.0 | -40.0 - 40.0 deg | strut pair 0: lean, nose end outboard (+) | T8.5.1 15 mm (gate) | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `fws1_t` | **shape** | 3.0 | 0.0 - 6.0 mm | strut pair 1: thickness; under the print wall it is not there | print wall | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `fws1_y` | **shape** | 0.5 | 0.0 - 1.0 - | strut pair 1: where on the span (0 the centre or the root, 1 T8.5.1's 15 mm) | T8.5.1 | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `fws1_x` | **shape** | 0.5 | 0.15 - 0.85 - | strut pair 1: where along the chord |  | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `fws1_chord` | **shape** | 12.0 | 4.0 - 20.0 mm | strut pair 1: chord |  | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `fws1_rake` | **shape** | 0.0 | -30.0 - 30.0 deg | strut pair 1: lean, nose end aft (+) | T8.5.1 ahead of Ref A (gate) | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `fws1_splay` | **shape** | 0.0 | -40.0 - 40.0 deg | strut pair 1: lean, nose end outboard (+) | T8.5.1 15 mm (gate) | user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
+| `fwsup0_width` | **shape** | 6.0 | 0.0 - 12.0 mm | support 0: width where it leaves the wing; under the print wall it is not there | print wall | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `fwsup0_y` | **shape** | 0.5 | 0.0 - 1.0 - | support 0: where on the span (0 the centre or a half's root, 1 the furthest out allowed) | T8.5.1 15 mm; T8.6.1 25 mm beyond | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `fwsup0_chord` | **shape** | 0.6 | 0.2 - 1.0 - | support 0: share of the chord it leaves from |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `fwsup0_foot` | **shape** | 1.2 | 0.4 - 2.0 - | support 0: its foot's size, times the patch's (flared > 1) |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `fwsup0_waist` | **shape** | 0.3 | 0.0 - 0.6 - | support 0: pinched half way by this share |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `fwsup1_width` | **shape** | 6.0 | 0.0 - 12.0 mm | support 1: width where it leaves the wing; under the print wall it is not there | print wall | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `fwsup1_y` | **shape** | 0.5 | 0.0 - 1.0 - | support 1: where on the span (0 the centre or a half's root, 1 the furthest out allowed) | T8.5.1 15 mm; T8.6.1 25 mm beyond | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `fwsup1_chord` | **shape** | 0.6 | 0.2 - 1.0 - | support 1: share of the chord it leaves from |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `fwsup1_foot` | **shape** | 1.2 | 0.4 - 2.0 - | support 1: its foot's size, times the patch's (flared > 1) |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `fwsup1_waist` | **shape** | 0.3 | 0.0 - 0.6 - | support 1: pinched half way by this share |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
 
-## rear wing (23 of 27 evolved)
+## rear wing (15 of 21 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
 | `rw_chord` | **shape** | 15.3 | 15.3 - 25.0 mm | chord | T9.5.2 15-25 | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
 | `rw_t_frac` | **fixed** | 0.15 | 0.13 - 0.4 - | thickness / chord | T9.5.3 2-6 mm | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `rw_camber` | **shape** | 0.0 | -0.06 - 0.06 - | camber (fraction of chord): + lifts, - presses down |  | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
-| `rw_aoa` | **shape** | 0.0 | -8.0 - 12.0 deg | angle of attack, nose up (+) | T9.4.3, T9.6 | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rw_camber` | **fixed** | 0.0 | 0.0 - 0.0 - | camber (fraction of chord): + lifts, - presses down |  | user 2026-11-23: every wing straight -- no tilt, no angling |
+| `rw_aoa` | **fixed** | 0.0 | 0.0 - 0.0 deg | angle of attack, nose up (+) | T9.4.3, T9.6 | user 2026-11-23: every wing straight -- no tilt, no angling |
 | `rw_half_span` | **shape** | 25.5 | 25.5 - 42.0 mm | half span | T9.5.1 >= 50; T3.4 85 wide | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
 | `rw_x_le` | **evolve** | 3.5 | 0.0 - 20.0 mm | leading edge behind Ref B | T9.4.1 behind Ref B; T9.4.2 <= 40 behind Ref B; T5.6 nothing round the cartridge behind the rear face (the gates check each car) | user 2026-11-22: rear wing position is a parameter |
 | `rw_clear_air_margin` | **fixed** | 0.5 | 0.2 - 2.0 mm | margin over the 5 mm clear air | T9.6 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
@@ -196,22 +192,16 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `rw_pylon_chord` | **fixed** | 10.0 | 6.0 - 20.0 mm | pylon chord |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `rw_t` | **shape** | 2.3 | 2.3 - 6.0 mm | wing thickness | T9.5.3 2-6 | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
 | `rw_lift` | **shape** | 0.0 | 0.0 - 15.0 mm | height above the lowest T9.6 / T9.7 allow | T9.4.3 65 mm | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
-| `rw_sweep` | **shape** | 0.0 | -20.0 - 25.0 deg | leading edge back towards the tip (+) | T9.4.2 (the engine reduces a sweep that would not fit) | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
-| `rw_dihedral` | **shape** | 0.0 | -25.0 - 25.0 deg | tip up (+) | T9.5.4 <= 15 mm along the span (capped) | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
-| `rws0_t` | **shape** | 3.0 | 0.0 - 6.0 mm | strut pair 0: thickness; under the print wall it is not there | print wall | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws0_y` | **shape** | 0.5 | 0.0 - 1.0 - | strut pair 0: where on the span (0 just off the centre line, 1 the tip; never on it: team rule) |  | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws0_x` | **shape** | 0.5 | 0.15 - 0.85 - | strut pair 0: where along the chord |  | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws0_chord` | **shape** | 12.0 | 4.0 - 20.0 mm | strut pair 0: chord |  | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws0_rake` | **shape** | 0.0 | -30.0 - 30.0 deg | strut pair 0: lean, foot aft (+) | T9.4.1 behind Ref B (gate) | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws0_splay` | **shape** | 0.0 | -40.0 - 40.0 deg | strut pair 0: lean, foot outboard (+): onto pods, sidepods, whatever body is there |  | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws0_slot` | **shape** | 2.5 | -3.0 - 8.0 mm | strut pair 0: root; <= 0 glued, > 0 a ball-cut slot this deep | T5.5 wall, 3 mm of foam round it (the engine makes it shallower or glues it) | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws1_t` | **shape** | 3.0 | 0.0 - 6.0 mm | strut pair 1: thickness; under the print wall it is not there | print wall | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws1_y` | **shape** | 0.5 | 0.0 - 1.0 - | strut pair 1: where on the span (0 just off the centre line, 1 the tip; never on it: team rule) |  | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws1_x` | **shape** | 0.5 | 0.15 - 0.85 - | strut pair 1: where along the chord |  | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws1_chord` | **shape** | 12.0 | 4.0 - 20.0 mm | strut pair 1: chord |  | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws1_rake` | **shape** | 0.0 | -30.0 - 30.0 deg | strut pair 1: lean, foot aft (+) | T9.4.1 behind Ref B (gate) | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws1_splay` | **shape** | 0.0 | -40.0 - 40.0 deg | strut pair 1: lean, foot outboard (+): onto pods, sidepods, whatever body is there |  | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
-| `rws1_slot` | **shape** | 2.5 | -3.0 - 8.0 mm | strut pair 1: root; <= 0 glued, > 0 a ball-cut slot this deep | T5.5 wall, 3 mm of foam round it (the engine makes it shallower or glues it) | user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at) |
+| `rwsup0_width` | **shape** | 6.0 | 0.0 - 12.0 mm | support 0: width where it leaves the wing; under the print wall it is not there | print wall | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `rwsup0_y` | **shape** | 0.5 | 0.0 - 1.0 - | support 0: where on the span (0 just off the centre line, 1 the tip; never on it: team rule) | team: off the centre line | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `rwsup0_chord` | **shape** | 0.6 | 0.2 - 1.0 - | support 0: share of the chord it leaves from |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `rwsup0_foot` | **shape** | 1.2 | 0.4 - 2.0 - | support 0: its foot's size, times the patch's (flared > 1) |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `rwsup0_waist` | **shape** | 0.3 | 0.0 - 0.6 - | support 0: pinched half way by this share |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `rwsup1_width` | **shape** | 6.0 | 0.0 - 12.0 mm | support 1: width where it leaves the wing; under the print wall it is not there | print wall | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `rwsup1_y` | **shape** | 0.5 | 0.0 - 1.0 - | support 1: where on the span (0 just off the centre line, 1 the tip; never on it: team rule) | team: off the centre line | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `rwsup1_chord` | **shape** | 0.6 | 0.2 - 1.0 - | support 1: share of the chord it leaves from |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `rwsup1_foot` | **shape** | 1.2 | 0.4 - 2.0 - | support 1: its foot's size, times the patch's (flared > 1) |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `rwsup1_waist` | **shape** | 0.3 | 0.0 - 0.6 - | support 1: pinched half way by this share |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
 
 ## tether guides (0 of 2 evolved)
 

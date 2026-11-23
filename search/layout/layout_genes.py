@@ -173,33 +173,28 @@ def support_design(v=None) -> dict:
                 disc_recess_mm=float(v["sup_disc_recess"]))
 
 
+def _supports(v, prefix, n):
+    return [dict(width_mm=float(v[f"{prefix}{k}_width"]), y_frac=float(v[f"{prefix}{k}_y"]),
+                 chord_frac=float(v[f"{prefix}{k}_chord"]), foot_scale=float(v[f"{prefix}{k}_foot"]),
+                 waist=float(v[f"{prefix}{k}_waist"])) for k in range(n)]
+
+
 def front_wing_design(v=None) -> dict:
-    """front_wing_engine.FrontWingDesign's numbers (with its strut pairs) from parameter values."""
+    """front_wing_engine.FrontWingDesign's numbers (straight; its loft supports) from parameter values."""
     v = v or {p["name"]: p["value"] for p in PARAMS}
-    struts = [dict(t_mm=float(v[f"fws{k}_t"]), y_frac=float(v[f"fws{k}_y"]), x_frac=float(v[f"fws{k}_x"]),
-                   chord_mm=float(v[f"fws{k}_chord"]), rake_deg=float(v[f"fws{k}_rake"]),
-                   splay_deg=float(v[f"fws{k}_splay"]))
-              for k in range(N_FW_STRUTS)]
     return dict(pieces=2 if float(v["fw_pieces"]) >= 0.5 else 1, chord_mm=float(v["fw_chord"]),
                 te_gap_mm=float(v["fw_te_gap"]), z_mm=float(v["fw_z"]), tip_y_mm=float(v["fw_tip_y"]),
-                root_y_mm=float(v["fw_root_y"]), sweep_deg=float(v["fw_sweep"]), dihedral_deg=float(v["fw_dihedral"]),
-                struts=struts)
+                root_y_mm=float(v["fw_root_y"]), supports=_supports(v, "fwsup", N_FW_STRUTS))
 
 
 N_FW_STRUTS = 2
 
 
 def rear_wing_design(v=None) -> dict:
-    """rear_wing_engine.RearWingDesign's numbers (with its strut pairs) from parameter values."""
+    """rear_wing_engine.RearWingDesign's numbers (straight; its loft supports) from parameter values."""
     v = v or {p["name"]: p["value"] for p in PARAMS}
-    struts = [dict(t_mm=float(v[f"rws{k}_t"]), y_frac=float(v[f"rws{k}_y"]), x_frac=float(v[f"rws{k}_x"]),
-                   chord_mm=float(v[f"rws{k}_chord"]), rake_deg=float(v[f"rws{k}_rake"]),
-                   splay_deg=float(v[f"rws{k}_splay"]), slot_mm=float(v[f"rws{k}_slot"]))
-              for k in range(N_RW_STRUTS)]
-    return dict(chord_mm=float(v["rw_chord"]), t_mm=float(v["rw_t"]), camber=float(v["rw_camber"]),
-                aoa_deg=float(v["rw_aoa"]), half_span_mm=float(v["rw_half_span"]), x_le_mm=float(v["rw_x_le"]),
-                lift_mm=float(v["rw_lift"]), sweep_deg=float(v["rw_sweep"]), dihedral_deg=float(v["rw_dihedral"]),
-                struts=struts)
+    return dict(chord_mm=float(v["rw_chord"]), t_mm=float(v["rw_t"]), half_span_mm=float(v["rw_half_span"]),
+                x_le_mm=float(v["rw_x_le"]), lift_mm=float(v["rw_lift"]), supports=_supports(v, "rwsup", N_RW_STRUTS))
 
 
 N_RW_STRUTS = 2

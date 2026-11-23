@@ -41,16 +41,15 @@ def _nose_m():
 
 
 NOSE = _nose_m()
-S = fwe.Strut
-OFF = S(t_mm=0.0)
+S = fwe.Support
+OFF = S(width_mm=0.0)
 CASES = {
-    "one piece through the nose": dict(struts=(OFF, OFF)),
-    "two halves rooted in the nose": dict(pieces=2, root_y_mm=9.0, struts=(OFF, OFF)),
-    "one piece under the nose on a centre strut": dict(z_mm=6.5, chord_mm=18.0, struts=(S(t_mm=2.5, y_frac=0.0), OFF)),
-    "two swept halves on raked, splayed pairs": dict(pieces=2, root_y_mm=5.0, sweep_deg=15.0, dihedral_deg=6.0,
-                                                     chord_mm=20.0, z_mm=10.0,
-                                                     struts=(S(t_mm=2.0, y_frac=0.4, rake_deg=15.0, splay_deg=-10.0),
-                                                             S(t_mm=2.5, y_frac=0.9))),
+    "one piece through the nose": dict(supports=(OFF, OFF)),
+    "two halves rooted in the nose": dict(pieces=2, root_y_mm=9.0, supports=(OFF, OFF)),
+    "one piece under the nose, a support across the centre": dict(z_mm=6.5, chord_mm=18.0,
+                                                                   supports=(S(width_mm=4.0, y_frac=0.0), OFF)),
+    "two halves under the nose, a flared pair": dict(pieces=2, root_y_mm=5.0, chord_mm=20.0, z_mm=6.5,
+                                                     supports=(S(width_mm=3.0, y_frac=0.3, foot_scale=2.0, waist=0.5), OFF)),
     "the middle of every range": dict(),
 }
 
@@ -65,12 +64,13 @@ def test_every_t8_gate_passes(name):
     assert w.is_watertight and len(w.split(only_watertight=False)) == 1
 
 
-def test_sweep_is_repaired_not_refused():
-    """A sweep that would carry the tip past Ref A moves the root forward; one that cannot fit in the
-    40 mm overhang is reduced."""
-    r = fwe.build(fwe.FrontWingDesign(sweep_deg=60.0, chord_mm=20.0), NOSE, X_FRONT, WHEEL)
-    assert r["info"]["sweep_used_deg"] < 60.0
-    assert r["gates"]["T8.5.2_fw_ahead_of_ref_A"] >= 0 and r["gates"]["T8.2_fw_inside_overhang"] >= 0
+def test_the_wing_is_straight():
+    """Level and square to the car: every vertical cut across the span is the same section, at one height."""
+    r = fwe.build(fwe.FrontWingDesign(**CASES["the middle of every range"]), NOSE, X_FRONT, WHEEL)
+    w = r["wing"].copy(); w.apply_scale(1e3)
+    cuts = [w.section(plane_origin=[0, y, 0], plane_normal=[0, 1.0, 0]) for y in (16.0, 26.0, 34.0)]
+    b = [c.bounds for c in cuts if c is not None]
+    assert len(b) == 3 and np.allclose(b[0][:, [0, 2]], b[1][:, [0, 2]], atol=1e-3) and np.allclose(b[1][:, [0, 2]], b[2][:, [0, 2]], atol=1e-3)
 
 
 def test_a_short_tip_is_pushed_out_to_a_25_mm_segment():
@@ -78,15 +78,17 @@ def test_a_short_tip_is_pushed_out_to_a_25_mm_segment():
     assert r["gates"]["T8.6.1_fw_segment"] >= 0, r["info"]
 
 
-def test_struts_reach_the_nose_or_are_reported():
-    """Struts asked for far out (T8.5.1's 15 mm) where the nose is narrower land on the nose (leaned back
-    if need be) or are reported; never a strut outside the support band."""
-    r = fwe.build(fwe.FrontWingDesign(**CASES["two swept halves on raked, splayed pairs"]), NOSE, X_FRONT, WHEEL)
-    for p in r["info"]["struts"]:
-        assert abs(p["nose_mm"][1]) + p["t_mm"] / 2 <= fwe.SUPPORT_BAND_MM
-    assert len(r["info"]["struts"]) + len(r["info"].get("struts_not_placed", [])) + len(r["info"].get("struts_in_the_nose", [])) == 2
+def test_supports_reach_the_nose_inside_the_band_or_are_reported():
+    for name, kw in CASES.items():
+        r = fwe.build(fwe.FrontWingDesign(**kw), NOSE, X_FRONT, WHEEL)
+        for p in r["info"]["struts"]:
+            assert abs(p["nose_mm"][1]) <= fwe.SUPPORT_BAND_MM
+        if r["pylons"] is not None:
+            pb = r["pylons"].bounds * 1e3
+            assert pb[1, 1] <= fwe.SUPPORT_BAND_MM + 1e-6, (name, pb)
 
 
-def test_struts_all_under_the_wall_keep_the_thickest_when_nothing_holds_the_wing():
-    r = fwe.build(fwe.FrontWingDesign(z_mm=6.5, chord_mm=18.0, struts=(S(t_mm=0.5), S(t_mm=0.8))), NOSE, X_FRONT, WHEEL)
+def test_supports_under_the_wall_widen_the_widest_when_nothing_holds_the_wing():
+    r = fwe.build(fwe.FrontWingDesign(z_mm=6.5, chord_mm=18.0, supports=(S(width_mm=0.5), S(width_mm=0.8))),
+                  NOSE, X_FRONT, WHEEL)
     assert r["info"]["supported"]

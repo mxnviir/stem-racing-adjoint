@@ -224,7 +224,7 @@ def part4_kwargs(a) -> dict:
             kw["front"] = wg.FrontWing(**fj)
     if getattr(a, "rwing_json", None):
         rj = json.loads(a.rwing_json)
-        if "struts" in rj:                    # the searches' wing (car/parts/rear_wing_engine.py)
+        if "supports" in rj:                  # the searches' wing (car/parts/rear_wing_engine.py)
             import rear_wing_engine as rwe
             kw["rear"] = rwe.from_dict(rj)
         else:

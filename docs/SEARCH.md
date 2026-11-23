@@ -18,11 +18,11 @@ So the work is split by what each number is:
 2. **Stage 2, shape (search/shape, CMA-ES).** On the best layout from stage 1, everything else is designed
    freely: the body and nose (car/body/freeform.py: top, bottom and side surfaces, fitted to the stage-1
    car and moved by a coarse grid of displacements: 5 x 2 top, 5 x 2 bottom, 5 x 3 side, 6/4/6 mm per unit),
-   the front wing (one piece or two, chord, gap, span, root, sweep, dihedral, and two strut pairs: each
-   thickness, place on span and chord, chord, rake, splay), the rear wing and its two strut pairs (section, span, sweep,
-   dihedral, lift; each strut's thickness, place, chord, rake, splay, root: car/parts/rear_wing_engine.py)
-   and the wheel supports' plates (chord, thickness, taper, transition): 80 numbers. No support design is
-   preset: every strut number starts at the middle of its range and the search decides. The rule masks and the milling are applied after, so every vector is a legal, millable body;
+   the front wing (straight: one piece or two, chord, gap, span, root) and the rear wing (straight: chord,
+   thickness, half span, lift), each with two supports lofted to the nose / body (width, place on the span,
+   share of the chord, foot scale, waist: car/parts/wing_loft.py)
+   and the wheel supports' plates (chord, thickness, taper, transition): 68 numbers. No support design is
+   preset: every support number starts at the middle of its range and the search decides. The rule masks and the milling are applied after, so every vector is a legal, millable body;
    what a mask cannot force is measured and refused. CMA-ES, 8 cars a generation.
    The coarse grid is a setting (simscale_shape.COARSE): a finer grid is freer but needs more runs. With
    one key's worth (about 40 runs, 5 generations) CMA moves the car a few steps from the stage-1 car, not to
