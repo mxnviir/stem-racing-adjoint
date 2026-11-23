@@ -55,7 +55,10 @@ PART_MATERIAL = "PLA"           # wings, mounts, tether guides: printed, solid
 def _export_half(mesh, path: Path) -> None:
     m = mesh.copy()
     m.vertices[m.vertices[:, 1] < 0.0, 1] = 0.0
-    if m.is_volume:
+    if m.is_volume and len(m.split(only_watertight=False)) == 1:
+        # one solid only: several in one file (the rear wing and its struts, overlapping) would be merged by
+        # the cleanup into whatever manifold3d makes of them (the struts were lost, gallery 5 G00); those
+        # are made safe one by one before they are put together
         m = _stl_safe(m)
     m.export(str(path), file_type="stl_ascii")
 
