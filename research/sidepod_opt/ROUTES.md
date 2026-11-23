@@ -1357,6 +1357,34 @@ external topology case was **not found** in their material (that is not proof it
     (mark L PASS, 2026-11-23 18:10 entry). Both FAILs mean no usable bump pair (the morph failed; pod_rear_top is a
     fresh-mesh pair), so the verdict is inconclusive, not an adjoint failure.
 
+- **2026-11-23 19:10, review of the wall-resolved adjoint test (main agent). Agree: inconclusive, D9 stays open. The blocker is the morph alone; the run is otherwise sound.**
+  - **Power is not the problem.** Adjoint-predicted half-differences at the registered sites (`esi/predict_sites.py`, frozen / sst):
+    pod_front_low +0.29 / +0.34, pod_rear −0.16 / −0.08, pod_rear_top +0.05 / +0.09 mN (pod_front +0.65 / +0.71, tail_side
+    +0.06 / +0.06). Morph-path steady runs on coarse had force_mean_stderr 0.003–0.004 mN, so 3 SE ≈ 0.01 mN: all three
+    registered pairs would be "clear" if they could be morphed. (The 0.08 mN of the pod_rear_top pair is fresh-mesh noise.)
+  - **Why wider was worse:** the bump is a Gaussian in straight-line 3D distance along STL vertex normals, so a wider bump puts
+    more displacement onto sharp edges and neighbouring faces. The mesh's wall points sit on gate/original, up to 0.2 mm
+    off original_rm near edges, and take (nearest point on bumped rm) − (nearest point on rm). Near an edge those two
+    projections can land on different facets, a jump the 0.5 mm smoothing spreads over a few wall cells: harmless for a
+    coarse cell, fatal for a 15 µm one. The zero-bump check cannot see this (with no bump the two projections are equal).
+    Not yet verified: nobody has looked at where the inverted cells are.
+  - **Stepped morph: not first.** The Laplacian is linear, so stepping to the same final wall displacement changes the
+    result only through the diffusivity being re-read on the moved mesh; it cures large bulk rotations, not a wall field that
+    is rough at the 0.1 mm scale. Cheaper first: (1) `checkMesh -writeSets` on 2–3 failed morphs and locate the bad cells
+    (sharp edge / junction / ground gap / bump rim); (2) if edges: move each wall point by the bump field evaluated at the point
+    itself (a·exp(−d²/r²) along the wall normal), no nearest-point mapping and no smoothing. Same site, 1 mm, 10 mm Gaussian,
+    so the registered protocol is unchanged, and the prediction then uses the exact field the CFD moved.
+    pod_front_low's centre is 2 mm above the ground; if it still folds there with a clean field, the site is the problem and
+    changing it is a protocol decision for the owner, made on morphability alone, before any resolved bump is measured.
+  - Checks asked of the main agent: (1) points split: the fine/medium runs here keep the final points in constant/polyMesh
+    (live fine run: 3,715,103 points, no 0/polyMesh), and the fine campaign never morphs or runs esi_on_state.py: not affected.
+    (2) morph reference offset: common to every morph-path run of a mesh, including zero.json, so it cancels in ± half-differences
+    (and in D − D_zero) to first order; the coarse A2 numbers stand. (3) The A1 caveat of 2026-11-23 is answered: A1 was judged on
+    1000 pure-upwind iterations of the joined history (10 block means in base.json).
+  - Minor: the frozen adjoint's pa residual (3.3e-5) was still falling; frozen and SST predictions differ up to 2× by site and in
+    sign at nose_side. Before a verdict, compare the sensitivities at iterations 900 and 1000 or run on to ~1e-6.
+  - Keep the Kaggle steady state and the draft release until the morph route is decided: any rerun needs them.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
