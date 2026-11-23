@@ -159,10 +159,13 @@ def _union_closed(parts_m):
     open, gallery G02, and the referee could not measure it). Not one closed solid: the car is refused."""
     import manifold3d as mf
     import support_engine as se
+    import wing_loft as wl
     Ms = []
     for p in parts_m:
         q = p.copy(); q.apply_scale(1e3); Ms.append(se._to_manifold(q))
-    t = se._to_trimesh(mf.Manifold.batch_boolean(Ms, mf.OpType.Add))
+    # its own mesh if closed, else the cleaned one, else with its slivers merged (wing_loft.to_trimesh): the
+    # nose and its swept struts came out open through the cleanup alone (gallery 7 G00)
+    t = wl.to_trimesh(mf.Manifold.batch_boolean(Ms, mf.OpType.Add))
     if not t.is_volume:
         raise ValueError("illegal car: the nose and its wing pylons do not make one closed solid")
     t.apply_scale(1e-3)

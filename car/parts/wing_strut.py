@@ -223,6 +223,10 @@ def design(face_xz, face_point, n_out, target, base_dir, g, reach_mm=60.0, accep
     towards base_dir when the result breaks a rule: accept(manifold) -> bool), lands on the first surface that
     way (else the target's nearest point), and is thickened until no section is over ALLOW_MPA."""
     info = {}
+    o = np.asarray(face_point, float) + 0.5 * np.asarray(n_out, float)
+    if target.is_volume and bool(target.contains(o[None])[0]):
+        info["in_target"] = True                        # the face is (all but) in what it would join: held
+        return None, info
     out, fwd = float(g["aim_out_deg"]), float(g["aim_fwd_deg"])
     chord, thick = max(float(g["chord_mm"]), wall_mm), max(float(g["thick_mm"]), wall_mm)
     for k in np.linspace(1.0, 0.0, 8):
@@ -258,3 +262,21 @@ def design(face_xz, face_point, n_out, target, base_dir, g, reach_mm=60.0, accep
         info.update(foot_mm=[round(float(v), 2) for v in foot], aim_used=[round(out * k, 1), round(fwd * k, 1)])
         return M, info
     return None, info
+
+
+def whole(half_mm):
+    """The whole part (mm) from its right half: the strut lands on the real surface, not on the half's cap on
+    y = 0 (a strut cast inwards met that cap and stood on the centre line, gallery 7 G00)."""
+    import manifold3d as mf
+    import support_engine as se
+    import wing_loft as wl
+    m = half_mm.copy()
+    mir = m.copy(); mir.vertices[:, 1] *= -1.0; mir.invert()
+    try:
+        U = se._to_manifold(m) + se._to_manifold(mir)
+        t = wl.to_trimesh(U)
+        if t.is_volume:
+            return t
+    except Exception:  # noqa: BLE001
+        pass
+    return half_mm

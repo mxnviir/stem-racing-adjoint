@@ -215,7 +215,7 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
                 and b[1, 1] <= HALF_WIDTH_MAX_MM - MARGIN_MM and b[0, 1] >= CENTRE_CLEAR_MM
                 and b[1, 2] <= cc.REAR_Z_MAX - MARGIN_MM and _clear(t, wheel_rear, W_mm, x_front_mm))
     g = dataclasses.asdict(sp)
-    M, sinfo = ws.design(face_xz, face_pt, np.array([0.0, 1.0, 0.0]), body, np.array([0.0, 0.0, -1.0]), g,
+    M, sinfo = ws.design(face_xz, face_pt, np.array([0.0, 1.0, 0.0]), ws.whole(body), np.array([0.0, 0.0, -1.0]), g,
                          reach_mm=FOOT_REACH_MM, accept=accept, wall_mm=cc.BUILD_WALL_MM)
     sup, placed = None, []
     if M is not None:

@@ -245,11 +245,17 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
                     and b[1, 0] <= ref_a - MARGIN_MM and b[0, 0] >= ref_a - OVERHANG_MM + MARGIN_MM
                     and b[0, 2] >= TRACK_CLEAR_MM)
         # "out" for the front: leaning from straight in (-y) towards down (-z)
-        M, sinfo = ws.design(face_xz, face_pt, np.array([0.0, -1.0, 0.0]), nose, np.array([0.0, -1.0, 0.0]),
+        M, sinfo = ws.design(face_xz, face_pt, np.array([0.0, -1.0, 0.0]), ws.whole(nose), np.array([0.0, -1.0, 0.0]),
                              dict(dataclasses.asdict(sp)), reach_mm=30.0, accept=accept, wall_mm=cc.BUILD_WALL_MM)
         if M is not None:
             pylons.append(M)
             placed.append(dict(y_mm=round(y0, 2), t_mm=0.0, **sinfo))
+        elif sinfo.get("in_target"):
+            # its end is all but in the nose (within 0.5 mm): run on 1.5 mm into it, held by it
+            y0 = max(y0 - 1.5, 0.5)
+            wing = se._to_trimesh(element(d, y0, tip, x_le, z) ^ se._box(-1e3, 1e3, 0.0, 1e3, -1e3, 1e3))
+            root_in_nose = True
+            info["root_run_into_the_nose"] = True
         else:
             info["supports_not_placed"] = sinfo
     info["root_in_nose"] = root_in_nose
