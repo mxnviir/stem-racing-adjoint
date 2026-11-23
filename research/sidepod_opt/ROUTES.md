@@ -1279,6 +1279,25 @@ external topology case was **not found** in their material (that is not proof it
     (165.9 → 177.1) while the team's barely change. So on fine the pod shields the wheels more than medium shows.
   - Queue: design 8 (started 14:29), blend 50; done ~19:45 UTC.
 
+- **2026-11-23 17:15, fine mesh: design 8 reads 175.37 mN, −1.2 mN against the team pod (−0.4 SE). C5 (design 8 not better than −3 SE) passes on fine.**
+
+  | fine, half car | runs | total | body total (pressure) | wheels | lift |
+  |---|---|---|---|---|---|
+  | team pod | 3 | 176.55 (sd 3.08) | 18.8 (2.9) | 157.8 | 63.7 |
+  | groove | 3 | 178.75 (sd 0.97) | 23.9 (8.5) | 154.8 | 47.4 |
+  | design 8 | 1 | 175.37 | 17.2 (0.9) | 158.2 | 49.6 |
+
+  - 3,377,371 cells, y+ max 86.5, converged by the run's own test; 200-iteration block means 177.06, 176.14, 175.63,
+    175.37 (iterations 200–1000). Still falling ~0.25 mN per block at the end, so the 1000-iteration reading may sit
+    ~0.5 mN high; that doesn't change any mark.
+  - **C5:** −1.18 mN, SE 2.64 (pooled fine σ 2.28 × √(1/1 + 1/3)), z = −0.45: not better than −3 SE. **Passes.**
+    Medium said −0.8 ± 0.6 (3 clean meshes); fine agrees: no established gain for the adjoint design.
+  - **M1 part 2 for design 8:** medium −0.8 ± 0.6 against fine −1.2 ± 2.64, a shift of 0.4 mN against 3 SE = 8.1
+    (SEs combined): within. It says little, because the fine SE is wide. M1 still fails on part 1 (team body drag).
+  - Its split is its own: the lowest body drag of any fine run (body pressure 0.9, like team~2's low state) but
+    groove-like lift (49.6) and the highest wheel drag of the pod designs (158.2). Less body drag is paid back on the wheels.
+  - Queue: blend 50 (started 17:11); done ~19:55 UTC. It gives C2 on fine.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
