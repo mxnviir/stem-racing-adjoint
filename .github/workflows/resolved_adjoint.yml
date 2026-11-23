@@ -324,12 +324,38 @@ jobs:
         uses: actions/upload-artifact@v4
         with: { name: proda-failure, path: research/sidepod_opt/gate/prodcheck_link.log, retention-days: 14 }
 
+  kgate:
+    name: "1b Kaggle steady state: marks L, A1"
+    needs: init
+    if: needs.init.outputs.stage == 'kbumps'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    outputs:
+      ok: ${{ steps.g.outputs.ok }}
+    steps:
+      - id: g
+        env:
+          TAG: ${{ needs.init.outputs.steady_release }}
+          REPO: ${{ github.repository }}
+        run: |
+          # fail closed: no base.json, or a mark missing or not passed, stops the bumps and the adjoints
+          gh release download "$TAG" -R "$REPO" -p base.json -D /tmp/k || { echo "ok=false" >> "$GITHUB_OUTPUT"; echo "STOP: no base.json in $TAG"; exit 0; }
+          python3 - >> "$GITHUB_OUTPUT" <<'PY'
+          import json, sys
+          b = json.load(open('/tmp/k/base.json'))
+          a1, lay = b.get('steady_pass') is True, b.get('mark_L') is True
+          print(f"A1 {'PASS' if a1 else 'FAIL'} (span {b.get('block_span_last1000_mN')} mN over the last 1000 iterations), "
+                f"L {'PASS' if lay else 'FAIL'} (layer coverage {b.get('layer_coverage_pct')} %)", file=sys.stderr)
+          print(f"ok={'true' if a1 and lay else 'false'}")
+          PY
+          grep -q '^ok=true' "$GITHUB_OUTPUT" || echo "STOP: marks L/A1 not both passed; no bumps, no adjoints"
+
   bumpgeom:
     name: "2 bump geometry (mesh-independent)"
-    needs: [init, proda]
+    needs: [init, proda, kgate]
     if: >-
       always() && !cancelled() && needs.init.result == 'success' &&
-      (needs.init.outputs.stage == 'kbumps' ||
+      ((needs.init.outputs.stage == 'kbumps' && needs.kgate.outputs.ok == 'true') ||
        (needs.init.outputs.stage == 'all' && needs.proda.outputs.chained != 'true' && needs.proda.result == 'success'))
     runs-on: ubuntu-24.04
     timeout-minutes: 45
@@ -477,11 +503,11 @@ jobs:
 
   bumps:
     name: "2 bump ${{ matrix.site }}"
-    needs: [init, steady, bumpgeom]
+    needs: [init, steady, bumpgeom, kgate]
     if: >-
       always() && !cancelled() && needs.init.result == 'success' &&
       (needs.init.outputs.stage == 'bumps' ||
-       (needs.init.outputs.stage == 'kbumps' && needs.bumpgeom.result == 'success') ||
+       (needs.init.outputs.stage == 'kbumps' && needs.kgate.outputs.ok == 'true' && needs.bumpgeom.result == 'success') ||
        (needs.init.outputs.stage == 'all' && needs.steady.outputs.a1 == 'true' && needs.steady.outputs.layers == 'true'
         && needs.bumpgeom.result == 'success'))
     strategy:
@@ -637,10 +663,10 @@ jobs:
 
   adjoint:
     name: "3 ESI adjoint (${{ matrix.turb }})"
-    needs: [init, steady]
+    needs: [init, steady, kgate]
     if: >-
       always() && !cancelled() && needs.init.result == 'success' &&
-      (needs.init.outputs.stage == 'adjoint' || needs.init.outputs.stage == 'kbumps' ||
+      (needs.init.outputs.stage == 'adjoint' || (needs.init.outputs.stage == 'kbumps' && needs.kgate.outputs.ok == 'true') ||
        (needs.init.outputs.stage == 'all' && needs.steady.outputs.a1 == 'true' && needs.steady.outputs.layers == 'true'))
     strategy:
       fail-fast: false
@@ -810,6 +836,11 @@ jobs:
           done
           python - <<'PY' | tee gate_results_resolved_up/esi/VERDICT.txt | tee -a "$GITHUB_STEP_SUMMARY"
           import json, os
+          bp = "gate_results_resolved_up/base.json"
+          b = json.load(open(bp)) if os.path.exists(bp) else {}
+          marks_ok = b.get("steady_pass") is True and b.get("mark_L", True) is not False   # mark_L absent: the steady job gated it
+          if not marks_ok:
+              print("MARKS NOT PASSED (wake not steady, or wall layers missing): no adjoint result below can PASS")
           for p in ("gate_results_resolved/prodcheck_stateA.json", "gate_results_resolved_up/base.json"):
               if os.path.exists(p):
                   q = json.load(open(p))
@@ -825,7 +856,7 @@ jobs:
               d = json.load(open(p)); rows = d["pairs"]
               ratios = d.get("ratio_pred_over_meas") or []
               ok = (d.get("pearson_r") or 0) >= 0.9 and d.get("signs", "0/1").split("/")[0] == d.get("signs", "0/1").split("/")[1] \
-                   and len(ratios) == 3 and all(0.5 <= r <= 2.0 for r in ratios)
+                   and len(ratios) == 3 and all(0.5 <= r <= 2.0 for r in ratios) and marks_ok
               print(f"{turb}: signs {d.get('signs')}, r {d.get('pearson_r')}, predicted/measured {[round(r, 2) for r in ratios]} -> {'PASS' if ok else 'FAIL'}")
               for r in rows:
                   print(f"   {r['site']:14s} measured {r['measured_half_mN']:+.3f} mN  predicted {r['predicted_half_mN']:+.3f}  stderr {r['stderr_mN']:.3f}  usable {r['usable']}")
