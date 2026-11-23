@@ -1179,6 +1179,25 @@ external topology case was **not found** in their material (that is not proof it
     supports level is one setting (`openfoam_case.py`, `plus_surfaces`) if a mesh study needs it.
     Memory: started at 9 GB available next to the fine queue's solver; no kill.
 
+- **2026-11-23 01:10, fine mesh: groove~1 (the rerun after the out-of-memory kill) reads 179.81 mN. Interim, 2 meshes each; no verdict until the third.**
+
+  | fine mesh, half car (200-iteration means) | total | body pressure | wheels | lift |
+  |---|---|---|---|---|
+  | team (frame 0) | 176.04 | 2.6 | 157.4 | 64.8 |
+  | team~1 (frame +0.37 mm) | 179.86 | 5.3 | 158.9 | 55.6 |
+  | groove (frame 0) | 178.52 | 8.1 | 154.9 | 44.7 |
+  | groove~1 (frame shifted) | 179.81 | 9.4 | 155.2 | 50.1 |
+
+  - Means so far: team 177.95, groove 179.17, so groove is +1.2 mN, inside the 3.8 mN spread of the team's two runs. The mark fixed
+    on 2026-11-22 14:45 (±3 SE with 3 meshes each) is applied only after team~2 and groove~2.
+  - The split repeats for the groove (wheels 154.9 / 155.2, body pressure 8.1 / 9.4), while the team's swings
+    (wheels 157.4 / 158.9, body pressure 2.6 / 5.3). In both groove runs the wheels are about 3 mN lower than
+    in either team run, and the body pressure is 3–7 mN higher. The direction matches the medium mesh's
+    "groove works through the wheels" reading, but the totals don't separate.
+  - The run is clean: 3,377,412 cells, y+ max 84.7, converged, 23,756 s wall (slower than the 17–18 ks of the others
+    while the support-generator coarse runs shared the machine). Running next: team~2 (started 01:07), then
+    groove~2, no pod, design 8, blend 50.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
