@@ -26,7 +26,7 @@ on:
     paths: [".github/resolved_adjoint_state*"]
   workflow_dispatch:
     inputs:
-      stage: { default: "all", description: "all | kbumps | bumps | adjoint | verdict" }
+      stage: { default: "all", description: "all | kbumps (bumps + adjoints from a Kaggle steady state) | bumps | adjoint | verdict" }
       link: { default: "1" }
       max_links: { default: "8" }
       ckpt_run: { default: "", description: "run id holding ckpt-proda: continue that link's solve" }
@@ -36,7 +36,7 @@ on:
       turbs: { default: '["frozen","sst"]' }
       verdict_runs: { default: "", description: "run ids holding bump-*/esi-* artifacts (default: this run, then src_run)" }
       NP: { default: "4" }
-      steady_release: { default: "", description: "draft release with the Kaggle steady state (steadystate.tgz.part*) and adjoints (esi-*.tgz)" }
+      steady_release: { default: "", description: "draft release with the Kaggle steady state (steadystate.tgz.part*)" }
 
 permissions: { contents: write, actions: write }
 
@@ -640,7 +640,7 @@ jobs:
     needs: [init, steady]
     if: >-
       always() && !cancelled() && needs.init.result == 'success' &&
-      (needs.init.outputs.stage == 'adjoint' ||
+      (needs.init.outputs.stage == 'adjoint' || needs.init.outputs.stage == 'kbumps' ||
        (needs.init.outputs.stage == 'all' && needs.steady.outputs.a1 == 'true' && needs.steady.outputs.layers == 'true'))
     strategy:
       fail-fast: false
@@ -666,8 +666,15 @@ jobs:
           test -d /usr/lib/openfoam/openfoam2412/tutorials
           pip install $PY_DEPS
       - name: steady state
+        env:
+          TAG: ${{ needs.init.outputs.steady_release }}
         run: |
-          gh run download "${{ needs.init.outputs.src_run || github.run_id }}" -R "${{ github.repository }}" -n steadystate -D /tmp/ss
+          if [ -n "$TAG" ]; then   # steady state solved on Kaggle, parked in a draft release
+            gh release download "$TAG" -R "${{ github.repository }}" -p 'steadystate.tgz.part*' -D /tmp/ss
+            cat /tmp/ss/steadystate.tgz.part* > /tmp/ss/steadystate.tgz && rm /tmp/ss/steadystate.tgz.part*
+          else
+            gh run download "${{ needs.init.outputs.src_run || github.run_id }}" -R "${{ github.repository }}" -n steadystate -D /tmp/ss
+          fi
           tar xzf /tmp/ss/steadystate.tgz -C research/sidepod_opt
       - name: "solve (${{ matrix.turb }} turbulence adjoint)"
         id: solve
@@ -780,12 +787,10 @@ jobs:
             [ -d gate/original_rm ] || \
               { gh run download "$R" -R "$REPO" -n bumpgeom -D "/tmp/gather/bg/$R" 2>/dev/null && tar xzf "/tmp/gather/bg/$R/bumpgeom.tgz" -C . || true; }
           done
-          # Kaggle's half: steady state (base.json) and the adjoints, parked in a draft release
-          if [ -n "$TAG" ]; then
+          # steady state solved on Kaggle: its base.json is in the draft release
+          if [ -n "$TAG" ] && [ ! -f gate_results_resolved_up/base.json ]; then
             gh release download "$TAG" -R "$REPO" -p base.json -D /tmp/gather/rel 2>/dev/null && \
-              { [ -f gate_results_resolved_up/base.json ] || cp /tmp/gather/rel/base.json gate_results_resolved_up/base.json; } || true
-            gh release download "$TAG" -R "$REPO" -p 'esi-*.tgz' -D /tmp/gather/rel 2>/dev/null || true
-            for f in /tmp/gather/rel/esi-*.tgz; do [ -f "$f" ] && tar xzf "$f" -C . && echo "from $TAG: $(basename "$f")"; done
+              mkdir -p gate_results_resolved_up && cp /tmp/gather/rel/base.json gate_results_resolved_up/base.json || true
           fi
           ls gate_results_resolved_up/ 2>/dev/null | head -30 || true
       - name: judge (same marks as the driver) and write the verdict
