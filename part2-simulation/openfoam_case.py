@@ -1707,8 +1707,8 @@ def _morph(run: Path, cfg: OpenFOAMRunConfig, bashrc: str, timeout_s: int) -> No
             f"p99 {np.quantile(np.linalg.norm(disp, axis=1), 0.99):.3e} m\n"
             f"largest jumps raw (dd/dx, at mm): {largest_jumps(pts, raw)}\n"
             f"largest jumps smoothed: {largest_jumps(pts, disp)}\n")
-        # opt-in (P2_MORPH_DIFFUSIVITY): wall-resolved meshes need "quadratic inverseDistance (car)" so the
-        # thin layer cells ride with the wall; the default inverseDistance sheared 15 um cells inside-out
+        # opt-in (P2_MORPH_DIFFUSIVITY): another motion diffusivity, e.g. "quadratic inverseDistance (car)"
+        # (tried on the wall-resolved mesh 2026-11-23: no better than the default)
         diffusivity = os.environ.get("P2_MORPH_DIFFUSIVITY", "inverseDistance (car)")
         _write(run / "constant" / "dynamicMeshDict",
                _header("dictionary", "dynamicMeshDict")
