@@ -61,7 +61,7 @@ def run_car_args(d: dict, out: Path, lattice: dict | None = None) -> list[str]:
 
 
 def build(x, out: Path, timeout_s=3600, lattice: dict | None = None, support: dict | None = None,
-          fwing: dict | None = None, freeform: dict | None = None) -> dict:
+          fwing: dict | None = None, freeform: dict | None = None, rwing: dict | None = None) -> dict:
     """Genes -> a built, checked car in `out`. Returns a record (legal, mass, files, why).
     lattice: the shape search's free-form change of the body (part1 param_body.build lattice=).
     support: the shape search's wheel-support design (support_engine.SupportDesign numbers), else the
@@ -72,6 +72,8 @@ def build(x, out: Path, timeout_s=3600, lattice: dict | None = None, support: di
         d["support"] = dict(d["support"], **support)
     if fwing:
         d["fwing"] = dict(d["fwing"], **fwing)
+    if rwing:                                 # the searches' rear wing and its struts (rear_wing_engine.py)
+        d["rwing"] = rwing
     if freeform:
         d["freeform"] = freeform
     rec = {"genes": [float(v) for v in np.clip(x, 0, 1)], "layout": {k: d[k] for k in ("W", "rear", "halo_rear", "x_front", "d_halo")},

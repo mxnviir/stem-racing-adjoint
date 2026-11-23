@@ -75,21 +75,17 @@ def build_halo_pocket_forbidden_mask(
     ref_plane_A_m: float,
     d_halo_mm: float,
 ) -> np.ndarray:
-    """Bool mask, True = forbidden (must be phi > 0 / air) for the halo pocket recess."""
+    """Bool mask, True = forbidden (must be phi > 0 / air) for the halo pocket recess: the ball-cut seat
+    round the official halo (halo_seat.seat_air, user 2026-11-23), not the 50 x 25 x 3.175 bounding box
+    (its square walls left a trench round the halo's rounded base). Below the rim only: over it is the
+    halo's own air (fixed_hardware.halo_seat_mask)."""
+    import halo_seat as hs
+    from fixed_hardware import halo_seat_mask
     box = compute_halo_pocket_box_m(ref_plane_A_m, d_halo_mm)
 
-    ox, oy, oz = origin_m
-    nx, ny, nz = shape
-    dx = GRID_SPACING_M
-    xs = ox + np.arange(nx) * dx
-    ys = oy + np.arange(ny) * dx
-    zs = oz + np.arange(nz) * dx
-
-    in_x = (xs >= box["x_min_m"]) & (xs <= box["x_max_m"])
-    in_y = (ys >= box["y_min_m"]) & (ys <= box["y_max_m"])
-    in_z = (zs >= box["z_min_m"]) & (zs <= box["z_max_m"])
-
-    return in_x[:, None, None] & in_y[None, :, None] & in_z[None, None, :]
+    def below_rim(X, aY, Z, x0):
+        return np.minimum(hs.seat_air(X, aY, Z, x0), hs.RIM_Z_MM + 1e-6 - Z)
+    return halo_seat_mask(tuple(shape), tuple(origin_m), box["x_min_m"] * 1e3, field=below_rim)
 
 
 def pocket_floor_layer_mask(origin_m: tuple, shape: tuple, ref_plane_A_m: float,

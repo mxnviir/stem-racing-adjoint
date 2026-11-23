@@ -120,10 +120,18 @@ def test_machining_leaves_the_pocket_floor_flat():
     xs, zs = r.origin_m[0] + np.arange(r.shape[0]) * d, r.origin_m[2] + np.arange(r.shape[2]) * d
     j = int(np.argmin(np.abs(r.origin_m[1] + np.arange(r.shape[1]) * d - 0.004)))
     x0 = g.landmarks["ref_plane_A_m"] + 0.04372
+    import halo_seat as hs
     for dx in (0.001, 0.002, 0.004, 0.008, 0.016, 0.048):
         i = int(np.argmin(np.abs(xs - (x0 + dx))))
         top = zs[np.where(g.phi.grid[i, j] < 0)[0].max()]
-        assert abs(top - 0.024) < d, f"{dx * 1e3} mm aft of the pocket's front: floor at {top * 1e3:.2f} mm"
+        # the seat as the ball cuts it: flat at 24.0 inside, its wall rising to the rim within a ball's
+        # radius of the halo's outline (halo_seat.py); the body's top in this column is the seat's floor
+        zz = np.arange(24.0, hs.RIM_Z_MM, 0.01)
+        f = hs.seat_air(np.full_like(zz, xs[i] * 1e3), np.full_like(zz, 4.0), zz, x0 * 1e3)
+        want = zz[f > 0].min() * 1e-3 if (f > 0).any() else hs.RIM_Z_MM * 1e-3
+        assert abs(top - want) <= d, f"{dx * 1e3} mm aft of the pocket's front: floor at {top * 1e3:.2f} mm, seat {want * 1e3:.2f}"
+        if dx >= 0.004:
+            assert abs(top - 0.024) < d, f"{dx * 1e3} mm aft of the pocket's front: floor at {top * 1e3:.2f} mm"
     _pass("test_machining_leaves_the_pocket_floor_flat")
 
 

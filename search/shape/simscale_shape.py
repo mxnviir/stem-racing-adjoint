@@ -85,9 +85,10 @@ class ShapeCampaign(SL.Campaign):
         v = np.asarray(v, float)
         n = self.fr.n_genes(*self.coarse)
         ff = self.fr.from_unit(self.seed, v[:n], self.amp, *self.coarse)
-        sh = SL.LG.shape_from_unit(v[n:], z_fw=SL.LG.decode(self.base)["fwing"]["z_mm"])
+        base = SL.LG.decode(self.base)
+        sh = SL.LG.shape_from_unit(v[n:], z_fw=base["fwing"]["z_mm"], rw_x_le=base["rwing"]["x_le_after_ref_b_mm"])
         return {"x": self.base.tolist(), "v": v.tolist(), "freeform": ff.as_dict(),
-                "support": sh["support"], "fwing": sh["fwing"]}
+                "support": sh["support"], "fwing": sh["fwing"], "rwing": sh["rwing"]}
 
     def batch_done(self, ids):
         """Every car of the generation is back: tell CMA its race times (a car that could not be built,
@@ -122,7 +123,8 @@ class ShapeCampaign(SL.Campaign):
         src = self.root / "cars" / "BASE"
         if not (src / "layout_car.json").exists():
             j = self.job(np.zeros(self.dim()))
-            rec = SL.LC.build(self.base, src.resolve(), freeform=j["freeform"], support=j["support"], fwing=j["fwing"])
+            rec = SL.LC.build(self.base, src.resolve(), freeform=j["freeform"], support=j["support"], fwing=j["fwing"],
+                              rwing=j.get("rwing"))
         else:
             rec = json.loads((src / "layout_car.json").read_text())
         self.log({"id": "BASE", "kind": "ref", "genes": None, "legal": rec.get("legal"), "layout": rec.get("layout"),

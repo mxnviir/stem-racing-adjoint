@@ -185,16 +185,34 @@ def front_wing_design(v=None) -> dict:
                 pylon_rake_deg=float(v["fw_pylon_rake"]))
 
 
-def shape_from_unit(u, z_fw=None) -> dict:
+def rear_wing_design(v=None) -> dict:
+    """rear_wing_engine.RearWingDesign's numbers (with its strut pairs) from parameter values."""
+    v = v or {p["name"]: p["value"] for p in PARAMS}
+    struts = [dict(t_mm=float(v[f"rws{k}_t"]), y_frac=float(v[f"rws{k}_y"]), x_frac=float(v[f"rws{k}_x"]),
+                   chord_mm=float(v[f"rws{k}_chord"]), rake_deg=float(v[f"rws{k}_rake"]),
+                   splay_deg=float(v[f"rws{k}_splay"]), slot_mm=float(v[f"rws{k}_slot"]))
+              for k in range(N_RW_STRUTS)]
+    return dict(chord_mm=float(v["rw_chord"]), t_mm=float(v["rw_t"]), camber=float(v["rw_camber"]),
+                aoa_deg=float(v["rw_aoa"]), half_span_mm=float(v["rw_half_span"]), x_le_mm=float(v["rw_x_le"]),
+                lift_mm=float(v["rw_lift"]), sweep_deg=float(v["rw_sweep"]), dihedral_deg=float(v["rw_dihedral"]),
+                struts=struts)
+
+
+N_RW_STRUTS = 2
+
+
+def shape_from_unit(u, z_fw=None, rw_x_le=None) -> dict:
     """Stage 2: the shape genes (SHAPE_GENES, in order) from CMA's numbers: 0 is the catalogue's value,
-    -1 its lo, +1 its hi (clipped), linear on each side. Returns {"support": ..., "fwing": ...}; z_fw keeps
-    stage 1's front wing height."""
+    -1 its lo, +1 its hi (clipped), linear on each side. Returns {"support": ..., "fwing": ..., "rwing": ...};
+    z_fw and rw_x_le keep stage 1's front wing height and rear wing position."""
     v = {p["name"]: p["value"] for p in PARAMS}
     for p, ui in zip(SHAPE_GENES, np.clip(np.asarray(u, float), -1.0, 1.0)):
         v[p["name"]] = p["value"] + ui * ((p["hi"] - p["value"]) if ui > 0 else (p["value"] - p["lo"]))
     if z_fw is not None:
         v["fw_z"] = z_fw
-    return {"support": support_design(v), "fwing": front_wing_design(v)}
+    if rw_x_le is not None:
+        v["rw_x_le"] = rw_x_le
+    return {"support": support_design(v), "fwing": front_wing_design(v), "rwing": rear_wing_design(v)}
 
 
 def support_from_unit(u) -> dict:

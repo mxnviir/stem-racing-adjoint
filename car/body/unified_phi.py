@@ -402,7 +402,8 @@ def _marking_room_mask(region, cargo_solid, ref_A_mm: float, d_halo_mm: float):
         xc, zc, yo = x[i].mean(), z[k].mean(), np.abs(y[j]).max()
         m |= (np.abs(X - xc) <= 16.5) & (np.abs(Z - zc) <= 8.5) & (Y <= yo)
     x0 = hp.compute_halo_pocket_box_m(ref_A_mm / 1e3, d_halo_mm)["x_min_m"] * 1e3
-    zf = HALO_MIN_Z_MM + fh.HALO_VISIBILITY_FILLET_MM
+    import halo_seat as _hs
+    zf = _hs.RIM_Z_MM                 # nothing above the pocket's rim in the front view (halo_seat.view_air)
     xa = ref_A_mm + 3.0
     if x0 - 1.0 - xa >= 17.0:
         m |= (X >= xa) & (X <= x0 + 2.0) & (Y <= 5.5) & (Z <= zf - 1.0)
@@ -577,28 +578,18 @@ def build_unified_geometry(
         # after the fact. Measured before this existed, on a carved 79 g car:
         # 100% of halo cells obstructed in top view, 100% in front, 64.7% in
         # side. The rule was comprehensively violated and nothing forbade it.
-        from fixed_hardware import halo_visibility_air_mask
-        hard_air |= halo_visibility_air_mask(
-            fixed_hardware.halo_void_mask,
-            z_origin_m=region.origin_m[2],
-            dz_m=GRID_SPACING_M,
-        )
+        # The halo mask is now the halo's own seat and the air over its plan outline (top view,
+        # T4.4.3); the front and side views (T4.4.2) are the halo's bounding box from the pocket's rim
+        # to its top, ahead of it and beside it (halo_seat.view_air: nothing above the rim in either
+        # view, user 2026-11-23).
+        import halo_seat as _hs
+        from fixed_hardware import halo_seat_mask
+        hard_air |= halo_seat_mask(region.shape, region.origin_m,
+                                   (bv.ref_plane_A_m * 1e3 + d_halo_mm), field=_hs.view_air, views=True)
 
-        # The halo->canister loft. Making a surface across the component
-        # boundary REPRESENTABLE (this module's whole point) did not make one
-        # get built: the visibility mask bounds only the halo's own shadow, so
-        # aft of the halo the field filled to the envelope roof and left a
-        # 28 mm cliff behind the halo. The loft is a ceiling, not a shape --
-        # the optimiser still chooses everything under it.
-        from fixed_hardware import halo_canister_loft_air_mask
-        hard_air |= halo_canister_loft_air_mask(
-            fixed_hardware.halo_void_mask,
-            getattr(fixed_hardware, "canister_cylinder", None),
-            x_origin_m=region.origin_m[0],
-            y_origin_m=region.origin_m[1],
-            z_origin_m=region.origin_m[2],
-            d_m=GRID_SPACING_M,
-        )
+        # The halo->canister loft is required body now (halo_canister_loft_solid_mask: the halo's whole
+        # rear face to the cartridge's safety zone), with no ceiling over it: the search shapes the top
+        # (user 2026-11-23: free-form; the ceiling pinned the deck's top surface to one line).
     except ImportError:
         # Part 2 supplies FixedHardwareSpec. Without it there are no hardware
         # voids -- loud in the returned object (fixed_hardware is None), not

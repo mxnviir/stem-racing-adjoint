@@ -43,7 +43,7 @@ SEED = {"nu": 3, "nv": 2, "nw": 2, "top": [30.0] * 6, "bottom": [5.0] * 6, "side
         "blend_mm": 1.0, "x_tip_mm": 0.0, "x_rear_mm": 240.0}
 
 
-def stub_build(x, out, timeout_s=0, lattice=None, support=None, fwing=None, freeform=None):
+def stub_build(x, out, timeout_s=0, lattice=None, support=None, fwing=None, freeform=None, rwing=None):
     out = Path(out); out.mkdir(parents=True, exist_ok=True)
     dev = ((freeform or SEED)["top"][0] - SEED["top"][0]) / 6.0      # CMA's first number, in its own units
     if dev > 1.0:

@@ -165,7 +165,7 @@ def _visibility_checks(assembly: dict, solids: dict) -> dict:
         # floor of one car (9.2 mm3, z 24.0-24.2). The halo just sits on it, inside T4.4.4's
         # +-1 mm, and nothing stands over the halo.
         skin = 0.3
-        r["T4.4.3_halo_seen_from_top"] = report(in_box((x0 + rim, -hy + rim, b[0, 2] + skin), (x1 - rim, hy - rim, 150.0)))
+        r["T4.4.3_halo_seen_from_top"] = _seen_from_top(half("halo"), solids, rim, skin)
         if not r["T4.4.3_halo_seen_from_top"]["pass"]:      # where, so a fault can be traced
             top = trimesh.creation.box(bounds=[(x0 + rim, -hy + rim, b[0, 2] + skin), (x1 - rim, hy - rim, 150.0)])
             where = [f"{k} in {np.round(i.bounds, 1).tolist()}" for k, m in solids.items()
@@ -238,9 +238,14 @@ def _visibility_checks(assembly: dict, solids: dict) -> dict:
         if len(pts):
             r["T8.7_front_wing_clear_air_all_parts"] = _clear_air(pts, others)
     if "rwing" in stl:
-        wing = max(half("rwing").split(only_watertight=False), key=lambda s: s.extents[1])
+        pieces = half("rwing").split(only_watertight=False)
+        wing = max(pieces, key=lambda s: s.extents[1])
         pts = trimesh.sample.sample_surface(wing, 3000, seed=3)[0]
-        pts = pts[pts[:, 1] > 5.0 + 2.0]               # the pylon stands at |y| < 1 mm, give or take
+        # the wing's own supports, wherever they stand on it: 5 mm either side of each (the fillet the rule
+        # allows where the support joins); the rest of the wing keeps 5 mm from everything
+        for p in pieces:
+            if p is not wing and p.extents[1] < WING_ELEMENT_MIN_Y_MM:
+                pts = pts[(pts[:, 1] < p.bounds[0, 1] - 5.0) | (pts[:, 1] > p.bounds[1, 1] + 5.0)]
         others = {k: m for k, m in solids.items() if k != "printed_rwing"}
         others.update(wheels)
         if "halo" in stl:
@@ -757,6 +762,73 @@ def zone_polygons_mm(wheels: dict) -> dict:
     }
 
 
+def _seen_from_top(halo_half_mm, solids, rim=0.5, skin=0.3, step=0.25) -> dict:
+    """T4.4.3: "The Halo must not be physically obstructed in the plan view". Looking down every 0.25 mm
+    over the halo's plan outline, nothing may be higher than the halo there: the volume of any part over
+    the halo's top in each column (mm3). The halo's base is rounded and sits in a pocket cut by the ball,
+    so the pocket's wall runs in under the base's rounded edge: under the halo, not over it. (A box over
+    the halo's bounding box counted that wall: the pocket had to be a square trench to pass.) As before,
+    the outer `rim` mm of the outline and the floor's own top `skin` mm are not counted."""
+    import trimesh
+    h = halo_half_mm.copy()
+    mir = h.copy(); mir.vertices[:, 1] *= -1.0; mir.invert()
+    h = trimesh.util.concatenate([h, mir])
+    b = h.bounds
+    xs = np.arange(b[0, 0] + rim + step / 2, b[1, 0] - rim, step)
+    ys = np.arange(-b[1, 1] + rim + step / 2, b[1, 1] - rim, step)
+    XX, YY = np.meshgrid(xs, ys, indexing="ij")
+    O = np.c_[XX.ravel(), YY.ravel(), np.full(XX.size, 200.0)]
+    D = np.tile([0.0, 0.0, -1.0], (len(O), 1))
+
+    def tops(m):
+        t = np.full(len(O), -np.inf)
+        loc, ri, _ = m.ray.intersects_location(O, D, multiple_hits=False)
+        if len(loc):
+            np.maximum.at(t, ri, loc[:, 2])
+        return t
+    th = tops(h)
+    on = np.isfinite(th)                                   # columns with halo under them
+    hits = {}
+    for k, m in solids.items():
+        t = tops(m)
+        over = on & (t > th + 1e-3) & (t > b[0, 2] + skin)
+        v = float(np.sum((t - th)[over])) * step * step
+        if v > _ROUND_OFF_MM3:
+            hits[k] = v
+    return _absent(sum(hits.values()), ", ".join(f"{k} {v:.1f} mm3 over the halo" for k, v in hits.items()) or "clear")
+
+
+def halo_face_joined(halo_half_mm, body_mm, gap_mm=0.6, step=0.5) -> dict:
+    """Team (user 2026-11-23): "the loft connects 100% of the halo face to the canister". Every point of
+    the halo's rear face (looking forward from behind, every `step` mm over its outline) has the body
+    directly behind it, within gap_mm (the seat's 0.1 mm fit and the zones' margins): the share of the
+    face that is backed, which must be all of it."""
+    h = halo_half_mm
+    b = h.bounds
+    ys = np.arange(step / 2, b[1, 1], step)
+    zs = np.arange(b[0, 2] + step / 2, b[1, 2], step)
+    YY, ZZ = np.meshgrid(ys, zs, indexing="ij")
+    O = np.c_[np.full(YY.size, b[1, 0] + 50.0), YY.ravel(), ZZ.ravel()]
+    loc, ri, _ = h.ray.intersects_location(O, np.tile([-1.0, 0.0, 0.0], (len(O), 1)), multiple_hits=False)
+    face = np.full(len(O), np.nan)
+    face[ri] = loc[:, 0]                                        # the halo's rearmost point in each row
+    on = np.isfinite(face) & (face > b[1, 0] - 3.0)             # rows that are its rear face
+    if not on.any():
+        return {"team_halo_face_joined": _entry(-1.0, "no rear face found on the halo")}
+    P = np.c_[face[on] + 1e-3, O[on, 1], O[on, 2]]
+    loc, ri, _ = body_mm.ray.intersects_location(P, np.tile([1.0, 0.0, 0.0], (len(P), 1)), multiple_hits=False)
+    hit = np.full(len(P), np.inf)
+    hit[ri] = loc[:, 0] - P[ri, 0]
+    inside = body_mm.contains(P + np.array([gap_mm / 2, 0.0, 0.0]))
+    backed = (hit <= gap_mm) | inside
+    share = float(backed.mean())
+    miss = P[~backed]
+    note = f"{100 * share:.1f} % of the halo's rear face has body behind it"
+    if len(miss):
+        note += f"; not behind y {miss[:, 1].min():.1f}-{miss[:, 1].max():.1f}, z {miss[:, 2].min():.1f}-{miss[:, 2].max():.1f}"
+    return {"team_halo_face_joined": _entry(share - 0.995, note)}
+
+
 def halo_pocket_mm(assembly: dict) -> dict:
     """The halo pocket's box (Appendix ix), its front where the halo's own front is when
     there is a halo file, else at Ref A + d_halo; floor at 24.0 (T4.4.4)."""
@@ -960,6 +1032,8 @@ def manufactured_checks(assembly: dict, solids: dict | None = None) -> dict:
                 parts = [np.round(p.bounds, 2).tolist() for p in i.split(only_watertight=False)]
                 r["T4.4.4_halo_fits_pocket"]["note"] += (f"; halo bounds mm {np.round(hm.bounds, 2).tolist()}"
                                                          f"; foam in halo, bounds mm {parts}")
+    if halo:
+        r.update(halo_face_joined(hm, body))
     r.update(ballast_checks(body, halo_pocket_mm(assembly), float(assembly.get("ballast_g") or 0.0)))
     r.update(_visibility_checks(assembly, solids))
     if as_drawn:

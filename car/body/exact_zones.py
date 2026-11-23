@@ -124,10 +124,11 @@ def halo_pocket_and_ballast(X, aY, Z, ref_A_mm, d_halo_mm, d_mm=1.0, ballast=Tru
     """halo_pocket.build_halo_pocket_forbidden_mask and build_ballast_container_forbidden_mask
     (the capsule at its true size; the mask's one-cell inset is not needed here)."""
     import halo_pocket as hp
+    import halo_seat as hs
     box = hp.compute_halo_pocket_box_m(ref_A_mm / 1e3, d_halo_mm)
     b = {k: v * 1e3 for k, v in box.items()}
-    pocket = _box(X, aY, Z, x=(b["x_min_m"], b["x_max_m"]), y=(None, b["y_max_m"]),
-                  z=(b["z_min_m"], b["z_max_m"]))
+    # the ball-cut seat round the official halo, below its rim (halo_seat.py)
+    pocket = np.minimum(hs.seat_air(X, aY, Z, b["x_min_m"]), hs.RIM_Z_MM - Z)
     r = hp.BALLAST_SLOT_WIDTH_MM / 2.0
     hs = max(hp.BALLAST_SLOT_LENGTH_MM / 2.0 - r, 0.0)
     cx = b["x_min_m"] + hp.BALLAST_CENTRE_FROM_POCKET_FRONT_MM
@@ -335,40 +336,17 @@ def halo_zones(X, aY, Z, ref_A_mm, d_halo_mm, canister=None, part="all"):
     import fixed_hardware as fh
     import halo_pocket as hp
     from geometry_contract import HALO_MIN_Z_MM
+    import halo_seat as hs
     box = hp.compute_halo_pocket_box_m(ref_A_mm / 1e3, d_halo_mm)
-    x0, x1 = box["x_min_m"] * 1e3, box["x_max_m"] * 1e3
-    hw, z0, zt = fh.HALO_CROSS_SECTION_HALF_WIDTH_MM, HALO_MIN_Z_MM, fh.HALO_CROSS_SECTION_TOP_MM
-    zf = z0 + fh.HALO_VISIBILITY_FILLET_MM
-    above = _box(X, aY, Z, x=(x0, x1), y=(None, hw), z=(z0, None))           # halo and above
-    if part == "above":              # its floor is the pocket floor, exactly 24 mm: no margin
+    x0 = box["x_min_m"] * 1e3
+    _, x1, hw, _ = hs.box_mm(x0)
+    # the halo, its ball-cut seat and the air over its plan outline (halo_seat.py): its floor is the
+    # pocket floor, exactly 24 mm: no margin
+    above = hs.seat_air(X, aY, Z, x0)
+    if part == "above":
         return above
-    out = [_box(X, aY, Z, x=(None, x0), y=(None, hw), z=(zf, zt)),          # its front shadow
-           _box(X, aY, Z, x=(x0, x1), y=(hw, None), z=(zf, zt))]            # its side shadows
-    if canister is not None:
-        r = fh.CANISTER_CLEARANCE_RADIUS_MM
-        zc = canister.z_center_m * 1e3
-        xc = (canister.x_center_m - canister.x_half_width_m) * 1e3
-        if xc > x1:
-            t = np.clip((X - x1) / (xc - x1), 0.0, 1.0)
-            s = t * t * (3.0 - 2.0 * t)
-            yv = min(hw, r)                       # where both the halo and bore profiles exist
-            z_h = fh.HALO_REAR_FACE_TOP_MM
-            z_can = zc + np.sqrt(np.maximum(r * r - np.minimum(aY, yv) ** 2, 0.0))
-            crown = z_h + s * (zc + r - z_h)      # the highest valid profile point, at y = 0
-            ceil_ = np.where(aY <= yv, z_h + s * (z_can - z_h), crown)
-            # The deck from the halo's rear face to the bore front, then flat at the bore's top
-            # to the tail; each piece with true end faces. The mask puts each join on the cell
-            # holding it, and a one-sided switch there put mask cells 2-6 mm out (2026-11-10).
-            # (positive inside: a piece is the min of its faces, the union the max)
-            out.append(np.minimum.reduce([X - x1, xc - X, Z - ceil_]))
-            # The flat part from the halo's rear, not the bore front: ahead of the bore it is
-            # inside the deck part anyway, and a face at the join gave points above both
-            # ceilings no depth there; the projection bounced them across it (2026-11-10).
-            out.append(np.minimum(X - x1, Z - (zc + r)))
-            # The deck run on forward over the halo, MARGIN_MM inside the air above it, so
-            # the halo's rear face is no seam for points above the deck (they sat on it,
-            # 2026-11-10) and the margin added later does not reach past that exact zone.
-            out.append(np.minimum.reduce([X - x0 - MARGIN_MM, hw - MARGIN_MM - aY, xc - X, Z - ceil_]))
+    out = [hs.view_air(X, aY, Z, x0)]                                         # front and side views
+    # (no loft ceiling: the loft is required body, not a bound on it -- fixed_hardware.halo_canister_loft_solid_mask)
     if part == "shadows":
         return np.maximum.reduce(out)
     return np.maximum.reduce(out + [above])
@@ -402,19 +380,49 @@ def _air_boxes(g):
                 (None, wv.T79_ZONE_HEIGHT_MM + m)))
     out.append(((ra - m, ra + wv.T79_RECT_DEPTH_MM + m), (wv.REAR_INNER_GAP_ACTUAL_MM / 2.0 - m, None),
                 (None, wv.T79_ZONE_HEIGHT_MM + m)))
-    b = {kk: v * 1e3 for kk, v in hp.compute_halo_pocket_box_m(ref_A / 1e3, g.d_halo_mm).items()}
-    out.append(((b["x_min_m"], b["x_max_m"]), (None, b["y_max_m"]), (b["z_min_m"], b["z_max_m"])))
-    # the halo and the air above it (exact), and its front and side view shadows (T4.4.2,
-    # margin): 480 of 1,008 carved cars had 6-13 mm3 ahead of the halo (Part 4, 2026-11-10)
-    import fixed_hardware as fh
-    from geometry_contract import HALO_MIN_Z_MM
-    hw, zt = fh.HALO_CROSS_SECTION_HALF_WIDTH_MM, fh.HALO_CROSS_SECTION_TOP_MM
-    zf = HALO_MIN_Z_MM + fh.HALO_VISIBILITY_FILLET_MM
-    x0, x1 = b["x_min_m"], b["x_max_m"]
-    out.append(((x0, x1), (None, hw), (HALO_MIN_Z_MM, None)))
-    out.append(((None, x0 + m), (None, hw + m), (zf - m, zt + m)))
-    out.append(((x0 - m, x1 + m), (hw - m, None), (zf - m, zt + m)))
+    # The halo's seat and the air over it, and its view boxes, are not boxes any more: cut_boxes cuts
+    # them as solids (halo_seat.seat_manifold_m, view_manifolds_m).
     return out
+
+
+def _loft_join(g):
+    """The body that joins the halo's whole rear face to the cartridge, exact (halo_seat.loft_manifold_m),
+    for the body to be united with: the field holds it cell by cell (fixed_hardware's loft mask), and its
+    edges at the halo's face rounded off there."""
+    import fixed_hardware as fh
+    import halo_pocket as hp
+    import halo_seat as hs
+    c = _canister(g)
+    if c is None:
+        return None
+    x0 = hp.compute_halo_pocket_box_m(g.landmarks["ref_plane_A_m"], g.d_halo_mm)["x_min_m"] * 1e3
+    x1 = hs.box_mm(x0)[1]
+    xc = (c.x_center_m - c.x_half_width_m) * 1e3
+    if xc <= x1 + 1.0:
+        return None
+    return _loft_at(round(x1, 6), round(xc, 6), round(c.z_center_m * 1e3, 6), fh.CANISTER_CLEARANCE_RADIUS_MM)
+
+
+@__import__("functools").lru_cache(maxsize=8)
+def _loft_at(x1, xc, zc, r):
+    import halo_seat as hs
+    return hs.loft_manifold_m(x1, xc, zc, r)
+
+
+def _seat_cut(g, e):
+    import halo_pocket as hp
+    import halo_seat as hs
+    x0 = hp.compute_halo_pocket_box_m(g.landmarks["ref_plane_A_m"], g.d_halo_mm)["x_min_m"] * 1e3
+    return _seat_cut_at(round(x0, 6), e)
+
+
+@__import__("functools").lru_cache(maxsize=32)
+def _seat_cut_at(x0, e):
+    import halo_seat as hs
+    c = hs.seat_manifold_m(x0, grow_mm=e)
+    for v in hs.view_manifolds_m(x0, grow_mm=MARGIN_MM + e):
+        c = c + v
+    return c
 
 
 def cut_boxes(g, mesh):
@@ -470,7 +478,12 @@ def cut_boxes(g, mesh):
             body = body + m3.Manifold.hull_points(np.asarray(pts) / 1e3)
         cut = cut + m3.Manifold(m3.Mesh(vert_properties=np.asarray(cap.vertices, np.float32),
                                         tri_verts=np.asarray(cap.faces, np.uint32)))
-        o = (body - cut).simplify(tol).to_mesh()
+        # the halo's ball-cut seat with the air over it (exact), and its front and side views (margin):
+        # 480 of 1,008 carved cars had 6-13 mm3 ahead of the halo with no margin (Part 4, 2026-11-10)
+        cut = cut + _seat_cut(g, e)
+        lf = _loft_join(g)
+        o = ((body + lf) if lf is not None else body)
+        o = (o - cut).simplify(tol).to_mesh()
         raw = trimesh.Trimesh(np.asarray(o.vert_properties)[:, :3].astype(np.float64), np.asarray(o.tri_verts),
                               process=False)
         out = trimesh.load(io.BytesIO(raw.export(file_type="stl")), file_type="stl", force="mesh")

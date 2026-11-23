@@ -321,6 +321,31 @@ def _build_four_wheel_zones(
     return zones
 
 
+def halo_seat_mask(grid_shape, grid_origin_m, x_front_mm: float, field=None, views=False) -> np.ndarray:
+    """Cells inside halo_seat's air (the halo, its seat and the air over it, or `field` -- a function of
+    (X, |Y|, Z, x_front_mm) in mm, positive inside -- instead), on the body grid. Worked out only round the
+    halo (it is the only place the field can be positive), whatever the grid."""
+    import halo_seat as hs
+    nx, ny, nz = grid_shape
+    ox, oy, oz = (v * 1e3 for v in grid_origin_m)
+    d = GRID_SPACING_M * 1e3
+    f = field or hs.seat_air
+    x0, x1, hw, top = hs.box_mm(x_front_mm)
+    xs = ox + np.arange(nx) * d
+    ys = oy + np.arange(ny) * d
+    zs = oz + np.arange(nz) * d
+    out = np.zeros(grid_shape, bool)
+    lo = 500.0 if views else 1.0                        # the views run ahead of the halo to the car's front
+    i = np.flatnonzero((xs >= x0 - lo) & (xs <= x1 + 1.0))
+    j = np.flatnonzero(np.abs(ys) <= hw + (600.0 if views else 1.0))
+    k = np.flatnonzero(zs >= hs.HALO_MIN_Z_MM - 1.0)
+    if not (len(i) and len(j) and len(k)):
+        return out
+    X, Y, Z = np.meshgrid(xs[i], ys[j], zs[k], indexing="ij")
+    out[np.ix_(i, j, k)] = f(X, np.abs(Y), Z, x_front_mm) > 0.0
+    return out
+
+
 def _build_polygon_void_mask(
     grid_shape: tuple[int, int, int],
     grid_origin_m: tuple[float, float, float],
@@ -553,12 +578,10 @@ def place_fixed_hardware(
             "HaloGeometry(cross_section_yz_m=[(y1,z1),(y2,z2),...]) in metres. "
             "The polygon defines the halo tube cross-section at each x slice."
         )
-    halo_mask = _build_polygon_void_mask(
-        body_grid_shape, body_grid_origin_m,
-        x_min_m=halo_geometry.x_front_m,
-        x_max_m=halo_geometry.x_rear_m,
-        polygon_yz_m=halo_geometry.cross_section_yz_m,
-    )
+    # The halo, its ball-cut seat and the air over it, from the official halo itself (halo_seat.py;
+    # user 2026-11-23: no recess). The polygon box (25 x 21 mm over the pocket's 50 x 25 x 3.175 box)
+    # left square trenches beside the halo's rounded base.
+    halo_mask = halo_seat_mask(body_grid_shape, body_grid_origin_m, halo_geometry.x_front_m * 1e3)
 
     # Combined mask: union of all four voids
     combined = front_axle_mask | rear_axle_mask | canister_mask | halo_mask
@@ -1149,52 +1172,39 @@ def halo_canister_loft_solid_mask(halo_mask: "np.ndarray",
                                   y_origin_m: float,
                                   z_origin_m: float,
                                   d_m: float) -> "np.ndarray":
-    """The lofted deck itself: cells that must be SOLID.
+    """The body joining the halo to the cartridge: cells that must be SOLID.
 
-    halo_canister_loft_air_mask alone does not produce a loft. A ceiling only
-    says "no higher"; with no aerodynamic term in Stage 1's proxy, mass
-    minimisation then pulls the top surface as far BELOW the ceiling as it
-    likes. Measured after adding the ceiling: the cliff went (53.5 -> 38.5 mm
-    aft of the halo, good) but the deck settled flat at 38.5 mm while the
-    canister top is at 44.1 mm, so the surface ran past the cartridge instead
-    of arriving at it -- and the bore was left open to the sky, 28.4 mm of body
-    at x=160 against a bore reaching 47 mm.
+    The whole of the halo's rear face (the official part's, halo_seat.outlines()["rear"], 0.3 mm larger
+    all round) carried back to the T5.5 safety zone's outer circle at the chamber's front, each section a
+    blend of the two (halo_seat.loft_solid). User 2026-11-23: "make sure that the loft connects 100% of
+    the halo face to the canister". It replaces a 2 mm skin under a ceiling, |y| <= 12 (where the old
+    halo box and the bore's circle were both defined): the halo's face is +-12.5 by 10 mm, and the body
+    3 mm behind it came out 11.8 wide, the face standing proud of it.
 
-    "The back of the halo lofts to the canister" is a statement about a surface
-    that EXISTS, so it has to be required material, not permitted volume. This
-    forces a skin of LOFT_SKIN_THICKNESS_MM immediately under the same
-    smoothstep line the ceiling uses, so the two agree by construction: the
-    deck lands on the ceiling and the ceiling is the loft.
-
-    Width is limited to the halo/canister half-width rather than the full body
-    -- the loft is the spine joining two centreline parts, and forcing it the
-    full 65 mm would be inventing bodywork the rule does not ask for and the
-    mass budget cannot afford.
-    """
+    A lower bound only: the body may be wider, taller or anything else round it (there is no ceiling any
+    more: the search shapes the top)."""
     import numpy as _np
-
-    prof = _loft_profile(halo_mask, canister_cylinder, x_origin_m,
-                         y_origin_m, z_origin_m, d_m)
-    if prof is None:
-        return _np.zeros_like(halo_mask, dtype=bool)
-    i0, i1, z_top, valid = prof
-
-    # Start one cell AFT of the halo: over the halo's own footprint T4.4.3
-    # forces air, and a deck there would fight the visibility rule.
-    i0 = i0 + 1
-    if i1 <= i0:
-        return _np.zeros_like(halo_mask, dtype=bool)
-    z_top = z_top[1:]
-
-    nz = halo_mask.shape[2]
-    thick = max(int(round(LOFT_SKIN_THICKNESS_MM / (d_m * 1000.0))), 1)
-    k_top = _np.floor((z_top - z_origin_m) / d_m)
-    k_top = _np.where(valid[None, :], k_top, -1.0)
-    ks = _np.arange(nz)[None, None, :]
+    import halo_seat as hs
     out = _np.zeros_like(halo_mask, dtype=bool)
-    out[i0:i1 + 1] = ((ks <= k_top[:, :, None])
-                      & (ks > (k_top - thick)[:, :, None])
-                      & valid[None, :, None])
+    hx = _np.flatnonzero(halo_mask.any(axis=(1, 2)))
+    if hx.size == 0 or canister_cylinder is None:
+        return out
+    nx, ny, nz = halo_mask.shape
+    d = d_m * 1e3
+    xs = x_origin_m * 1e3 + _np.arange(nx) * d
+    ys = y_origin_m * 1e3 + _np.arange(ny) * d
+    zs = z_origin_m * 1e3 + _np.arange(nz) * d
+    x_rear = float(xs[hx[-1]])                            # the halo (its seat, +0.1 mm): the last cell of it
+    x_can = (canister_cylinder.x_center_m - canister_cylinder.x_half_width_m) * 1e3
+    if x_can <= x_rear:
+        return out
+    r = CANISTER_CLEARANCE_RADIUS_MM
+    zc = canister_cylinder.z_center_m * 1e3
+    i = _np.flatnonzero((xs > x_rear) & (xs <= x_can + d))
+    j = _np.flatnonzero(_np.abs(ys) <= 20.0)
+    k = _np.flatnonzero((zs >= 15.0) & (zs <= zc + r + 5.0))
+    X, Y, Z = _np.meshgrid(xs[i], ys[j], zs[k], indexing="ij")
+    out[_np.ix_(i, j, k)] = hs.loft_solid(X, _np.abs(Y), Z, x_rear, x_can, zc, r) <= 0.0
     return out & ~halo_mask
 
 

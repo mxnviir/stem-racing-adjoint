@@ -235,7 +235,9 @@ def build_nose(ff: Freeform, x_tip, x_rear, ref_a, blend_after_mm=1.0, h=0.25):
     pcs = sorted(M.decompose(), key=lambda q: -q.volume())
     if not pcs:
         return None
-    M = pcs[0]
+    # marching cubes leaves edges of 1e-6 mm that an STL's float32 collapses (the part came back open,
+    # gallery G02); merged here (0.01 mm), the nose stays one closed solid through every Boolean and file
+    M = pcs[0].simplify(0.01)
     def tm(Q):
         g = Q.to_mesh()
         t = trimesh.Trimesh(np.asarray(g.vert_properties)[:, :3], np.asarray(g.tri_verts), process=True)

@@ -55,7 +55,32 @@ PART_MATERIAL = "PLA"           # wings, mounts, tether guides: printed, solid
 def _export_half(mesh, path: Path) -> None:
     m = mesh.copy()
     m.vertices[m.vertices[:, 1] < 0.0, 1] = 0.0
+    if m.is_volume:
+        m = _stl_safe(m)
     m.export(str(path), file_type="stl_ascii")
+
+
+STL_EDGE_MM = 0.01       # mm: merged before a part is written (_stl_safe); above support_engine._weld's 2 um
+
+
+def _stl_safe(m):
+    """A closed part (metres) that is still closed once written to STL and read back: marching cubes
+    leaves edges of 1e-6 mm, which the file's float32 collapses, and the part came back open (gallery G02's
+    nose: the referee could not measure it). Edges under STL_EDGE_MM are merged by manifold3d's simplify,
+    which keeps the solid closed. Unchanged where that would not give a closed solid."""
+    import io
+    import trimesh
+    import support_engine as se
+    q = m.copy(); q.apply_scale(1e3)
+    try:
+        t = se._to_trimesh(se._to_manifold(q).simplify(STL_EDGE_MM))
+    except Exception:  # noqa: BLE001
+        return m
+    if not t.is_volume:
+        return m
+    t.apply_scale(1e-3)
+    back = trimesh.load(io.BytesIO(t.export(file_type="stl_ascii").encode()), file_type="stl")
+    return t if back.is_volume else m
 
 
 def _half_of(mesh):
@@ -181,10 +206,12 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
     R = 0.5 * (f.R + r.R)
 
     surfaces, gates, parts_mass, info = [], {}, {}, {}
+    wheel_meshes = {}
 
     # -- wheels (rotating closed cylinders) --------------------------------
     for name, x, y_in, w in (("wheelF", x_front_mm, FY, f.w), ("wheelR", x_rear, RY, r.w)):
         cyl = wh.cfd_surface(R, w, x, y_in, SINK_MM)
+        wheel_meshes[name] = cyl
         _export_half(cyl, out / f"{name}.stl")
         origin = (x / 1e3, (y_in + w / 2) / 1e3, (R - SINK_MM) / 1e3)
         surfaces.append({"name": name, "stl": str(out / f"{name}.stl"),
@@ -308,14 +335,27 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
 
     # -- rear wing ---------------------------------------------------------
     forward = [body, halo] + sup
-    rwm = wg.build_rear_wing(rear, x_front_mm, W_mm, body, forward)
-    rparts = {k: rwm[k] for k in ("wing", "pylon")}
-    gates.update(wg.rear_wing_gates(rear, rparts, x_front_mm, W_mm, body, forward))
-    _export_half(trimesh.util.concatenate(list(rparts.values())), out / "rwing.stl")
+    import rear_wing_engine as rwe
+    if isinstance(rear, rwe.RearWingDesign):
+        # the searches' rear wing (rear_wing_engine.py): its struts cast to this body, wherever it is
+        wheel_r = (x_rear, RY, R, r.w)
+        res = rwe.build(rear, body, x_front_mm, W_mm, wheel_r, clear_of=[halo] + sup + [wheel_meshes["wheelR"]],
+                        forward_parts=forward)
+        gates.update({f"P4.{k}": v for k, v in res["gates"].items()})
+        info["rear_wing_engine"] = res["info"]
+        rparts = [res["wing"]] + res["struts"]
+        info["rear_wing_slot_mm3"] = float(sum(abs(p.volume) for p in res["plugs"]) * 1e9)
+    else:
+        rwm = wg.build_rear_wing(rear, x_front_mm, W_mm, body, forward)
+        rd = {k: rwm[k] for k in ("wing", "pylon")}
+        gates.update(wg.rear_wing_gates(rear, rd, x_front_mm, W_mm, body, forward))
+        rparts = list(rd.values())
+        info["rear_wing_z_chord_mm"] = rwm["_z_chord_mm"]
+        info["body_top_under_rear_wing_mm"] = rwm["_body_top_mm"]
+    # the wing and its supports as separate solids in one file: the referee tells them apart (T9.5.1)
+    _export_half(trimesh.util.concatenate([_stl_safe(p) if p.is_volume else p for p in rparts]), out / "rwing.stl")
     surfaces.append({"name": "rwing", "stl": str(out / "rwing.stl"), "rotating": None})
-    parts_mass["rwing"] = _full_mass_com(list(rparts.values()), cc.DENSITY_G_CM3[PART_MATERIAL])
-    info["rear_wing_z_chord_mm"] = rwm["_z_chord_mm"]
-    info["body_top_under_rear_wing_mm"] = rwm["_body_top_mm"]
+    parts_mass["rwing"] = _full_mass_com(rparts, cc.DENSITY_G_CM3[PART_MATERIAL])
 
     # -- tether guides (T6) -------------------------------------------------
     tg = []
