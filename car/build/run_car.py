@@ -218,7 +218,7 @@ def part4_kwargs(a) -> dict:
         fj = json.loads(a.fwing_json)
         if "pieces" in fj:                    # the searches' wing (car/parts/front_wing_engine.py)
             import front_wing_engine as fwe
-            kw["front"] = fwe.FrontWingDesign(**fj)
+            kw["front"] = fwe.from_dict(fj)
         else:
             import wings as wg
             kw["front"] = wg.FrontWing(**fj)

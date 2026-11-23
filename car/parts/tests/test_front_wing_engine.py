@@ -41,12 +41,17 @@ def _nose_m():
 
 
 NOSE = _nose_m()
+S = fwe.Strut
+OFF = S(t_mm=0.0)
 CASES = {
-    "one piece through the nose": {},
-    "two halves rooted in the nose": dict(pieces=2, root_y_mm=9.0),
-    "one piece on a centre pylon": dict(z_mm=6.5, pylons=1, chord_mm=18.0),
-    "two swept halves on twin pylons": dict(pieces=2, root_y_mm=5.0, pylons=2, pylon_y_mm=11.0, sweep_deg=15.0,
-                                            dihedral_deg=6.0, chord_mm=20.0, z_mm=10.0),
+    "one piece through the nose": dict(struts=(OFF, OFF)),
+    "two halves rooted in the nose": dict(pieces=2, root_y_mm=9.0, struts=(OFF, OFF)),
+    "one piece under the nose on a centre strut": dict(z_mm=6.5, chord_mm=18.0, struts=(S(t_mm=2.5, y_frac=0.0), OFF)),
+    "two swept halves on raked, splayed pairs": dict(pieces=2, root_y_mm=5.0, sweep_deg=15.0, dihedral_deg=6.0,
+                                                     chord_mm=20.0, z_mm=10.0,
+                                                     struts=(S(t_mm=2.0, y_frac=0.4, rake_deg=15.0, splay_deg=-10.0),
+                                                             S(t_mm=2.5, y_frac=0.9))),
+    "the middle of every range": dict(),
 }
 
 
@@ -73,9 +78,15 @@ def test_a_short_tip_is_pushed_out_to_a_25_mm_segment():
     assert r["gates"]["T8.6.1_fw_segment"] >= 0, r["info"]
 
 
-def test_twin_pylons_are_kept_where_the_nose_is():
-    """A pylon asked for 11 mm out, where the nose is narrower, is placed inside the nose's reach."""
-    r = fwe.build(fwe.FrontWingDesign(**CASES["two swept halves on twin pylons"]), NOSE, X_FRONT, WHEEL)
-    assert r["pylons"] is not None and r["info"]["pylon_y_placed_mm"]
-    assert max(r["info"]["pylon_y_placed_mm"]) < 11.0
-    assert not r["info"].get("pylons_not_placed")
+def test_struts_reach_the_nose_or_are_reported():
+    """Struts asked for far out (T8.5.1's 15 mm) where the nose is narrower land on the nose (leaned back
+    if need be) or are reported; never a strut outside the support band."""
+    r = fwe.build(fwe.FrontWingDesign(**CASES["two swept halves on raked, splayed pairs"]), NOSE, X_FRONT, WHEEL)
+    for p in r["info"]["struts"]:
+        assert abs(p["nose_mm"][1]) + p["t_mm"] / 2 <= fwe.SUPPORT_BAND_MM
+    assert len(r["info"]["struts"]) + len(r["info"].get("struts_not_placed", [])) + len(r["info"].get("struts_in_the_nose", [])) == 2
+
+
+def test_struts_all_under_the_wall_keep_the_thickest_when_nothing_holds_the_wing():
+    r = fwe.build(fwe.FrontWingDesign(z_mm=6.5, chord_mm=18.0, struts=(S(t_mm=0.5), S(t_mm=0.8))), NOSE, X_FRONT, WHEEL)
+    assert r["info"]["supported"]

@@ -158,6 +158,7 @@ All limits are absolute (T2.7.1): 48.0 g passes, 47.9 g fails. No rule gives a m
 | T9.5.2 | 42 | Rear chord, horizontal, throughout span; up to 2 vanes, overlapping | 15.0-25.0 mm, PP | `T9.5.2_rear_chord_min/max`, `T9.5.2_rear_vanes_overlap` | checked |
 | T9.5.3 | 43 | Rear thickness | 2.0-6.0 mm, PP | `T9.5.3_rear_thickness_min/max` | checked |
 | T9.5.4 | 43 | Height change along the top of the span | <= 15.0 mm, PP | `T9.5.4_rear_height_deviation` | checked |
+| team | - | No strut on the rear wing's centre line (user 2026-11-23); each strut's inner face >= 2.5 mm off it | >= 2.5 mm | `P4.team_rw_no_centre_strut` | built in (struts come in pairs) |
 | T9.6 | 44 | 5.0 mm clear air from the rear wing | >= 5.0 mm | `T9.6_rear_wing_clear_air_all_parts`; `P4.T9.6_clear_air_body` | checked |
 | T9.7 | 45 | Rear wing seen from the front | no obstruction | `T9.7_rear_wing_seen_from_front`; `P4.T9.7_front_view` | checked |
 

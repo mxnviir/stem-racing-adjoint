@@ -91,14 +91,17 @@ folder gets `supports.png` (`search/layout/support_render.py`) to inspect the de
 
 `front_wing_engine.py` designs the searches' front wing: one piece across the centre line or a left and
 a right wing (T8.6.1), flat NACA 0015 elements (chord, height, span, sweep, dihedral; swept by shearing so
-every vertical cut is the true section), and its own supports: none (held by the nose it runs into), one
-pylon on the centre line or two, each cast to the nose's surface and printed with the nose. It repairs
+every vertical cut is the true section), and its own supports: two strut pairs of continuous numbers
+(thickness -- off under the print wall --, place on span and chord, chord, rake, splay; a pair at the
+centre is one strut), each cast from the wing to the nose's surface, up or down, and printed with the nose;
+a wing the nose runs into is held by it. No preset: every strut number starts at the middle of its range. It repairs
 rather than refuses (sweep within T8.2's 40 mm, segments out to 25 mm, dihedral within T8.5.2 and the
 track's 5 mm, roots into the nose, a wing lowered to keep 5 mm under a nose that does not hold it) and
 measures every T8 rule. The referee measures it again (T8.5-T8.8).
 `rear_wing_engine.py` designs the searches' rear wing and its supports, one representation with no modes
 (user 2026-11-23): a NACA section (camber either way, angle of attack), span, chord, thickness, sweep and
-dihedral, a lift over the lowest height T9.6 and T9.7 allow; and up to two strut pairs, each only continuous
+dihedral, a lift over the lowest height T9.6 and T9.7 allow; and up to two strut pairs (never on the centre
+line: team rule, user 2026-11-23; from just off it out to the tips), each only continuous
 numbers -- thickness (off under the print wall), where on the span and the chord, chord, rake, splay, root
 (glued, or a slot this deep). Each strut is cast from the wing along its lean to whatever body is there (the
 chamber's top, a sidepod, a rearpod); a slot is a plug the ball can cut, above the T5.5 wall with 3 mm of

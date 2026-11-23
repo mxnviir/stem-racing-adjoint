@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import dataclasses
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import numpy as np
 
@@ -44,6 +44,18 @@ N_SPAN = 24                    # sections along an element
 
 
 @dataclass
+class Strut:
+    """A strut pair (one strut on the centre line where it stands there): only continuous numbers."""
+    t_mm: float = 3.0              # under the printer's wall it is not there
+    y_frac: float = 0.5            # where on the span it meets the wing: 0 the centre (or the root), 1 the
+                                   # furthest out a support may stand (T8.5.1: 15 mm)
+    x_frac: float = 0.5            # where along the chord
+    chord_mm: float = 12.0
+    rake_deg: float = 0.0          # lean in side view: the nose end further aft (+)
+    splay_deg: float = 0.0         # lean in front view: the nose end further outboard (+)
+
+
+@dataclass
 class FrontWingDesign:
     pieces: int = 1                # 1 or 2
     chord_mm: float = 15.3         # T8.6.2 minimum + 0.3 for the print
@@ -53,11 +65,13 @@ class FrontWingDesign:
     root_y_mm: float = 8.0         # two pieces: where each half starts (inside the support band)
     sweep_deg: float = 0.0         # leading edge swept back towards the tip (+)
     dihedral_deg: float = 0.0      # tip up (+)
-    pylons: int = 0                # 0 (held by the nose it passes through), 1 (centre line), 2 (twin)
-    pylon_y_mm: float = 6.0        # twin pylons' distance from the centre line
-    pylon_chord_mm: float = 8.0
-    pylon_t_mm: float = 2.0        # at least the printer's wall
-    pylon_rake_deg: float = 0.0    # leaning forward at the top (+)
+    struts: tuple = field(default_factory=lambda: (Strut(), Strut()))
+
+
+def from_dict(d: dict) -> FrontWingDesign:
+    d = {k: v for k, v in dict(d).items() if not k.startswith("pylon")}    # (the old fixed pylons: gone)
+    st = tuple(Strut(**s) if isinstance(s, dict) else s for s in d.pop("struts", ()))
+    return FrontWingDesign(**d, struts=st)
 
 
 def params_dict(d: FrontWingDesign) -> dict:
@@ -128,6 +142,14 @@ def _nose_hits(nose_tm, x, y, z0):
     return (float(up.min()) if len(up) else None), (float(dn.max()) if len(dn) else None)
 
 
+def _ray_hit(m, o, d):
+    """The first surface of m from o along d (mm), or None."""
+    loc, _, _ = m.ray.intersects_location(o[None], (d / np.linalg.norm(d))[None], multiple_hits=True)
+    if not len(loc):
+        return None
+    return loc[np.argmin(np.linalg.norm(loc - o, axis=1))]
+
+
 def build(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=None):
     """The wing and its pylons, right halves (trimesh, metres), for this nose. wheel = (x_axle, y_inner,
     R) of the front wheel. Returns {"wing": trimesh, "pylons": trimesh or None, "gates": {...}, "info": {...}}.
@@ -189,7 +211,7 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
     if d.pieces == 2:
         # each half starts in the nose's side (the nose holds it) or, where the wing passes over or under
         # the nose, above or below it, where a pylon reaches the nose
-        lim = (cut_min - EMBED_MM) if cut_min > EMBED_MM + 0.5 else (hw_any - d.pylon_t_mm / 2 - 0.5)
+        lim = (cut_min - EMBED_MM) if cut_min > EMBED_MM + 0.5 else (hw_any - cc.BUILD_WALL_MM / 2 - 0.5)
         y0 = float(np.clip(min(d.root_y_mm, lim), 0.5, SUPPORT_BAND_MM - 1.0))
     else:
         y0 = -0.5                                         # across the centre line (mirrored: one piece)
@@ -204,46 +226,68 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
     inside = trimesh.boolean.intersection([wing, nose], engine="manifold") if nose.is_volume else None
     held = inside is not None and not inside.is_empty and abs(inside.volume) > 1.0
     info["held_by_nose"] = bool(held)
-    # pylons, from the wing's surface to the nose's
-    pylons = []
-    ys_p = {0: [], 1: [0.0], 2: [float(np.clip(d.pylon_y_mm, d.pylon_t_mm / 2 + 0.5, SUPPORT_BAND_MM - d.pylon_t_mm / 2 - MARGIN_MM))]}[d.pylons]
-    if d.pieces == 2:
-        ys_p = [max(yp, y0 + d.pylon_t_mm / 2 + 0.5) for yp in ys_p] or ([] if held else [y0 + d.pylon_t_mm / 2 + 0.5])
-    info["pylon_y_mm"] = ys_p
-    for yp in ys_p:
-        xm = x_le + 0.5 * d.chord_mm + math.tan(math.radians(d.sweep_deg)) * (yp - max(y0, 0.0) if d.pieces == 2 else yp)
-        zw = z + math.tan(math.radians(d.dihedral_deg)) * (yp - max(y0, 0.0) if d.pieces == 2 else yp)
-        # within the nose's reach at this station (a pylon outboard of the nose would meet nothing)
-        sx = nose.section(plane_origin=[xm, 0, 0], plane_normal=[1, 0, 0])
-        hw = float(sx.vertices[:, 1].max()) if sx is not None else 0.0
-        yp = min(yp, hw - d.pylon_t_mm / 2 - 0.5)
-        if yp < 0.0 or (yp < d.pylon_t_mm / 2 and yp != 0.0 and d.pylons == 2):
-            info.setdefault("pylons_not_placed", []).append(round(xm, 1))
+    # struts, cast from the wing along their lean to the nose (up or down, whichever they meet first)
+    sts = [q for q in d.struts if q.t_mm >= cc.BUILD_WALL_MM]
+    if not sts and not held and d.struts:
+        # nothing holds the wing and every strut is under the print wall: the thickest, at the wall
+        k = int(np.argmax([q.t_mm for q in d.struts]))
+        sts = [dataclasses.replace(d.struts[k], t_mm=cc.BUILD_WALL_MM)]
+        info["strut_thickened_to_wall"] = k
+    pylons, placed = [], []
+    sw_, dh_ = math.tan(math.radians(d.sweep_deg)), math.tan(math.radians(d.dihedral_deg))
+    for i, q in enumerate(sts):
+        c = float(np.clip(q.chord_mm, 2 * cc.BUILD_WALL_MM, 0.8 * d.chord_mm))
+        tt = float(np.clip(q.t_mm, cc.BUILD_WALL_MM, 8.0))
+        y_lo = (max(y0, 0.0) + tt / 2 + 0.5) if d.pieces == 2 else 0.0
+        y_hi = min(SUPPORT_BAND_MM, tip) - tt / 2 - MARGIN_MM
+        yp = y_lo + float(np.clip(q.y_frac, 0.0, 1.0)) * max(y_hi - y_lo, 0.0)
+        if d.pieces == 1 and yp < tt / 2 + 0.5:
+            yp = 0.0                                      # one strut on the centre line
+        dy = (yp - max(y0, 0.0)) if d.pieces == 2 else yp
+        xf = float(np.clip(q.x_frac, 0.1 + c / 2 / d.chord_mm, 0.9 - c / 2 / d.chord_mm))
+        xm = x_le + sw_ * dy + xf * d.chord_mm
+        zw = z + dh_ * dy
+        if nose.is_volume and nose.contains(np.array([[xm, max(yp, 0.05), zw]]))[0]:
+            info.setdefault("struts_in_the_nose", []).append(i)     # the nose holds the wing there itself
             continue
-        up, dn = _nose_hits(nose, xm, yp, zw)
-        cand = [(abs(h - zw), h) for h in (up, dn) if h is not None and abs(h - zw) < 30.0]
-        if not cand:
-            info.setdefault("pylons_not_placed", []).append(round(xm, 1))
+        hit = None
+        for k in np.linspace(1.0, 0.0, 6):               # leaned back towards the vertical if it misses
+            rk, sp = math.tan(math.radians(q.rake_deg * k)), math.tan(math.radians(q.splay_deg * k))
+            best = None
+            for sgn in (-1.0, 1.0):
+                h = _ray_hit(nose, np.array([xm, max(yp, 0.05), zw]), np.array([rk, sp if yp > 0 else 0.0, sgn]))
+                if h is not None and (best is None or abs(h[2] - zw) < abs(best[2] - zw)):
+                    best = h
+            if best is not None and abs(best[1]) + tt / 2 <= SUPPORT_BAND_MM - MARGIN_MM and abs(best[2] - zw) < 30.0:
+                hit = best
+                break
+        if hit is None:
+            info.setdefault("struts_not_placed", []).append(i)
             continue
-        info.setdefault("pylon_y_placed_mm", []).append(round(yp, 2))
-        _, zh = min(cand)
-        a, b = sorted((zw, zh))
-        a -= EMBED_MM if zh < zw else t / 2 - 0.2
-        b += EMBED_MM if zh > zw else t / 2 - 0.2
-        sec = naca00(d.pylon_chord_mm, min(0.4, max(d.pylon_t_mm, cc.BUILD_WALL_MM) / d.pylon_chord_mm))
-        rk = math.tan(math.radians(d.pylon_rake_deg))
+        if yp == 0.0:
+            hit = np.array([hit[0], 0.0, hit[2]])
+        top_down = hit[2] < zw                            # the nose under the wing
+        p_wing = np.array([xm, yp, zw + (t / 2 - 0.2 if top_down else -(t / 2 - 0.2))])
+        v = hit - np.array([xm, yp, zw])
+        p_nose = hit + v / max(np.linalg.norm(v), 1e-9) * EMBED_MM
+        a, b = sorted([(p_wing[2], p_wing), (p_nose[2], p_nose)], key=lambda u: u[0])
+        sec = naca00(c, min(0.4, tt / c)) - np.array([c / 2, 0.0])
         st = []
-        for zz in np.linspace(a, b, 8):
-            xs_ = xm - d.pylon_chord_mm / 2 + sec[:, 0] - rk * (zz - zw)
-            ys_ = yp + sec[:, 1]
-            st.append((float(zz), np.c_[xs_, ys_]))
+        for zz in np.linspace(a[0], b[0], 8):
+            f = (zz - a[0]) / max(b[0] - a[0], 1e-9)
+            cpt = a[1] + f * (b[1] - a[1])
+            st.append((float(zz), np.c_[cpt[0] + sec[:, 0], cpt[1] + sec[:, 1]]))
         pylons.append(_loft_z(st))
+        placed.append(dict(index=i, y_mm=round(yp, 2), t_mm=tt, chord_mm=round(c, 2),
+                           nose_mm=[round(float(u), 2) for u in hit], wing_z_mm=round(zw, 2)))
+    info["struts"] = placed
+    info["pylon_y_placed_mm"] = [p["y_mm"] for p in placed]
     pyl = None
     if pylons:
         import manifold3d as mf
         Pm = mf.Manifold.batch_boolean(pylons, mf.OpType.Add) ^ se._box(-1e3, 1e3, 0.0, 1e3, -1e3, 1e3)
         pyl = se._to_trimesh(Pm)
-    info["supported"] = bool(held or pylons)
+    info["supported"] = bool(held or placed)
     gates = measure(d, wing, pyl, nose, ref_a, wheel, body_half_m, info)
     wing.apply_scale(1e-3)
     if pyl is not None:
@@ -263,7 +307,6 @@ def measure(d, wing, pyl, nose, ref_a, wheel, body_half_m, info) -> dict:
     g = {}
     b = wing.bounds
     g["fw_supported"] = 0.0 if info["supported"] else -1.0
-    g["fw_pylons_placed"] = -float(len(info.get("pylons_not_placed", [])))
     g["T8.5.2_fw_ahead_of_ref_A"] = ref_a - float(b[1, 0])
     g["T8.2_fw_inside_overhang"] = OVERHANG_MM - (ref_a - float(b[0, 0]))
     out = wing.vertices[wing.vertices[:, 1] > SUPPORT_BAND_MM]
@@ -293,8 +336,8 @@ def measure(d, wing, pyl, nose, ref_a, wheel, body_half_m, info) -> dict:
     near_joint |= pts[:, 1] < float(nose.bounds[1, 1]) + CLEAR_MM
     if info.get("held_by_nose"):
         near_joint |= pts[:, 1] < max(info["nose_cut_y_mm"], info.get("nose_half_width_mm", 0.0)) + CLEAR_MM
-    for yp in info.get("pylon_y_placed_mm", []):
-        near_joint |= np.abs(pts[:, 1] - yp) < d.pylon_t_mm / 2 + CLEAR_MM
+    for p in info.get("struts", []):
+        near_joint |= np.abs(pts[:, 1] - p["y_mm"]) < p["t_mm"] / 2 + CLEAR_MM
     free = pts[~near_joint]
     g["T8.7_fw_track"] = float(wing.bounds[0, 2]) - CLEAR_MM
     xa, y_in, R = wheel

@@ -5,10 +5,10 @@ endless").
 
 One representation, no modes. The wing is a NACA 4-digit section (camber either way, angle of attack),
 swept and given dihedral by shearing it along the span. Under it stand up to N_STRUTS strut pairs (mirrored;
-one on the centre line where it sits there), each described only by continuous numbers:
+never on the centre line: team rule, user 2026-11-23), each described only by continuous numbers:
 
   t_mm        thickness; under the printer's wall the strut is not there
-  y_frac      where on the span it meets the wing (0 the centre line, 1 the tip)
+  y_frac      where on the span it meets the wing (0 just off the centre line, 1 the tip)
   x_frac      where along the chord
   chord_mm    its own chord
   rake_deg    lean in side view (+: the foot further aft than the top)
@@ -50,6 +50,7 @@ WHEEL_CLEAR_MM = 1.0            # a strut stays this far off a wheel
 TOP_EMBED_MM = 0.2              # a strut stops this far under the wing's upper surface
 N_SPAN = 20
 HALF_WIDTH_MAX_MM = 42.5        # T3.4: 85 mm
+CENTRE_CLEAR_MM = 2.5           # team (user 2026-11-23): no strut in the middle -- each strut's inner face this far off it
 
 
 @dataclass
@@ -74,7 +75,7 @@ class RearWingDesign:
     lift_mm: float = 0.0            # above the lowest height T9.6 and T9.7 allow
     sweep_deg: float = 0.0          # leading edge back towards the tip (+)
     dihedral_deg: float = 0.0       # tip up (+)
-    struts: tuple = field(default_factory=lambda: (Strut(),))
+    struts: tuple = field(default_factory=lambda: (Strut(t_mm=3.0, y_frac=0.5), Strut(t_mm=3.0, y_frac=0.5)))
 
 
 def from_dict(d: dict) -> RearWingDesign:
@@ -235,9 +236,10 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
     for s in struts:
         c = float(np.clip(s.chord_mm, cc.BUILD_WALL_MM * 2, chord * 0.8))
         tt = float(np.clip(s.t_mm, cc.BUILD_WALL_MM, 8.0))
-        y = float(np.clip(s.y_frac, 0.0, 1.0)) * (hs - tt / 2 - MARGIN_MM)
-        if y < tt / 2 + 0.5:
-            y = 0.0                                      # one strut on the centre line
+        # pairs only, from just off the centre line (team rule, user 2026-11-23: no strut in the middle of a
+        # rear wing) out to the tip: y_frac 0 the innermost a pair can stand, 1 the tip
+        y_in, y_out = tt / 2 + CENTRE_CLEAR_MM, hs - tt / 2 - MARGIN_MM
+        y = y_in + float(np.clip(s.y_frac, 0.0, 1.0)) * max(y_out - y_in, 0.0)
         xf = float(np.clip(s.x_frac, 0.1 + c / 2 / chord, 0.9 - c / 2 / chord)) if c < 0.8 * chord else 0.5
         plans.append(dataclasses.replace(s, chord_mm=c, t_mm=tt, y_frac=y, x_frac=xf))
 
@@ -333,11 +335,11 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
         xm = x_le + sw * p.y_frac + p.x_frac * chord
         zmid, th = _mid_z(sec, p.x_frac * chord)
         top = np.array([xm, p.y_frac, z + dhk * p.y_frac + zmid + th / 2 - TOP_EMBED_MM])
-        start = np.array([xm, max(p.y_frac, 0.05), z + dhk * p.y_frac + zmid])
+        start = np.array([xm, p.y_frac, z + dhk * p.y_frac + zmid])
         foot, used = None, None
         for k in np.linspace(1.0, 0.0, 6):               # leaned back towards the vertical if it misses
             rk, sp = math.radians(p.rake_deg * k), math.radians(p.splay_deg * k)
-            dirv = np.array([math.tan(rk), math.tan(sp) if p.y_frac > 0 else 0.0, -1.0])
+            dirv = np.array([math.tan(rk), math.tan(sp), -1.0])
             hit = _hit(body, start, dirv)
             if hit is not None:
                 foot, used = hit, (p.rake_deg * k, p.splay_deg * k)
@@ -345,9 +347,7 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
         if foot is None:
             info.setdefault("struts_not_placed", []).append(i)
             continue
-        if foot[1] < 0.05 and p.y_frac == 0.0:
-            foot = np.array([foot[0], 0.0, foot[2]])
-        if p.y_frac > 0 and foot[1] + p.t_mm / 2 > HALF_WIDTH_MAX_MM - MARGIN_MM:
+        if foot[1] - p.t_mm / 2 < CENTRE_CLEAR_MM or foot[1] + p.t_mm / 2 > HALF_WIDTH_MAX_MM - MARGIN_MM:
             info.setdefault("struts_not_placed", []).append(i)
             continue
         slot = float(p.slot_mm)
@@ -475,6 +475,9 @@ def measure(d, wing, struts, plugs, body, others, fwd, ref_b, wheel_rear, x_fron
     g["T9.7_rw_seen_from_front"] = float(b[0, 2]) - _front_view_top(wing, fwd)
     # the struts: held at all, printable, clear of the wheels and of T7.9's zones, slots legal
     g["rw_supported"] = 1.0 if placed else -1.0
+    if struts:
+        ys = np.vstack([s.vertices for s in struts])[:, 1]
+        g["team_rw_no_centre_strut"] = float(np.abs(ys).min()) - (CENTRE_CLEAR_MM - 0.05)
     if struts:
         g["rw_strut_wall"] = min(p["t_mm"] for p in placed) - cc.BUILD_WALL_MM
         P = np.vstack([s.sample(600) for s in struts])

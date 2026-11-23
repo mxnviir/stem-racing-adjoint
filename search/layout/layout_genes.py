@@ -174,15 +174,19 @@ def support_design(v=None) -> dict:
 
 
 def front_wing_design(v=None) -> dict:
-    """front_wing_engine.FrontWingDesign's numbers from parameter values (the catalogue's by default)."""
+    """front_wing_engine.FrontWingDesign's numbers (with its strut pairs) from parameter values."""
     v = v or {p["name"]: p["value"] for p in PARAMS}
-    pyl = float(v["fw_pylons"])
+    struts = [dict(t_mm=float(v[f"fws{k}_t"]), y_frac=float(v[f"fws{k}_y"]), x_frac=float(v[f"fws{k}_x"]),
+                   chord_mm=float(v[f"fws{k}_chord"]), rake_deg=float(v[f"fws{k}_rake"]),
+                   splay_deg=float(v[f"fws{k}_splay"]))
+              for k in range(N_FW_STRUTS)]
     return dict(pieces=2 if float(v["fw_pieces"]) >= 0.5 else 1, chord_mm=float(v["fw_chord"]),
                 te_gap_mm=float(v["fw_te_gap"]), z_mm=float(v["fw_z"]), tip_y_mm=float(v["fw_tip_y"]),
                 root_y_mm=float(v["fw_root_y"]), sweep_deg=float(v["fw_sweep"]), dihedral_deg=float(v["fw_dihedral"]),
-                pylons=0 if pyl < 1 / 3 else (1 if pyl < 2 / 3 else 2), pylon_y_mm=float(v["fw_pylon_y"]),
-                pylon_chord_mm=float(v["fw_pylon_chord"]), pylon_t_mm=float(v["fw_pylon_t"]),
-                pylon_rake_deg=float(v["fw_pylon_rake"]))
+                struts=struts)
+
+
+N_FW_STRUTS = 2
 
 
 def rear_wing_design(v=None) -> dict:

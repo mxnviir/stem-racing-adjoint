@@ -1300,14 +1300,14 @@
   {
    "group": "front wing",
    "name": "fw_pieces",
-   "value": 0.25,
+   "value": 0.5,
    "lo": 0.0,
    "hi": 1.0,
    "mode": "shape",
    "unit": "0-1",
    "what": "below 0.5 one wing across the centre line, above it a left and a right wing",
    "rule": "T8.6.1: 1 x 50 or 2 x 25 where another part passes through",
-   "why": "user 2026-11-23: one piece or two, the search decides"
+   "why": "user 2026-11-23: one piece or two, the search decides (starts at the middle)"
   },
   {
    "group": "front wing",
@@ -1383,63 +1383,147 @@
   },
   {
    "group": "front wing",
-   "name": "fw_pylons",
-   "value": 0.0,
+   "name": "fws0_t",
+   "value": 3.0,
+   "lo": 0.0,
+   "hi": 6.0,
+   "mode": "shape",
+   "unit": "mm",
+   "what": "strut pair 0: thickness; under the print wall it is not there",
+   "rule": "print wall",
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
+  },
+  {
+   "group": "front wing",
+   "name": "fws0_y",
+   "value": 0.5,
    "lo": 0.0,
    "hi": 1.0,
    "mode": "shape",
-   "unit": "0-1",
-   "what": "supports: below 1/3 none (held by the nose it runs into), below 2/3 one on the centre line, above two",
-   "rule": "T8.5.1 inside the 30 mm wide, 25 mm high box ahead of Ref A",
-   "why": "user 2026-11-23: it designs its own wing supports"
+   "unit": "-",
+   "what": "strut pair 0: where on the span (0 the centre or the root, 1 T8.5.1's 15 mm)",
+   "rule": "T8.5.1",
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "front wing",
-   "name": "fw_pylon_y",
-   "value": 6.0,
-   "lo": 1.5,
-   "hi": 14.0,
+   "name": "fws0_x",
+   "value": 0.5,
+   "lo": 0.15,
+   "hi": 0.85,
    "mode": "shape",
-   "unit": "mm",
-   "what": "twin pylons' distance from the centre line (kept where the nose is)",
-   "rule": "T8.5.1 15 mm",
-   "why": ""
-  },
-  {
-   "group": "front wing",
-   "name": "fw_pylon_chord",
-   "value": 8.0,
-   "lo": 4.0,
-   "hi": 15.0,
-   "mode": "shape",
-   "unit": "mm",
-   "what": "pylon chord (a NACA section edge-on to the flow)",
+   "unit": "-",
+   "what": "strut pair 0: where along the chord",
    "rule": "",
-   "why": ""
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "front wing",
-   "name": "fw_pylon_t",
-   "value": 2.0,
-   "lo": 1.05,
-   "hi": 4.0,
-   "mode": "shape",
-   "unit": "mm",
-   "what": "pylon thickness",
-   "rule": "the printer's wall",
-   "why": ""
-  },
-  {
-   "group": "front wing",
-   "name": "fw_pylon_rake",
-   "value": 0.0,
-   "lo": -20.0,
+   "name": "fws0_chord",
+   "value": 12.0,
+   "lo": 4.0,
    "hi": 20.0,
    "mode": "shape",
-   "unit": "deg",
-   "what": "pylon leaning forward at the top (+)",
+   "unit": "mm",
+   "what": "strut pair 0: chord",
    "rule": "",
-   "why": ""
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
+  },
+  {
+   "group": "front wing",
+   "name": "fws0_rake",
+   "value": 0.0,
+   "lo": -30.0,
+   "hi": 30.0,
+   "mode": "shape",
+   "unit": "deg",
+   "what": "strut pair 0: lean, nose end aft (+)",
+   "rule": "T8.5.1 ahead of Ref A (gate)",
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
+  },
+  {
+   "group": "front wing",
+   "name": "fws0_splay",
+   "value": 0.0,
+   "lo": -40.0,
+   "hi": 40.0,
+   "mode": "shape",
+   "unit": "deg",
+   "what": "strut pair 0: lean, nose end outboard (+)",
+   "rule": "T8.5.1 15 mm (gate)",
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
+  },
+  {
+   "group": "front wing",
+   "name": "fws1_t",
+   "value": 3.0,
+   "lo": 0.0,
+   "hi": 6.0,
+   "mode": "shape",
+   "unit": "mm",
+   "what": "strut pair 1: thickness; under the print wall it is not there",
+   "rule": "print wall",
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
+  },
+  {
+   "group": "front wing",
+   "name": "fws1_y",
+   "value": 0.5,
+   "lo": 0.0,
+   "hi": 1.0,
+   "mode": "shape",
+   "unit": "-",
+   "what": "strut pair 1: where on the span (0 the centre or the root, 1 T8.5.1's 15 mm)",
+   "rule": "T8.5.1",
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
+  },
+  {
+   "group": "front wing",
+   "name": "fws1_x",
+   "value": 0.5,
+   "lo": 0.15,
+   "hi": 0.85,
+   "mode": "shape",
+   "unit": "-",
+   "what": "strut pair 1: where along the chord",
+   "rule": "",
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
+  },
+  {
+   "group": "front wing",
+   "name": "fws1_chord",
+   "value": 12.0,
+   "lo": 4.0,
+   "hi": 20.0,
+   "mode": "shape",
+   "unit": "mm",
+   "what": "strut pair 1: chord",
+   "rule": "",
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
+  },
+  {
+   "group": "front wing",
+   "name": "fws1_rake",
+   "value": 0.0,
+   "lo": -30.0,
+   "hi": 30.0,
+   "mode": "shape",
+   "unit": "deg",
+   "what": "strut pair 1: lean, nose end aft (+)",
+   "rule": "T8.5.1 ahead of Ref A (gate)",
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
+  },
+  {
+   "group": "front wing",
+   "name": "fws1_splay",
+   "value": 0.0,
+   "lo": -40.0,
+   "hi": 40.0,
+   "mode": "shape",
+   "unit": "deg",
+   "what": "strut pair 1: lean, nose end outboard (+)",
+   "rule": "T8.5.1 15 mm (gate)",
+   "why": "user 2026-11-23: the wing's supports are the search's own (front_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
@@ -1600,26 +1684,26 @@
   {
    "group": "rear wing",
    "name": "rws0_t",
-   "value": 2.0,
+   "value": 3.0,
    "lo": 0.0,
    "hi": 6.0,
    "mode": "shape",
    "unit": "mm",
    "what": "strut pair 0: thickness; under the print wall it is not there",
    "rule": "print wall",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
    "name": "rws0_y",
-   "value": 0.0,
+   "value": 0.5,
    "lo": 0.0,
    "hi": 1.0,
    "mode": "shape",
    "unit": "-",
-   "what": "strut pair 0: where on the span (0 the centre line, 1 the tip)",
+   "what": "strut pair 0: where on the span (0 just off the centre line, 1 the tip; never on it: team rule)",
    "rule": "",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
@@ -1631,19 +1715,19 @@
    "unit": "-",
    "what": "strut pair 0: where along the chord",
    "rule": "",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
    "name": "rws0_chord",
-   "value": 10.0,
+   "value": 12.0,
    "lo": 4.0,
    "hi": 20.0,
    "mode": "shape",
    "unit": "mm",
    "what": "strut pair 0: chord",
    "rule": "",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
@@ -1655,55 +1739,55 @@
    "unit": "deg",
    "what": "strut pair 0: lean, foot aft (+)",
    "rule": "T9.4.1 behind Ref B (gate)",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
    "name": "rws0_splay",
    "value": 0.0,
-   "lo": -10.0,
-   "hi": 45.0,
+   "lo": -40.0,
+   "hi": 40.0,
    "mode": "shape",
    "unit": "deg",
    "what": "strut pair 0: lean, foot outboard (+): onto pods, sidepods, whatever body is there",
    "rule": "",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
    "name": "rws0_slot",
-   "value": 0.0,
+   "value": 2.5,
    "lo": -3.0,
    "hi": 8.0,
    "mode": "shape",
    "unit": "mm",
    "what": "strut pair 0: root; <= 0 glued, > 0 a ball-cut slot this deep",
    "rule": "T5.5 wall, 3 mm of foam round it (the engine makes it shallower or glues it)",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
    "name": "rws1_t",
-   "value": 0.0,
+   "value": 3.0,
    "lo": 0.0,
    "hi": 6.0,
    "mode": "shape",
    "unit": "mm",
    "what": "strut pair 1: thickness; under the print wall it is not there",
    "rule": "print wall",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
    "name": "rws1_y",
-   "value": 0.6,
+   "value": 0.5,
    "lo": 0.0,
    "hi": 1.0,
    "mode": "shape",
    "unit": "-",
-   "what": "strut pair 1: where on the span (0 the centre line, 1 the tip)",
+   "what": "strut pair 1: where on the span (0 just off the centre line, 1 the tip; never on it: team rule)",
    "rule": "",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
@@ -1715,19 +1799,19 @@
    "unit": "-",
    "what": "strut pair 1: where along the chord",
    "rule": "",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
    "name": "rws1_chord",
-   "value": 10.0,
+   "value": 12.0,
    "lo": 4.0,
    "hi": 20.0,
    "mode": "shape",
    "unit": "mm",
    "what": "strut pair 1: chord",
    "rule": "",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
@@ -1739,31 +1823,31 @@
    "unit": "deg",
    "what": "strut pair 1: lean, foot aft (+)",
    "rule": "T9.4.1 behind Ref B (gate)",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
    "name": "rws1_splay",
    "value": 0.0,
-   "lo": -10.0,
-   "hi": 45.0,
+   "lo": -40.0,
+   "hi": 40.0,
    "mode": "shape",
    "unit": "deg",
    "what": "strut pair 1: lean, foot outboard (+): onto pods, sidepods, whatever body is there",
    "rule": "",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "rear wing",
    "name": "rws1_slot",
-   "value": 0.0,
+   "value": 2.5,
    "lo": -3.0,
    "hi": 8.0,
    "mode": "shape",
    "unit": "mm",
    "what": "strut pair 1: root; <= 0 glued, > 0 a ball-cut slot this deep",
    "rule": "T5.5 wall, 3 mm of foam round it (the engine makes it shallower or glues it)",
-   "why": "user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice)"
+   "why": "user 2026-11-23: the rear wing's supports are the search's own (rear_wing_engine.py); every strut number starts at the middle of its range (no design pointed at)"
   },
   {
    "group": "tether guides",
