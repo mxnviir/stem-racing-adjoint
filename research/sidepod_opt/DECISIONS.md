@@ -88,7 +88,7 @@ decided), *withdrawn*.
   Clean medium noise: σ = 0.75 mN (7 degrees of freedom).
 - **Overturned if:** n/a.
 
-## D8. Scoring mesh (open)
+## D8. Scoring mesh (medium ruled out; fine-scoring method open)
 - **Question:** is the medium mesh (~520 k cells) enough to rank sidepod designs?
 - **Evidence so far:** medium agrees with coarse on large effects (pod vs none +25 mN; the valley). On medium
   with 3–4 clean repeats the groove is −3.6 ± 0.5 mN. On the fine mesh (3.36 M cells) single runs can't rank
@@ -99,8 +99,11 @@ decided), *withdrawn*.
   averaged). Single cold runs are valid only for differences well above ~4 mN (medium) / ~8 mN (fine).
 - **Decision rule (fixed 2026-11-21 13:00, mark M1):** medium is adequate only if the team pod's body drag is
   within 3 mN of the finer mesh and every design difference within max(2 mN, 3 SE).
-- **Next evidence:** fine clean repeats (team, groove), fine design 8 / no pod / blend 50; the 5 M-cell
-  wall-resolved runs.
+- **Result (2026-11-23, fine queue complete): M1 fails, medium is not adequate.** Team body drag medium 24.0 vs fine
+  18.8 (−5.2 mN, limit 3); no pod's gap to the team pod shifts +13.9 mN (limit 8.3); medium's groove −3.6 ± 0.5 becomes
+  +2.2 ± 1.9 on fine; medium's valley (blend 50 +6.8 vs no pod) becomes −7.1 on fine. M2 also fails on fine (pooled
+  σ 2.28 mN, team sd 3.08 between flow states). Scoring is therefore on fine, and small differences there need
+  state-controlled scoring (method A) or repeats; the method is the owner's call.
 
 ## D9. Which adjoint (open)
 - **Evidence:** discrete adjoint (DAFoam) predicts 66–109 % of measured ±1 mm bump effects (r = 0.98), but
@@ -143,6 +146,9 @@ decided), *withdrawn*.
 - **Decision:** runs start from at least three very different shapes (full legal block, team pod, no pod).
 - **Evidence:** the path from no pod to the team pod first gets worse: no pod 204.2, 50 % 211.0, 75 % 196.5,
   full 178.7 mN (medium); same shape on coarse. A local method starting from "no pod" stalled after −2 mN.
+- **2026-11-23: the valley is medium-only.** On fine, blend 50 reads 7.1 mN *below* no pod (208.8 vs 215.9, single
+  meshes, −2.2 SE); mark C2 fails there. The decision stands (different starts also guard against flow-state and
+  local-minimum traps), but this evidence no longer supports it on the scoring mesh.
 - **Overturned if:** n/a; the number of starts is set by compute.
 
 ## D12. Pass marks first

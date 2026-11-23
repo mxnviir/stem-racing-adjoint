@@ -1396,6 +1396,27 @@ external topology case was **not found** in their material (that is not proof it
     the sensitivities at iterations 900 and 1000 or run on toward ~1e-6.
   - Keep the Kaggle steady state and the draft release until the morph route is decided: any rerun needs them.
 
+- **2026-11-23 19:50, fine mesh: blend 50 reads 208.82 mN, 7.1 mN below no pod. C2 (the valley) fails on fine. Fine queue finished.**
+
+  | half car, mN | medium (1 mesh) | fine (1 mesh) | fine body (pressure) | fine wheels | fine lift |
+  |---|---|---|---|---|---|
+  | no pod | 204.23 | 215.94 | 38.9 (27.5) | 177.1 | 44.6 |
+  | 50 % blend | 210.98 | 208.82 | 31.7 (19.3) | 177.2 | 44.4 |
+  | blend − no pod | **+6.8** | **−7.1** | −7.2 | +0.1 | |
+
+  - Converged; 200-iteration block means 210.16, 209.48, 208.85, 208.82 (iterations 200–1000).
+  - **C2 (blend 50 worse than no pod by > 3 SE): fails.** −7.12 mN, SE 3.22 (pooled fine σ 2.28 × √2), z = −2.2: not worse,
+    if anything better. The whole difference is body drag; the wheels read the same.
+  - Most of the reversal is no pod moving with the mesh (204.2 medium → 215.9 fine, +11.7, mainly wheels 165.9 → 177.1);
+    blend 50 moves −2.2. Both are single meshes.
+  - **M1 part 2** for these: no pod vs team +25.5 medium → +39.4 fine, a shift of 13.9 mN against 3 SE = 8.3 (medium σ 0.75,
+    fine σ 2.28, SEs combined): outside. Blend 50 vs team +32.2 → +32.3: within. M1 already failed on part 1.
+  - **What it means:** the valley that D11 cites (growing a pod from nothing first costs drag) is a medium-mesh result that
+    fine does not show. D11's decision (several different starts) stands on cost grounds, but its evidence is now "medium
+    only". C1 (any pod beats no pod by ≥ 15 mN) still passes: team 176.6, blend 50 208.8, no pod 215.9.
+  - Fine marks, all in: M1 fail, M2 fail (pooled σ 2.28), C1 pass, C2 fail, C3 fail (groove not resolved), C5 pass.
+  - Queue finished; this machine is idle. Next on fine needs the owner: state-controlled scoring (method A), or repeats.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
