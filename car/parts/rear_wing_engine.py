@@ -38,11 +38,13 @@ N_SPAN = 6
 
 @dataclass
 class Support:
-    width_mm: float = 6.0       # along the span, where it leaves the wing; under the print wall: not there
-    y_frac: float = 0.5         # where on the span: 0 just off the centre line, 1 at the tip
-    chord_frac: float = 0.6     # how much of the chord it leaves from (centred on the chord)
-    foot_scale: float = 1.0     # the foot's size, times the patch's
-    waist: float = 0.2          # pinched half way down by this share
+    """The pair of side supports: each covers the wing's tip (where its aerofoil shows) and is lofted down to
+    the body (wing_loft.py). Only shape numbers; where it lands is the body's."""
+    plate_mm: float = 3.0       # its thickness outboard of the tip (T3.4 keeps the whole car 85 mm wide)
+    ext: float = 0.3            # how far it runs past the chord, as a share of the chord (half fore, half aft)
+    rise_mm: float = 3.0        # how far it stands above the wing's top
+    foot_scale: float = 1.0     # its foot's size, times the plate's
+    waist: float = 0.3          # pinched half way down by this share
 
 
 @dataclass
@@ -52,14 +54,15 @@ class RearWingDesign:
     half_span_mm: float = 26.0  # T9.5.1: >= 25 a side
     x_le_mm: float = 3.5        # leading edge behind Ref B
     lift_mm: float = 0.0        # above the lowest height T9.6 and T9.7 allow
-    supports: tuple = field(default_factory=lambda: (Support(), Support()))
+    support: Support = field(default_factory=Support)
 
 
 def from_dict(d: dict) -> RearWingDesign:
     d = dict(d)
-    sp = tuple(Support(**s) if isinstance(s, dict) else s for s in d.pop("supports", ()))
+    sp = d.pop("support", None) or {}
     keep = {f.name for f in dataclasses.fields(RearWingDesign)}
-    return RearWingDesign(**{k: v for k, v in d.items() if k in keep}, supports=sp)
+    return RearWingDesign(**{k: v for k, v in d.items() if k in keep and k != "supports"},
+                          support=Support(**sp) if isinstance(sp, dict) else sp)
 
 
 def params_dict(d: RearWingDesign) -> dict:
@@ -121,7 +124,9 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
         m.apply_scale(1e3)
     info = {"design": params_dict(d)}
     ref_b = cc.ref_plane_B(x_front_mm, W_mm)
-    hs = float(np.clip(d.half_span_mm, cc.REAR_SPAN_MIN / 2 + MARGIN_MM, HALF_WIDTH_MAX_MM - MARGIN_MM))
+    sp = d.support
+    plate = float(np.clip(sp.plate_mm, cc.BUILD_WALL_MM, 8.0))
+    hs = float(np.clip(d.half_span_mm, cc.REAR_SPAN_MIN / 2 + MARGIN_MM, HALF_WIDTH_MAX_MM - MARGIN_MM - plate))
     chord = float(np.clip(d.chord_mm, cc.REAR_CHORD_MIN + MARGIN_MM, cc.REAR_CHORD_MAX - MARGIN_MM))
     t = float(np.clip(d.t_mm, cc.WING_THICK_MIN + MARGIN_MM, cc.WING_THICK_MAX - MARGIN_MM))
     room = cc.REAR_OVERHANG_MAX - 2 * MARGIN_MM - chord
@@ -138,22 +143,8 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
     d = dataclasses.replace(d, half_span_mm=hs, chord_mm=chord, t_mm=t)
     info.update(half_span_mm=hs, chord_mm=chord, t_mm=t, x_le_mm=x_le)
 
-    # -- the supports' patches on the wing (y, width, x range) ------------------------------------------
-    sups = [s for s in d.supports if s.width_mm >= cc.BUILD_WALL_MM]
-    if not sups and d.supports:
-        k = int(np.argmax([s.width_mm for s in d.supports]))
-        sups = [dataclasses.replace(d.supports[k], width_mm=cc.BUILD_WALL_MM)]
-        info["support_widened_to_wall"] = k
-    patches = []
-    for i, s in enumerate(sups):
-        w = float(np.clip(s.width_mm, cc.BUILD_WALL_MM, hs - CENTRE_CLEAR_MM))
-        y_in, y_out = CENTRE_CLEAR_MM + w / 2, hs - w / 2
-        yc = y_in + float(np.clip(s.y_frac, 0.0, 1.0)) * max(y_out - y_in, 0.0)
-        cf = float(np.clip(s.chord_frac, 0.2, 1.0))
-        patches.append((i, s, yc, w, cf))
-
     def bands():
-        return [(yc - w / 2 - cc.CLEAR_AIR, yc + w / 2 + cc.CLEAR_AIR) for _, _, yc, w, _ in patches]
+        return [(hs - cc.CLEAR_AIR, hs + plate)]          # the joints with the side supports, at the tips
 
     # -- height: the lowest T9.6 (but at the joints) and T9.7 allow, then the search's lift --------------
     cloud = np.vstack([m.sample(int(min(400000, max(20000, m.area * 8)))) for m in [body] + others])
@@ -197,51 +188,46 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
         wing_tm = se._to_trimesh(_wing(d, x_le, z))
     info.update(z_chord_mm=z, lift_used_mm=lift)
 
-    # -- the supports: lofts from the patches to the body -------------------------------------------------
-    solids, placed = [], []
-    for i, s, yc, w, cf in patches:
-        x0 = x_le + chord * (0.5 - cf / 2)
-        x1 = x_le + chord * (0.5 + cf / 2)
-        o = np.array([0.5 * (x0 + x1), yc, z])
-        # the foot: the body straight under the patch, or (nothing under it) the body's nearest point
-        down = wl.first_hit(body, o, np.array([0.0, 0.0, -1.0]))
-        if down is not None:
-            foot = down
-        else:
-            q, dist, _ = trimesh.proximity.closest_point(body, o[None])
-            foot = q[0] if dist[0] <= FOOT_REACH_MM and q[0][2] < z else None
+    # -- the side supports: from the wing's tips (their aerofoil faces) lofted to the body --------------
+    t_half = 0.5 * float(wing_tm.bounds[1, 2] - wing_tm.bounds[0, 2])
+    z_bot, z_top = z - t_half, z + t_half
+    rise = float(np.clip(sp.rise_mm, 0.0, max((cc.REAR_Z_MAX - MARGIN_MM) - z_top, 0.0)))
+    ext = float(np.clip(sp.ext, 0.0, 0.8))
+    Mbody = se._to_manifold(body)
+    sup, placed = None, []
+    for _ in range(10):
+        x0 = max(x_le - 0.5 * ext * chord, ref_b + MARGIN_MM)
+        x1 = min(x_le + chord + 0.5 * ext * chord, ref_b + cc.REAR_OVERHANG_MAX - MARGIN_MM)
+        y0, y1 = hs - 0.3, hs + plate                     # 0.3 mm into the wing's tip: one printed part
+        bottom = np.array([0.5 * (x0 + x1), 0.5 * (y0 + y1), z_bot])
+        foot = wl.first_hit(body, bottom, np.array([0.0, 0.0, -1.0]))
+        if foot is None:                                  # nothing under the tip: the body's nearest point
+            q, dist, _ = trimesh.proximity.closest_point(body, bottom[None])
+            foot = q[0] if dist[0] <= FOOT_REACH_MM and q[0][2] < z_bot else None
         if foot is None:
-            info.setdefault("supports_not_placed", []).append(i)
-            continue
-        fs = float(np.clip(s.foot_scale, 0.3, 3.0))
-        Mbody = se._to_manifold(body)
-        part = None
-        for _ in range(10):
-            # the foot (shrunk if need be) inside the limits: off the centre line, inside the car's width,
-            # behind Ref B, out of T7.9's zones and clear of the rear wheel
-            hy, hx = 0.5 * w * fs, 0.5 * (x1 - x0) * fs
-            if (foot[1] - hy >= CENTRE_CLEAR_MM and foot[1] + hy <= HALF_WIDTH_MAX_MM - MARGIN_MM
-                    and foot[0] - hx >= ref_b + MARGIN_MM):
-                m = wl.loft((x0, x1, yc - w / 2, yc + w / 2), z, (foot[0], foot[1]), foot[2], foot_scale=fs,
-                            waist=float(np.clip(s.waist, 0.0, 0.7)))
-                if m is not None:
-                    # its base fitted to the milled body (glued, no pocket); the right half
-                    M = (se._to_manifold(m) - Mbody) ^ se._box(-1e3, 1e3, 0.0, 1e3, -1e3, 1e3)
-                    pcs = sorted(M.decompose(), key=lambda p: -p.volume())
-                    if pcs and _clear(se._to_trimesh(pcs[0]), wheel_rear, W_mm, x_front_mm):
-                        part = pcs[0]
-                        break
+            break
+        fs = float(np.clip(sp.foot_scale, 0.3, 3.0))
+        while fs > 0.25:
+            hy = 0.5 * (y1 - y0) * fs
+            if foot[1] - hy >= CENTRE_CLEAR_MM and foot[1] + hy <= HALF_WIDTH_MAX_MM - MARGIN_MM:
+                break
             fs *= 0.85
-        if part is None:
-            info.setdefault("supports_not_placed", []).append(i)
-            continue
-        solids.append(part)
-        placed.append(dict(index=i, y_mm=round(yc, 2), width_mm=round(w, 2), chord_frac=round(cf, 3),
-                           foot_mm=[round(float(v), 2) for v in foot], foot_scale=round(fs, 3)))
-    sup = None
-    if solids:
-        import manifold3d as mf
-        sup = se._to_trimesh(mf.Manifold.batch_boolean(solids, mf.OpType.Add))
+        m = wl.loft((x0, x1, y0, y1), z_bot, (foot[0], foot[1]), foot[2], foot_scale=fs,
+                    waist=float(np.clip(sp.waist, 0.0, 0.7)), hold_mm=z_top + rise - z_bot, axis="z")
+        if m is not None:
+            # its base fitted to the milled body (glued, no pocket); the right half
+            M = (m - Mbody) ^ se._box(-1e3, 1e3, 0.0, 1e3, -1e3, 1e3)
+            pcs = sorted(M.decompose(), key=lambda p: -p.volume())
+            if pcs and _clear(wl.to_trimesh(pcs[0]), wheel_rear, W_mm, x_front_mm):
+                sup = wl.to_trimesh(pcs[0])
+                placed = [dict(y_mm=round(0.5 * (y0 + y1), 2), width_mm=round(y1 - y0, 2), plate_mm=plate,
+                               x_mm=[round(x0, 2), round(x1, 2)], rise_mm=round(rise, 2),
+                               foot_mm=[round(float(v), 2) for v in foot], foot_scale=round(fs, 3))]
+                break
+        ext *= 0.7                                        # shorter, then a smaller foot, until it is clear
+        sp = dataclasses.replace(sp, foot_scale=sp.foot_scale * 0.85)
+    if sup is None:
+        info["supports_not_placed"] = True
     info["struts"] = placed
     info["supported"] = bool(placed)
     gates = measure(d, wing_tm, sup, body, others, fwd, ref_b, wheel_rear, x_front_mm, W_mm, placed)
@@ -281,8 +267,8 @@ def measure(d, wing, sup, body, others, fwd, ref_b, wheel_rear, x_front_mm, W_mm
     g["T9.5.3_rw_thick_max"] = cc.WING_THICK_MAX - float(b[1, 2] - b[0, 2])
     pts, _ = trimesh.sample.sample_surface_even(wing, 2500, seed=3)
     keep = np.ones(len(pts), bool)
-    for p in placed:
-        keep &= np.abs(pts[:, 1] - p["y_mm"]) > p["width_mm"] / 2 + cc.CLEAR_AIR
+    for p in placed:                                     # the joint with a side support: 5 mm in from the tip
+        keep &= pts[:, 1] < b[1, 1] - cc.CLEAR_AIR
     q = pts[keep]
     if len(q):
         gaps = [float(np.concatenate([trimesh.proximity.closest_point(m, q[i:i + 256])[1]
@@ -302,5 +288,5 @@ def measure(d, wing, sup, body, others, fwd, ref_b, wheel_rear, x_front_mm, W_mm
         g["rw_support_wheel_clear"] = float(np.where(inside_y, r - (R + WHEEL_CLEAR_MM), 99.0).min())
         zv = ez.t79_zones(P[:, 0], np.abs(P[:, 1]), P[:, 2], W_mm, x_front_mm)
         g["rw_support_T7.9_zones"] = -float(zv.max()) if (zv > 0).any() else 1.0
-        g["rw_support_wall"] = min(p["width_mm"] for p in placed) - cc.BUILD_WALL_MM
+        g["rw_support_wall"] = min(p["plate_mm"] for p in placed) - cc.BUILD_WALL_MM
     return g

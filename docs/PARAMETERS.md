@@ -1,6 +1,6 @@
 # Layout search: every parameter of the car
 
-156 parameters, 10 evolved in stage 1 (the layout search), 33 in stage 2 (`shape`: the shape search, with the body's lattice), 113 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
+145 parameters, 10 evolved in stage 1 (the layout search), 22 in stage 2 (`shape`: the shape search, with the body's lattice), 113 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
 
 x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, Ref B = rear axle + 16.
 
@@ -156,7 +156,7 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `nose_root_scale` | **fixed** | 1.0 | 0.9 - 1.0 - | root section vs the body's |  |  |
 | `nose_wall` | **fixed** | 1.0 | 0.8 - 2.0 mm | printed shell wall | print minimum | mass only |
 
-## front wing (16 of 16 evolved)
+## front wing (10 of 10 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -166,18 +166,12 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `fw_te_gap` | **shape** | 6.0 | 5.3 - 20.0 mm | trailing edge ahead of Ref A | T8.7 5 mm to the body and the wheels; T8.2 the whole wing within 40 mm of Ref A |  |
 | `fw_tip_y` | **shape** | 36.5 | 26.0 - 42.0 mm | tip, from the centre line (pushed out until each segment is 25 mm) | T8.6.1; T3.4 car width |  |
 | `fw_root_y` | **shape** | 8.0 | 0.5 - 15.0 mm | two pieces: where each half starts (in the nose's side, or over/under it on a pylon) | T8.5.1 support band 15 mm |  |
-| `fwsup0_width` | **shape** | 6.0 | 0.0 - 12.0 mm | support 0: width where it leaves the wing; under the print wall it is not there | print wall | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `fwsup0_y` | **shape** | 0.5 | 0.0 - 1.0 - | support 0: where on the span (0 the centre or a half's root, 1 the furthest out allowed) | T8.5.1 15 mm; T8.6.1 25 mm beyond | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `fwsup0_chord` | **shape** | 0.6 | 0.2 - 1.0 - | support 0: share of the chord it leaves from |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `fwsup0_foot` | **shape** | 1.2 | 0.4 - 2.0 - | support 0: its foot's size, times the patch's (flared > 1) |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `fwsup0_waist` | **shape** | 0.3 | 0.0 - 0.6 - | support 0: pinched half way by this share |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `fwsup1_width` | **shape** | 6.0 | 0.0 - 12.0 mm | support 1: width where it leaves the wing; under the print wall it is not there | print wall | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `fwsup1_y` | **shape** | 0.5 | 0.0 - 1.0 - | support 1: where on the span (0 the centre or a half's root, 1 the furthest out allowed) | T8.5.1 15 mm; T8.6.1 25 mm beyond | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `fwsup1_chord` | **shape** | 0.6 | 0.2 - 1.0 - | support 1: share of the chord it leaves from |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `fwsup1_foot` | **shape** | 1.2 | 0.4 - 2.0 - | support 1: its foot's size, times the patch's (flared > 1) |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `fwsup1_waist` | **shape** | 0.3 | 0.0 - 0.6 - | support 1: pinched half way by this share |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `fwsup_ext` | **shape** | 0.4 | 0.0 - 0.8 - | split wing: its side supports' plate past the chord (share of it) | T8.5.1 ahead of Ref A | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
+| `fwsup_rise` | **shape** | 3.0 | 0.0 - 6.0 mm | split wing: its side supports' plate above and below the section | T8.5.1 25 mm | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
+| `fwsup_foot` | **shape** | 1.2 | 0.4 - 2.0 - | split wing: its side supports' foot on the nose, times the plate | T8.5.1 | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
+| `fwsup_waist` | **shape** | 0.3 | 0.0 - 0.6 - | split wing: its side supports pinched half way by this share |  | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
 
-## rear wing (15 of 21 evolved)
+## rear wing (10 of 16 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -192,16 +186,11 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `rw_pylon_chord` | **fixed** | 10.0 | 6.0 - 20.0 mm | pylon chord |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `rw_t` | **shape** | 2.3 | 2.3 - 6.0 mm | wing thickness | T9.5.3 2-6 | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
 | `rw_lift` | **shape** | 0.0 | 0.0 - 15.0 mm | height above the lowest T9.6 / T9.7 allow | T9.4.3 65 mm | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
-| `rwsup0_width` | **shape** | 6.0 | 0.0 - 12.0 mm | support 0: width where it leaves the wing; under the print wall it is not there | print wall | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `rwsup0_y` | **shape** | 0.5 | 0.0 - 1.0 - | support 0: where on the span (0 just off the centre line, 1 the tip; never on it: team rule) | team: off the centre line | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `rwsup0_chord` | **shape** | 0.6 | 0.2 - 1.0 - | support 0: share of the chord it leaves from |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `rwsup0_foot` | **shape** | 1.2 | 0.4 - 2.0 - | support 0: its foot's size, times the patch's (flared > 1) |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `rwsup0_waist` | **shape** | 0.3 | 0.0 - 0.6 - | support 0: pinched half way by this share |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `rwsup1_width` | **shape** | 6.0 | 0.0 - 12.0 mm | support 1: width where it leaves the wing; under the print wall it is not there | print wall | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `rwsup1_y` | **shape** | 0.5 | 0.0 - 1.0 - | support 1: where on the span (0 just off the centre line, 1 the tip; never on it: team rule) | team: off the centre line | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `rwsup1_chord` | **shape** | 0.6 | 0.2 - 1.0 - | support 1: share of the chord it leaves from |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `rwsup1_foot` | **shape** | 1.2 | 0.4 - 2.0 - | support 1: its foot's size, times the patch's (flared > 1) |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
-| `rwsup1_waist` | **shape** | 0.3 | 0.0 - 0.6 - | support 1: pinched half way by this share |  | user 2026-11-23: supports grown like the halo's loft (wing_loft.py), no presets: every number starts at the middle of its range |
+| `rwsup_plate` | **shape** | 3.6 | 1.2 - 6.0 mm | side supports: plate thickness outboard of the tips | print wall; T3.4 | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
+| `rwsup_ext` | **shape** | 0.4 | 0.0 - 0.8 - | side supports: plate past the chord (share of it) | T9.4.1, T9.4.2 | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
+| `rwsup_rise` | **shape** | 4.0 | 0.0 - 8.0 mm | side supports: above the wing's top | T9.4.3 65 mm | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
+| `rwsup_foot` | **shape** | 1.2 | 0.4 - 2.0 - | side supports: foot on the body, times the plate | T7.9, T3.4 | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
+| `rwsup_waist` | **shape** | 0.3 | 0.0 - 0.6 - | side supports: pinched half way down by this share |  | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
 
 ## tether guides (0 of 2 evolved)
 

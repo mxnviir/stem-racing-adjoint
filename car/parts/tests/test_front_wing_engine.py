@@ -42,15 +42,13 @@ def _nose_m():
 
 NOSE = _nose_m()
 S = fwe.Support
-OFF = S(width_mm=0.0)
 CASES = {
-    "one piece through the nose": dict(supports=(OFF, OFF)),
-    "two halves rooted in the nose": dict(pieces=2, root_y_mm=9.0, supports=(OFF, OFF)),
-    "one piece under the nose, a support across the centre": dict(z_mm=6.5, chord_mm=18.0,
-                                                                   supports=(S(width_mm=4.0, y_frac=0.0), OFF)),
-    "two halves under the nose, a flared pair": dict(pieces=2, root_y_mm=5.0, chord_mm=20.0, z_mm=6.5,
-                                                     supports=(S(width_mm=3.0, y_frac=0.3, foot_scale=2.0, waist=0.5), OFF)),
-    "the middle of every range": dict(),
+    "one piece through the nose": dict(),
+    "one piece set under the nose: moved into it": dict(pieces=1, z_mm=6.5, chord_mm=18.0),
+    "two halves rooted in the nose": dict(pieces=2, root_y_mm=4.0),
+    "two halves off the nose, their ends lofted into it": dict(pieces=2, root_y_mm=13.0, chord_mm=20.0,
+                                                              support=S(ext=0.6, rise_mm=4.0, foot_scale=1.6, waist=0.4)),
+    "the middle of every range": dict(pieces=2),
 }
 
 
@@ -78,17 +76,17 @@ def test_a_short_tip_is_pushed_out_to_a_25_mm_segment():
     assert r["gates"]["T8.6.1_fw_segment"] >= 0, r["info"]
 
 
-def test_supports_reach_the_nose_inside_the_band_or_are_reported():
-    for name, kw in CASES.items():
+def test_a_split_wing_is_held_by_its_ends():
+    """Off the nose, each half's inner end (its aerofoil face) is lofted into the nose: inside T8.5.1's band."""
+    r = fwe.build(fwe.FrontWingDesign(**CASES["two halves off the nose, their ends lofted into it"]), NOSE, X_FRONT, WHEEL)
+    assert r["info"]["struts"] and r["pylons"] is not None, r["info"]
+    pb = r["pylons"].bounds * 1e3
+    wb = r["wing"].bounds * 1e3
+    assert pb[1, 1] <= wb[0, 1] + 0.31 + 1e-6            # the plate covers the end face, from there inwards
+    assert pb[1, 1] <= fwe.SUPPORT_BAND_MM and pb[1, 2] <= 25.0
+
+
+def test_one_piece_is_always_held_by_the_nose():
+    for kw in (CASES["one piece through the nose"], CASES["one piece set under the nose: moved into it"]):
         r = fwe.build(fwe.FrontWingDesign(**kw), NOSE, X_FRONT, WHEEL)
-        for p in r["info"]["struts"]:
-            assert abs(p["nose_mm"][1]) <= fwe.SUPPORT_BAND_MM
-        if r["pylons"] is not None:
-            pb = r["pylons"].bounds * 1e3
-            assert pb[1, 1] <= fwe.SUPPORT_BAND_MM + 1e-6, (name, pb)
-
-
-def test_supports_under_the_wall_widen_the_widest_when_nothing_holds_the_wing():
-    r = fwe.build(fwe.FrontWingDesign(z_mm=6.5, chord_mm=18.0, supports=(S(width_mm=0.5), S(width_mm=0.8))),
-                  NOSE, X_FRONT, WHEEL)
-    assert r["info"]["supported"]
+        assert r["info"]["held_by_nose"] and r["info"]["supported"]

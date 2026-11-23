@@ -39,19 +39,19 @@ HIGH_OUTBOARD_MM = 20.0        # T8.5.2
 SEGMENT_MIN_MM = 25.0          # T8.6.1
 OVERHANG_MM = 40.0             # T8.2: the car's front no more than this ahead of Ref A
 MARGIN_MM = 0.3                # kept off every limit
+TRACK_CLEAR_MM = 5.0            # T8.7: 5 mm over the track
 EMBED_MM = 1.0                 # a pylon runs this far into the nose and into the wing
 N_SPAN = 24                    # sections along an element
 
 
 @dataclass
 class Support:
-    """A support grown from a patch of the wing to the nose (wing_loft.py): only shape numbers."""
-    width_mm: float = 6.0          # along the span, where it leaves the wing; under the print wall: not there
-    y_frac: float = 0.5            # where on the span: 0 the centre (or a half's root), 1 the furthest out a
-                                   # support may stand (T8.5.1's 15 mm, and 25 mm of span beyond it, T8.6.1)
-    chord_frac: float = 0.6        # how much of the chord it leaves from (centred on the chord)
-    foot_scale: float = 1.0        # its foot's size, times the patch's
-    waist: float = 0.2             # pinched half way by this share
+    """A split wing's side supports: each half's inner end (where its aerofoil shows) lofted into the nose
+    (wing_loft.py). Only shape numbers; where it lands is the nose's."""
+    ext: float = 0.3               # how far the plate runs past the chord, as a share of it (half fore, half aft)
+    rise_mm: float = 2.0           # how far it stands above and below the wing's section
+    foot_scale: float = 1.0        # its foot's size on the nose, times the plate's
+    waist: float = 0.3             # pinched half way by this share
 
 
 @dataclass
@@ -63,14 +63,15 @@ class FrontWingDesign:
     z_mm: float = 8.0              # chord line height
     tip_y_mm: float = 36.5         # tip: just outboard of the front wheel by default
     root_y_mm: float = 8.0         # two pieces: where each half starts (inside the support band)
-    supports: tuple = field(default_factory=lambda: (Support(), Support()))
+    support: Support = field(default_factory=Support)
 
 
 def from_dict(d: dict) -> FrontWingDesign:
     keep = {f.name for f in dataclasses.fields(FrontWingDesign)}
     d = dict(d)
-    sp = tuple(Support(**q) if isinstance(q, dict) else q for q in d.pop("supports", ()))
-    return FrontWingDesign(**{k: v for k, v in d.items() if k in keep and k != "supports"}, supports=sp)
+    sp = d.pop("support", None) or {}
+    return FrontWingDesign(**{k: v for k, v in d.items() if k in keep and k not in ("support", "supports")},
+                           support=Support(**sp) if isinstance(sp, dict) else sp)
 
 
 def params_dict(d: FrontWingDesign) -> dict:
@@ -149,6 +150,17 @@ def build(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=None):
     A wing the nose does not hold, closer than 5 mm to it, is lowered by what it lacks and built again
     (down to the track's own 5 mm)."""
     r = _build_once(d, nose_half_m, x_front_mm, wheel, body_half_m)
+    if d.pieces == 1 and not r["info"].get("held_by_nose"):
+        # one wing across the centre line is held only by the nose it runs through (T1.7): moved to the
+        # nose's own height at its chord, then built again
+        nose = nose_half_m.copy(); nose.apply_scale(1e3)
+        xm = r["info"]["x_le_root_mm"] + 0.5 * d.chord_mm
+        sx = nose.section(plane_origin=[xm, 0, 0], plane_normal=[1.0, 0, 0])
+        if sx is not None:
+            zc = 0.5 * float(sx.vertices[:, 2].min() + sx.vertices[:, 2].max())
+            r2 = _build_once(dataclasses.replace(d, z_mm=zc), nose_half_m, x_front_mm, wheel, body_half_m)
+            r2["info"]["moved_to_the_nose_mm"] = round(zc - r["info"]["z_mm"], 2)
+            r = r2
     for _ in range(3):
         short = -r["gates"].get("T8.7_fw_nose", 0.0)
         if short <= 0 or r["info"].get("held_by_nose"):
@@ -193,14 +205,13 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
             hw_any = max(hw_any, float(s_.vertices[:, 1].max()))
     info["nose_half_width_mm"] = hw_any
     if d.pieces == 2:
-        # each half starts in the nose's side (the nose holds it) or, where the wing passes over or under
-        # the nose, above or below it, where a pylon reaches the nose
-        lim = (cut_min - EMBED_MM) if cut_min > EMBED_MM + 0.5 else (hw_any - cc.BUILD_WALL_MM / 2 - 0.5)
-        y0 = float(np.clip(min(d.root_y_mm, lim), 0.5, SUPPORT_BAND_MM - 1.0))
+        # each half starts where the search says, inside T8.5.1's band: in the nose (the nose holds it) or
+        # off it (its inner end is lofted into the nose)
+        y0 = float(np.clip(d.root_y_mm, 0.5, SUPPORT_BAND_MM - 1.0))
     else:
         y0 = -0.5                                         # across the centre line (mirrored: one piece)
     seg_from = max(cut, max(y0, 0.0))
-    tip = max(d.tip_y_mm, seg_from + SEGMENT_MIN_MM + MARGIN_MM,
+    tip = max(d.tip_y_mm, seg_from + SEGMENT_MIN_MM + MARGIN_MM + 0.3,      # (+ the side support's 0.3 mm into it)
               (SEGMENT_MIN_MM + MARGIN_MM) if d.pieces == 1 and cut == 0.0 else 0.0)
     info["tip_y_mm"] = tip
     el = element(d, y0, tip, x_le, z)
@@ -210,70 +221,46 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
     inside = trimesh.boolean.intersection([wing, nose], engine="manifold") if nose.is_volume else None
     held = inside is not None and not inside.is_empty and abs(inside.volume) > 1.0
     info["held_by_nose"] = bool(held)
-    # supports: lofts from patches of the wing to the nose (wing_loft.py), printed with the nose
+    # side supports (a split wing): each half's inner end lofted into the nose, printed with it
     import wing_loft as wl
-    sups = [q for q in d.supports if q.width_mm >= cc.BUILD_WALL_MM]
-    if not sups and not held and d.supports:
-        # nothing holds the wing and every support is under the print wall: the widest, at the wall
-        k = int(np.argmax([q.width_mm for q in d.supports]))
-        sups = [dataclasses.replace(d.supports[k], width_mm=cc.BUILD_WALL_MM)]
-        info["support_widened_to_wall"] = k
     pylons, placed = [], []
-    # a support breaks the span (T8.6.1): none stands further out than leaves the tip's 25 mm beyond it,
-    # and T8.5.1 keeps them inside 15 mm
-    y_out = min(SUPPORT_BAND_MM - MARGIN_MM, tip - SEGMENT_MIN_MM - MARGIN_MM)
-    for i, q in enumerate(sups):
-        w = float(np.clip(q.width_mm, cc.BUILD_WALL_MM, 2 * y_out))
-        y_lo = (max(y0, 0.0) + w / 2) if d.pieces == 2 else 0.0
-        y_hi = y_out - w / 2
-        yc = y_lo + float(np.clip(q.y_frac, 0.0, 1.0)) * max(y_hi - y_lo, 0.0)
-        if d.pieces == 1 and yc < w / 2:
-            yc = 0.0                                      # across the centre line: one support
-        cf = float(np.clip(q.chord_frac, 0.2, 1.0))
-        x0, x1 = x_le + d.chord_mm * (0.5 - cf / 2), x_le + d.chord_mm * (0.5 + cf / 2)
-        o = np.array([0.5 * (x0 + x1), max(yc, 0.05), z])
-        if nose.is_volume and nose.contains(o[None])[0]:
-            info.setdefault("supports_in_the_nose", []).append(i)   # the nose holds the wing there itself
-            continue
-        import trimesh as _tm
-        # the foot: the nose straight above or below the patch (the nearer), or its nearest point
-        hits = [h for h in (wl.first_hit(nose, o, np.array([0, 0, -1.0])), wl.first_hit(nose, o, np.array([0, 0, 1.0])))
-                if h is not None]
-        if hits:
-            foot = min(hits, key=lambda h: abs(h[2] - z))
-        else:
-            qq, dist, _ = _tm.proximity.closest_point(nose, o[None])
-            foot = qq[0] if dist[0] <= 30.0 else None
+    sp = d.support
+    root_in_nose = d.pieces == 2 and nose.is_volume and bool(nose.contains(np.array([[x_le + 0.5 * d.chord_mm, y0 + 0.2, z]]))[0])
+    if d.pieces == 2 and not root_in_nose:
+        ext = float(np.clip(sp.ext, 0.0, 0.8))
+        rise = float(np.clip(sp.rise_mm, 0.0, 25.0 - MARGIN_MM - (z + t / 2)))
+        x0 = max(x_le - 0.5 * ext * d.chord_mm, ref_a - OVERHANG_MM + MARGIN_MM)
+        x1 = min(x_le + d.chord_mm + 0.5 * ext * d.chord_mm, ref_a - MARGIN_MM)
+        z0, z1 = max(z - t / 2 - rise, TRACK_CLEAR_MM), z + t / 2 + rise
+        o = np.array([0.5 * (x0 + x1), y0, z])
+        foot = wl.first_hit(nose, o, np.array([0.0, -1.0, 0.0]))
         if foot is None:
-            info.setdefault("supports_not_placed", []).append(i)
-            continue
-        if yc == 0.0:
-            foot = np.array([foot[0], 0.0, foot[2]])
-        fs = float(np.clip(q.foot_scale, 0.3, 3.0))
-        ok = False
-        for _ in range(12):                               # the foot inside T8.5.1's band and the span rule
-            ok = abs(foot[1]) + 0.5 * w * fs <= y_out and foot[0] + 0.5 * (x1 - x0) * fs <= ref_a - MARGIN_MM
-            if ok:
-                break
-            fs *= 0.85
-        if not ok:
-            info.setdefault("supports_not_placed", []).append(i)
-            continue
-        m = wl.loft((x0, x1, yc - w / 2, yc + w / 2), z, (foot[0], foot[1]), foot[2], foot_scale=fs,
-                    waist=float(np.clip(q.waist, 0.0, 0.7)), past_mm=EMBED_MM)
-        if m is None:
-            info.setdefault("supports_not_placed", []).append(i)
-            continue
-        pylons.append(se._to_manifold(m))
-        placed.append(dict(index=i, y_mm=round(yc, 2), t_mm=w, width_mm=round(w, 2), chord_frac=round(cf, 3),
-                           nose_mm=[round(float(u), 2) for u in foot], foot_scale=round(fs, 3)))
+            import trimesh as _tm
+            qq, dist, _ = _tm.proximity.closest_point(nose, o[None])
+            foot = qq[0] if dist[0] <= 30.0 and qq[0][1] < y0 else None
+        if foot is not None:
+            fs = float(np.clip(sp.foot_scale, 0.3, 3.0))
+            while fs > 0.25 and (foot[2] + 0.5 * (z1 - z0) * fs > 25.0 - MARGIN_MM
+                                 or foot[0] + 0.5 * (x1 - x0) * fs > ref_a - MARGIN_MM):
+                fs *= 0.85                              # its foot inside T8.5.1's box
+            m = wl.loft((x0, x1, z0, z1), y0, (foot[0], foot[2]), foot[1], foot_scale=fs,
+                        waist=float(np.clip(sp.waist, 0.0, 0.7)), past_mm=EMBED_MM, hold_mm=0.3, axis="y")
+            if m is not None:
+                pylons.append(m)
+                placed.append(dict(y_mm=round(y0, 2), t_mm=0.0, x_mm=[round(x0, 2), round(x1, 2)],
+                                   z_mm=[round(z0, 2), round(z1, 2)], nose_mm=[round(float(u), 2) for u in foot],
+                                   foot_scale=round(fs, 3)))
+        if not placed:
+            info["supports_not_placed"] = True
+    info["root_in_nose"] = root_in_nose
+    held = held or root_in_nose
     info["struts"] = placed
     info["pylon_y_placed_mm"] = [p["y_mm"] for p in placed]
     pyl = None
     if pylons:
         import manifold3d as mf
         Pm = mf.Manifold.batch_boolean(pylons, mf.OpType.Add) ^ se._box(-1e3, 1e3, 0.0, 1e3, -1e3, 1e3)
-        pyl = se._to_trimesh(Pm)
+        pyl = wl.to_trimesh(Pm)
     info["supported"] = bool(held or placed)
     gates = measure(d, wing, pyl, nose, ref_a, wheel, body_half_m, info)
     wing.apply_scale(1e-3)

@@ -92,16 +92,16 @@ folder gets `supports.png` (`search/layout/support_render.py`) to inspect the de
 `front_wing_engine.py` and `rear_wing_engine.py` design the searches' wings and their supports. Every wing is
 STRAIGHT (user 2026-11-23): a level, symmetric NACA section square to the car -- no sweep, dihedral, angle of
 attack or camber. Searched: the front wing one piece or two, chord, gap to Ref A, span, root; the rear wing's
-chord, thickness, half span and height over the lowest T9.6 / T9.7 allow. Their supports are LOFTS
-(`wing_loft.py`, like the halo's loft): each grows from a patch of the wing -- anywhere on the span the rules
-let a support stand, up to the rear wing's tips, over part or all of the chord -- to the nose / body straight
-under it (or, with nothing under it, their nearest point), its outline morphing from the patch's to its
-foot's, flared or narrowed, pinched or not. Numbers per support: width (under the print wall it is not there),
-where on the span, how much of the chord, the foot's scale, the waist -- each starting at the middle of its
-range; where it lands is the geometry's. Front supports are printed with the nose and kept in T8.5.1's band
-and T8.6.1's 25 mm of span beyond them; rear supports are trimmed to the body's surface (a glued joint), never
-on the centre line (team rule, user 2026-11-23), shrunk out of T7.9's zones and the rear wheel. Every T8 / T9
-rule is measured on the result, and again by the referee.
+chord, thickness, half span and height over the lowest T9.6 / T9.7 allow. Supports are on the wings' SIDES,
+where the aerofoil shows (user 2026-11-23; the regulations' T1.6 and appendix iv), lofted like the halo's loft
+(`wing_loft.py`): a plate over the end face, carried slice by slice to the body / nose, its outline morphing into
+its foot, flared or narrowed, pinched or not. Rear: a pair at the tips, down to the body straight under them or,
+with nothing there, to its nearest point; trimmed to the body's surface (a glued joint); never on the centre
+line; shrunk out of T7.9's zones and off the rear wheel. Front: T1.6.1 / T8.5.1 put a support within 15 mm of
+the centre line, so a split wing's inner ends are lofted into the nose (printed with it); one piece is held by
+the nose it runs through, moved to the nose's height if it would miss it. Numbers: plate thickness (rear), how
+far it runs past the chord, how far above / below the wing, foot scale, waist -- each starting mid-range; where
+it lands is the geometry's. Every T8 / T9 rule is measured on the result, and again by the referee.
 `joints.make_all` cuts pockets for the printed parts and writes the manufacturing files (skipped in
 searches with `--no-joints`; rebuild finalists without it).
 
