@@ -1213,6 +1213,28 @@ external topology case was **not found** in their material (that is not proof it
   - **ETA:** about 2.7 h per run, so team~2 ~09:00, groove~2 ~11:45 (gives the 3-vs-3 verdict), no pod ~14:30,
     design 8 ~17:00, blend 50 ~19:45 UTC.
 
+- **2026-11-23 09:00, fine mesh: team~2 (1000 iterations) reads 173.76 mN. With 3 team meshes, groove~2 can no longer give a verdict either way.**
+
+  | fine mesh, half car (200-iteration means) | iterations | total | body pressure | wheels | lift |
+  |---|---|---|---|---|---|
+  | team (frame 0) | 2000 | 176.04 | 2.6 | 157.4 | 64.8 |
+  | team~1 (+0.37 mm) | 2000 | 179.86 | 5.3 | 158.9 | 55.6 |
+  | team~2 (+0.74 mm) | 1000 | 173.76 | 0.9 | 156.8 | 69.4 |
+  | groove (frame 0) | 2000 | 178.52 | 8.1 | 154.9 | 44.7 |
+  | groove~1 (+0.37 mm) | 2000 | 179.81 | 9.4 | 155.2 | 50.1 |
+
+  - The run is clean: 3,364,441 cells, y+ max 88.1, converged. 200-iteration block means 175.10, 173.92, 173.87, 173.76
+    (iterations 200–1000): settled from ~600.
+  - The team pod over 3 meshes: mean 176.55, sd 3.08 mN (range 6.1). Its runs look like two flow states: team and
+    team~2 have low body pressure (2.6, 0.9) and high lift (65, 69); team~1 has 5.3 and 56. The groove's two runs
+    sit elsewhere (body pressure 8–9, lift 45–50).
+  - **Mark (fixed 2026-11-22 14:45) worked out before groove~2:** for every possible groove~2 value (scanned
+    160–200 mN) the difference of means stays within ±1.8 SE (pooled sd). So the 3-vs-3 result is already
+    "not resolved by 3 fine meshes each". Per that entry, ranking on fine now needs state-controlled
+    scoring (both flow states per design, Part 2's method A) or more repeats on a bigger machine.
+  - groove~2 still runs (started 08:56): it is the third groove mesh that D8 (mark M1) needs for the groove's
+    fine mean and SE, and it shows whether the groove has a second state too.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
