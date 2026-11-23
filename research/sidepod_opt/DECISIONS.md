@@ -112,6 +112,20 @@ decided), *withdrawn*.
 - **Status 2026-11-23:** the test ran (2.13 M cells, layers on 62 % of wall faces, A1 PASS, both adjoints clean) but is
   inconclusive: every registered bump folded the wall layer when morphed, so no bump pair was measured. The
   next step (locate the folded cells, then a direct-field or stepped morph) needs a written amendment to the test first.
+- **Plan B (2026-11-23 18:40, proposed; routes in step 2 wait for the owner's choice):**
+  1. Diagnostic, no rule change (PC, morph-only checks, ~1.3 min each): locate the folded cells (`checkMesh -writeSets`)
+     for pod_front_low, pod_rear, pod_rear_top_m with the fixed reference; morph pod_front_low and pod_rear_top_m at 0.5 and
+     0.25 mm to see whether folds scale with height. Must first reproduce pod_front_low = 9 cells.
+  2. One repair, picked from step 1 and written into RESOLVED_TEST.md before any run: smaller bump (0.5 mm, mean over whole
+     ~101-iteration cycles) if folds vanish with height; direct-field morph if they sit on sharp edges at any height;
+     site swap (chosen on morphability alone) if only pod_front_low's ground gap folds; stepped morph last (needs a ramp).
+  3. **Stop rule:** one diagnostic round plus one repair round. If the registered pairs (or the swapped set) still do not all
+     morph Mesh OK, the normal adjoint is closed as "not testable on a layered mesh" and Plan C applies.
+  4. **Plan C:** discrete adjoint (DAFoam, coarse r = 0.98) on the fine mesh, the scoring mesh D8 now points to (medium
+     failed M1). ~150 kB/cell × 3.4 M ≈ 510 GB: a rented machine, only with the owner's OK on instance and cost, after a
+     sizing run. Its bump validation needs a working morph on fine (check first). A gradient-free route is not proposed: under
+     "no parameters, no predictors" the only step proposer is bump-by-bump differencing, i.e. a gradient at 2 CFD runs per site.
+  - Not fixed by any of this: fine-mesh scoring scatter (two flow states, team sd 3 mN) still needs method A or repeats.
   Otherwise the discrete adjoint, but only on a mesh that passes D8 (medium ≈ 128 GB; fine ≈ 500 GB,
   extrapolated), or steps scored by CFD without a gradient.
 - **Interaction with D8:** the PC test is on the `resolved` mesh (wall layers); D8's evidence is on `fine` (no
