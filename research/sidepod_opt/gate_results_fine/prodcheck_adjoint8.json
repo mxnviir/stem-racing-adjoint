@@ -1,0 +1,20 @@
+{
+ "D20_half_N": 0.1753709015948472,
+ "wall_s": 9756.9,
+ "converged": true,
+ "residual_p": 0.000937168097037449,
+ "force_osc": 0.017999807123896636,
+ "force_drift": 0.0013064592088394722,
+ "run_dir": "",
+ "force_mean_stderr": 0.0007191244895280763,
+ "morph_fallback": false,
+ "folder": "/home/user/esp32-line-follower/research/sidepod_opt/runs/fine_cars/adjoint8/car",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "fine",
+ "iterations": 1000,
+ "n_proc": 4,
+ "y_plus_min": 0.39867819054882503,
+ "y_plus_max": 86.4570213205706,
+ "n_cells": 3377371
+}
