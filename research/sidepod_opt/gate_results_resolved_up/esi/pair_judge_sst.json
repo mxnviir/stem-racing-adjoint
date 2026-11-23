@@ -1,0 +1,14 @@
+{
+ "pairs": [
+  {
+   "site": "pod_rear_top",
+   "measured_half_mN": -1.6342293365225469,
+   "predicted_half_mN": 0.10422646881578208,
+   "stderr_mN": 0.08214246474579671,
+   "usable": false
+  }
+ ],
+ "n_pairs": 1,
+ "n_clear": 0,
+ "sens_file": "gate_results_resolved_up/esi/esi_sens_sst.npz"
+}

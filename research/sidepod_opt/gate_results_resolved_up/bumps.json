@@ -1,0 +1,105 @@
+{
+ "nose_top": {
+  "centre_on_surface_m": [
+   0.02992505357457536,
+   0.0,
+   0.022002503469463704
+  ],
+  "dV_mm3": 241.37306351141154,
+  "dV_expected_mm3": 251.67359065492676,
+  "moved_vertices": 1251,
+  "max_move_mm": 0.9833276864177811
+ },
+ "nose_side": {
+  "centre_on_surface_m": [
+   0.039957987857732094,
+   0.00838282803790442,
+   0.01869146717170816
+  ],
+  "dV_mm3": 303.7624918473717,
+  "dV_expected_mm3": 298.31387320949875,
+  "moved_vertices": 1433,
+  "max_move_mm": 1.0
+ },
+ "pod_front": {
+  "centre_on_surface_m": [
+   0.09115141566031759,
+   0.02658789204938748,
+   0.011703559498056175
+  ],
+  "dV_mm3": 403.1261645823784,
+  "dV_expected_mm3": 405.14374377538263,
+  "moved_vertices": 3633,
+  "max_move_mm": 1.0
+ },
+ "pod_front_low": {
+  "centre_on_surface_m": [
+   0.09484333037785941,
+   0.021862180809931412,
+   0.002
+  ],
+  "dV_mm3": 398.731513319447,
+  "dV_expected_mm3": 396.30677860572575,
+  "moved_vertices": 2743,
+  "max_move_mm": 1.0
+ },
+ "pod_rear": {
+  "centre_on_surface_m": [
+   0.15952321664603536,
+   0.02985178335396462,
+   0.012204521651449057
+  ],
+  "dV_mm3": 380.6821054452126,
+  "dV_expected_mm3": 378.9506137539519,
+  "moved_vertices": 3514,
+  "max_move_mm": 1.0
+ },
+ "pod_rear_low": {
+  "centre_on_surface_m": [
+   0.1660001009197621,
+   0.023374899080237887,
+   0.003916820299092077
+  ],
+  "dV_mm3": 387.82469836437616,
+  "dV_expected_mm3": 385.0712927388008,
+  "moved_vertices": 2823,
+  "max_move_mm": 1.0
+ },
+ "pod_rear_top": {
+  "centre_on_surface_m": [
+   0.14982449904633852,
+   0.025364747815560407,
+   0.02717497253417969
+  ],
+  "dV_mm3": 397.50036758715663,
+  "dV_expected_mm3": 398.0211297035166,
+  "moved_vertices": 4094,
+  "max_move_mm": 1.0
+ },
+ "tail_side": {
+  "centre_on_surface_m": [
+   0.2147096175013077,
+   0.012497865761770385,
+   0.03004344323664317
+  ],
+  "dV_mm3": 327.5196012078569,
+  "dV_expected_mm3": 321.3928710931679,
+  "moved_vertices": 2487,
+  "max_move_mm": 1.0
+ },
+ "pod_rear_m": {
+  "site": "pod_rear",
+  "amp_mm": -1.0,
+  "dV_mm3": -370.34101414044017
+ },
+ "pod_front_low_m": {
+  "site": "pod_front_low",
+  "amp_mm": -1.0,
+  "dV_mm3": -378.63514332259524
+ },
+ "pod_rear_top_m": {
+  "site": "pod_rear_top",
+  "amp_mm": -1.0,
+  "dV_mm3": -389.55158403647425
+ }
+}

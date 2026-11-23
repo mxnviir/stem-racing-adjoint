@@ -1,0 +1,6 @@
+mesh: 2132871 cells, y+ 0.07858142828048874..52.669260034099025; production D 181.54 mN
+steady D 190.73 mN, block span 0.03974568915421628 mN -> A1 PASS
+frozen: signs None, r None, predicted/measured [] -> FAIL
+   pod_rear_top   measured -1.634 mN  predicted +0.063  stderr 0.082  usable False
+sst: signs None, r None, predicted/measured [] -> FAIL
+   pod_rear_top   measured -1.634 mN  predicted +0.104  stderr 0.082  usable False

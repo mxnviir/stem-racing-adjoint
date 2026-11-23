@@ -1339,6 +1339,21 @@ external topology case was **not found** in their material (that is not proof it
     defaults unchanged), strict + fixed-ref on in the workflow's bump jobs. Open: a stepped morph (the wall moved in increments
     with mesh updates) is the untried route to a usable resolved bump pair.
 
+- **2026-11-23, resolved-mesh normal-adjoint test (GitHub Actions, distributed)**. Run log: https://github.com/mxnviir/stem-racing-paper/actions/runs/45233556064. The same stage commands as `esi/run_resolved_test.sh`, one runner per stage (meshing first, the state passed to the bump and adjoint runners as artifacts).
+  - Mesh: 2132871 cells, y+ 0.07858142828048874..52.669260034099025, layer coverage Extruding 0 out of 72313 faces (0%); production D 181.54 mN.
+  - Steady continuation: D 190.73 mN, block span 0.03974568915421628 mN -> A1 PASS.
+  - bump pod_rear_top: D 189.44 mN (morph_fallback: fresh mesh, pair unusable).
+  - bump pod_rear_top_m: D 192.71 mN (morph_fallback: fresh mesh, pair unusable).
+  - mesh: 2132871 cells, y+ 0.07858142828048874..52.669260034099025; production D 181.54 mN
+  - steady D 190.73 mN, block span 0.03974568915421628 mN -> A1 PASS
+  - frozen: signs None, r None, predicted/measured [] -> FAIL
+  -    pod_rear_top   measured -1.634 mN  predicted +0.063  stderr 0.082  usable False
+  - sst: signs None, r None, predicted/measured [] -> FAIL
+  -    pod_rear_top   measured -1.634 mN  predicted +0.104  stderr 0.082  usable False
+  - judge json: `gate_results_resolved_up/esi/pair_judge_frozen.json`
+  - judge json: `gate_results_resolved_up/esi/pair_judge_sst.json`
+  - Peak memory / wall time per stage (GitHub runner, 4 vCPU + swap): resources_stateA: peak 4988 MB, wall 129 min; resources_esi_frozen: peak 5340 MB, wall 38 min; resources_esi_sst: peak 6335 MB, wall 124 min.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)

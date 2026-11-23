@@ -1,0 +1,30 @@
+{
+ "D20_half_N": 0.19072551318559103,
+ "converged": true,
+ "steady_pass": true,
+ "block_span_last1000_mN": 0.03974568915421628,
+ "block_means_mN": [
+  190.757,
+  190.72,
+  190.718,
+  190.728,
+  190.73,
+  190.729,
+  190.729,
+  190.729,
+  190.73,
+  190.73
+ ],
+ "run_dir_kept": "/tmp/sp/gate/refA_resolved_up",
+ "from_state": "gate/refA_resolved",
+ "from_time": 1000,
+ "extra_iterations": 1200,
+ "batch_size": 400,
+ "batches": 3,
+ "window_upwind_iters": 1000,
+ "scheme_div_phi_U": "bounded Gauss upwind",
+ "mark_L": true,
+ "layer_coverage_pct": 62,
+ "n_proc": 4,
+ "host": "kaggle"
+}

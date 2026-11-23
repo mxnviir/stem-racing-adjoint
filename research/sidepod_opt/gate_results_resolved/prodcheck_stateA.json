@@ -1,0 +1,21 @@
+{
+ "D20_half_N": 0.18154090520853208,
+ "wall_s": 7747.8,
+ "converged": true,
+ "residual_p": 0.0027550683881435627,
+ "force_osc": 0.08962599516587358,
+ "force_drift": 0.010108350832326309,
+ "run_dir": "",
+ "force_mean_stderr": 0.003869030216164852,
+ "morph_fallback": false,
+ "folder": "gate/original",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "resolved",
+ "iterations": 1000,
+ "n_proc": 4,
+ "y_plus_min": 0.07858142828048874,
+ "y_plus_max": 52.669260034099025,
+ "n_cells": 2132871,
+ "run_dir_kept": "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate/refA_resolved"
+}
