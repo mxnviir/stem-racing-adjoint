@@ -1330,7 +1330,7 @@ external topology case was **not found** in their material (that is not proof it
   - The fix that matters: the morph measured the shape change from the surface state A was snapped to (gate/original), not
     from the bumps' base (original_rm); they differ by up to 0.205 mm near edges (99th percentile 71 um), so even a no-bump
     morph moved the wall and inverted the same 2 cells as several bumps. With GATE_MORPH_REF_RM=1 (opt-in) a no-bump morph moves
-    nothing and is Mesh OK. Quadratic inverseDistance (owner's rule 1) does not help with or without it; adding the ground patch
+    nothing and is Mesh OK. Quadratic inverseDistance (the main agent's rule 1) does not help with or without it; adding the ground patch
     to the diffusivity does not either (10 and 5 cells); wider footprints (rule 4) are worse at every registered site.
   - Site survey (10 mm, fixed ref): Mesh OK at both signs only for tail_side (not registered); pod_rear_m and pod_rear_low_m
     alone; nose_top/nose_side worst (76-81 cells, checkMesh crash at -1 mm). A 1 mm bump folds the 15 um layer at most sites.

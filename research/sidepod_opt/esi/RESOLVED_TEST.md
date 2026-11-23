@@ -86,7 +86,8 @@ predicted/measured is between 0.5 and 2 at all three sites. The script prints th
 
 The first CI bump run (inverseDistance morph, the Part 2 default) failed checkMesh on all six bumps
 (2-12 inverted wall-layer cells where counted) and every one fell back to a fresh mesh, so no usable
-pair was left. Owner's ruling for this test only:
+pair was left. Ruling for this test only, from the main agent running `research/sidepod_opt`
+(relayed by the owner):
 
 1. The bumps are morphed with `diffusivity quadratic inverseDistance (car)` (opt-in:
    `P2_MORPH_DIFFUSIVITY`; Part 2's default stays `inverseDistance`), so the thin layer cells ride
