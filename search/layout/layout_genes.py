@@ -178,7 +178,9 @@ def _strut(v, prefix):
     return dict(aim_out_deg=float(v[f"{prefix}_out"]), aim_fwd_deg=float(v[f"{prefix}_fwd"]),
                 leave=float(v[f"{prefix}_leave"]), arrive=float(v[f"{prefix}_arrive"]),
                 chord_mm=float(v[f"{prefix}_chord"]), thick_mm=float(v[f"{prefix}_thick"]),
-                flare=float(v[f"{prefix}_flare"]), round=float(v[f"{prefix}_round"]))
+                flare=float(v[f"{prefix}_flare"]), round=float(v[f"{prefix}_round"]),
+                mid_x=float(v[f"{prefix}_mid_x"]), mid_y=float(v[f"{prefix}_mid_y"]), mid_z=float(v[f"{prefix}_mid_z"]),
+                swell=float(v[f"{prefix}_swell"]))
 
 
 def _supports(v, prefix, n):

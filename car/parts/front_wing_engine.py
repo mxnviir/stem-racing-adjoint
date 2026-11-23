@@ -56,6 +56,10 @@ class Support:
     thick_mm: float = 3.0
     flare: float = 1.4
     round: float = 2.5
+    mid_x: float = 0.0          # a free point its path is drawn towards half way (share of its length) ...
+    mid_y: float = 0.0
+    mid_z: float = 0.0
+    swell: float = 1.0          # its section half way, times its own
 
 
 @dataclass

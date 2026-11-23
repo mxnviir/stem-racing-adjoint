@@ -49,7 +49,11 @@ class Support:
     chord_mm: float = 10.0      # its own section, along the flow
     thick_mm: float = 3.0       # and across it
     flare: float = 1.4          # its foot, times its section
-    round: float = 2.5          # 2 an ellipse, higher squarer
+    round: float = 2.5
+    mid_x: float = 0.0          # a free point its path is drawn towards half way (share of its length) ...
+    mid_y: float = 0.0
+    mid_z: float = 0.0
+    swell: float = 1.0          # its section half way, times its own          # 2 an ellipse, higher squarer
 
 
 @dataclass

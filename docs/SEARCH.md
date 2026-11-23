@@ -22,8 +22,9 @@ So the work is split by what each number is:
    mm per unit),
    the front wing (straight: one piece or two, chord, gap, span, root) and the rear wing (straight: chord,
    thickness, half span, lift), their struts, swept out of the wings' sides to the nose / body (lean out / in,
-   fore / aft, carry-out, carry-in, chord, thickness, flare, squareness: car/parts/wing_strut.py)
-   and the wheel supports' plates (chord, thickness, taper, transition): 74 numbers. No support design is
+   fore / aft, carry-out, carry-in, a free mid point, chord, thickness, swell, flare, squareness:
+   car/parts/wing_strut.py)
+   and the wheel supports' plates (chord, thickness, taper, transition): 82 numbers. No support design is
    preset: every support number starts at the middle of its range and the search decides. The rule masks and the milling are applied after, so every vector is a legal, millable body;
    what a mask cannot force is measured and refused. CMA-ES, 8 cars a generation.
    The coarse grid is a setting (simscale_shape.COARSE): a finer grid is freer but needs more runs. With

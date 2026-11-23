@@ -95,10 +95,13 @@ attack or camber. Searched: the front wing one piece or two, chord, gap to Ref A
 chord, thickness, half span and height over the lowest T9.6 / T9.7 allow.
 The struts (`wing_strut.py`) are organic swept solids the search designs: each leaves the wing through its
 SIDE -- its first section is the wing's own aerofoil there (0.1 mm round it), straight for 1 mm -- and follows a
-smooth path (a cubic Bezier: how far it carries on out of the face, how far it comes square into its foot) to
-where it heads (its lean out / in and fore / aft from straight down, rear, or straight in, front), its sections
-morphing from the aerofoil into its own streamlined superellipse (chord, thickness, squareness) and flaring
-into its foot. Limited only by the print wall, the ABS (every section checked in bending and axially under an
+smooth path (a quartic Bezier: how far it carries on out of the face, how far it comes square into its foot,
+and a free point it is drawn towards half way -- so it can S-bend, arc up and over, loop fore or aft, swan-neck)
+to where it heads (its lean out / in up to 60 degrees and fore / aft up to 45 from straight down, rear, or
+straight in, front), its sections morphing from the aerofoil into its own streamlined superellipse (chord,
+thickness, squareness), swelling or slimming half way, and flaring into its foot. No shape is preset: which
+of these the search keeps is the race time's call -- its mass goes into the car's (printed with the wing /
+nose: race mass above the 48.2 g floor, and the centre of mass always) and its drag into the CFD. Limited only by the print wall, the ABS (every section checked in bending and axially under an
 assumed 1 N drag, 0.5 N side and 2 N down at the wing, 20 MPa allowed, thickened until it holds) and the rules:
 a strut that breaks one is pulled back towards a plain one (its lean, carry-out and flare by one share).
 Rear: a pair from the tips (the regulations' appendix iv), trimmed to the body's surface (a glued foot), never

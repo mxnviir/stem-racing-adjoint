@@ -12,6 +12,10 @@ the flow) and, at the end, flare into its foot. What the search sets (all contin
                              or inward, forward or aft -- the first surface that way is its foot
   leave, arrive              how far it carries on out of the face, and into the foot, before it bends
                              (shares of its length): straight and stiff, or long sweeping curves
+  mid_x, mid_y, mid_z        a free point its path is drawn towards half way (shares of its length): S-bends,
+                             arcs up and over, loops fore or aft, swan necks -- any path that leaves the face
+                             square to it and arrives square to its foot
+  swell                      its section along its length: fatter (> 1) or slimmer (< 1) half way
   chord_mm, thick_mm         its own section between the wing and the foot (streamlined: long along x)
   flare                      its foot, times that section
   round                      its section's squareness (superellipse exponent)
@@ -59,8 +63,12 @@ def _superellipse(a, b, p, n=N_RING):
 
 
 def _bezier(P, s):
-    s = np.asarray(s)[:, None]
-    return ((1 - s) ** 3) * P[0] + 3 * ((1 - s) ** 2) * s * P[1] + 3 * (1 - s) * s ** 2 * P[2] + s ** 3 * P[3]
+    """A Bezier curve of any degree through its control points P (k, 3) at parameters s (de Casteljau)."""
+    s = np.asarray(s, float)[:, None, None]
+    Q = np.repeat(np.asarray(P, float)[None], len(s), axis=0)
+    while Q.shape[1] > 1:
+        Q = (1 - s) * Q[:, :-1] + s * Q[:, 1:]
+    return Q[:, 0]
 
 
 def _rmf(points, t0, u0):
@@ -101,7 +109,7 @@ def _section_props(R):
 
 
 def sweep(face_xz, face_point, n_out, foot, n_foot, leave, arrive, chord_mm, thick_mm, flare, roundness,
-          into_wing=0.3, into_foot=1.5, wall_mm=1.2):
+          into_wing=0.3, into_foot=1.5, wall_mm=1.2, mid=(0.0, 0.0, 0.0), swell=1.0):
     """The strut as rings (N_PATH + 2, N_RING, 3) and its path, before any check.
     face_xz: the wing's aerofoil outline in its side face, (k, 2) in (x, z), absolute; face_point: the face's
     centre (x, y, z); n_out: the face's outward normal (unit, along +-y); foot: where it lands; n_foot: the
@@ -115,7 +123,7 @@ def sweep(face_xz, face_point, n_out, foot, n_foot, leave, arrive, chord_mm, thi
     P2 = foot + max(arrive, 0.05) * L * n_foot
     s_c = np.linspace(0.0, 1.0, N_PATH)
     pts = np.vstack([face_point + np.outer([-into_wing, 0.0, 0.5 * STRAIGHT_MM], n_out),
-                     _bezier(np.array([Ps, P1, P2, P3]), s_c)])
+                     _bezier(np.array([Ps, P1, 0.5 * (P1 + P2) + L * np.asarray(mid, float), P2, P3]), s_c)])
     s = np.r_[0.0, 0.0, 0.0, s_c]                          # the morph's parameter: the straight part is s = 0
     T, U, V = _rmf(pts, n_out, np.array([1.0, 0.0, 0.0]))
     # the aerofoil, in its face's (u, v) = (x, z) about the face's centre; the strut's own section; the foot
@@ -132,7 +140,8 @@ def sweep(face_xz, face_point, n_out, foot, n_foot, leave, arrive, chord_mm, thi
         w1 = w1 * w1 * (3 - 2 * w1)
         w2 = np.clip((si - 0.7) / 0.3, 0.0, 1.0)               # own -> foot over the last 30 %
         w2 = w2 * w2 * (3 - 2 * w2)
-        sec = (1 - w1) * air + w1 * own
+        sw = 1.0 + (swell - 1.0) * math.sin(math.pi * si)      # swelling (or slimming) along its length
+        sec = (1 - w1) * air + w1 * own * sw
         sec = (1 - w2) * sec + w2 * foot_sec
         # u along the flow (U), v up at the face
         rings.append(pts[i] + np.outer(sec[:, 0], U[i]) + np.outer(sec[:, 1], -V[i] if n_out[1] > 0 else V[i]))
@@ -243,7 +252,10 @@ def design(face_xz, face_point, n_out, target, base_dir, g, reach_mm=60.0, accep
             # of the face and into the foot, and its flare, all by the same share k (k = 1: as the search asked)
             rings, pts, frames, _ = sweep(face_xz, face_point, n_out, foot, nf, float(g["leave"]) * (0.1 + 0.9 * k),
                                           float(g["arrive"]) * (0.4 + 0.6 * k), c, t, 1.0 + (float(g["flare"]) - 1.0) * k,
-                                          float(g["round"]), wall_mm=wall_mm)
+                                          float(g["round"]), wall_mm=wall_mm,
+                                          mid=k * np.array([float(g.get("mid_x", 0.0)), float(g.get("mid_y", 0.0)),
+                                                            float(g.get("mid_z", 0.0))]),
+                                          swell=max(1.0 + (float(g.get("swell", 1.0)) - 1.0) * k, wall_mm / max(min(c, t), 1e-6)))
             sig = stress_mpa(rings, pts, frames, load_at if load_at is not None else face_point)
             if sig <= ALLOW_MPA:
                 break
