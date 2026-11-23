@@ -19,7 +19,7 @@ decided), *withdrawn*.
 | D8 | Which mesh scores designs (medium vs fine or finer) | medium ruled out (M1 fails); how to score on fine is open |
 | D9 | Which adjoint drives the shape steps (discrete vs normal) | open |
 | D10 | The adjoint runs on a steady (first-order) flow model; gains are confirmed on the production model | provisional |
-| D11 | Several different starting shapes, (the valley seen on medium is absent on fine) | settled |
+| D11 | Several different starting shapes (the valley seen on medium is absent on fine) | settled |
 | D12 | Pass marks are fixed in writing before each result | settled |
 | D13 | The wheel is optimised separately for inertia and durability, with one closing check | provisional |
 | D14 | The hubcap is a separate, later decision (axle-mounted, non-rotating) | provisional |
