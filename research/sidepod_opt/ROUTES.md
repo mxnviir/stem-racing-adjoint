@@ -1264,6 +1264,21 @@ external topology case was **not found** in their material (that is not proof it
     states, Part 2's method A). This is not started; it needs the owner's go-ahead (cost: about 2 fine runs per design per state).
   - Queue: no pod (started 11:40), design 8, blend 50; done ~19:45 UTC. These give C1, C2, C5 and the rest of M1.
 
+- **2026-11-23 14:30, fine mesh: no pod reads 215.94 mN, +39.4 mN against the team pod's 3-mesh mean. C1 (a pod beats no pod by ≥ 15 mN) passes on fine.**
+
+  | half car, mN | medium total | fine total | body total (pressure), fine | wheels, fine | lift, fine |
+  |---|---|---|---|---|---|
+  | no pod (1 mesh each) | 204.23 | 215.94 | 38.9 (27.5) | 177.1 | 44.6 |
+  | team pod (fine: 3 meshes) | 178.74 | 176.55 | 18.8 (2.9) | 157.7 | 63.3 |
+  | no pod − team | +25.5 | **+39.4** | +20.1 | +19.4 | |
+
+  - 3,455,399 cells, y+ max 87.1, converged; block means 216.89, 216.08, 215.79, 215.94 (iterations 200–1000).
+  - The margin is large against any noise seen (team sd 3.08), so one no-pod mesh is enough for C1.
+  - The pod's benefit **grows** from medium to fine (+25.5 → +39.4). No pod's body drag doesn't move with the mesh
+    (38.4 medium, 38.9 fine); the team pod's falls (24.0 → 18.8), and no pod's wheels read more on fine
+    (165.9 → 177.1) while the team's barely change. So on fine the pod shields the wheels more than medium shows.
+  - Queue: design 8 (started 14:29), blend 50; done ~19:45 UTC.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
