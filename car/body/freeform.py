@@ -38,6 +38,7 @@ NOSE_Z_MAX_MM = 25.0            # T8.5.1
 NOSE_OVERHANG_MM = 40.0         # T8.2
 TRACK_MM = 1.5                  # T3.7
 MARGIN_MM = 0.2
+EMPTY_MM = 4.0                  # seed_nose: ahead of the nose, the top this far under the bottom
 
 
 @dataclass(frozen=True)
@@ -147,6 +148,49 @@ def fit(meshes_mm, x_tip, x_rear, nu=12, nv=4, nw=6, blend_mm=1.5, step=0.5) -> 
     # off the car: top below bottom there (no solid), the side drawn in to 0
     return Freeform(nu=nu, nv=nv, nw=nw, top=tuple(T.ravel()), bottom=tuple(B.ravel()),
                     side=tuple(np.maximum(S, 0.0).ravel()), blend_mm=blend_mm, x_tip_mm=float(x_tip), x_rear_mm=float(x_rear))
+
+
+def seed_nose(ff: Freeform, body_mm, ref_a, x_nose_tip, p=2.0) -> Freeform:
+    """A starting nose made from the body itself (user 2026-11-23: no cone): the body's own cross-section at
+    Ref A carried forward and rounded off to nothing at x_nose_tip (a superellipse in x, exponent p: 2 is a
+    quarter ellipse, blunt and round, not a point), set just ahead of the front wing so the wing passes
+    through it. Ahead of x_nose_tip the fields are empty (top = bottom, no width) but still free: the search
+    can grow the nose there. body_mm: the milled body (mm, right half or both); only control points ahead
+    of Ref A change."""
+    import trimesh
+    m = trimesh.util.concatenate(body_mm) if isinstance(body_mm, (list, tuple)) else body_mm
+    T, B, S = (g.copy() for g in ff.grids())
+    xs = ff.x_tip_mm + np.linspace(0.0, 1.0, ff.nu) * (ff.x_rear_mm - ff.x_tip_mm)
+    vs = np.linspace(0.0, 1.0, ff.nv) * Y_MAX_MM
+    ws = np.linspace(0.0, 1.0, ff.nw) * Z_MAX_MM
+    xa = ref_a + 1.0                                                   # the section, just behind Ref A
+    yy = np.arange(0.05, Y_MAX_MM, 0.25)
+    O = np.c_[np.full(len(yy), xa), yy, np.full(len(yy), 200.0)]
+    loc, ri, _ = m.ray.intersects_location(O, np.tile([0, 0, -1.0], (len(O), 1)), multiple_hits=True)
+    hit = np.unique(ri)
+    if len(hit) < 3:
+        return ff
+    ty = np.array([loc[ri == i, 2].max() for i in hit]); by = np.array([loc[ri == i, 2].min() for i in hit])
+    yh = yy[hit]
+    zz = np.arange(0.05, Z_MAX_MM, 0.25)
+    O = np.c_[np.full(len(zz), xa), np.full(len(zz), 200.0), zz]
+    loc, ri, _ = m.ray.intersects_location(O, np.tile([0, -1.0, 0], (len(O), 1)), multiple_hits=True)
+    hz = np.unique(ri)
+    sz = np.array([np.abs(loc[ri == i, 1]).max() for i in hz]); zh = zz[hz]
+    zc = 0.5 * (ty[0] + by[0])                                         # the section's centre height on y = 0
+    L = max(ref_a - x_nose_tip, 1.0)
+    for i, x in enumerate(xs):
+        if x >= ref_a:
+            continue
+        s = (ref_a - x) / L
+        f = (1.0 - s ** p) ** (1.0 / p) if s < 1.0 else 0.0
+        if f <= 0.02:                                                  # ahead of the nose: nothing (yet):
+            T[i, :] = zc - EMPTY_MM; B[i, :] = zc + EMPTY_MM; S[i, :] = 0.0   # top under bottom, so the cubic
+            continue                                                   # grid's overshoot cannot reach far
+        T[i, :] = zc + f * (np.interp(vs / f, yh, ty) - zc)            # off the section: its edge value (as fit)
+        B[i, :] = zc + f * (np.interp(vs / f, yh, by) - zc)
+        S[i, :] = f * np.interp(zc + (ws - zc) / f, zh, sz)
+    return dataclasses.replace(ff, top=tuple(T.ravel()), bottom=tuple(B.ravel()), side=tuple(np.maximum(S, 0.0).ravel()))
 
 
 def _fill(g):

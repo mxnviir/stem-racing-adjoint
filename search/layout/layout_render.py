@@ -41,6 +41,7 @@ def load(folder: Path, cfd: bool = False) -> dict:
         m = trimesh.load(str(p), force="mesh"); m.apply_scale(1e3)
         mir = m.copy(); mir.vertices[:, 1] *= -1; mir.invert()
         out[k] = trimesh.util.concatenate([m, mir])
+        out[k].metadata["halves"] = [m, mir]     # cut separately: the joined halves share the y = 0 face
     return out
 
 
@@ -77,19 +78,20 @@ def section(ax, meshes, origin, normal, u, v, title):
     import matplotlib
     from matplotlib.patches import PathPatch
     from matplotlib.path import Path as MPath
-    for k, m in meshes.items():
-        try:
-            sec = m.section(plane_origin=origin, plane_normal=normal)
-        except Exception:                                        # noqa: BLE001
-            sec = None
-        if sec is None:
-            continue
-        verts, codes = [], []
-        for loop in sec.discrete:
-            p2 = np.c_[loop @ u, loop @ v]
-            verts += list(p2); codes += [MPath.MOVETO] + [MPath.LINETO] * (len(p2) - 2) + [MPath.CLOSEPOLY]
-        if verts:
-            ax.add_patch(PathPatch(MPath(verts, codes), facecolor=COLOURS.get(k, "#888"), edgecolor="k", lw=0.3))
+    for k, whole in meshes.items():
+        for m in whole.metadata.get("halves", [whole]):
+            try:
+                sec = m.section(plane_origin=origin, plane_normal=normal)
+            except Exception:                                    # noqa: BLE001
+                sec = None
+            if sec is None:
+                continue
+            verts, codes = [], []
+            for loop in sec.discrete:
+                p2 = np.c_[loop @ u, loop @ v]
+                verts += list(p2); codes += [MPath.MOVETO] + [MPath.LINETO] * (len(p2) - 2) + [MPath.CLOSEPOLY]
+            if verts:
+                ax.add_patch(PathPatch(MPath(verts, codes), facecolor=COLOURS.get(k, "#888"), edgecolor="k", lw=0.3))
     ax.set_aspect("equal"); ax.autoscale_view(); ax.set_title(title, fontsize=9)
     ax.tick_params(labelsize=6)
 

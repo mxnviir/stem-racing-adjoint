@@ -62,3 +62,23 @@ def test_the_sidepod_top_holds_between_the_wheels(ff):
     assert phi[1] > 0                    # over it, outboard of the spine, between the wheels: cut
     assert phi[2] < 0                    # the spine itself may be taller
     assert phi[3] < 0                    # ahead of the front wheel the cap does not apply
+
+
+def test_the_seed_nose_is_the_body_rounded_off_not_a_cone():
+    """seed_nose: the body's Ref A section carried forward and rounded off at the tip asked for: round, not a
+    point (halfway along, a cone is half as wide as at Ref A; this is over 0.7), nothing ahead of the tip."""
+    ref_a, tip = 40.0, 20.0
+    body = trimesh.boolean.intersection([_car(), trimesh.creation.box(bounds=[[ref_a, -50, 0], [240, 50, 60]])],
+                                        engine="manifold")
+    ff = fr.seed_nose(fr.fit([body], X_TIP, X_REAR, 24, 9, 12, blend_mm=0.5), body, ref_a, tip)
+    nm = fr.build_nose(ff, X_TIP, X_REAR, ref_a)
+    m = nm["_full"].copy(); m.apply_scale(1e3)
+    assert m.bounds[0, 0] > tip - 4.0, m.bounds                  # the bicubic grid (10 mm) rounds the tip a little
+
+    def half(x):
+        s = m.section(plane_origin=np.array([x, 0.0, 0.0]), plane_normal=np.array([1.0, 0.0, 0.0]))
+        return 0.0 if s is None else float(s.vertices[:, 1].max())
+    front = m.bounds[0, 0]
+    mid = 0.5 * (front + ref_a)
+    assert half(mid) > 0.7 * half(ref_a - 1.0), (half(mid), half(ref_a - 1.0))
+    assert half(ref_a - 1.0) > 14.5                              # the body's 20 mm half-width, clipped to T8.5.1 (15 less 0.2)

@@ -37,6 +37,7 @@ import simscale_layout as SL
 COARSE = (5, 2, 3)           # displacement control points: along the car, across (top/bottom) and up (side)
 AMP_MM = (6.0, 4.0, 6.0)     # mm per unit of CMA's numbers: top, bottom, side
 FIT_GRID = (24, 9, 12)       # the surfaces' own control grid, fitted to the stage-1 car (IoU 0.85 on L0044)
+NOSE_LEAD_MM = 2.0          # the seed nose starts this far ahead of the seed front wing's leading edge
 
 
 class ShapeCampaign(SL.Campaign):
@@ -163,16 +164,20 @@ def best_of(layout_root: Path, car: str | None = None):
 
 
 def fit_seed(car_dir: Path, genes):
-    """The free-form surfaces of a built car (its body and nose), on FIT_GRID."""
+    """The free-form surfaces of a built car's BODY, on FIT_GRID, with a nose made from the body itself
+    (freeform.seed_nose: its Ref A section carried forward and rounded off just ahead of the front wing
+    stage 2 starts from), not the stage-1 car's nose cone (user 2026-11-23: no cone)."""
     import trimesh
     import freeform as fr
     d = SL.LG.decode(genes)
-    ms = []
-    for p in (car_dir / "body_half.stl", car_dir / "parts" / "nose.stl"):
-        m = trimesh.load(str(p), force="mesh"); m.apply_scale(1e3); ms.append(m)
+    body = trimesh.load(str(car_dir / "body_half.stl"), force="mesh"); body.apply_scale(1e3)
     x_tip = d["x_front"] - 16.0 - d["nose"]["length_mm"]
     x_rear = d["x_front"] + d["W"] + d["rear"]
-    return fr.fit(ms, x_tip, x_rear, *FIT_GRID).as_dict()
+    ref_a = d["x_front"] - 16.0
+    fw = SL.LG.shape_from_unit(np.zeros(len(SL.LG.SHAPE_GENES)))["fwing"]
+    x_le = ref_a - fw["te_gap_mm"] - fw["chord_mm"]
+    ff = fr.fit([body], x_tip, x_rear, *FIT_GRID)
+    return fr.seed_nose(ff, body, ref_a, max(x_le - NOSE_LEAD_MM, x_tip)).as_dict()
 
 
 def init(root, layout_root, car=None, budget=40, popsize=8, sigma=0.5, seed_ff=None):
