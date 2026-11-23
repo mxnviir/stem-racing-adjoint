@@ -39,7 +39,7 @@ class StubEvaluator:
         return out
 
 
-def stub_build(x, out, timeout_s=0, lattice=None, support=None):
+def stub_build(x, out, timeout_s=0, lattice=None, support=None, fwing=None):
     out = Path(out); out.mkdir(parents=True, exist_ok=True)
     v = (lattice or {}).get("values") or [0.0]
     if v[0] > 1.0:

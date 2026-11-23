@@ -1,6 +1,6 @@
 # Layout search: every parameter of the car
 
-143 parameters, 10 evolved in stage 1 (the layout search), 4 in stage 2 (`shape`: the shape search, with the body's lattice), 129 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
+141 parameters, 10 evolved in stage 1 (the layout search), 16 in stage 2 (`shape`: the shape search, with the body's lattice), 115 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
 
 x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, Ref B = rear axle + 16.
 
@@ -156,25 +156,23 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `nose_root_scale` | **fixed** | 1.0 | 0.9 - 1.0 - | root section vs the body's |  |  |
 | `nose_wall` | **fixed** | 1.0 | 0.8 - 2.0 mm | printed shell wall | print minimum | mass only |
 
-## front wing (1 of 15 evolved)
+## front wing (13 of 13 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
-| `fw_chord` | **fixed** | 15.3 | 10.0 - 17.0 mm | chord, single element (T8.6.2 min 15.0; thickness 0.15 x 15.3 = 2.3 mm, T8.6.3 min 2.0) | T8.6.2 15-25 total incl. flap | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_t_frac` | **fixed** | 0.15 | 0.13 - 0.4 - | thickness / chord | T8.6.3 2-6 mm | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_camber` | **fixed** | 0.0 | 0.0 - 0.08 - | camber |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_aoa` | **fixed** | 0.0 | -5.0 - 15.0 deg | angle of attack | T8.5.2 <= 20 high outboard | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_half_span` | **fixed** | 25.5 | 25.5 - 45.0 mm | half span (the builder widens it to the legal minimum: 25 mm clear of the nose each side, T8.6.1) | T8.6.1 >= 50 (or 2 x 25 if split) | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_z` | **evolve** | 8.0 | 6.5 - 18.0 mm | chord line height | T8.7 5 mm clear air to the track (chord line >= 6.2); T8.5.2 <= 20 high outboard (chord line <= 18.8) | user 2026-11-22: front wing height is a parameter (wheel wake, ground effect) |
-| `fw_gap_to_wheel` | **fixed** | 5.5 | 5.0 - 12.0 mm | gap ahead of the front wheel | T7.9.1, T8.7 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_endplate_h` | **fixed** | 0.0 | 0.0 - 15.0 mm | end plate height (0 = none) | T8.5.3 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_endplate_w` | **fixed** | 2.0 | 1.0 - 10.0 mm | end plate width | T8.5.3 <= 10 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_mount_t` | **fixed** | 3.0 | 2.0 - 6.0 mm | mount thickness |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_flap_chord` | **fixed** | 0.0 | 0.0 - 8.0 mm | flap chord: 0 = no flap, single element | T8.6.2, up to 3 elements | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_flap_t_frac` | **fixed** | 0.29 | 0.25 - 0.6 - | flap thickness / chord | T8.6.3 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_flap_aoa` | **fixed** | 0.0 | 0.0 - 40.0 deg | flap angle | T8.5.2 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_flap_overlap` | **fixed** | 1.0 | 0.0 - 3.0 mm | flap overlap | T8.6.2 elements overlap | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `fw_flap_gap` | **fixed** | 0.5 | 0.3 - 2.0 mm | slot gap |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
+| `fw_z` | **evolve** | 8.0 | 6.5 - 18.0 mm | chord line height at the root | T8.7 5 mm clear of the track; T8.5.2 <= 20 high beyond 15 mm out (front_wing_engine) | user 2026-11-22: front wing height is a parameter (wheel wake, ground effect) |
+| `fw_pieces` | **shape** | 0.25 | 0.0 - 1.0 0-1 | below 0.5 one wing across the centre line, above it a left and a right wing | T8.6.1: 1 x 50 or 2 x 25 where another part passes through | user 2026-11-23: one piece or two, the search decides |
+| `fw_chord` | **shape** | 15.3 | 15.3 - 25.0 mm | chord (a flat NACA 0015, user 2026-11-22) | T8.6.2 15-25; T8.6.3 thickness 2-6 (15 %) |  |
+| `fw_te_gap` | **shape** | 6.0 | 5.3 - 20.0 mm | trailing edge ahead of Ref A | T8.7 5 mm to the body and the wheels; T8.2 the whole wing within 40 mm of Ref A |  |
+| `fw_tip_y` | **shape** | 36.5 | 26.0 - 42.0 mm | tip, from the centre line (pushed out until each segment is 25 mm) | T8.6.1; T3.4 car width |  |
+| `fw_root_y` | **shape** | 8.0 | 0.5 - 15.0 mm | two pieces: where each half starts (in the nose's side, or over/under it on a pylon) | T8.5.1 support band 15 mm |  |
+| `fw_sweep` | **shape** | 0.0 | -20.0 - 25.0 deg | leading edge swept back towards the tip (+): the root moves forward to make room | T8.2 40 mm; T8.5.2 ahead of Ref A |  |
+| `fw_dihedral` | **shape** | 0.0 | -10.0 - 15.0 deg | tip up (+), capped by T8.5.2's 20 mm outboard and T8.7's 5 mm to the track |  |  |
+| `fw_pylons` | **shape** | 0.0 | 0.0 - 1.0 0-1 | supports: below 1/3 none (held by the nose it runs into), below 2/3 one on the centre line, above two | T8.5.1 inside the 30 mm wide, 25 mm high box ahead of Ref A | user 2026-11-23: it designs its own wing supports |
+| `fw_pylon_y` | **shape** | 6.0 | 1.5 - 14.0 mm | twin pylons' distance from the centre line (kept where the nose is) | T8.5.1 15 mm |  |
+| `fw_pylon_chord` | **shape** | 8.0 | 4.0 - 15.0 mm | pylon chord (a NACA section edge-on to the flow) |  |  |
+| `fw_pylon_t` | **shape** | 2.0 | 1.05 - 4.0 mm | pylon thickness | the printer's wall |  |
+| `fw_pylon_rake` | **shape** | 0.0 | -20.0 - 20.0 deg | pylon leaning forward at the top (+) |  |  |
 
 ## rear wing (1 of 9 evolved)
 

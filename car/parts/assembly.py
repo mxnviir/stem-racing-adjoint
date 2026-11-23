@@ -43,6 +43,7 @@ import wings as wg                # noqa: E402
 import nose as ns                 # noqa: E402
 import beam_support as bsm        # noqa: E402
 import support_engine as se      # noqa: E402
+import front_wing_engine as fwe   # noqa: E402
 
 SPEED_MPS = 20.0
 SINK_MM = 0.3
@@ -122,6 +123,24 @@ def fixed_hardware_kwargs(W_mm, x_front_mm, d_halo_mm, parts_mass: dict,
         "halo_mass_kg": fh.HALO_MASS_KG,
         "halo_com": (0.5 * (halo.x_front_m + halo.x_rear_m), 0.0, 0.5 * (min(hz) + max(hz))),
     }
+
+
+def _legacy_front_wing(front, nm, x_front_mm, R, body, out, gates, info, surfaces, parts_mass):
+    """Part 4's parametric front wing (wings.FrontWing) through the nose, on its centreline mount."""
+    import trimesh
+    fwm = wg.build_front_wing(front, x_front_mm, R, body)
+    blockers = [body] + ([nm["nose"]] if nm is not None else [])
+    y_cut = wg.front_span_cut_mm(fwm["wing"], blockers)
+    need = y_cut + cc.FRONT_SPAN_SEGMENT_MIN + 0.05
+    if y_cut > front.mount_t_mm / 2 and front.half_span_mm < need:
+        front = replace(front, half_span_mm=need)
+        fwm = wg.build_front_wing(front, x_front_mm, R, body)
+        y_cut = wg.front_span_cut_mm(fwm["wing"], blockers)
+    info["front_span_cut_mm"] = y_cut
+    gates.update(wg.front_wing_gates(front, fwm, x_front_mm, R, nose_half_width_mm=y_cut))
+    _export_half(trimesh.util.concatenate(list(fwm.values())), out / "fwing.stl")
+    surfaces.append({"name": "fwing", "stl": str(out / "fwing.stl"), "rotating": None})
+    parts_mass["fwing"] = _full_mass_com(list(fwm.values()), cc.DENSITY_G_CM3[PART_MATERIAL])
 
 
 def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
@@ -245,19 +264,23 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
     # A nose or body the wing passes through splits its span there (T8.6.1): each outer
     # segment must then be 25 mm, so the tip goes out to the crossing + 25 (Part 1 found
     # 24.23 mm segments on car 41518/1, 2026-11-12, when the gate assumed no crossing).
-    fwm = wg.build_front_wing(front, x_front_mm, R, body)
-    blockers = [body] + ([nm["nose"]] if nm is not None else [])
-    y_cut = wg.front_span_cut_mm(fwm["wing"], blockers)
-    need = y_cut + cc.FRONT_SPAN_SEGMENT_MIN + 0.05
-    if y_cut > front.mount_t_mm / 2 and front.half_span_mm < need:
-        front = replace(front, half_span_mm=need)
-        fwm = wg.build_front_wing(front, x_front_mm, R, body)
-        y_cut = wg.front_span_cut_mm(fwm["wing"], blockers)
-    info["front_span_cut_mm"] = y_cut
-    gates.update(wg.front_wing_gates(front, fwm, x_front_mm, R, nose_half_width_mm=y_cut))
-    _export_half(trimesh.util.concatenate(list(fwm.values())), out / "fwing.stl")
-    surfaces.append({"name": "fwing", "stl": str(out / "fwing.stl"), "rotating": None})
-    parts_mass["fwing"] = _full_mass_com(list(fwm.values()), cc.DENSITY_G_CM3[PART_MATERIAL])
+    if isinstance(front, fwe.FrontWingDesign):
+        # the searches' wing (front_wing_engine.py): one piece or two, its own pylons to THIS nose, printed
+        # with the nose (nose.stl), and every T8 rule measured
+        if nm is None:
+            raise ValueError("the generated front wing needs a nose to hold it")
+        res = fwe.build(front, nm["nose"], x_front_mm, (x_front_mm, FY, R), body)
+        gates.update({f"P4.{k}" if not k.startswith("P4.") else k: v for k, v in res["gates"].items()})
+        info["front_wing_engine"] = {k: v for k, v in res["info"].items()}
+        if res["pylons"] is not None:
+            nose_with = trimesh.boolean.union([nm["nose"], res["pylons"]], engine="manifold")
+            _export_half(nose_with, out / "nose.stl")
+            parts_mass["nose"] = _full_mass_com([nose_with], cc.DENSITY_G_CM3[PART_MATERIAL])
+        _export_half(res["wing"], out / "fwing.stl")
+        surfaces.append({"name": "fwing", "stl": str(out / "fwing.stl"), "rotating": None})
+        parts_mass["fwing"] = _full_mass_com([res["wing"]], cc.DENSITY_G_CM3[PART_MATERIAL])
+    else:
+        _legacy_front_wing(front, nm, x_front_mm, R, body, out, gates, info, surfaces, parts_mass)
 
     # -- rear wing ---------------------------------------------------------
     forward = [body, halo] + sup

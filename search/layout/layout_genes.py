@@ -147,16 +147,11 @@ def decode(x) -> dict:
     nose = dict(length_mm=nose_len, k=float(v["nose_k"]), p=float(v["nose_p"]), tip_z_mm=float(v["nose_tip_z"]),
                 blend_after_ref_a_mm=float(v["nose_blend"]), root_scale=float(v["nose_root_scale"]),
                 wall_mm=float(v["nose_wall"]))
-    fwing = dict(chord_mm=v["fw_chord"], t_frac=v["fw_t_frac"], camber=v["fw_camber"], aoa_deg=v["fw_aoa"],
-                 half_span_mm=v["fw_half_span"], z_chord_mm=v["fw_z"], gap_to_wheel_mm=v["fw_gap_to_wheel"],
-                 endplate_h_mm=v["fw_endplate_h"], endplate_w_mm=v["fw_endplate_w"], mount_t_mm=v["fw_mount_t"],
-                 flap_chord_mm=v["fw_flap_chord"], flap_t_frac=v["fw_flap_t_frac"], flap_aoa_deg=v["fw_flap_aoa"],
-                 flap_overlap_mm=v["fw_flap_overlap"], flap_gap_mm=v["fw_flap_gap"])
+    fwing = front_wing_design(v)
     rwing = dict(chord_mm=v["rw_chord"], t_frac=v["rw_t_frac"], camber=v["rw_camber"], aoa_deg=v["rw_aoa"],
                  half_span_mm=v["rw_half_span"], x_le_after_ref_b_mm=v["rw_x_le"],
                  clear_air_margin_mm=v["rw_clear_air_margin"], pylon_t_mm=v["rw_pylon_t"],
                  pylon_chord_mm=v["rw_pylon_chord"])
-    fwing = {k: float(val) for k, val in fwing.items()}
     rwing = {k: float(val) for k, val in rwing.items()}
     cargo_x0 = x_front + float(v["cargo_x"]) * (W - CARGO_LEN_MM)
     # a preference: Part 1 puts the cargo at the legal position nearest it (unified_phi, "prefer")
@@ -176,6 +171,30 @@ def support_design(v=None) -> dict:
                 fillet_mm=float(v["sup_fillet"]),
                 saddle_h_mm=float(v["sup_saddle_h"]), disc_r_mm=float(v["sup_disc_r"]),
                 disc_recess_mm=float(v["sup_disc_recess"]))
+
+
+def front_wing_design(v=None) -> dict:
+    """front_wing_engine.FrontWingDesign's numbers from parameter values (the catalogue's by default)."""
+    v = v or {p["name"]: p["value"] for p in PARAMS}
+    pyl = float(v["fw_pylons"])
+    return dict(pieces=2 if float(v["fw_pieces"]) >= 0.5 else 1, chord_mm=float(v["fw_chord"]),
+                te_gap_mm=float(v["fw_te_gap"]), z_mm=float(v["fw_z"]), tip_y_mm=float(v["fw_tip_y"]),
+                root_y_mm=float(v["fw_root_y"]), sweep_deg=float(v["fw_sweep"]), dihedral_deg=float(v["fw_dihedral"]),
+                pylons=0 if pyl < 1 / 3 else (1 if pyl < 2 / 3 else 2), pylon_y_mm=float(v["fw_pylon_y"]),
+                pylon_chord_mm=float(v["fw_pylon_chord"]), pylon_t_mm=float(v["fw_pylon_t"]),
+                pylon_rake_deg=float(v["fw_pylon_rake"]))
+
+
+def shape_from_unit(u, z_fw=None) -> dict:
+    """Stage 2: the shape genes (SHAPE_GENES, in order) from CMA's numbers: 0 is the catalogue's value,
+    -1 its lo, +1 its hi (clipped), linear on each side. Returns {"support": ..., "fwing": ...}; z_fw keeps
+    stage 1's front wing height."""
+    v = {p["name"]: p["value"] for p in PARAMS}
+    for p, ui in zip(SHAPE_GENES, np.clip(np.asarray(u, float), -1.0, 1.0)):
+        v[p["name"]] = p["value"] + ui * ((p["hi"] - p["value"]) if ui > 0 else (p["value"] - p["lo"]))
+    if z_fw is not None:
+        v["fw_z"] = z_fw
+    return {"support": support_design(v), "fwing": front_wing_design(v)}
 
 
 def support_from_unit(u) -> dict:

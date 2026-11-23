@@ -204,8 +204,13 @@ def part4_kwargs(a) -> dict:
     if getattr(a, "rear_mm", None) is not None:
         kw["rear_face_mm"] = a.x_front + a.W + a.rear_mm
     if getattr(a, "fwing_json", None):
-        import wings as wg
-        kw["front"] = wg.FrontWing(**json.loads(a.fwing_json))
+        fj = json.loads(a.fwing_json)
+        if "pieces" in fj:                    # the searches' wing (car/parts/front_wing_engine.py)
+            import front_wing_engine as fwe
+            kw["front"] = fwe.FrontWingDesign(**fj)
+        else:
+            import wings as wg
+            kw["front"] = wg.FrontWing(**fj)
     if getattr(a, "rwing_json", None):
         import wings as wg
         kw["rear"] = wg.RearWing(**json.loads(a.rwing_json))

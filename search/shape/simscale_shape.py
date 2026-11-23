@@ -68,16 +68,17 @@ class ShapeCampaign(SL.Campaign):
         return xs, {"mode": "cma", "sigma": round(float(es.sigma), 4), "generation": int(es.countiter)}
 
     def dim(self):
-        """CMA's vector: the lattice's control points, then the wheel supports' shape genes
-        (layout_genes.SHAPE_GENES, 0 = the catalogue's value, -1 / +1 its lo / hi)."""
+        """CMA's vector: the lattice's control points, then the shape genes (layout_genes.SHAPE_GENES: the
+        wheel supports and the front wing; 0 = the catalogue's value, -1 / +1 its lo / hi)."""
         return int(np.prod(self.shape)) + len(SL.LG.SHAPE_GENES)
 
     def job(self, v):
         v = np.asarray(v, float)
         n = int(np.prod(self.shape))
+        sh = SL.LG.shape_from_unit(v[n:], z_fw=SL.LG.decode(self.base)["fwing"]["z_mm"])
         return {"x": self.base.tolist(), "v": v.tolist(),
                 "lattice": {"shape": list(self.shape), "values": v[:n].tolist(), "amp_mm": self.amp},
-                "support": SL.LG.support_from_unit(v[n:])}
+                "support": sh["support"], "fwing": sh["fwing"]}
 
     def batch_done(self, ids):
         """Every car of the generation is back: tell CMA its race times (a car that could not be built,
