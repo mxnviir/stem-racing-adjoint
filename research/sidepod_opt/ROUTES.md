@@ -1235,6 +1235,35 @@ external topology case was **not found** in their material (that is not proof it
   - groove~2 still runs (started 08:56): it is the third groove mesh that D8 (mark M1) needs for the groove's
     fine mean and SE, and it shows whether the groove has a second state too.
 
+- **2026-11-23 11:45, fine mesh: groove~2 reads 177.92 mN. Groove vs team on 3 fine meshes each: not resolved (+2.2 ± 1.9 mN, +1.2 SE). Marks M1 and M2 fail on this evidence.**
+
+  | fine, half car (200-iteration means) | runs | totals | mean | sd | body total (pressure) |
+  |---|---|---|---|---|---|
+  | team | 3 | 176.04, 179.86, 173.76 | 176.55 | 3.08 | 18.5, 20.8, 17.0 (2.6, 5.3, 0.9) |
+  | groove | 3 | 178.52, 179.81, 177.92 | 178.75 | 0.97 | 23.6, 24.7, 23.5 (8.1, 9.4, 8.1) |
+
+  - groove~2: 3,376,413 cells, y+ max 88.1, converged; block means 178.14, 177.77, 178.15, 177.92 (iterations 200–1000).
+    Split: body pressure 8.1, wheels 154.4, lift 47.3, the same pattern as the groove's other two runs.
+  - **C3 (groove < −3 SE) on fine: fails.** The difference is +2.20 mN, pooled SE 1.86 (sd 2.28 pooled with the two
+    groups' sd 3.08 / 0.97), z = +1.18: not resolved. On medium it was −3.6 ± 0.5 (7 SE).
+  - **The scatter is the team pod's, not the groove's:** the groove repeats within 1 mN in total and in its split; the team
+    pod moves between at least two flow states (body pressure 0.9–5.3 mN, lift 56–69 mN). A design that
+    sits in one state is easier to measure than one that flips, so the fine scatter depends on the design.
+  - **M2 (single runs can score: pooled σ ≤ 2 mN): fails on fine** (pooled σ 2.28 mN).
+  - **M1 (medium adequate): fails.**
+    - Part 1, team body drag within 3 mN of fine: medium 23.95 (4 clean meshes: 22.12, 23.48, 25.50, 24.70)
+      against fine 18.77 (3 meshes): −5.2 mN. (14:45's −3.6 was 2 fine meshes.) The groove's body drag barely moves
+      with the mesh (medium 25.0 from groove~1/~2, fine 23.9), so medium over-reads the **team** pod's body
+      drag in particular.
+    - Part 2, the groove−team difference within max(2 mN, 3 SE): medium −3.6 ± 0.5 against fine +2.2 ± 1.86,
+      a shift of 5.80 mN against 3 SE = 5.78 (SEs combined): fails by 0.02 mN, i.e. on the edge. Not a clean reading
+      either way; part 1 decides M1.
+  - **What this means for the pod search:** medium ranks the groove ahead (−3.6 mN, tight), fine can't
+    rank them (team ±3 mN between states). The medium "groove beats team" result is not confirmed on
+    fine. Next step per the 14:45 mark: state-controlled scoring on fine (each design scored in both flow
+    states, Part 2's method A). This is not started; it needs the owner's go-ahead (cost: about 2 fine runs per design per state).
+  - Queue: no pod (started 11:40), design 8, blend 50; done ~19:45 UTC. These give C1, C2, C5 and the rest of M1.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
