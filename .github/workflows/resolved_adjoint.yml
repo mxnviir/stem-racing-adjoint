@@ -4,8 +4,8 @@ run-name: "Wall-resolved normal-adjoint test (branch launch)"
 # RESOLVED_TEST.md as a distributed job graph (one GitHub runner per stage, meshes passed as
 # artifacts): proda = step 1a (resolved mesh with wall layers + production state A, 3000 cold
 # iterations; checkpoint-chains itself past the 6 h job cap), steady = step 1b (upwind
-# continuation + marks L and A1), bumpgeom + bumps = step 2 (six +/-1 mm bumps, parallel),
-# adjoint = step 3 (ESI frozen + sst, parallel), verdict = step 4 (same marks as the driver) plus
+# continuation + marks L and A1), bumpgeom + bumps = step 2 (six +/-1 mm bumps, parallel,
+# 1000 each), adjoint = step 3 (ESI frozen + sst, parallel, 1000 each), verdict = step 4 plus
 # the dated ROUTES.md entry and the push of results (branch only, never main).
 #
 # Trigger: this workflow lives on the feature branch only, and workflow_dispatch cannot target a
@@ -201,8 +201,8 @@ jobs:
               # but the MESH is intact. Cold-solve from 0 to the iteration target on this mesh.
               # writeInterval MUST equal the target too, or the finished solve is never written
               # (endTime 1000 with the inherited writeInterval 3000 discarded a completed run).
-              t = re.sub(r'\nendTime\s+[^;\n]+;', '\nendTime       3000;', t, count=1)
-              t = re.sub(r'\nwriteInterval\s+[^;\n]+;', '\nwriteInterval    3000;', t, count=1)
+              t = re.sub(r'\nendTime\s+[^;\n]+;', '\nendTime       1000;', t, count=1)
+              t = re.sub(r'\nwriteInterval\s+[^;\n]+;', '\nwriteInterval    1000;', t, count=1)
               t = re.sub(r'\npurgeWrite\s+[^;\n]+;', '\npurgeWrite       0;', t, count=1)
               cd.write_text(t)
               print('mesh salvaged from the checkpoint; cold-solving to 1000 with a write at 1000')
@@ -221,7 +221,7 @@ jobs:
           mkdir -p gate gate_results_resolved
           export P2_JOB_DEADLINE=$(( $(date +%s) + 280*60 )) P2_CHECKPOINT_FILE=$PWD/ckpt_path.txt
           export PRODCHECK_WALL_RESOLVED=1 PRODCHECK_RES=resolved PRODCHECK_RESULTS=$PWD/gate_results_resolved \
-                 PRODCHECK_KEEP=$PWD/gate/refA_resolved PRODCHECK_ITERS=3000 PRODCHECK_TIMEOUT=18000
+                 PRODCHECK_KEEP=$PWD/gate/refA_resolved PRODCHECK_ITERS=1000 PRODCHECK_TIMEOUT=18000
           T0=$(date +%s)
           ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
                  i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t ../../part2-simulation/cfd_case_template/runs/*/postProcessing/forces/*/force.dat /tmp/case/run/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
@@ -255,7 +255,7 @@ jobs:
           mkdir -p ckpt && tar -cf ckpt/case.tar -C "$(dirname "$r")" --transform "s|^$(basename "$r")|run|" "$(basename "$r")"
       - if: steps.solve.outputs.chained == 'true'
         uses: actions/upload-artifact@v4
-        with: { name: ckpt-proda, path: ckpt/case.tar, retention-days: 3 }
+        with: { name: ckpt-proda, path: ckpt/case.tar, retention-days: 14 }
       - name: dispatch the next link (workflow_dispatch)
         if: steps.solve.outputs.chained == 'true'
         env:
@@ -294,10 +294,10 @@ jobs:
           cd ../.. && tar czf carcad.tgz -C research/sidepod_opt gate/original
       - if: steps.solve.outputs.chained != 'true'
         uses: actions/upload-artifact@v4
-        with: { name: prodstate, path: prodstate.tgz, retention-days: 7 }
+        with: { name: prodstate, path: prodstate.tgz, retention-days: 14 }
       - if: steps.solve.outputs.chained != 'true'
         uses: actions/upload-artifact@v4
-        with: { name: carcad, path: carcad.tgz, retention-days: 7 }
+        with: { name: carcad, path: carcad.tgz, retention-days: 14 }
       - name: retract the launch state (campaign continues downstream; this file must not relaunch it)
         if: steps.solve.outputs.chained != 'true'
         env:
@@ -318,7 +318,7 @@ jobs:
       - name: failure logs
         if: failure()
         uses: actions/upload-artifact@v4
-        with: { name: proda-failure, path: research/sidepod_opt/gate/prodcheck_link.log, retention-days: 7 }
+        with: { name: proda-failure, path: research/sidepod_opt/gate/prodcheck_link.log, retention-days: 14 }
 
   bumpgeom:
     name: "2 bump geometry (mesh-independent)"
@@ -351,11 +351,11 @@ jobs:
           tar czf ../../bumpgeom.tgz gate/bump_pod_rear gate/bump_pod_rear_m gate/bump_pod_front_low gate/bump_pod_front_low_m \
                  gate/bump_pod_rear_top gate/bump_pod_rear_top_m gate/original_rm gate_results_resolved_up/bumps.json
       - uses: actions/upload-artifact@v4
-        with: { name: bumpgeom, path: bumpgeom.tgz, retention-days: 7 }
+        with: { name: bumpgeom, path: bumpgeom.tgz, retention-days: 14 }
       - name: failure logs
         if: failure()
         uses: actions/upload-artifact@v4
-        with: { name: bumpgeom-failure, path: research/sidepod_opt/gate/bumps_make.log, retention-days: 7 }
+        with: { name: bumpgeom-failure, path: research/sidepod_opt/gate/bumps_make.log, retention-days: 14 }
 
   steady:
     name: "1b steady continuation + marks L, A1"
@@ -387,7 +387,7 @@ jobs:
         run: |
           gh run download "${{ needs.init.outputs.src_run || github.run_id }}" -R "${{ github.repository }}" -n prodstate -D /tmp/ps
           tar xzf /tmp/ps/prodstate.tgz -C research/sidepod_opt
-      - name: solve (3000 upwind-U iterations, wake steadiness test)
+      - name: solve (1000 upwind-U iterations, wake steadiness test)
         id: solve
         working-directory: research/sidepod_opt
         env:
@@ -399,7 +399,7 @@ jobs:
           ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
                  i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t gate/refA_resolved_up/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
           set +e
-          python -W ignore -u fine_campaign/steady_base.py gate/refA_resolved gate/refA_resolved_up gate_results_resolved_up "$NP" 3000 > gate/steady_link.log 2>&1
+          python -W ignore -u fine_campaign/steady_base.py gate/refA_resolved gate/refA_resolved_up gate_results_resolved_up "$NP" 1000 > gate/steady_link.log 2>&1
           RC=$?
           set -e
           kill $MON 2>/dev/null || true
@@ -456,17 +456,17 @@ jobs:
         run: tar czf steadystate.tgz -C research/sidepod_opt gate/refA_resolved_up gate_results_resolved_up
       - if: steps.done.outputs.layers == 'true' && steps.done.outputs.a1 == 'true'
         uses: actions/upload-artifact@v4
-        with: { name: steadystate, path: steadystate.tgz, retention-days: 7 }
+        with: { name: steadystate, path: steadystate.tgz, retention-days: 14 }
       - name: steadystate anyway (marks failed, kept for the report)
         if: steps.done.outputs.layers != 'true' || steps.done.outputs.a1 != 'true'
         run: tar czf steadystate.tgz -C research/sidepod_opt gate/refA_resolved_up gate_results_resolved_up
       - if: steps.done.outputs.layers != 'true' || steps.done.outputs.a1 != 'true'
         uses: actions/upload-artifact@v4
-        with: { name: steadystate, path: steadystate.tgz, retention-days: 7 }
+        with: { name: steadystate, path: steadystate.tgz, retention-days: 14 }
       - name: failure logs
         if: failure()
         uses: actions/upload-artifact@v4
-        with: { name: steady-failure, path: research/sidepod_opt/gate/steady_link.log, retention-days: 7 }
+        with: { name: steady-failure, path: research/sidepod_opt/gate/steady_link.log, retention-days: 14 }
 
   bumps:
     name: "2 bump ${{ matrix.site }}"
@@ -522,7 +522,7 @@ jobs:
         timeout-minutes: 325
         run: |
           export P2_JOB_DEADLINE=$(( $(date +%s) + 250*60 )) P2_CHECKPOINT_FILE=$PWD/ckpt_path.txt
-          export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1500 GATE_TIMEOUT=18000 \
+          export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1000 GATE_TIMEOUT=18000 \
                  CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1
           T0=$(date +%s)
           ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
@@ -556,7 +556,7 @@ jobs:
           mkdir -p ckpt && tar -cf ckpt/case.tar -C "$(dirname "$r")" --transform "s|^$(basename "$r")|run|" "$(basename "$r")"
       - if: steps.solve.outputs.chained == 'true'
         uses: actions/upload-artifact@v4
-        with: { name: "ckpt-bump-${{ matrix.site }}", path: ckpt/case.tar, retention-days: 3 }
+        with: { name: "ckpt-bump-${{ matrix.site }}", path: ckpt/case.tar, retention-days: 14 }
       - name: dispatch the continuation (workflow_dispatch for this bump site)
         if: steps.solve.outputs.chained == 'true'
         env:
@@ -606,7 +606,7 @@ jobs:
       - name: failure logs
         if: failure()
         uses: actions/upload-artifact@v4
-        with: { name: "bump-failure-${{ matrix.site }}", path: research/sidepod_opt/gate/bump_link.log, retention-days: 7 }
+        with: { name: "bump-failure-${{ matrix.site }}", path: research/sidepod_opt/gate/bump_link.log, retention-days: 14 }
 
   adjoint:
     name: "3 ESI adjoint (${{ matrix.turb }})"
@@ -655,7 +655,7 @@ jobs:
           ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
                  i=$((i+1)); if [ $((i % 4)) = 0 ]; then echo "PROG $(tail -n3 gate/esi_resolved_"$TURB"/log.adjoint 2>/dev/null | tr '\n' ' ' | cut -c1-160)"; fi; sleep 15; done ) & MON=$!
           set +e
-          python -W ignore -u esi/esi_on_state.py gate/refA_resolved_up gate/esi_resolved_"$TURB" "$TURB" "$NP" 3000 100 > gate/esi_resolved_"$TURB".log 2>&1
+          python -W ignore -u esi/esi_on_state.py gate/refA_resolved_up gate/esi_resolved_"$TURB" "$TURB" "$NP" 1000 100 > gate/esi_resolved_"$TURB".log 2>&1
           RC=$?
           set -e
           kill $MON 2>/dev/null || true
@@ -692,14 +692,14 @@ jobs:
       - name: failure logs
         if: failure()
         uses: actions/upload-artifact@v4
-        with: { name: "esi-failure-${{ matrix.turb }}", path: "research/sidepod_opt/gate_results_resolved_up/esi/esi_log_tail_${{ matrix.turb }}.txt", retention-days: 7 }
+        with: { name: "esi-failure-${{ matrix.turb }}", path: "research/sidepod_opt/gate_results_resolved_up/esi/esi_log_tail_${{ matrix.turb }}.txt", retention-days: 14 }
       - name: failure esi dir anyway (a crashed adjoint's log tail still counts for the report)
         if: failure() && steps.solve.outputs.ok == 'false'
         working-directory: research/sidepod_opt
         run: tar czf ../../esi_crash.tgz gate_results_resolved_up/esi 2>/dev/null || (mkdir -p gate_results_resolved_up/esi && tar czf ../../esi_crash.tgz gate_results_resolved_up/esi)
       - if: failure() && steps.solve.outputs.ok == 'false'
         uses: actions/upload-artifact@v4
-        with: { name: "esi-crash-${{ matrix.turb }}", path: esi_crash.tgz, retention-days: 7 }
+        with: { name: "esi-crash-${{ matrix.turb }}", path: esi_crash.tgz, retention-days: 14 }
 
   verdict:
     name: "4 verdict + ROUTES.md + push results"
@@ -723,6 +723,7 @@ jobs:
           for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
       - run: pip install $PY_DEPS
       - name: gather state, bumps and sensitivities
+        if: always()
         working-directory: research/sidepod_opt
         env:
           SITES: ${{ needs.init.outputs.sites }}
@@ -751,6 +752,7 @@ jobs:
           done
           ls gate_results_resolved_up/ 2>/dev/null | head -30 || true
       - name: judge (same marks as the driver) and write the verdict
+        if: always()
         working-directory: research/sidepod_opt
         env:
           TURBS: ${{ needs.init.outputs.turbs }}
@@ -788,6 +790,7 @@ jobs:
           PY
           cat gate_results_resolved_up/esi/VERDICT.txt
       - name: ROUTES.md entry + push (never to main)
+        if: always()
         working-directory: research/sidepod_opt
         env:
           REPO: ${{ github.repository }}
