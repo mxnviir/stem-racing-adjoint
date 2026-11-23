@@ -214,7 +214,12 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
     Pw, _ = _tm.sample.sample_surface_even(wing_tm, 2500, seed=3)
     Pw = Pw[Pw[:, 1] < hs - cc.CLEAR_AIR - 0.5]
 
+    wb = wing_tm.bounds
+    span_box = se._box(wb[0, 0] - 1.0, wb[1, 0] + 1.0, -1.0, hs - 0.35, wb[0, 2] - 0.5, wb[1, 2] + 0.5)
+
     def accept(M):
+        if (M ^ span_box).volume() > 1e-3:              # not back into the wing's own span past the joint
+            return False
         T = trimmed(M)
         if T is None:
             return False

@@ -32,7 +32,7 @@ import numpy as np
 
 N_RING = 192            # points round each section
 STRAIGHT_MM = 1.0       # straight out of the wing's face before it curves
-LEAVE_AROUND = 0.35     # go_around's repair: how far out of the face (share of its length) before it turns
+LEAVE_AROUND = 0.5      # go_around's repair: how far out of the face (share of its length) before it turns
 FACE_GROW_MM = 0.1      # the first section 0.1 mm round the aerofoil: the strut holds the whole face
 N_PATH = 40             # sections along the path
 ALLOW_MPA = 20.0        # ABS, as support_engine (printed, with margin)
