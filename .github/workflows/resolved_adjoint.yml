@@ -199,9 +199,13 @@ jobs:
           else:
               # the saved checkpoint lost its processor dirs (old tar bug): the FLOW is gone,
               # but the MESH is intact. Cold-solve from 0 to the iteration target on this mesh.
+              # writeInterval MUST equal the target too, or the finished solve is never written
+              # (endTime 1000 with the inherited writeInterval 3000 discarded a completed run).
               t = re.sub(r'\nendTime\s+[^;\n]+;', '\nendTime       1000;', t, count=1)
+              t = re.sub(r'\nwriteInterval\s+[^;\n]+;', '\nwriteInterval    1000;', t, count=1)
+              t = re.sub(r'\npurgeWrite\s+[^;\n]+;', '\npurgeWrite       0;', t, count=1)
               cd.write_text(t)
-              print('mesh salvaged from the checkpoint; cold-solving to 1000 (owner protocol)')
+              print('mesh salvaged from the checkpoint; cold-solving to 1000 with a write at 1000')
           PY
           if [ ! -d /tmp/case/run/processor0 ]; then
             bash -c "source /usr/lib/openfoam/openfoam2412/etc/bashrc && cd /tmp/case/run && decomposePar -force > logs/decomposePar.log 2>&1" || exit 1
