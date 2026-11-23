@@ -1198,6 +1198,21 @@ external topology case was **not found** in their material (that is not proof it
     while the support-generator coarse runs shared the machine). Running next: team~2 (started 01:07), then
     groove~2, no pod, design 8, blend 50.
 
+- **2026-11-23 06:10, the remaining fine runs go to 1000 iterations (owner's call), and the queue was restarted twice.**
+  - **Container restart:** about 03:15 the container was reclaimed while the session was idle (no background task
+    running) and killed team~2 at iteration 895. No checkpoint is written before the end, so it restarts
+    from scratch. Relaunched 06:01 as `gate/fine_here6.sh`. Lesson: keep a background task alive for as long
+    as a queue runs here.
+  - **1000 iterations (was 2000):** team~2 was restarted during meshing, so nothing was lost. Evidence it doesn't move
+    verdicts: in the four finished fine runs, the 200-iteration block mean at 800–1000 sits within 0.5 mN of the
+    1800–2000 mean (team 176.02 / 175.88, team~1 179.71 / 179.73, groove 178.02 / 178.49, groove~1 179.73 /
+    179.83), while two runs of the same car differ by 3.8 mN. The reported drag is the mean over the last 20 %,
+    so iterations 800–1000; there's no scheme switch at the start. The groove is the one that drifts (+0.5), so
+    the third repeats (team~2, groove~2) are 1000-iteration runs mixed with 2000-iteration ones; the
+    bias is ≤ 0.5 mN, small against the ±3 SE mark.
+  - **ETA:** about 2.7 h per run, so team~2 ~09:00, groove~2 ~11:45 (gives the 3-vs-3 verdict), no pod ~14:30,
+    design 8 ~17:00, blend 50 ~19:45 UTC.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
