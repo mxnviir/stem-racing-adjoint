@@ -46,8 +46,8 @@ CASES = {
     "one piece through the nose": dict(),
     "one piece set under the nose: moved into it": dict(pieces=1, z_mm=6.5, chord_mm=18.0),
     "two halves rooted in the nose": dict(pieces=2, root_y_mm=4.0),
-    "two halves off the nose, their ends lofted into it": dict(pieces=2, root_y_mm=13.0, chord_mm=20.0,
-                                                              support=S(ext=0.6, rise_mm=4.0, foot_scale=1.6, waist=0.4)),
+    "two halves off the nose, their ends swept into it": dict(pieces=2, root_y_mm=13.0, chord_mm=20.0,
+                                                             support=S(aim_out_deg=20.0, leave=0.5, arrive=0.6, flare=2.0)),
     "the middle of every range": dict(pieces=2),
 }
 
@@ -77,12 +77,12 @@ def test_a_short_tip_is_pushed_out_to_a_25_mm_segment():
 
 
 def test_a_split_wing_is_held_by_its_ends():
-    """Off the nose, each half's inner end (its aerofoil face) is lofted into the nose: inside T8.5.1's band."""
-    r = fwe.build(fwe.FrontWingDesign(**CASES["two halves off the nose, their ends lofted into it"]), NOSE, X_FRONT, WHEEL)
+    """Off the nose, each half's inner end (its aerofoil face) is swept into the nose: inside T8.5.1's band."""
+    r = fwe.build(fwe.FrontWingDesign(**CASES["two halves off the nose, their ends swept into it"]), NOSE, X_FRONT, WHEEL)
     assert r["info"]["struts"] and r["pylons"] is not None, r["info"]
     pb = r["pylons"].bounds * 1e3
     wb = r["wing"].bounds * 1e3
-    assert pb[1, 1] <= wb[0, 1] + 0.31 + 1e-6            # the plate covers the end face, from there inwards
+    assert pb[1, 1] <= wb[0, 1] + 0.31 + 1e-6            # the strut leaves through the end face, inwards
     assert pb[1, 1] <= fwe.SUPPORT_BAND_MM and pb[1, 2] <= 25.0
 
 

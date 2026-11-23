@@ -89,19 +89,23 @@ the slot or none, slot cut from below, one closed solid. Thicknesses grow until 
 folder gets `supports.png` (`search/layout/support_render.py`) to inspect the design.
 `beam_support.py` (Part 4's pod/plate/strip support) is kept for the team's own car (`--support beam`).
 
-`front_wing_engine.py` and `rear_wing_engine.py` design the searches' wings and their supports. Every wing is
+`front_wing_engine.py` and `rear_wing_engine.py` design the searches' wings and their struts. Every wing is
 STRAIGHT (user 2026-11-23): a level, symmetric NACA section square to the car -- no sweep, dihedral, angle of
 attack or camber. Searched: the front wing one piece or two, chord, gap to Ref A, span, root; the rear wing's
-chord, thickness, half span and height over the lowest T9.6 / T9.7 allow. Supports are on the wings' SIDES,
-where the aerofoil shows (user 2026-11-23; the regulations' T1.6 and appendix iv), lofted like the halo's loft
-(`wing_loft.py`): a plate over the end face, carried slice by slice to the body / nose, its outline morphing into
-its foot, flared or narrowed, pinched or not. Rear: a pair at the tips, down to the body straight under them or,
-with nothing there, to its nearest point; trimmed to the body's surface (a glued joint); never on the centre
-line; shrunk out of T7.9's zones and off the rear wheel. Front: T1.6.1 / T8.5.1 put a support within 15 mm of
-the centre line, so a split wing's inner ends are lofted into the nose (printed with it); one piece is held by
-the nose it runs through, moved to the nose's height if it would miss it. Numbers: plate thickness (rear), how
-far it runs past the chord, how far above / below the wing, foot scale, waist -- each starting mid-range; where
-it lands is the geometry's. Every T8 / T9 rule is measured on the result, and again by the referee.
+chord, thickness, half span and height over the lowest T9.6 / T9.7 allow.
+The struts (`wing_strut.py`) are organic swept solids the search designs: each leaves the wing through its
+SIDE -- its first section is the wing's own aerofoil there (0.1 mm round it), straight for 1 mm -- and follows a
+smooth path (a cubic Bezier: how far it carries on out of the face, how far it comes square into its foot) to
+where it heads (its lean out / in and fore / aft from straight down, rear, or straight in, front), its sections
+morphing from the aerofoil into its own streamlined superellipse (chord, thickness, squareness) and flaring
+into its foot. Limited only by the print wall, the ABS (every section checked in bending and axially under an
+assumed 1 N drag, 0.5 N side and 2 N down at the wing, 20 MPa allowed, thickened until it holds) and the rules:
+a strut that breaks one is pulled back towards a plain one (its lean, carry-out and flare by one share).
+Rear: a pair from the tips (the regulations' appendix iv), trimmed to the body's surface (a glued foot), never
+on the centre line, out of T7.9's zones and off the rear wheel, inside T3.4's width (the span leaves it 4 mm).
+Front: T1.6.1 / T8.5.1 keep supports within 15 mm of the centre line, so a split wing's inner ends sweep into
+the nose (printed with it); one piece is held by the nose it runs through, moved to its height if it would miss.
+Every number starts mid-range; every T8 / T9 rule is measured on the result and again by the referee.
 `joints.make_all` cuts pockets for the printed parts and writes the manufacturing files (skipped in
 searches with `--no-joints`; rebuild finalists without it).
 

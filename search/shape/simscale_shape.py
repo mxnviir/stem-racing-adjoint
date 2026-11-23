@@ -34,7 +34,7 @@ import numpy as np
 
 import simscale_layout as SL
 
-COARSE = (5, 2, 3)           # displacement control points: along the car, across (top/bottom) and up (side)
+COARSE = (5, 2, 3, 4)        # displacement control points: along the car, across the top, up the side, across the floor
 AMP_MM = (6.0, 4.0, 6.0)     # mm per unit of CMA's numbers: top, bottom, side
 FIT_GRID = (24, 9, 12)       # the surfaces' own control grid, fitted to the stage-1 car (IoU 0.85 on L0044)
 NOSE_LEAD_MM = 2.0          # the seed nose starts this far ahead of the seed front wing's leading edge

@@ -17,11 +17,13 @@ So the work is split by what each number is:
    The first 16 cars are space-filling (Sobol). Budget: 48 cars plus the reference twice.
 2. **Stage 2, shape (search/shape, CMA-ES).** On the best layout from stage 1, everything else is designed
    freely: the body and nose (car/body/freeform.py: top, bottom and side surfaces, fitted to the stage-1
-   car and moved by a coarse grid of displacements: 5 x 2 top, 5 x 2 bottom, 5 x 3 side, 6/4/6 mm per unit),
+   car and moved by a coarse grid of displacements: 5 x 2 top, 5 x 4 bottom -- four across the floor, so it
+   can form channels: a catamaran tunnel's two hulls and the raised centre between them --, 5 x 3 side, 6/4/6
+   mm per unit),
    the front wing (straight: one piece or two, chord, gap, span, root) and the rear wing (straight: chord,
-   thickness, half span, lift), their side supports lofted from the wings' end faces to the nose / body
-   (plate, extension past the chord, rise, foot scale, waist: car/parts/wing_loft.py)
-   and the wheel supports' plates (chord, thickness, taper, transition): 57 numbers. No support design is
+   thickness, half span, lift), their struts, swept out of the wings' sides to the nose / body (lean out / in,
+   fore / aft, carry-out, carry-in, chord, thickness, flare, squareness: car/parts/wing_strut.py)
+   and the wheel supports' plates (chord, thickness, taper, transition): 74 numbers. No support design is
    preset: every support number starts at the middle of its range and the search decides. The rule masks and the milling are applied after, so every vector is a legal, millable body;
    what a mask cannot force is measured and refused. CMA-ES, 8 cars a generation.
    The coarse grid is a setting (simscale_shape.COARSE): a finer grid is freer but needs more runs. With

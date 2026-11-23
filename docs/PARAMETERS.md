@@ -1,6 +1,6 @@
 # Layout search: every parameter of the car
 
-145 parameters, 10 evolved in stage 1 (the layout search), 22 in stage 2 (`shape`: the shape search, with the body's lattice), 113 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
+152 parameters, 10 evolved in stage 1 (the layout search), 29 in stage 2 (`shape`: the shape search, with the body's lattice), 113 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
 
 x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, Ref B = rear axle + 16.
 
@@ -156,7 +156,7 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `nose_root_scale` | **fixed** | 1.0 | 0.9 - 1.0 - | root section vs the body's |  |  |
 | `nose_wall` | **fixed** | 1.0 | 0.8 - 2.0 mm | printed shell wall | print minimum | mass only |
 
-## front wing (10 of 10 evolved)
+## front wing (14 of 14 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -166,12 +166,16 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `fw_te_gap` | **shape** | 6.0 | 5.3 - 20.0 mm | trailing edge ahead of Ref A | T8.7 5 mm to the body and the wheels; T8.2 the whole wing within 40 mm of Ref A |  |
 | `fw_tip_y` | **shape** | 36.5 | 26.0 - 42.0 mm | tip, from the centre line (pushed out until each segment is 25 mm) | T8.6.1; T3.4 car width |  |
 | `fw_root_y` | **shape** | 8.0 | 0.5 - 15.0 mm | two pieces: where each half starts (in the nose's side, or over/under it on a pylon) | T8.5.1 support band 15 mm |  |
-| `fwsup_ext` | **shape** | 0.4 | 0.0 - 0.8 - | split wing: its side supports' plate past the chord (share of it) | T8.5.1 ahead of Ref A | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
-| `fwsup_rise` | **shape** | 3.0 | 0.0 - 6.0 mm | split wing: its side supports' plate above and below the section | T8.5.1 25 mm | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
-| `fwsup_foot` | **shape** | 1.2 | 0.4 - 2.0 - | split wing: its side supports' foot on the nose, times the plate | T8.5.1 | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
-| `fwsup_waist` | **shape** | 0.3 | 0.0 - 0.6 - | split wing: its side supports pinched half way by this share |  | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
+| `fwsup_out` | **shape** | 0.0 | -40.0 - 40.0 deg | struts: a split wing's: from straight in to the nose, leaning down (+) or up (-) |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `fwsup_fwd` | **shape** | 0.0 | -30.0 - 30.0 deg | struts: leaning forward (+) or aft (-) |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `fwsup_leave` | **shape** | 0.45 | 0.1 - 0.8 - | struts: how far straight out of the wing's side before bending (share of length) |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `fwsup_arrive` | **shape** | 0.45 | 0.1 - 0.8 - | struts: how far square into the foot (share of length) |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `fwsup_chord` | **shape** | 12.0 | 4.0 - 20.0 mm | struts: their own section along the flow (grown if the ABS needs it) | ABS 20 MPa | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `fwsup_thick` | **shape** | 3.6 | 1.2 - 6.0 mm | struts: their own section across the flow (grown if the ABS needs it) | print wall; ABS 20 MPa | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `fwsup_flare` | **shape** | 1.65 | 0.8 - 2.5 - | struts: their foot, times their section |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `fwsup_round` | **shape** | 3.5 | 2.0 - 5.0 - | struts: section squareness (2 an ellipse) |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
 
-## rear wing (10 of 16 evolved)
+## rear wing (13 of 19 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -186,11 +190,14 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `rw_pylon_chord` | **fixed** | 10.0 | 6.0 - 20.0 mm | pylon chord |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `rw_t` | **shape** | 2.3 | 2.3 - 6.0 mm | wing thickness | T9.5.3 2-6 | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
 | `rw_lift` | **shape** | 0.0 | 0.0 - 15.0 mm | height above the lowest T9.6 / T9.7 allow | T9.4.3 65 mm | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
-| `rwsup_plate` | **shape** | 3.6 | 1.2 - 6.0 mm | side supports: plate thickness outboard of the tips | print wall; T3.4 | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
-| `rwsup_ext` | **shape** | 0.4 | 0.0 - 0.8 - | side supports: plate past the chord (share of it) | T9.4.1, T9.4.2 | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
-| `rwsup_rise` | **shape** | 4.0 | 0.0 - 8.0 mm | side supports: above the wing's top | T9.4.3 65 mm | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
-| `rwsup_foot` | **shape** | 1.2 | 0.4 - 2.0 - | side supports: foot on the body, times the plate | T7.9, T3.4 | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
-| `rwsup_waist` | **shape** | 0.3 | 0.0 - 0.6 - | side supports: pinched half way down by this share |  | user 2026-11-23: supports on the wing's sides (where the aerofoil is), lofted like the halo's (wing_loft.py); every number starts at the middle of its range |
+| `rwsup_out` | **shape** | 0.0 | -40.0 - 40.0 deg | struts: from straight down, leaning outward (+) or inward (-) |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `rwsup_fwd` | **shape** | 0.0 | -30.0 - 30.0 deg | struts: leaning forward (+) or aft (-) |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `rwsup_leave` | **shape** | 0.45 | 0.1 - 0.8 - | struts: how far straight out of the wing's side before bending (share of length) |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `rwsup_arrive` | **shape** | 0.45 | 0.1 - 0.8 - | struts: how far square into the foot (share of length) |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `rwsup_chord` | **shape** | 12.0 | 4.0 - 20.0 mm | struts: their own section along the flow (grown if the ABS needs it) | ABS 20 MPa | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `rwsup_thick` | **shape** | 3.6 | 1.2 - 6.0 mm | struts: their own section across the flow (grown if the ABS needs it) | print wall; ABS 20 MPa | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `rwsup_flare` | **shape** | 1.65 | 0.8 - 2.5 - | struts: their foot, times their section |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
+| `rwsup_round` | **shape** | 3.5 | 2.0 - 5.0 - | struts: section squareness (2 an ellipse) |  | user 2026-11-23: organic struts the search designs (wing_strut.py), leaving the wing through its side (its aerofoil) and sweeping to the body / nose; limited only by the print wall, the ABS's strength and the rules; every number starts mid-range |
 
 ## tether guides (0 of 2 evolved)
 

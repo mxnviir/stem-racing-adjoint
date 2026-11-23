@@ -32,10 +32,11 @@ BODY, SPINE = _tail(), _spine_only()
 S = rwe.Support
 CASES = {
     "the middle of every range, over the pods": (rwe.RearWingDesign(), BODY),
-    "a wide wing, its sides down onto the pods, flared": (rwe.RearWingDesign(half_span_mm=29.0, support=S(
-        plate_mm=5.0, ext=0.6, rise_mm=6.0, foot_scale=1.8, waist=0.4)), BODY),
-    "nothing under the tips: the sides curve in to the spine": (rwe.RearWingDesign(half_span_mm=30.0), SPINE),
-    "a wide chord, a thick wing, lifted": (rwe.RearWingDesign(chord_mm=22.0, t_mm=4.0, lift_mm=4.0), BODY),
+    "leaning out onto the pods, long sweeping curves": (rwe.RearWingDesign(half_span_mm=29.0, support=S(
+        aim_out_deg=25.0, leave=0.7, arrive=0.7, chord_mm=14.0, thick_mm=3.0, flare=2.0)), BODY),
+    "nothing under the tips: curving in to the spine": (rwe.RearWingDesign(half_span_mm=30.0, support=S(aim_out_deg=-30.0)), SPINE),
+    "a wide chord, a thick wing, lifted, raked struts": (rwe.RearWingDesign(chord_mm=22.0, t_mm=4.0, lift_mm=4.0,
+                                                                          support=S(aim_fwd_deg=-20.0, round=4.5)), BODY),
 }
 
 
@@ -59,29 +60,37 @@ def test_every_gate_passes(built, name):
 
 
 @pytest.mark.parametrize("name", list(CASES))
-def test_the_supports_are_at_the_sides_covering_the_aerofoil(built, name):
-    """Each side support covers its tip's whole aerofoil face, there and not under the wing."""
+def test_the_struts_leave_the_wing_through_its_sides(built, name):
+    """Each strut leaves through its tip: its first section is the wing's own aerofoil there (it covers the
+    whole face), and none of it is under the wing inboard of the tip."""
     r, _ = built[name]
     w = r["wing"].copy(); w.apply_scale(1e3)
     s = r["struts"][0].copy(); s.apply_scale(1e3)
     tip = w.bounds[1, 1]
     face = w.section(plane_origin=[0, tip - 0.05, 0], plane_normal=[0, 1.0, 0]).vertices
-    P = np.c_[face[:, 0], np.full(len(face), tip + 0.1), np.clip(face[:, 2], w.bounds[0, 2] + 0.05, w.bounds[1, 2] - 0.05)]
-    assert s.contains(P).mean() > 0.97
+    P = np.c_[face[:, 0], np.full(len(face), tip + 0.1), face[:, 2]]
+    sd = trimesh.proximity.signed_distance(s, P)
+    assert (sd > -0.05).mean() > 0.97
     under = s.vertices[(s.vertices[:, 2] > w.bounds[0, 2] + 0.05) & (s.vertices[:, 2] < w.bounds[1, 2])]
-    assert under[:, 1].min() >= tip - 0.31             # nothing of it under the wing, inboard of the tip
+    assert under[:, 1].min() >= tip - 0.31
+
+
+def test_the_abs_holds(built):
+    import wing_strut as ws
+    for r, _ in built.values():
+        assert r["info"]["struts"][0]["stress_mpa"] <= ws.ALLOW_MPA
 
 
 def test_the_wing_is_straight(built):
-    w = built["a wide chord, a thick wing, lifted"][0]["wing"].copy(); w.apply_scale(1e3)
+    w = built["a wide chord, a thick wing, lifted, raked struts"][0]["wing"].copy(); w.apply_scale(1e3)
     b = [w.section(plane_origin=[0, y, 0], plane_normal=[0, 1.0, 0]).bounds for y in (3.0, 12.0, 24.0)]
     assert np.allclose(b[0][:, [0, 2]], b[1][:, [0, 2]], atol=1e-3) and np.allclose(b[1][:, [0, 2]], b[2][:, [0, 2]], atol=1e-3)
 
 
-def test_sides_land_on_whatever_body_is_there(built):
-    f = built["a wide wing, its sides down onto the pods, flared"][0]["info"]["struts"][0]["foot_mm"]
+def test_struts_land_where_they_head(built):
+    f = built["leaning out onto the pods, long sweeping curves"][0]["info"]["struts"][0]["foot_mm"]
     assert f[1] > 13.0 and abs(f[2] - 26.0) < 0.5, f
-    g = built["nothing under the tips: the sides curve in to the spine"][0]["info"]["struts"][0]["foot_mm"]
+    g = built["nothing under the tips: curving in to the spine"][0]["info"]["struts"][0]["foot_mm"]
     assert g[1] <= 14.0 + 1e-6, g
 
 

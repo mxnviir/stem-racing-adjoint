@@ -82,3 +82,18 @@ def test_the_seed_nose_is_the_body_rounded_off_not_a_cone():
     mid = 0.5 * (front + ref_a)
     assert half(mid) > 0.7 * half(ref_a - 1.0), (half(mid), half(ref_a - 1.0))
     assert half(ref_a - 1.0) > 14.5                              # the body's 20 mm half-width, clipped to T8.5.1 (15 less 0.2)
+
+
+def test_the_floor_can_form_a_tunnel(ff):
+    """Four points across the floor (gb=4): the centre raised between two lower hulls -- a catamaran tunnel --
+    is something the search can make (with two the floor could only tilt into a V)."""
+    gu, gv, gw, gb = 5, 2, 3, 4
+    n = fr.n_genes(gu, gv, gw, gb)
+    u = np.zeros(n)
+    i0 = gu * gv                                           # the bottom's grid: (gu, gb), row-major
+    B = np.zeros((gu, gb)); B[1:4, 0:2] = 1.5; B[1:4, 3] = -1.0   # centre up, outer edge down, mid-car
+    u[i0:i0 + gu * gb] = B.ravel()
+    t = fr.from_unit(ff, u, (6.0, 4.0, 6.0), gu, gv, gw, gb)
+    _, bot, _ = fr.surfaces(t, np.array([120.0, 120.0]), np.array([0.0, 30.0]), np.array([0.0, 0.0]), X_TIP, X_REAR)
+    _, bot0, _ = fr.surfaces(ff, np.array([120.0, 120.0]), np.array([0.0, 30.0]), np.array([0.0, 0.0]), X_TIP, X_REAR)
+    assert bot[0] - bot0[0] > 4.0 and bot[1] - bot0[1] < -2.0   # the centre up, the edge down

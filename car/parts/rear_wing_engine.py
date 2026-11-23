@@ -32,19 +32,24 @@ MARGIN_MM = 0.3
 WHEEL_CLEAR_MM = 1.0
 HALF_WIDTH_MAX_MM = 42.5        # T3.4: 85 mm
 CENTRE_CLEAR_MM = 2.5           # team (user 2026-11-23): nothing on the centre line -- a support's inner face this far off it
+STRUT_ROOM_MM = 4.0             # the half span leaves its side struts this much of T3.4's 42.5 mm
+ZONE_MARGIN_MM = 0.6            # the wing this far clear of T7.9's zones (its struts' first section is 0.1 mm bigger)
 FOOT_REACH_MM = 60.0            # a support reaches no further than this to the body
 N_SPAN = 6
 
 
 @dataclass
 class Support:
-    """The pair of side supports: each covers the wing's tip (where its aerofoil shows) and is lofted down to
-    the body (wing_loft.py). Only shape numbers; where it lands is the body's."""
-    plate_mm: float = 3.0       # its thickness outboard of the tip (T3.4 keeps the whole car 85 mm wide)
-    ext: float = 0.3            # how far it runs past the chord, as a share of the chord (half fore, half aft)
-    rise_mm: float = 3.0        # how far it stands above the wing's top
-    foot_scale: float = 1.0     # its foot's size, times the plate's
-    waist: float = 0.3          # pinched half way down by this share
+    """The pair of side struts (wing_strut.py): each leaves the wing through its tip -- its first section the
+    wing's own aerofoil -- and sweeps, as the search shapes it, to the body. Only shape numbers."""
+    aim_out_deg: float = 0.0    # from straight down: leaning outward (+) or inward (-)
+    aim_fwd_deg: float = 0.0    # leaning forward (+) or aft (-)
+    leave: float = 0.35         # how far it carries on out of the tip before it bends (share of its length)
+    arrive: float = 0.35        # how far it comes in square to the body (share of its length)
+    chord_mm: float = 10.0      # its own section, along the flow
+    thick_mm: float = 3.0       # and across it
+    flare: float = 1.4          # its foot, times its section
+    round: float = 2.5          # 2 an ellipse, higher squarer
 
 
 @dataclass
@@ -125,8 +130,7 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
     info = {"design": params_dict(d)}
     ref_b = cc.ref_plane_B(x_front_mm, W_mm)
     sp = d.support
-    plate = float(np.clip(sp.plate_mm, cc.BUILD_WALL_MM, 8.0))
-    hs = float(np.clip(d.half_span_mm, cc.REAR_SPAN_MIN / 2 + MARGIN_MM, HALF_WIDTH_MAX_MM - MARGIN_MM - plate))
+    hs = float(np.clip(d.half_span_mm, cc.REAR_SPAN_MIN / 2 + MARGIN_MM, HALF_WIDTH_MAX_MM - MARGIN_MM - STRUT_ROOM_MM))
     chord = float(np.clip(d.chord_mm, cc.REAR_CHORD_MIN + MARGIN_MM, cc.REAR_CHORD_MAX - MARGIN_MM))
     t = float(np.clip(d.t_mm, cc.WING_THICK_MIN + MARGIN_MM, cc.WING_THICK_MAX - MARGIN_MM))
     room = cc.REAR_OVERHANG_MAX - 2 * MARGIN_MM - chord
@@ -135,7 +139,7 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
     import exact_zones as ez
     Y_, Z_ = np.meshgrid(np.linspace(0.0, hs, 40), np.linspace(0.0, cc.REAR_Z_MAX, 14), indexing="ij")
     for _ in range(40):
-        zv = ez.t79_zones(np.full(Y_.size, x_le - MARGIN_MM), Y_.ravel(), Z_.ravel(), W_mm, x_front_mm)
+        zv = ez.t79_zones(np.full(Y_.size, x_le - ZONE_MARGIN_MM), Y_.ravel(), Z_.ravel(), W_mm, x_front_mm)
         if not (zv > -MARGIN_MM).any():
             break
         x_le += float(zv.max()) + MARGIN_MM + 0.05
@@ -144,7 +148,7 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
     info.update(half_span_mm=hs, chord_mm=chord, t_mm=t, x_le_mm=x_le)
 
     def bands():
-        return [(hs - cc.CLEAR_AIR, hs + plate)]          # the joints with the side supports, at the tips
+        return [(hs - cc.CLEAR_AIR, hs + 99.0)]           # the joints with the side struts, at the tips
 
     # -- height: the lowest T9.6 (but at the joints) and T9.7 allow, then the search's lift --------------
     cloud = np.vstack([m.sample(int(min(400000, max(20000, m.area * 8)))) for m in [body] + others])
@@ -167,7 +171,7 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
         gap = min(gap, float(q[:, 2].min()))
         w_ = base.copy(); w_.apply_translation([0.0, 0.0, zr])
         return cc.CLEAR_AIR + MARGIN_MM - gap, _front_view_top(w_, fwd) + 0.1 - (lo0 + zr)
-    lo, hi = 0.0, cc.REAR_Z_MAX
+    lo, hi = 0.0, cc.REAR_Z_MAX - 1.0
     if max(short(hi)) > 0:
         z = hi
     else:
@@ -181,53 +185,44 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
                 break
             z += max(a, b) + 0.05
     wing_tm = se._to_trimesh(_wing(d, x_le, z))
-    room_up = (cc.REAR_Z_MAX - MARGIN_MM) - float(wing_tm.bounds[1, 2])
+    import wing_strut as _ws                              # (its struts' first section is FACE_GROW_MM bigger)
+    room_up = (cc.REAR_Z_MAX - MARGIN_MM - _ws.FACE_GROW_MM - 0.05) - float(wing_tm.bounds[1, 2])
     lift = float(np.clip(d.lift_mm, 0.0, max(room_up, 0.0)))
     if lift > 0:
         z += lift
         wing_tm = se._to_trimesh(_wing(d, x_le, z))
     info.update(z_chord_mm=z, lift_used_mm=lift)
 
-    # -- the side supports: from the wing's tips (their aerofoil faces) lofted to the body --------------
-    t_half = 0.5 * float(wing_tm.bounds[1, 2] - wing_tm.bounds[0, 2])
-    z_bot, z_top = z - t_half, z + t_half
-    rise = float(np.clip(sp.rise_mm, 0.0, max((cc.REAR_Z_MAX - MARGIN_MM) - z_top, 0.0)))
-    ext = float(np.clip(sp.ext, 0.0, 0.8))
+    # -- the side struts: out of the wing's tips (their aerofoil faces), swept to the body ---------------
+    import wing_strut as ws
+    sec = section(d)
+    face_xz = np.c_[x_le + sec[:, 0], z + sec[:, 1]]
+    face_pt = np.array([x_le + 0.5 * chord, hs, z])
     Mbody = se._to_manifold(body)
+    half = se._box(-1e3, 1e3, 0.0, 1e3, -1e3, 1e3)
+
+    def trimmed(M):
+        pcs = sorted(((M - Mbody) ^ half).decompose(), key=lambda p: -p.volume())
+        return pcs[0] if pcs else None
+
+    def accept(M):
+        T = trimmed(M)
+        if T is None:
+            return False
+        t = wl.to_trimesh(T)
+        b = t.bounds
+        return (b[0, 0] >= ref_b + MARGIN_MM and b[1, 0] <= ref_b + cc.REAR_OVERHANG_MAX - MARGIN_MM
+                and b[1, 1] <= HALF_WIDTH_MAX_MM - MARGIN_MM and b[0, 1] >= CENTRE_CLEAR_MM
+                and b[1, 2] <= cc.REAR_Z_MAX - MARGIN_MM and _clear(t, wheel_rear, W_mm, x_front_mm))
+    g = dataclasses.asdict(sp)
+    M, sinfo = ws.design(face_xz, face_pt, np.array([0.0, 1.0, 0.0]), body, np.array([0.0, 0.0, -1.0]), g,
+                         reach_mm=FOOT_REACH_MM, accept=accept, wall_mm=cc.BUILD_WALL_MM)
     sup, placed = None, []
-    for _ in range(10):
-        x0 = max(x_le - 0.5 * ext * chord, ref_b + MARGIN_MM)
-        x1 = min(x_le + chord + 0.5 * ext * chord, ref_b + cc.REAR_OVERHANG_MAX - MARGIN_MM)
-        y0, y1 = hs - 0.3, hs + plate                     # 0.3 mm into the wing's tip: one printed part
-        bottom = np.array([0.5 * (x0 + x1), 0.5 * (y0 + y1), z_bot])
-        foot = wl.first_hit(body, bottom, np.array([0.0, 0.0, -1.0]))
-        if foot is None:                                  # nothing under the tip: the body's nearest point
-            q, dist, _ = trimesh.proximity.closest_point(body, bottom[None])
-            foot = q[0] if dist[0] <= FOOT_REACH_MM and q[0][2] < z_bot else None
-        if foot is None:
-            break
-        fs = float(np.clip(sp.foot_scale, 0.3, 3.0))
-        while fs > 0.25:
-            hy = 0.5 * (y1 - y0) * fs
-            if foot[1] - hy >= CENTRE_CLEAR_MM and foot[1] + hy <= HALF_WIDTH_MAX_MM - MARGIN_MM:
-                break
-            fs *= 0.85
-        m = wl.loft((x0, x1, y0, y1), z_bot, (foot[0], foot[1]), foot[2], foot_scale=fs,
-                    waist=float(np.clip(sp.waist, 0.0, 0.7)), hold_mm=z_top + rise - z_bot, axis="z")
-        if m is not None:
-            # its base fitted to the milled body (glued, no pocket); the right half
-            M = (m - Mbody) ^ se._box(-1e3, 1e3, 0.0, 1e3, -1e3, 1e3)
-            pcs = sorted(M.decompose(), key=lambda p: -p.volume())
-            if pcs and _clear(wl.to_trimesh(pcs[0]), wheel_rear, W_mm, x_front_mm):
-                sup = wl.to_trimesh(pcs[0])
-                placed = [dict(y_mm=round(0.5 * (y0 + y1), 2), width_mm=round(y1 - y0, 2), plate_mm=plate,
-                               x_mm=[round(x0, 2), round(x1, 2)], rise_mm=round(rise, 2),
-                               foot_mm=[round(float(v), 2) for v in foot], foot_scale=round(fs, 3))]
-                break
-        ext *= 0.7                                        # shorter, then a smaller foot, until it is clear
-        sp = dataclasses.replace(sp, foot_scale=sp.foot_scale * 0.85)
-    if sup is None:
-        info["supports_not_placed"] = True
+    if M is not None:
+        sup = wl.to_trimesh(trimmed(M))
+        placed = [dict(y_mm=round(hs, 2), width_mm=0.0, plate_mm=cc.BUILD_WALL_MM, **sinfo)]
+    else:
+        info["supports_not_placed"] = sinfo
     info["struts"] = placed
     info["supported"] = bool(placed)
     gates = measure(d, wing_tm, sup, body, others, fwd, ref_b, wheel_rear, x_front_mm, W_mm, placed)
@@ -237,6 +232,11 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
     if sup is not None:
         q = sup.copy(); q.apply_scale(1e-3); out["struts"].append(q)
     return out
+
+
+def ws_allow():
+    import wing_strut as ws
+    return ws.ALLOW_MPA
 
 
 def _clear(m, wheel_rear, W_mm, x_front_mm) -> bool:
@@ -288,5 +288,5 @@ def measure(d, wing, sup, body, others, fwd, ref_b, wheel_rear, x_front_mm, W_mm
         g["rw_support_wheel_clear"] = float(np.where(inside_y, r - (R + WHEEL_CLEAR_MM), 99.0).min())
         zv = ez.t79_zones(P[:, 0], np.abs(P[:, 1]), P[:, 2], W_mm, x_front_mm)
         g["rw_support_T7.9_zones"] = -float(zv.max()) if (zv > 0).any() else 1.0
-        g["rw_support_wall"] = min(p["plate_mm"] for p in placed) - cc.BUILD_WALL_MM
+        g["rw_support_abs_stress"] = ws_allow() - max(p.get("stress_mpa", 0.0) for p in placed)
     return g

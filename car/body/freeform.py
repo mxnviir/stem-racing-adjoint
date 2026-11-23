@@ -248,15 +248,18 @@ def build_nose(ff: Freeform, x_tip, x_rear, ref_a, blend_after_mm=1.0, h=0.25):
 
 
 # ------------------------------------------------------------------ the search's numbers
-def coarse_grid_shapes(gu=5, gv=2, gw=3):
-    return {"top": (gu, gv), "bottom": (gu, gv), "side": (gu, gw)}
+def coarse_grid_shapes(gu=5, gv=2, gw=3, gb=None):
+    """The search's coarse grids: top (gu x gv over x, |y|), bottom (gu x gb: more across the car than the top
+    so the floor can form channels -- a catamaran tunnel's two hulls and the raised centre between them need
+    at least four points across; with two the floor could only tilt into a V), side (gu x gw over x, z)."""
+    return {"top": (gu, gv), "bottom": (gu, gv if gb is None else gb), "side": (gu, gw)}
 
 
-def n_genes(gu=5, gv=2, gw=3) -> int:
-    return sum(a * b for a, b in coarse_grid_shapes(gu, gv, gw).values())
+def n_genes(gu=5, gv=2, gw=3, gb=None) -> int:
+    return sum(a * b for a, b in coarse_grid_shapes(gu, gv, gw, gb).values())
 
 
-def from_unit(seed: Freeform, u, amp_mm=(6.0, 6.0, 6.0), gu=5, gv=2, gw=3) -> Freeform:
+def from_unit(seed: Freeform, u, amp_mm=(6.0, 6.0, 6.0), gu=5, gv=2, gw=3, gb=None) -> Freeform:
     """Stage 2: the seed's fields moved by a coarse grid of control displacements (CMA's numbers, mm per unit:
     amp_mm for top, bottom, side), cubic-interpolated onto the seed's own control grid. A coarse grid keeps
     the number of free numbers to what the CFD runs can search; a finer one is a setting (gu, gv, gw)."""
@@ -264,7 +267,7 @@ def from_unit(seed: Freeform, u, amp_mm=(6.0, 6.0, 6.0), gu=5, gv=2, gw=3) -> Fr
     u = np.asarray(u, float)
     T, B, S = seed.grids()
     out, i = [], 0
-    for g, (a, b), amp in zip((T, B, S), coarse_grid_shapes(gu, gv, gw).values(), amp_mm):
+    for g, (a, b), amp in zip((T, B, S), coarse_grid_shapes(gu, gv, gw, gb).values(), amp_mm):
         c = u[i:i + a * b].reshape(a, b); i += a * b
         ca = np.linspace(0, a - 1, g.shape[0]); cb = np.linspace(0, b - 1, g.shape[1])
         CA, CB = np.meshgrid(ca, cb, indexing="ij")

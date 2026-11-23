@@ -173,6 +173,14 @@ def support_design(v=None) -> dict:
                 disc_recess_mm=float(v["sup_disc_recess"]))
 
 
+def _strut(v, prefix):
+    """wing_strut's numbers (front_wing_engine / rear_wing_engine .Support) from parameter values."""
+    return dict(aim_out_deg=float(v[f"{prefix}_out"]), aim_fwd_deg=float(v[f"{prefix}_fwd"]),
+                leave=float(v[f"{prefix}_leave"]), arrive=float(v[f"{prefix}_arrive"]),
+                chord_mm=float(v[f"{prefix}_chord"]), thick_mm=float(v[f"{prefix}_thick"]),
+                flare=float(v[f"{prefix}_flare"]), round=float(v[f"{prefix}_round"]))
+
+
 def _supports(v, prefix, n):
     return [dict(width_mm=float(v[f"{prefix}{k}_width"]), y_frac=float(v[f"{prefix}{k}_y"]),
                  chord_frac=float(v[f"{prefix}{k}_chord"]), foot_scale=float(v[f"{prefix}{k}_foot"]),
@@ -185,8 +193,7 @@ def front_wing_design(v=None) -> dict:
     return dict(pieces=2 if float(v["fw_pieces"]) >= 0.5 else 1, chord_mm=float(v["fw_chord"]),
                 te_gap_mm=float(v["fw_te_gap"]), z_mm=float(v["fw_z"]), tip_y_mm=float(v["fw_tip_y"]),
                 root_y_mm=float(v["fw_root_y"]),
-                support=dict(ext=float(v["fwsup_ext"]), rise_mm=float(v["fwsup_rise"]), foot_scale=float(v["fwsup_foot"]),
-                             waist=float(v["fwsup_waist"])))
+                support=_strut(v, "fwsup"))
 
 
 N_FW_STRUTS = 2
@@ -197,8 +204,7 @@ def rear_wing_design(v=None) -> dict:
     v = v or {p["name"]: p["value"] for p in PARAMS}
     return dict(chord_mm=float(v["rw_chord"]), t_mm=float(v["rw_t"]), half_span_mm=float(v["rw_half_span"]),
                 x_le_mm=float(v["rw_x_le"]), lift_mm=float(v["rw_lift"]),
-                support=dict(plate_mm=float(v["rwsup_plate"]), ext=float(v["rwsup_ext"]), rise_mm=float(v["rwsup_rise"]),
-                             foot_scale=float(v["rwsup_foot"]), waist=float(v["rwsup_waist"])))
+                support=_strut(v, "rwsup"))
 
 
 N_RW_STRUTS = 2
