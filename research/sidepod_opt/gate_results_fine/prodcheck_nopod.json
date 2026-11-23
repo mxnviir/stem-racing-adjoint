@@ -1,0 +1,20 @@
+{
+ "D20_half_N": 0.2159352823893288,
+ "wall_s": 10128.8,
+ "converged": true,
+ "residual_p": 0.0019259754656274916,
+ "force_osc": 0.04630836873233055,
+ "force_drift": 0.001341146026342147,
+ "run_dir": "",
+ "force_mean_stderr": 0.001662118701434027,
+ "morph_fallback": false,
+ "folder": "/home/user/esp32-line-follower/research/sidepod_opt/runs/fine_cars/nopod/car",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "fine",
+ "iterations": 1000,
+ "n_proc": 4,
+ "y_plus_min": 1.111138748180935,
+ "y_plus_max": 87.0967987921276,
+ "n_cells": 3455399
+}
