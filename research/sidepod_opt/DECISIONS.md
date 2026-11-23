@@ -16,10 +16,10 @@ decided), *withdrawn*.
 | D5 | Method: multi-start free-form adjoint shaping, each step CFD-checked | provisional |
 | D6 | The coarse mesh (~105 k cells) is not used for any design decision | settled |
 | D7 | Repeat meshes shift the meshing frame; the geometry is never nudged | settled |
-| D8 | Which mesh scores designs (medium vs fine or finer) | open |
+| D8 | Which mesh scores designs (medium vs fine or finer) | medium ruled out (M1 fails); how to score on fine is open |
 | D9 | Which adjoint drives the shape steps (discrete vs normal) | open |
 | D10 | The adjoint runs on a steady (first-order) flow model; gains are confirmed on the production model | provisional |
-| D11 | Several different starting shapes, because the design space has a valley | settled |
+| D11 | Several different starting shapes, (the valley seen on medium is absent on fine) | settled |
 | D12 | Pass marks are fixed in writing before each result | settled |
 | D13 | The wheel is optimised separately for inertia and durability, with one closing check | provisional |
 | D14 | The hubcap is a separate, later decision (axle-mounted, non-rotating) | provisional |
