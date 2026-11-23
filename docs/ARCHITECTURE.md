@@ -57,8 +57,10 @@ tether guides on stalks, the wheel supports, and Part 4's own gates.
 `--support engine`). One printed part per axle: a **saddle** flush with the underside (the body's lowest
 `saddle_h` over a chord at the axle, milled away from below and printed instead; it follows steps in the
 floor such as the front's centre channel, and wraps the body's rounded edge where less than 3 mm of foam
-would be left), an **arm** lofted from the body's side to the wheel (chord, thickness, exponent, taper, height
-at the disc), a concave **transition** into the **disc**, and the **axle** stub with its hubcap (the disc and
+would be left), a **plate** from the body's side to the wheel whose underside continues the body's floor
+(the form of the team's example car, 2026-11-23: it leaves the floor at the floor's own line and slope,
+eases level within 2 mm and untwists level within 4 mm, so the underside has no step or kink; measured:
+`fit_<axle>_flush_with_the_underside`), a concave **transition** into the **disc**, and the **axle** stub with its hubcap (the disc and
 the axle are `beam_support.py`'s). The slot's ceiling is computed column by column and opened by the 3.175 mm
 ball, so it is what the cutter can mill from below. Every rule and load is measured on the result:
 T7.12.1 (inside the wheels' cylinder), T7.13 (claw band clear), T3.7, arm / saddle / stub / disc stress

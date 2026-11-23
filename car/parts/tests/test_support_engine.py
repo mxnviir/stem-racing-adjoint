@@ -101,3 +101,17 @@ def test_ceiling_is_what_the_ball_can_mill():
     edge = Z[np.argmin(np.abs(xs - 15.9)), 5]
     assert edge < 7.0                                                   # the ball's radius at the chord's end
     assert not short.any()
+
+
+def test_the_plate_is_flush_with_the_underside(built):
+    """The example's form (user, 2026-11-23): outside the body the support is a plate whose underside
+    continues the body's floor (here z 4, flat), level, out to the disc: no step, no kink."""
+    for tag in ("front", "rear"):
+        st = built["info"][tag]
+        assert built["gates"][f"fit_{tag}_flush_with_the_underside"] >= 0.0, st
+        assert abs(st["plate_bottom_z_mm"] - 4.0) < 0.1, st
+    t = built["support"].copy(); t.apply_scale(1e3)
+    y_mid = 0.5 * (14.0 + 23.25 - 1.0)                      # between the body's side and the front disc
+    sec = t.section(plane_origin=[50.0, y_mid, 0], plane_normal=[0, 1, 0])
+    z = sec.vertices[:, 2]
+    assert abs(z.min() - 4.0) < 0.1, z.min()                 # the plate's underside is the floor's level

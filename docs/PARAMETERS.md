@@ -1,6 +1,6 @@
 # Layout search: every parameter of the car
 
-146 parameters, 10 evolved in stage 1 (the layout search), 7 in stage 2 (`shape`: the shape search, with the body's lattice), 129 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
+143 parameters, 10 evolved in stage 1 (the layout search), 4 in stage 2 (`shape`: the shape search, with the body's lattice), 129 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
 
 x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, Ref B = rear axle + 16.
 
@@ -205,16 +205,13 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `wheels` | **fixed** | team_stl |  | the team's measured wheels (front 13.25, rear 17.25 wide) | T7.4, T7.5 | printed parts you already have |
 | `wheel_inner_y` | **fixed** | Part 1 |  | wheel track (inner faces) | T7.2 gaps >= 38 / 30, T3.4 | a Part 1 constant used by every mask |
 
-## wheel supports (7 of 10 evolved)
+## wheel supports (4 of 7 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
-| `sup_chord` | **shape** | 10.0 | 6.0 - 16.0 mm | arm chord (x) where it leaves the body; the saddle's is at least this | T7.12.1 inside the wheels' cylinder (the engine narrows a saddle that would not fit) | what the air sees of the support: evolved in stage 2 with the body's shape |
-| `sup_t` | **shape** | 2.0 | 1.2 - 4.0 mm | arm thickness (z) where it leaves the body, at least what the loads need | loads: 3 N radial, 1.2 N side, 20 MPa, 0.15 mm sag (support_engine.py) | thicker is stiffer and blunter; the engine grows it until the loads pass |
-| `sup_taper` | **shape** | 0.85 | 0.6 - 1.2 - | arm chord and thickness at the disc / at the body |  |  |
-| `sup_dz` | **shape** | 0.0 | -5.0 - 5.0 mm | front arm's centre at the disc, above the axle (its underside is level with the body's where it leaves it) | T3.7 1.5 mm off the track; T7.13 claw band clear | where the arm crosses the gap between body and wheel |
-| `sup_dz_rear` | **shape** | 0.0 | -5.0 - 5.0 mm | rear arm's centre at the disc, above the axle | T3.7 1.5 mm off the track; T7.13 claw band clear | where the arm crosses the gap between body and wheel |
-| `sup_p` | **shape** | 2.0 | 1.6 - 3.0 - | arm section exponent (2 ellipse, larger boxier, smaller sharper edges) |  |  |
+| `sup_chord` | **shape** | 12.0 | 8.0 - 18.0 mm | plate chord (x) where it leaves the body; the saddle's is at least this | T7.12.1 inside the wheels' cylinder (the engine narrows a saddle that would not fit) | what the air sees of the support: evolved in stage 2 with the body's shape |
+| `sup_t` | **shape** | 2.0 | 1.2 - 4.0 mm | plate thickness (z), at least what the loads need | loads: 3 N radial, 1.2 N side, 20 MPa, 0.15 mm sag (support_engine.py); flush with the underside (gate) | thicker is stiffer and blunter; the engine grows it until the loads pass |
+| `sup_taper` | **shape** | 1.0 | 0.6 - 1.4 - | plate chord at the disc / at the body |  |  |
 | `sup_fillet` | **shape** | 2.5 | 1.0 - 4.0 mm | radius of the concave fillet where the arm grows into the disc |  |  |
 | `sup_saddle_h` | **fixed** | 3.0 | 1.05 - 6.0 mm | saddle depth over the underside (the slot milled from below), at least what the loads need | 3 mm foam over the slot or none; cut from below by the 3.175 mm ball | inside the body: the air never sees it, so it is sized, not searched |
 | `sup_disc_r` | **fixed** | 12.0 | 8.0 - 12.2 mm | disc radius (beam_support's disc) | inside the rim (13.72) less 0.5; T3.7 | inside the wheel: not seen by the CFD |

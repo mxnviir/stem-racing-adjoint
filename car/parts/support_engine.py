@@ -53,6 +53,14 @@ import component_contract as cc
 EDGE_STEP_MM = 0.3                  # the slot's depth where its ends meet the underside
 SLOT_TOL_MM = 0.1                   # machining tolerance on foam left under the slot
 WELD_MM = 0.002                     # vertices closer than this are one (see _weld)
+ROOT_IN_MM = 2.0                    # the plate's root, inside the body's side, when the floor has no flat part
+ROOT_SEARCH_MM = 8.0                # where to look for the floor's flat part, inward of the side
+ROOT_LEVEL = 0.05                   # within that run, the root is the outermost point this level
+ROOT_SLOPE = 0.25                   # the floor counts as flat while it rises less than this per mm sideways
+DISC_SAG_SHARE_MM = 0.05            # of the 0.15 mm at the bearing, what the disc's bending may take
+FLUSH_STEP_MM = 0.08                # most the underside's rise may change between 0.1 mm samples across the join
+TWIST_MM = 4.0                      # the plate's chordwise line goes from the floor's to level over this
+EASE_MM = 2.0                       # the plate's underside eases from the floor's slope to level over this
 SPECK_MM3 = 0.05                    # Boolean leftovers smaller than this are dropped (counted in specks_mm3)
 FOAM_WALL_MM = 3.0                  # thinnest machined foam wall (geometry_contract)
 FOAM_G_CM3 = 0.163
@@ -66,12 +74,9 @@ N_SECTION = 72                      # points round a section of the loft
 
 @dataclass
 class SupportDesign:
-    chord_mm: float = 10.0          # saddle and arm chord (x) at the body
-    t_mm: float = 2.0               # arm thickness (z) at the body, at least what the loads need
-    taper: float = 0.85             # arm chord and thickness at the disc / at the body
-    dz_mm: float = 0.0              # arm's centre at the disc, above the axle (front; the rear's too if
-    dz_rear_mm: float | None = None  # this is None)
-    p: float = 2.0                  # section exponent: 2 an ellipse, larger boxier, smaller sharper edges
+    chord_mm: float = 12.0          # plate chord (x) where it leaves the body; the saddle's is at least this
+    t_mm: float = 2.0               # plate thickness (z), at least what the loads need
+    taper: float = 1.0              # plate chord at the disc / at the body
     fillet_mm: float = 2.5          # the transition into the disc: concave fillet radius
     saddle_h_mm: float = 3.0        # saddle depth from the underside, at least what the loads need
     disc_r_mm: float = 12.0         # beam_support's disc
@@ -243,6 +248,53 @@ def superellipse(c, t, p, n=N_SECTION):
     return (c / 2 * np.sign(co) * np.abs(co) ** (2 / p), t / 2 * np.sign(si) * np.abs(si) ** (2 / p))
 
 
+def smoothstep(s):
+    return 3 * s * s - 2 * s ** 3
+
+
+def stadium(c, t, n=N_SECTION):
+    """A slab c long (x) and t thick (z) with half-round ends, centred on 0: flat top and bottom."""
+    r = min(t / 2, c / 2)
+    L = c - 2 * r
+    per = 2 * L + 2 * math.pi * r
+    s_ = np.linspace(0, per, n, endpoint=False)
+    xs, zs = np.empty(n), np.empty(n)
+    for i, v in enumerate(s_):
+        if v < math.pi * r / 2:                                # right end, lower quarter -> top
+            a = v / r; xs[i], zs[i] = L / 2 + r * math.cos(a), r * math.sin(a)
+        elif v < math.pi * r / 2 + L:                          # top, right -> left
+            xs[i], zs[i] = L / 2 - (v - math.pi * r / 2), r
+        elif v < 3 * math.pi * r / 2 + L:                      # left end
+            a = math.pi / 2 + (v - math.pi * r / 2 - L) / r; xs[i], zs[i] = -L / 2 + r * math.cos(a), r * math.sin(a)
+        elif v < 3 * math.pi * r / 2 + 2 * L:                  # bottom, left -> right
+            xs[i], zs[i] = -L / 2 + (v - 3 * math.pi * r / 2 - L), -r
+        else:                                                  # right end, lower quarter
+            a = 3 * math.pi / 2 + (v - 3 * math.pi * r / 2 - 2 * L) / r; xs[i], zs[i] = L / 2 + r * math.cos(a), r * math.sin(a)
+    return xs, zs * (t / 2) / r if r > 0 else zs
+
+
+def loft_sections(stations):
+    """Closed solid through sections [(y, (n, 2) array of (x, z), anticlockwise seen from +y)]."""
+    import trimesh
+    rings = [np.c_[P[:, 0], np.full(len(P), y), P[:, 1]] for y, P in stations]
+    n, N = len(rings[0]), len(rings)
+    V = np.vstack(rings + [np.mean(rings[0], 0)[None], np.mean(rings[-1], 0)[None]])
+    F = []
+    for i in range(N - 1):
+        for j in range(n):
+            a, b = i * n + j, i * n + (j + 1) % n
+            c_, d = (i + 1) * n + j, (i + 1) * n + (j + 1) % n
+            F += [(a, b, d), (a, d, c_)]
+    c0, c1 = N * n, N * n + 1
+    for j in range(n):
+        F.append((c0, (j + 1) % n, j))
+        F.append((c1, (N - 1) * n + j, (N - 1) * n + (j + 1) % n))
+    m = trimesh.Trimesh(V, np.array(F), process=False)
+    if m.volume < 0:
+        m.invert()
+    return _to_manifold(m)
+
+
 def loft(stations):
     """Closed solid through superellipse sections: stations = [(y, xc, zc, chord, thick, p), ...]."""
     import trimesh
@@ -391,7 +443,7 @@ def saddle(B, B_tm, xa, chord, h):
 
 # --------------------------------------------------------------- one axle
 def build_axle(sd: SupportDesign, body_mm, x_axle, z_axle, R, y_inner, wheel_width, hub_mm,
-               tag="front", t_mm=None, h_mm=None, chord_mm=None):
+               tag="front", t_mm=None, h_mm=None, chord_mm=None, disc_t_min=None):
     """Right half of one axle's support (manifold, mm), its hubcap, the foam its slot removes, and
     every measurement. body_mm: the car's body half (manifold, mm). t_mm / h_mm / chord_mm: the arm
     thickness, saddle depth and chord actually used (sizing), the design's when None."""
@@ -403,12 +455,6 @@ def build_axle(sd: SupportDesign, body_mm, x_axle, z_axle, R, y_inner, wheel_wid
     y_disc = y_inner + sd.disc_recess_mm
     y_bear = y_inner + 0.5 * (hub_mm[0] + hub_mm[1])
     y_tip = y_out - (bsm.BeamSupport().hubcap_t_mm if sd.hubcap else 0.0)
-    # the disc: thick enough to carry the stub's moment into the arm's root at the disc
-    M_disc = bsm.LOAD_RADIAL_N * (y_bear - y_disc) + bsm.LOAD_AXIAL_N * R
-    w_disc = t0 * sd.taper + 2 * sd.fillet_mm
-    disc_t = max(bsm.PRINT_MIN_MM, 1.01 * math.sqrt(6 * M_disc / (w_disc * ALLOW_MPA)))
-    y_d0 = y_disc - disc_t                                   # the disc's inner face: where the arm ends
-    st.update(disc_t_mm=disc_t, disc_stress_mpa=6 * M_disc / (w_disc * disc_t ** 2), y_disc_inner_mm=y_d0)
 
     # the body near this axle
     half = R + 2.0
@@ -420,7 +466,6 @@ def build_axle(sd: SupportDesign, body_mm, x_axle, z_axle, R, y_inner, wheel_wid
     y_side = float(sec.bounds[2])
     z_lowest = float(B.bounding_box()[2])
     st["y_body_side_mm"] = y_side
-    st["arm_span_mm"] = y_d0 - y_side
 
     # saddle: narrowed until it lies inside the wheels' cylinder (T7.12.1) with no foam sliver left
     # its chord: the arm's, but at least the ball's width and 2 mm more, and enough for the foam to bear
@@ -440,47 +485,99 @@ def build_axle(sd: SupportDesign, body_mm, x_axle, z_axle, R, y_inner, wheel_wid
     st.update(srep)
     st["saddle_outside_cylinder_mm3"] = round(out_vol, 4)
 
-    # the arm: its underside level with the body's underside where it leaves the body
-    from shapely.geometry import LineString
-    y_root = y_side - 1.5
-    cut = sec.intersection(LineString([(y_root, -1.0), (y_root, 200.0)]))
-    z_bot = float(cut.bounds[1]) if not cut.is_empty else z_lowest
-    z_root = z_bot + t0 / 2
-    z_end = z_axle + (sd.dz_rear_mm if tag == "rear" and sd.dz_rear_mm is not None else sd.dz_mm)
-    ys = y_root + (y_d0 - y_root) * (1 - np.cos(np.linspace(0, np.pi / 2, 48))) ** 1.0
-    ys = np.unique(np.r_[np.linspace(y_root, y_d0, 24), ys,
+    # the plate (the example's form, user 2026-11-23): its underside continues the body's underside, level,
+    # from the body's side out to the disc; a slab with rounded leading and trailing edges
+    # It starts where the floor is still flat, before the body's lower edge rounds up (the plate runs on
+    # under that edge), and its bottom follows the floor's own line along x there, so the underside has no
+    # step anywhere across the chord.
+    ys_r = np.arange(max(y_side - ROOT_SEARCH_MM, 0.5), y_side - 0.3, 0.1)
+    zr = _columns(B_tm, np.array([x_axle]), ys_r)[0][0]
+    good = np.isfinite(zr)
+    y_root = y_side - ROOT_IN_MM
+    if good.sum() > 3:
+        yy, zz = ys_r[good], zr[good]
+        flat = np.abs(np.gradient(zz, yy)) <= ROOT_SLOPE
+        # the outermost run of flat floor at least 1 mm wide; its outer end is the root
+        runs, start = [], None
+        for i, fl in enumerate(np.r_[flat, False]):
+            if fl and start is None:
+                start = i
+            elif not fl and start is not None:
+                runs.append((start, i - 1)); start = None
+        runs = [(a, b) for a, b in runs if yy[b] - yy[a] >= 1.0]
+        if runs:
+            a, b = runs[-1]
+            slope_ab = np.abs(np.gradient(zz, yy))[a:b + 1]
+            level = np.flatnonzero(slope_ab <= ROOT_LEVEL)   # where it is truly level, if anywhere
+            y_root = float(yy[a + level[-1]] if len(level) else yy[b])
+    xs_r = np.linspace(x_axle - chord / 2 - sd.fillet_mm - 1.0, x_axle + chord / 2 + sd.fillet_mm + 1.0, 41)
+    zline = _columns(B_tm, xs_r, np.array([y_root]))[0][:, 0]
+    if not np.isfinite(zline).any():
+        zline = np.full_like(xs_r, z_lowest)
+    zline = np.where(np.isfinite(zline), zline, np.nanmin(np.where(np.isfinite(zline), zline, np.nan)))
+    zline_in = _columns(B_tm, xs_r, np.array([y_root - 0.3]))[0][:, 0]
+    sl = np.where(np.isfinite(zline_in), (zline - zline_in) / 0.3, 0.0)
+    sl = np.clip(sl, -3.0, 3.0)
+    zp_of = lambda x: np.interp(x, xs_r, zline)
+    slope_of = lambda x: np.interp(x, xs_r, sl)
+    ease = min(EASE_MM, max(y_disc - 1.5 - y_root, 0.5))     # level before it reaches the disc
+
+    def bottom_rise(x, y):
+        """The plate's underside leaves the floor at its own slope and eases to level over `ease` mm."""
+        u = np.clip(y - y_root, 0.0, ease)
+        return slope_of(x) * (u - u * u / (2 * ease))
+    z_p = float(zp_of(x_axle))                               # the underside where the plate starts, at the axle
+    z_mid = z_p + t0 / 2
+    st["plate_root_y_mm"] = y_root
+    st["plate_bottom_z_mm"] = z_p
+    # the disc: carries the stub's moment from the boss to where the plate meets it, bending as a strip as
+    # wide as the plate's end over the gap between the boss and the plate (the plate lies below the axle)
+    M_disc = bsm.LOAD_RADIAL_N * (y_bear - y_disc) + bsm.LOAD_AXIAL_N * R
+    c_end = chord * sd.taper
+    w_disc = c_end + 2 * sd.fillet_mm
+    root_d = bsm.sized_root_d_mm(bsm.BeamSupport(), y_disc, y_bear, R)
+    lever = max(abs(z_axle - z_mid) - (t0 / 2 + sd.fillet_mm) - root_d / 2, 0.3)
+    reach = y_bear - y_disc
+    t_str = math.sqrt(6 * M_disc / (w_disc * ALLOW_MPA))                                  # stress
+    t_rot = (12 * M_disc * lever * reach / (E_MPA * w_disc * DISC_SAG_SHARE_MM)) ** (1 / 3)   # rotation
+    disc_t = max(bsm.PRINT_MIN_MM, 1.01 * t_str, 1.01 * t_rot, disc_t_min or 0.0)
+    I_d = w_disc * disc_t ** 3 / 12
+    y_d0 = y_disc - disc_t                                   # the disc's inner face: where the plate ends
+    st.update(disc_t_mm=disc_t, disc_stress_mpa=M_disc * (disc_t / 2) / I_d, y_disc_inner_mm=y_d0,
+              disc_lever_mm=lever, disc_sag_mm=M_disc * lever / (E_MPA * I_d) * reach)
+    st["arm_span_mm"] = y_d0 - y_side
+    ys = np.unique(np.r_[np.linspace(y_root, y_d0, 24),
                         y_d0 - sd.fillet_mm * (1 - np.cos(np.linspace(0, np.pi / 2, 16)))])
     ys = ys[(ys >= y_root) & (ys <= y_d0)]
     stations = []
     span = max(y_d0 - y_side, 1e-6)
     for y in ys:
-        s = float(np.clip((y - y_side) / span, 0.0, 1.0))
-        sm = 3 * s * s - 2 * s ** 3
-        c = chord * (1 + (sd.taper - 1) * sm)
-        t = t0 * (1 + (sd.taper - 1) * sm)
-        zc = z_root + (z_end - z_root) * sm
+        s_ = float(np.clip((y - y_side) / span, 0.0, 1.0))
+        c = chord * (1 + (sd.taper - 1) * (3 * s_ * s_ - 2 * s_ ** 3))
         sdist = y_d0 - y
         f = sd.fillet_mm - math.sqrt(max(0.0, sd.fillet_mm ** 2 - (sd.fillet_mm - sdist) ** 2)) if sdist < sd.fillet_mm else 0.0
-        # the transition stays on the disc
-        for _ in range(20):
-            x_, z_ = superellipse(c + 2 * f, t + 2 * f, sd.p)
-            rmax = float(np.hypot(x_, zc - z_axle + z_).max())
+        for _ in range(20):                                  # the transition stays on the disc
+            x_, z_ = stadium(c + 2 * f, t0 + 2 * f)
+            rmax = float(np.hypot(x_, z_mid - z_axle + z_).max())
             if rmax <= sd.disc_r_mm - 0.3 or f <= 0:
                 break
             f = max(0.0, f - (rmax - sd.disc_r_mm + 0.3))
-        stations.append((float(y), x_axle, zc, c + 2 * f, t + 2 * f, sd.p))
-    arm = loft(stations)
-    # inside the body only what lies in the saddle survives (never foam, never under the floor)
-    Bbig = body_mm ^ _box(x_axle - half - 3, x_axle + half + 3, -0.01, bb[4] + 1.0, bb[2] - 1.0, bb[5] + 1.0)
-    # inside the body the saddle is the support: the arm is what lies outside it. Its faces on the body's
+        x_, z_ = stadium(c + 2 * f, t0 + 2 * f)
+        # flush at the root, it untwists to level over TWIST_MM outward (no angle of attack across the gap)
+        w_t = 1.0 - smoothstep(np.clip((y - y_root) / TWIST_MM, 0.0, 1.0))
+        follow = (zp_of(x_axle + x_) - z_p + bottom_rise(x_axle + x_, y)) * w_t \
+            + (1.0 - w_t) * bottom_rise(x_axle, y)
+        stations.append((float(y), np.c_[x_axle + x_, z_mid + z_ + follow]))
+    arm = loft_sections(stations)
+    # inside the body the saddle is the support: the plate is what lies outside it. Its faces on the body's
     # surface are the body's own triangles, as are the saddle's, so the two join exactly.
+    Bbig = body_mm ^ _box(x_axle - half - 3, x_axle + half + 3, -0.01, bb[4] + 1.0, bb[2] - 1.0, bb[5] + 1.0)
     arm = arm - Bbig
     pcs = sorted(arm.decompose(), key=lambda q: -q.volume())
-    st["arm_dropped_mm3"] = round(float(sum(abs(q.volume()) for q in pcs[1:])), 4)   # specks where the arm grazes the body
+    st["arm_dropped_mm3"] = round(float(sum(abs(q.volume()) for q in pcs[1:])), 4)   # specks where the plate grazes the body
     arm = _clean(pcs[0])
     # disc + axle (beam_support's)
     bs = bsm.BeamSupport(disc_r_mm=sd.disc_r_mm, disc_recess_mm=sd.disc_recess_mm, hubcap=sd.hubcap)
-    root_d = bsm.sized_root_d_mm(bs, y_disc, y_bear, R)
     line = bsm.stub_outline(bs, y_disc, y_bear, y_tip, root_d)
     prof = [(0.0, y_d0 - 0.05), (sd.disc_r_mm, y_d0 - 0.05), (sd.disc_r_mm, y_disc)] + line + [(0.0, y_tip)]
     stub = _revolve(prof, x_axle, z_axle)
@@ -512,7 +609,8 @@ def build_axle(sd: SupportDesign, body_mm, x_axle, z_axle, R, y_inner, wheel_wid
     st.update(_structure(part, x_axle, y_side, y_d0, y_bear, R, st))
     return {"support": part, "hubcap": cap, "saddle": sad, "arm": arm, "slot": slot, "body_local": Bbig,
             "_struct": st, "geom": dict(x_axle=x_axle, z_axle=z_axle, R=R, y_inner=y_inner, y_out=y_out,
-                                         y_side=y_side, y_d0=y_d0, y_bear=y_bear, chord=chord)}
+                                         y_side=y_side, y_d0=y_d0, y_bear=y_bear, chord=chord, y_root=y_root,
+                                         y_flare=y_d0 - sd.fillet_mm)}
 
 
 def _revolve(profile_ry, x, z):
@@ -563,7 +661,7 @@ def _structure(part, x_axle, y_side, y_d0, y_bear, R, st):
     out["saddle_rotation_sag_mm"] = rot_saddle * (y_bear - y_side)
     # the saddle is glued along the floor into a body ~30x stiffer than it: the root is taken as rigid
     # (its free rotation, saddle_rotation_sag_mm, is reported: the bound if the glue let go)
-    out["sag_mm"] = out["arm_sag_mm"] + st["stub_sag_mm"]
+    out["sag_mm"] = out["arm_sag_mm"] + st["stub_sag_mm"] + st.get("disc_sag_mm", 0.0)
     # foam bearing under the saddle: the root moment as a linear pressure over its length
     out["foam_bearing_mpa"] = 6 * M(y_side) / (st["chord_used_mm"] * max(y_side, 1.0) ** 2)
     return out
@@ -576,7 +674,7 @@ def build_axle_sized(sd, body_mm, x_axle, z_axle, R, y_inner, wheel_width, hub_m
         r = build_axle(sd, body_mm, x_axle, z_axle, R, y_inner, wheel_width, hub_mm, tag, t_mm=t, h_mm=h)
         s = r["_struct"]
         # thickness factors that would just pass: stress ~ 1/t^2, sag ~ 1/t^3
-        budget = bsm.SAG_MAX_MM - s["stub_sag_mm"] - 0.005
+        budget = bsm.SAG_MAX_MM - s["stub_sag_mm"] - s.get("disc_sag_mm", 0.0) - 0.005
         f_t = max(math.sqrt(max(s["arm_stress_mpa"], 0.0) / ALLOW_MPA),
                   (max(s["arm_sag_mm"], 0.0) / budget) ** (1 / 3) if budget > 0 else np.inf)
         f_h = math.sqrt(max(s["saddle_stress_mpa"], 0.0) / ALLOW_MPA)
@@ -644,6 +742,27 @@ def column_check(body_tm, part_tm, xs, ys):
     return (worst_wall - FOAM_WALL_MM + 1e-3 if np.isfinite(worst_wall) else 0.0), worst_under, n   # 1 um: round-off
 
 
+def underside_step(body_tm, part_tm, xs, ys):
+    """The car's underside (body and support together: the lowest surface seen from below) along y at
+    each x, through the join between body and support. Returns the largest change of its rise between
+    neighbouring 0.1 mm samples (mm): a step or a kink where the support meets the body, or none (flush);
+    a smooth slope or curve gives a few hundredths."""
+    X, Y = np.meshgrid(xs, ys, indexing="ij")
+    O = np.c_[X.ravel(), Y.ravel(), np.full(X.size, -5.0)]
+    D = np.tile([0.0, 0.0, 1.0], (len(O), 1))
+
+    def first(m):
+        z = np.full(len(O), np.inf)
+        loc, ri, _ = m.ray.intersects_location(O, D, multiple_hits=True)
+        np.minimum.at(z, ri, loc[:, 2])
+        return z
+    z = np.minimum(first(body_tm), first(part_tm)).reshape(X.shape)
+    d = np.diff(z, axis=1)
+    dd = np.abs(np.diff(d, axis=1))                           # a step or a kink, not a slope
+    ok = np.isfinite(dd)
+    return float(dd[ok].max()) if ok.any() else 0.0
+
+
 def gates(r, tag) -> dict:
     """Margins (+ = passes) measured on the built part (mm, MPa)."""
     g = r["geom"]
@@ -672,6 +791,13 @@ def gates(r, tag) -> dict:
     gx, gy = st.pop("grid_xs"), st.pop("grid_ys")
     wall, under, n = column_check(_to_trimesh(r["body_local"]), part, gx, gy[gy <= g["y_side"] + 0.5])
     out[f"machining_{tag}_foam_over_slot"] = wall
+    # flush: the underside runs on from the body into the plate with no step and no kink (0.1 mm samples
+    # across the join, up to where the plate starts its fillet into the disc)
+    c = g["chord"]
+    step = underside_step(_to_trimesh(r["body_local"]), part, g["x_axle"] + np.array([-0.3, 0.0, 0.3]) * c,
+                          np.arange(g["y_root"] - 0.3, max(g["y_root"] + 0.6, min(g["y_side"] + 1.5, g["y_flare"])), 0.1))
+    st["underside_step_mm"] = step
+    out[f"fit_{tag}_flush_with_the_underside"] = FLUSH_STEP_MM - step
     out[f"machining_{tag}_slot_cut_from_below"] = SLOT_TOL_MM - under
     st["slot_columns_tested"] = n
     return out
