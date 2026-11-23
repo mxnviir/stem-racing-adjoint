@@ -209,18 +209,25 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
         pcs = sorted(((M - Mbody) ^ half).decompose(), key=lambda p: -p.volume())
         return pcs[0] if pcs else None
 
+    # T9.6 against its own strut: the wing away from the joint (5.5 mm in from the tip) keeps 5 mm from it
+    import trimesh as _tm
+    Pw, _ = _tm.sample.sample_surface_even(wing_tm, 2500, seed=3)
+    Pw = Pw[Pw[:, 1] < hs - cc.CLEAR_AIR - 0.5]
+
     def accept(M):
         T = trimmed(M)
         if T is None:
             return False
         t = wl.to_trimesh(T)
         b = t.bounds
+        if len(Pw) and _tm.proximity.closest_point(t, Pw)[1].min() < cc.CLEAR_AIR + 0.05:
+            return False
         return (b[0, 0] >= ref_b + MARGIN_MM and b[1, 0] <= ref_b + cc.REAR_OVERHANG_MAX - MARGIN_MM
                 and b[1, 1] <= HALF_WIDTH_MAX_MM - MARGIN_MM and b[0, 1] >= CENTRE_CLEAR_MM
                 and b[1, 2] <= cc.REAR_Z_MAX - MARGIN_MM and _clear(t, wheel_rear, W_mm, x_front_mm))
     g = dataclasses.asdict(sp)
     M, sinfo = ws.design(face_xz, face_pt, np.array([0.0, 1.0, 0.0]), ws.whole(body), np.array([0.0, 0.0, -1.0]), g,
-                         reach_mm=FOOT_REACH_MM, accept=accept, wall_mm=cc.BUILD_WALL_MM)
+                         reach_mm=FOOT_REACH_MM, accept=accept, wall_mm=cc.BUILD_WALL_MM, go_around=True)
     sup, placed = None, []
     if M is not None:
         sup = wl.to_trimesh(trimmed(M))
@@ -277,6 +284,13 @@ def measure(d, wing, sup, body, others, fwd, ref_b, wheel_rear, x_front_mm, W_mm
     if len(q):
         gaps = [float(np.concatenate([trimesh.proximity.closest_point(m, q[i:i + 256])[1]
                                       for i in range(0, len(q), 256)]).min()) for m in [body] + others]
+        # its own struts too, away from the joint (the fillet the rule allows: the strut runs 0.3 mm into the
+        # tip, so 5.5 mm in): a strut that arcs back over or under the wing must not take its clear air
+        if sup is not None:
+            qs = pts[pts[:, 1] < b[1, 1] - cc.CLEAR_AIR - 0.5]
+            if len(qs):
+                gaps.append(float(np.concatenate([trimesh.proximity.closest_point(sup, qs[i:i + 256])[1]
+                                                  for i in range(0, len(qs), 256)]).min()))
         g["T9.6_rw_clear_air"] = min(gaps + [float(q[:, 2].min())]) - cc.CLEAR_AIR
     g["T9.7_rw_seen_from_front"] = float(b[0, 2]) - _front_view_top(wing, fwd)
     Pw = wing.sample(3000)

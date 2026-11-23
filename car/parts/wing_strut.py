@@ -32,6 +32,7 @@ import numpy as np
 
 N_RING = 192            # points round each section
 STRAIGHT_MM = 1.0       # straight out of the wing's face before it curves
+LEAVE_AROUND = 0.35     # go_around's repair: how far out of the face (share of its length) before it turns
 FACE_GROW_MM = 0.1      # the first section 0.1 mm round the aerofoil: the strut holds the whole face
 N_PATH = 40             # sections along the path
 ALLOW_MPA = 20.0        # ABS, as support_engine (printed, with margin)
@@ -109,7 +110,7 @@ def _section_props(R):
 
 
 def sweep(face_xz, face_point, n_out, foot, n_foot, leave, arrive, chord_mm, thick_mm, flare, roundness,
-          into_wing=0.3, into_foot=1.5, wall_mm=1.2, mid=(0.0, 0.0, 0.0), swell=1.0):
+          into_wing=0.3, into_foot=1.5, wall_mm=1.2, mid=(0.0, 0.0, 0.0), swell=1.0, around=0.0):
     """The strut as rings (N_PATH + 2, N_RING, 3) and its path, before any check.
     face_xz: the wing's aerofoil outline in its side face, (k, 2) in (x, z), absolute; face_point: the face's
     centre (x, y, z); n_out: the face's outward normal (unit, along +-y); foot: where it lands; n_foot: the
@@ -122,8 +123,13 @@ def sweep(face_xz, face_point, n_out, foot, n_foot, leave, arrive, chord_mm, thi
     P3 = foot - into_foot * n_foot
     P2 = foot + max(arrive, 0.05) * L * n_foot
     s_c = np.linspace(0.0, 1.0, N_PATH)
+    # the free mid point; `around` (0-1) draws it toward the corner that takes the strut out of the face
+    # first, then down to its foot's level, then across to it -- clear of the wing it leaves (a repair, below)
+    Pm = 0.5 * (P1 + P2) + L * np.asarray(mid, float)
+    corner = P1 + np.dot(P3 - P1, n_foot) * n_foot           # out of the face, down to its foot's level
+    Pm = (1.0 - around) * Pm + around * corner
     pts = np.vstack([face_point + np.outer([-into_wing, 0.0, 0.5 * STRAIGHT_MM], n_out),
-                     _bezier(np.array([Ps, P1, 0.5 * (P1 + P2) + L * np.asarray(mid, float), P2, P3]), s_c)])
+                     _bezier(np.array([Ps, P1, Pm, P2, P3]), s_c)])
     s = np.r_[0.0, 0.0, 0.0, s_c]                          # the morph's parameter: the straight part is s = 0
     T, U, V = _rmf(pts, n_out, np.array([1.0, 0.0, 0.0]))
     # the aerofoil, in its face's (u, v) = (x, z) about the face's centre; the strut's own section; the foot
@@ -170,32 +176,21 @@ def stress_mpa(rings, pts, frames, load_at, load=LOAD_N):
 
 
 def mesh(rings):
-    """A closed solid (manifold3d) from the rings, capped at both ends; None if it is not one (a path that
-    folds back through itself)."""
-    import trimesh
-    import support_engine as se
-    n, N = rings.shape[1], rings.shape[0]
-    V = np.vstack(list(rings) + [rings[0].mean(0)[None], rings[-1].mean(0)[None]])
-    F = []
-    for i in range(N - 1):
-        for j in range(n):
-            a_, b_ = i * n + j, i * n + (j + 1) % n
-            c_, d_ = (i + 1) * n + j, (i + 1) * n + (j + 1) % n
-            F += [(a_, b_, d_), (a_, d_, c_)]
-    c0, c1 = N * n, N * n + 1
-    for j in range(n):
-        F.append((c0, (j + 1) % n, j))
-        F.append((c1, (N - 1) * n + j, (N - 1) * n + (j + 1) % n))
-    m = trimesh.Trimesh(V, np.array(F), process=False)
-    if m.volume < 0:
-        m.invert()
-    try:
-        M = se._to_manifold(m)
-    except Exception:  # noqa: BLE001
+    """A closed solid (manifold3d) from the rings: the union of the convex hulls of each run of three neighbouring
+    rings (every section is convex: the aerofoil, the superellipses and the blends between them). Whatever
+    the path does -- a bend tighter than the section, a loop through itself -- this is one valid solid, the
+    swept section's own volume; a ruled skin through the rings would fold through itself there instead.
+    None if it is not one piece (zero-volume slivers of the union are dropped)."""
+    import manifold3d as mf
+    # three rings to a hull, so neighbouring hulls overlap (two that only touch on a shared ring stay apart)
+    Ms = [mf.Manifold.hull_points(np.vstack(rings[i:i + 3])) for i in range(len(rings) - 2)]
+    M = mf.Manifold.batch_boolean(Ms, mf.OpType.Add)
+    if M.is_empty():
         return None
-    if M.is_empty() or len(M.decompose()) != 1:
+    pcs = sorted(M.decompose(), key=lambda q: -q.volume())
+    if len(pcs) > 1 and pcs[1].volume() > 1e-3 * pcs[0].volume():
         return None
-    return M
+    return pcs[0]
 
 
 def aim(n_out, out_deg, fwd_deg, base):
@@ -226,7 +221,8 @@ def nearest(m, o):
     return q[0], m.face_normals[tri[0]], float(dist[0])
 
 
-def design(face_xz, face_point, n_out, target, base_dir, g, reach_mm=60.0, accept=None, wall_mm=1.2, load_at=None):
+def design(face_xz, face_point, n_out, target, base_dir, g, reach_mm=60.0, accept=None, wall_mm=1.2, load_at=None,
+           go_around=False):
     """A strut (manifold3d, mm) for genes g (dict: aim_out_deg, aim_fwd_deg, leave, arrive, chord_mm, thick_mm,
     flare, round) from the face to `target` (trimesh, mm), or (None, info). It heads along its aim (leaned back
     towards base_dir when the result breaks a rule: accept(manifold) -> bool), lands on the first surface that
@@ -249,13 +245,16 @@ def design(face_xz, face_point, n_out, target, base_dir, g, reach_mm=60.0, accep
         M = None
         for _ in range(12):
             # a strut that breaks a rule is pulled back towards a plain one: its lean, how far it carries on out
-            # of the face and into the foot, and its flare, all by the same share k (k = 1: as the search asked)
-            rings, pts, frames, _ = sweep(face_xz, face_point, n_out, foot, nf, float(g["leave"]) * (0.1 + 0.9 * k),
-                                          float(g["arrive"]) * (0.4 + 0.6 * k), c, t, 1.0 + (float(g["flare"]) - 1.0) * k,
+            # of the face and into the foot, and its flare, all by the same share k (k = 1: as the search asked);
+            # go_around: its mid point drawn by 1 - k toward the corner out of the face then down (clear of the wing)
+            rings, pts, frames, _ = sweep(face_xz, face_point, n_out, foot, nf, (k * float(g["leave"]) + (1.0 - k) * LEAVE_AROUND) if go_around
+                                          else float(g["leave"]) * (0.1 + 0.9 * k),
+                                          float(g["arrive"]) * ((0.1 + 0.9 * k) if go_around else (0.4 + 0.6 * k)), c, t, 1.0 + (float(g["flare"]) - 1.0) * k,
                                           float(g["round"]), wall_mm=wall_mm,
                                           mid=k * np.array([float(g.get("mid_x", 0.0)), float(g.get("mid_y", 0.0)),
                                                             float(g.get("mid_z", 0.0))]),
-                                          swell=max(1.0 + (float(g.get("swell", 1.0)) - 1.0) * k, wall_mm / max(min(c, t), 1e-6)))
+                                          swell=max(1.0 + (float(g.get("swell", 1.0)) - 1.0) * k, wall_mm / max(min(c, t), 1e-6)),
+                                          around=(1.0 - k) if go_around else 0.0)
             sig = stress_mpa(rings, pts, frames, load_at if load_at is not None else face_point)
             if sig <= ALLOW_MPA:
                 break
@@ -271,7 +270,8 @@ def design(face_xz, face_point, n_out, target, base_dir, g, reach_mm=60.0, accep
         if accept is not None and not accept(M):
             info["leaned_back"] = round(float(k), 2)
             continue
-        info.update(foot_mm=[round(float(v), 2) for v in foot], aim_used=[round(out * k, 1), round(fwd * k, 1)])
+        info.update(foot_mm=[round(float(v), 2) for v in foot], aim_used=[round(out * k, 1), round(fwd * k, 1)],
+                    share=round(float(k), 2))
         return M, info
     return None, info
 

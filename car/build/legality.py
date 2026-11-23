@@ -212,7 +212,8 @@ def _visibility_checks(assembly: dict, solids: dict) -> dict:
 
     # T9.7: the same, for the rear wing. The pylon under it is not the wing.
     if "rwing" in stl:
-        wing = max(half("rwing").split(only_watertight=False), key=lambda s: s.extents[1])
+        el, rest = _wing_split(half("rwing"), across_centre=True)
+        wing = max(el or rest, key=lambda s: s.extents[1])
         ahead = {k: m for k, m in solids.items() if k != "printed_rwing"}
         if "halo" in stl:
             ahead["halo"] = half("halo")
@@ -238,15 +239,20 @@ def _visibility_checks(assembly: dict, solids: dict) -> dict:
         if len(pts):
             r["T8.7_front_wing_clear_air_all_parts"] = _clear_air(pts, others)
     if "rwing" in stl:
-        pieces = half("rwing").split(only_watertight=False)
-        wing = max(pieces, key=lambda s: s.extents[1])
+        el, rest = _wing_split(half("rwing"), across_centre=True)
+        pieces = el + rest
+        wing = max(el or pieces, key=lambda s: s.extents[1])
         pts = trimesh.sample.sample_surface(wing, 3000, seed=3)[0]
-        # the wing's own supports, wherever they stand on it: 5 mm either side of each (the fillet the rule
-        # allows where the support joins); the rest of the wing keeps 5 mm from everything
-        for p in pieces:
-            if p is not wing and p.extents[1] < WING_ELEMENT_MIN_Y_MM:
-                pts = pts[(pts[:, 1] < p.bounds[0, 1] - 5.0) | (pts[:, 1] > p.bounds[1, 1] + 5.0)]
+        # the wing's own supports, wherever they stand on it: 5 mm either side of where each JOINS it (the
+        # fillet the rule allows); the rest of the wing keeps 5 mm from everything -- its own supports too, so
+        # one that arcs back over or under the wing is measured
+        sups = [p for p in pieces if p is not wing]
+        for p in sups:
+            jy = p.vertices[trimesh.proximity.closest_point(wing, p.vertices)[1] < 0.5, 1]
+            lo, hi = (jy.min(), jy.max()) if len(jy) else (p.bounds[0, 1], p.bounds[1, 1])
+            pts = pts[(pts[:, 1] < lo - 5.5) | (pts[:, 1] > hi + 5.5)]
         others = {k: m for k, m in solids.items() if k != "printed_rwing"}
+        others.update({f"rwing_support_{i}": p for i, p in enumerate(sups)})
         others.update(wheels)
         if "halo" in stl:
             others["halo"] = half("halo")
@@ -380,12 +386,16 @@ def _clip(mesh, normal, origin):
     return m if m is not None and len(m.vertices) else None
 
 
-def _wing_split(mesh_mm):
+def _wing_split(mesh_mm, across_centre=False):
     """(wing elements, supports and end plates). An element spans at least WING_ELEMENT_MIN_Y_MM a side and
     runs along the span: its longest direction (the principal axis of its surface) within 35 deg of y (a
     dihedral is capped well under that). A strut leaning sideways can be as wide as an element (a pair
     splayed onto a narrow tail: 15.7 mm, gallery 5 G01, measured as a second element): its longest
-    direction is up and down."""
+    direction is up and down.
+    across_centre: the wing is one piece across the car (the rear, T9.5.1), so in the right half it reaches
+    the centre plane; its supports never do (team rule: no centre strut). A strut that sweeps out of the tip
+    and curves back in can run along the span as far as the wing does (gallery 7 G01: 26.5 mm against the
+    wing's 25.5, measured as the wing)."""
     pieces = mesh_mm.split(only_watertight=False)
 
     def along_span(p):
@@ -394,6 +404,8 @@ def _wing_split(mesh_mm):
         w, V = np.linalg.eigh(P.T @ P)
         return abs(V[1, -1]) >= np.cos(np.radians(35.0))
     el = [p for p in pieces if p.extents[1] >= WING_ELEMENT_MIN_Y_MM and along_span(p)]
+    if across_centre and any(p.bounds[0, 1] < 0.5 for p in el):
+        el = [p for p in el if p.bounds[0, 1] < 0.5]
     rest = [p for p in pieces if not any(p is e for e in el)]
     return el, rest
 
@@ -498,7 +510,7 @@ def _wing_checks(assembly: dict, body_mm, parts_mm: dict) -> dict:
                                                          f"{c.bounds[1, 2]:.2f} mm high beyond the wheel")
         others = dict(others, **{f"fwing_support{i}": m for i, m in enumerate(mounts)})
     if "rwing" in parts_mm:
-        el, rest = _wing_split(parts_mm["rwing"])
+        el, rest = _wing_split(parts_mm["rwing"], across_centre=True)
         # The wing's own pylon stands under it and does not break the span (T9.5.1).
         if el:
             r.update(_wing_measures("T9.5.2_rear", {"span": "T9.5.1_rear_span", "span_segments": False,

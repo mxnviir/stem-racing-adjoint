@@ -109,3 +109,32 @@ def test_limits_are_repaired_into_t9():
     for k in ("T9.4.1_rw_behind_ref_B", "T9.4.2_rw_overhang", "T9.5.1_rw_span", "T9.5.2_rw_chord_max",
               "T9.5.3_rw_thick_max", "T3.4_rw_width"):
         assert r["gates"][k] >= 0, (k, r["gates"][k], r["info"])
+
+
+def test_the_free_mid_point_and_swell_reach_the_strut():
+    """The search's mid point and swell change the strut (they are not dropped on the way to the sweep)."""
+    plain = rwe.build(rwe.RearWingDesign(), BODY, XF, W, WHEEL, forward_parts=[BODY])
+    bent = rwe.build(rwe.RearWingDesign(support=S(mid_x=0.4, mid_z=0.3, swell=1.4)), BODY, XF, W, WHEEL,
+                     forward_parts=[BODY])
+    a, b = plain["struts"][0], bent["struts"][0]
+    assert bent["info"]["struts"][0]["share"] > 0.0
+    assert abs(a.volume - b.volume) > 1e-3 * abs(a.volume) or np.abs(a.bounds - b.bounds).max() > 1e-3
+
+
+def test_any_path_makes_one_closed_solid():
+    """A path pulled hard back on itself (a bend tighter than its section, a loop) is still one closed,
+    printable solid: the swept section's own volume, not a skin folded through itself."""
+    import trimesh
+    import wing_loft as wl
+    import wing_strut as ws
+    face = np.c_[np.linspace(0, 15, 30), 0.6 * np.sin(np.linspace(0, np.pi, 30))]
+    face = np.vstack([face, face[::-1] * [1, -1]])[:-1] + [0.0, 50.0]
+    fp, n, foot, nf = np.array([7.5, 30.0, 50.0]), np.array([0, 1.0, 0]), np.array([7.5, 40.0, 30.0]), np.array([0, 0, 1.0])
+    for mid, sw in (((0.0, 0.0, 0.0), 1.0), ((0.0, -2.5, 0.0), 1.8), ((0.6, -0.6, 0.6), 1.8), ((0.0, 0.0, 1.5), 0.5)):
+        r, p, _, _ = ws.sweep(face, fp, n, foot, nf, 0.8, 0.8, 12.0, 3.6, 1.65, 3.5, mid=mid, swell=sw)
+        M = ws.mesh(r)
+        assert M is not None, mid
+        t = wl.to_trimesh(M)
+        assert t.is_volume and t.volume > 0, mid
+        # it holds every section's centre (the path runs inside it)
+        assert t.contains(p[3:-2]).all(), mid

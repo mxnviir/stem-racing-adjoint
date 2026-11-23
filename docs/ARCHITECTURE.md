@@ -101,7 +101,12 @@ to where it heads (its lean out / in up to 60 degrees and fore / aft up to 45 fr
 straight in, front), its sections morphing from the aerofoil into its own streamlined superellipse (chord,
 thickness, squareness), swelling or slimming half way, and flaring into its foot. No shape is preset: which
 of these the search keeps is the race time's call -- its mass goes into the car's (printed with the wing /
-nose: race mass above the 48.2 g floor, and the centre of mass always) and its drag into the CFD. Limited only by the print wall, the ABS (every section checked in bending and axially under an
+nose: race mass above the 48.2 g floor -- about 7.5 ms a gram on L0044; below it the lead it displaces
+makes it free -- and the centre of mass) and its drag into the CFD. The solid is the union of the convex
+hulls of each three neighbouring sections, so any path -- a bend tighter than its section, a loop -- is one
+valid printable solid (a skin stitched through the sections would fold through itself there). A rear strut
+also keeps T9.6's 5 mm from its own wing away from the joint (one curving back under the wing is pulled back
+towards a plain one, or refused). Limited only by the print wall, the ABS (every section checked in bending and axially under an
 assumed 1 N drag, 0.5 N side and 2 N down at the wing, 20 MPa allowed, thickened until it holds) and the rules:
 a strut that breaks one is pulled back towards a plain one (its lean, carry-out and flare by one share).
 Rear: a pair from the tips (the regulations' appendix iv), trimmed to the body's surface (a glued foot), never
