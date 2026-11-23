@@ -58,7 +58,8 @@ ROOT_SEARCH_MM = 8.0                # where to look for the floor's flat part, i
 ROOT_LEVEL = 0.05                   # within that run, the root is the outermost point this level
 ROOT_SLOPE = 0.25                   # the floor counts as flat while it rises less than this per mm sideways
 DISC_SAG_SHARE_MM = 0.05            # of the 0.15 mm at the bearing, what the disc's bending may take
-FLUSH_STEP_MM = 0.08                # most the underside's rise may change between 0.1 mm samples across the join
+FLUSH_STEP_MM = 0.15                # most the underside's rise may change between 0.1 mm samples across the join
+                                    # (a step reads >= 0.2; a smooth, curved floor up to ~0.1)
 TWIST_MM = 4.0                      # the plate's chordwise line goes from the floor's to level over this
 EASE_MM = 2.0                       # the plate's underside eases from the floor's slope to level over this
 SPECK_MM3 = 0.05                    # Boolean leftovers smaller than this are dropped (counted in specks_mm3)
@@ -737,7 +738,9 @@ def column_check(body_tm, part_tm, xs, ys):
         s0, s1 = s[0][0], max(q[1] for q in s)
         worst_under = max(worst_under, s0 - zb0)             # foam left under the slot
         for (a0, a1) in b:                                   # foam over the slot, in this body interval
-            if a1 > s1 + 1e-3 and a0 <= s1 + 1e-3:
+            # (where the body itself is thinner than a wall -- the tangent edge of a rounded side -- no
+            # foam can be 3 mm thick whatever the slot does: the body's own shape, not the slot's)
+            if a1 > s1 + 1e-3 and a0 <= s1 + 1e-3 and a1 - a0 >= FOAM_WALL_MM:
                 worst_wall = min(worst_wall, a1 - s1)
     return (worst_wall - FOAM_WALL_MM + 1e-3 if np.isfinite(worst_wall) else 0.0), worst_under, n   # 1 um: round-off
 
