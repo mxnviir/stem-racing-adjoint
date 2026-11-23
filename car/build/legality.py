@@ -15,6 +15,7 @@ import math
 import os
 
 import numpy as np
+from pathlib import Path
 
 import paths  # noqa: F401
 import rules_constants as rc
@@ -804,15 +805,55 @@ def ballast_checks(body_mm, pocket: dict, ballast_g: float) -> dict:
     }
 
 
-def manufactured_checks(assembly: dict) -> dict:
+def as_drawn_solids(assembly: dict, body_half_stl: str) -> dict:
+    """The car's solids as drawn (no manufacturing files: the searches build with --no-joints), both
+    halves, mm, under the names manufactured_checks uses: the body, the nose with the front wing (printed
+    as one), the rear wing, each axle's support, the tether guides, the hubcaps."""
+    import trimesh
+    stl = {s["name"]: s["stl"] for s in assembly.get("extra_surfaces", [])}
+
+    def full(path):
+        m = trimesh.load(str(path), force="mesh")
+        m.apply_scale(1e3)
+        mir = m.copy()
+        mir.vertices[:, 1] *= -1.0
+        mir.invert()
+        u = trimesh.boolean.union([m, mir], engine="manifold")
+        return u if u is not None and not u.is_empty else trimesh.util.concatenate([m, mir])
+    out = {"machined_body": full(body_half_stl)}
+    front = [full(stl[n]) for n in ("nose", "fwing") if n in stl]
+    if front:
+        out["printed_front_assembly"] = trimesh.boolean.union(front, engine="manifold") if len(front) > 1 else front[0]
+    if "rwing" in stl:
+        out["printed_rwing"] = full(stl["rwing"])
+    if "tethers" in stl:
+        out["printed_tether"] = full(stl["tethers"])
+    if "supports" in stl:
+        sup = full(stl["supports"])
+        xf, W = assembly["x_front_mm"], assembly["W_mm"]
+        for p in sup.split(only_watertight=False):
+            tag = "front" if abs(p.bounds[:, 0].mean() - xf) < abs(p.bounds[:, 0].mean() - xf - W) else "rear"
+            k = f"printed_support_{tag}"
+            out[k] = trimesh.util.concatenate([out[k], p]) if k in out else p
+    for tag, path in (assembly.get("info", {}).get("hubcap_stls") or {}).items():
+        if Path(path).exists():
+            out[f"printed_hubcaps_{tag}"] = full(path)
+    return out
+
+
+def manufactured_checks(assembly: dict, solids: dict | None = None) -> dict:
     """Rules measured on the files that get made, read back from disk: nothing in
     the T7.9 zones, the body inside the real block, the tether line clear, the
-    printed parts clear of the foam."""
+    printed parts clear of the foam. solids: the car as drawn instead (as_drawn_solids), when no
+    manufacturing files were made; then the checks that only the made files can answer (the
+    nose's tenon, printed parts clear of the pockets' foam) are left out."""
     import trimesh
     from shapely.geometry import Polygon
     W, xf = assembly["W_mm"], assembly["x_front_mm"]
-    files = {k: v["file"] for k, v in assembly["joints"]["manufactured"].items() if "file" in v}
-    solids = {k: trimesh.load(f, force="mesh") for k, f in files.items()}
+    as_drawn = solids is not None
+    if not as_drawn:
+        files = {k: v["file"] for k, v in assembly["joints"]["manufactured"].items() if "file" in v}
+        solids = {k: trimesh.load(f, force="mesh") for k, f in files.items()}
     r = {}
     open_files = [k for k, m in solids.items() if not m.is_volume]
     if open_files:     # nothing can be measured on these; the car is rejected, not a crash
@@ -915,6 +956,8 @@ def manufactured_checks(assembly: dict) -> dict:
                                                          f"; foam in halo, bounds mm {parts}")
     r.update(ballast_checks(body, halo_pocket_mm(assembly), float(assembly.get("ballast_g") or 0.0)))
     r.update(_visibility_checks(assembly, solids))
+    if as_drawn:
+        return r
     nose_row = assembly["joints"]["parts"].get("nose")
     if nose_row is not None:     # a nose only surface-bonded at Ref A has no tenon holding it
         r["nose_has_tenon"] = _entry(0.0 if "pocket_cm3_per_side" in nose_row else -1.0, nose_row["joint"])
@@ -1186,6 +1229,10 @@ def check(body_half_stl: str, assembly: dict, mass_state: dict | None = None,
     j = assembly.get("joints")
     if j is not None and any("file" in v for v in j.get("manufactured", {}).values()):
         r.update(manufactured_checks(assembly))
+    else:
+        # no manufacturing files (the searches build with --no-joints): the zone, visibility, clear-air,
+        # chamber, cargo and halo rules on the car as drawn, so no rule goes unmeasured
+        r.update(manufactured_checks(assembly, solids=as_drawn_solids(assembly, body_half_stl)))
     if j is not None:
         # every manufacturing file, RE-READ from disk, must be closed solids
         # and as many of them as the part has (an in-memory mesh can be closed
