@@ -48,6 +48,14 @@ T8.5.1 nose cap), then `machining` (top-and-bottom 3.175 mm ball, 3 mm minimum w
 joined or dropped. `rear_len_mm` moves the rear face (and the bore) for the layout search; `lattice`
 is stage 2's free-form change. Mass from the cells (0.163 g/cm3 foam).
 
+`freeform.py` (the searches' stage 2): the body and nose as three evolved surfaces, a top and a bottom over
+(x, |y|) and a side outline over (x, z), smooth fields over control points from the nose tip to the rear
+face (user 2026-11-23: no fixed stations, squareness or constant-width sidepods). The milled body is the
+part behind Ref A (param_body.build(freeform=...), through the same masks and milling); the printed nose is
+the same surfaces ahead of it, clipped to T8.5.1's box, T8.2's 40 mm and T3.7. Nothing outboard of the
+12.5 mm spine between the wheels is over 27.175 mm (the team's sidepod top). `fit()` reads the surfaces
+off any car (IoU 0.85 on L0044 at 24 x 9 x 12 control points), so stage 2 starts from the stage-1 car.
+
 ### car/parts (was Part 4)
 `assembly.build(...)`: the team's wheels (their measured files), the official halo in its pocket, the
 nose cone lofted onto the body's front section, NACA 0015 front and rear wings at the minimum legal size,
@@ -68,10 +76,25 @@ and bearing sag (3 N radial, 1.2 N side, ABS 20 MPa allowed, 0.15 mm), foam bear
 the slot or none, slot cut from below, one closed solid. Thicknesses grow until the loads pass. Each car
 folder gets `supports.png` (`search/layout/support_render.py`) to inspect the design.
 `beam_support.py` (Part 4's pod/plate/strip support) is kept for the team's own car (`--support beam`).
+
+`front_wing_engine.py` designs the searches' front wing: one piece across the centre line or a left and
+a right wing (T8.6.1), flat NACA 0015 elements (chord, height, span, sweep, dihedral; swept by shearing so
+every vertical cut is the true section), and its own supports: none (held by the nose it runs into), one
+pylon on the centre line or two, each cast to the nose's surface and printed with the nose. It repairs
+rather than refuses (sweep within T8.2's 40 mm, segments out to 25 mm, dihedral within T8.5.2 and the
+track's 5 mm, roots into the nose, a wing lowered to keep 5 mm under a nose that does not hold it) and
+measures every T8 rule. The referee measures it again (T8.5-T8.8).
 `joints.make_all` cuts pockets for the printed parts and writes the manufacturing files (skipped in
 searches with `--no-joints`; rebuild finalists without it).
 
 ### car/build (was Part 5)
+
+The referee measures every rule on every car. Without manufacturing files (the searches build with
+`--no-joints`) the zone, visibility, clear-air, chamber, cargo, halo and block rules run on the car as drawn
+(`legality.as_drawn_solids`); until 2026-11-23 they ran only on the made files, so search cars were never
+measured against T7.9-T7.11, T8.7, T8.8, T9.6, T9.7. Two of them fail on every car of the 1 mm build grid for
+the same reason as T5.1 (the bore drawn 0.6 mm small) and are waived only when that is all they are
+(`layout_car._grid_bore`).
 `run_car.py`: one car end to end (body, parts, mass roll-up, referee, report). `legality.py`: the
 scrutineer, independent of the builder (it imports nothing from car/body; `rules_constants.py` is
 typed from the regulations; `docs/RULES.md` maps every rule to its check).

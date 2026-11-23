@@ -2,11 +2,14 @@
 
 Stage 1 (simscale_layout.py) finds the layout -- wheelbase, tail, halo, cargo, nose, wing height and
 position -- with a surrogate model. This stage takes the best car of stage 1 (or any car's genes),
-holds its layout, and lets CMA-ES move the body surface freely: a coarse lattice of control points
-over the +y half of the body (mirrored), cubic-interpolated, grows or cuts the drawn body before Part 1
-applies the rule masks (cargo, halo pocket, chamber wall, wheel keep-clear zones, ceiling) and the
-3.175 mm ball-end milling. So whatever the numbers, the car stays legal and millable; a vector that
-breaks a rule anyway (a loose piece, a rule the masks cannot force) is told to CMA as the worst.
+holds its layout, and lets CMA-ES design the body and nose freely (car/body/freeform.py: a top surface, a
+bottom surface and a side outline from the nose tip to the rear face, user 2026-11-23: no fixed stations,
+no constant-width sidepods), together with the front wing (one piece or two, its own supports) and the
+wheel supports' plates. The surfaces start as the stage-1 car itself (fitted to its body and nose); CMA
+moves them by a coarse grid of displacements (the number of free numbers the CFD runs can search, a
+setting), before Part 1 applies the rule masks (cargo, halo pocket, chamber wall, wheel keep-clear zones,
+the 27.175 mm sidepod top) and the 3.175 mm ball-end milling. So whatever the numbers, the car stays
+legal and millable; a vector that breaks a rule anyway is told to CMA as the worst.
 
 The search, the CFD route (one closed solid, shrink-wrapped surface, exact wheels, SimScale) and the race
 model (each car's own mass and COM) are stage 1's (simscale_layout.Campaign); only what is asked differs.
@@ -31,8 +34,9 @@ import numpy as np
 
 import simscale_layout as SL
 
-LATTICE = (4, 2, 3)          # control points along x (Ref A .. rear face), y (0 .. 36 mm), z (0 .. 52 mm): 24 numbers
-AMP_MM = 6.0                 # a control point at 1.0 grows the body by 6 mm there
+COARSE = (5, 2, 3)           # displacement control points: along the car, across (top/bottom) and up (side)
+AMP_MM = (6.0, 4.0, 6.0)     # mm per unit of CMA's numbers: top, bottom, side
+FIT_GRID = (24, 9, 12)       # the surfaces' own control grid, fitted to the stage-1 car (IoU 0.85 on L0044)
 
 
 class ShapeCampaign(SL.Campaign):
@@ -40,8 +44,12 @@ class ShapeCampaign(SL.Campaign):
     def __init__(self, root):
         super().__init__(root)
         self.base = np.asarray(self.cfg["base_genes"], float)
-        self.shape = tuple(self.cfg["lattice"]["shape"])
-        self.amp = float(self.cfg["lattice"]["amp_mm"])
+        f = self.cfg["freeform"]
+        import freeform as fr
+        self.fr = fr
+        self.seed = fr.Freeform.from_dict(f["seed"])
+        self.coarse = tuple(f["coarse"])
+        self.amp = tuple(f["amp_mm"])
 
     # ------------------------------------------------------------------ CMA
     def es(self):
@@ -68,16 +76,16 @@ class ShapeCampaign(SL.Campaign):
         return xs, {"mode": "cma", "sigma": round(float(es.sigma), 4), "generation": int(es.countiter)}
 
     def dim(self):
-        """CMA's vector: the lattice's control points, then the shape genes (layout_genes.SHAPE_GENES: the
-        wheel supports and the front wing; 0 = the catalogue's value, -1 / +1 its lo / hi)."""
-        return int(np.prod(self.shape)) + len(SL.LG.SHAPE_GENES)
+        """CMA's vector: the surfaces' coarse displacements, then the shape genes (layout_genes.SHAPE_GENES:
+        the wheel supports and the front wing; 0 = the catalogue's value, -1 / +1 its lo / hi)."""
+        return self.fr.n_genes(*self.coarse) + len(SL.LG.SHAPE_GENES)
 
     def job(self, v):
         v = np.asarray(v, float)
-        n = int(np.prod(self.shape))
+        n = self.fr.n_genes(*self.coarse)
+        ff = self.fr.from_unit(self.seed, v[:n], self.amp, *self.coarse)
         sh = SL.LG.shape_from_unit(v[n:], z_fw=SL.LG.decode(self.base)["fwing"]["z_mm"])
-        return {"x": self.base.tolist(), "v": v.tolist(),
-                "lattice": {"shape": list(self.shape), "values": v[:n].tolist(), "amp_mm": self.amp},
+        return {"x": self.base.tolist(), "v": v.tolist(), "freeform": ff.as_dict(),
                 "support": sh["support"], "fwing": sh["fwing"]}
 
     def batch_done(self, ids):
@@ -107,11 +115,13 @@ class ShapeCampaign(SL.Campaign):
               min(good) if good else None, flush=True)
 
     def submit_reference(self, ev, ladder=(0,)):
-        """The base car itself (lattice all zero) through the CFD once: what the shape changes are measured against."""
+        """The base car itself (every number of CMA's at 0: the fitted surfaces, the catalogue's wing and
+        supports) through the CFD once: what the shape changes are measured against."""
         import shutil
         src = self.root / "cars" / "BASE"
         if not (src / "layout_car.json").exists():
-            rec = SL.LC.build(self.base, src.resolve(), lattice=None)
+            j = self.job(np.zeros(self.dim()))
+            rec = SL.LC.build(self.base, src.resolve(), freeform=j["freeform"], support=j["support"], fwing=j["fwing"])
         else:
             rec = json.loads((src / "layout_car.json").read_text())
         self.log({"id": "BASE", "kind": "ref", "genes": None, "legal": rec.get("legal"), "layout": rec.get("layout"),
@@ -152,13 +162,33 @@ def best_of(layout_root: Path, car: str | None = None):
     return r["id"], rows[r["id"]]["genes"], T
 
 
-def init(root, layout_root, car=None, budget=40, popsize=8, sigma=0.5):
+def fit_seed(car_dir: Path, genes):
+    """The free-form surfaces of a built car (its body and nose), on FIT_GRID."""
+    import trimesh
+    import freeform as fr
+    d = SL.LG.decode(genes)
+    ms = []
+    for p in (car_dir / "body_half.stl", car_dir / "parts" / "nose.stl"):
+        m = trimesh.load(str(p), force="mesh"); m.apply_scale(1e3); ms.append(m)
+    x_tip = d["x_front"] - 16.0 - d["nose"]["length_mm"]
+    x_rear = d["x_front"] + d["W"] + d["rear"]
+    return fr.fit(ms, x_tip, x_rear, *FIT_GRID).as_dict()
+
+
+def init(root, layout_root, car=None, budget=40, popsize=8, sigma=0.5, seed_ff=None):
     root = Path(root); root.mkdir(parents=True, exist_ok=True)
     cid, genes, T = best_of(Path(layout_root), car)
+    if seed_ff is None:
+        src = Path(layout_root) / "cars" / cid
+        if not (src / "body_half.stl").exists():
+            SL.LC.build(np.asarray(genes), (root / "cars" / "SEED").resolve())
+            src = root / "cars" / "SEED"
+        seed_ff = fit_seed(src, genes)
     (root / "config.json").write_text(json.dumps({
-        "_comment": "Stage 2 (simscale_shape.py): CMA-ES on a free-form lattice over the body, layout held at base_genes.",
+        "_comment": "Stage 2 (simscale_shape.py): CMA-ES on the free-form body and nose (fitted to the stage-1 car), "
+                    "the front wing and the wheel supports, layout held at base_genes.",
         "base_from": {"run": str(layout_root), "car": cid, "T": T}, "base_genes": genes,
-        "lattice": {"shape": list(LATTICE), "amp_mm": AMP_MM},
+        "freeform": {"seed": seed_ff, "coarse": list(COARSE), "amp_mm": list(AMP_MM)},
         "budget": budget, "batch": popsize, "cma": {"popsize": popsize, "sigma": sigma, "seed": 1},
         "evaluator": {"iters": 1000, "box_mm": 1.5, "max_cost": 80.0, "sizing": {"max_mm": 30, "min_mm": 0.8},
                       "small_feature_mm": SL.SMALL_FEATURE_MM}}, indent=1))

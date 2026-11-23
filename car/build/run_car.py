@@ -41,6 +41,16 @@ def log(msg: str) -> None:
 
 
 # --------------------------------------------------------------------------- body
+def _freeform(a):
+    """The searches' free-form body and nose (car/body/freeform.py), or None."""
+    if not getattr(a, "freeform_json", None):
+        return None
+    import freeform as fr
+    src = a.freeform_json
+    d = json.loads(Path(src).read_text()) if not src.lstrip().startswith("{") else json.loads(src)
+    return fr.Freeform.from_dict(d)
+
+
 def build_body(a, out: Path):
     """The parametric body (Part 1 param_body): drawn, made machinable, and
     sized by a skin offset (or at a fixed skin with --skin-mm)."""
@@ -53,7 +63,8 @@ def build_body(a, out: Path):
                  skin_offset_mm=getattr(a, "skin_mm", None),
                  rear_len_mm=getattr(a, "rear_mm", None), with_cargo=not getattr(a, "no_cargo", False),
                  cargo_placement=json.loads(a.cargo_json) if getattr(a, "cargo_json", None) else None,
-                 lattice=json.loads(a.lattice_json) if getattr(a, "lattice_json", None) else None)
+                 lattice=json.loads(a.lattice_json) if getattr(a, "lattice_json", None) else None,
+                 freeform=_freeform(a))
     return g, {"param_body": bp.as_dict(), "spacing_mm": a.cfd_mm,
                "build": getattr(g, "build_report", {})}
 
@@ -197,7 +208,7 @@ def part4_kwargs(a) -> dict:
     nk = dict(blend_after_ref_a_mm=1.0, root_scale=1.0, material="ABS", wall_mm=1.0)
     if getattr(a, "nose_json", None):
         nk.update(json.loads(a.nose_json))
-    kw = {"support": sup, "nose": ns.NoseCone(**nk),
+    kw = {"support": sup, "nose": ns.NoseCone(**nk), "freeform": _freeform(a),
           "supports": not getattr(a, "no_supports", False), "tethers": not getattr(a, "no_tethers", False)}
     if getattr(a, "tether_json", None):
         kw["tether_offsets_mm"] = tuple(json.loads(a.tether_json))
@@ -299,6 +310,8 @@ def parse_args(argv=None):
     ap.add_argument("--no-cargo", action="store_true", help="no T4.2 virtual cargo (team rule, layout search)")
     ap.add_argument("--cargo-json", default=None, help='T4.2 cargo placement {"x_start_m", "z_base_m", "flip"}')
     ap.add_argument("--lattice-json", default=None, help="free-form body change (param_body.build lattice=)")
+    ap.add_argument("--freeform-json", default=None,
+                    help="free-form body and nose (car/body/freeform.py): JSON, or a path to a JSON file")
     ap.add_argument("--tether-json", default=None, help="[front guide ahead of the front axle, rear guide behind the rear axle], mm (T6.1 <= 10)")
     ap.add_argument("--support", choices=("cad", "beam", "engine"), default="beam",
                     help="beam = the team's architecture, parametric; cad = the v2 CAD supports (reference); "

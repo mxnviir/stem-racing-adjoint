@@ -317,9 +317,9 @@ def timed_rows(rows, refs=False):
 
 
 def _build_one(args):
-    x, folder, lattice, support, fwing = (tuple(args) + (None, None, None))[:5]
+    x, folder, lattice, support, fwing, freeform = (tuple(args) + (None, None, None, None))[:6]
     try:
-        return LC.build(np.asarray(x), Path(folder), lattice=lattice, support=support, fwing=fwing)
+        return LC.build(np.asarray(x), Path(folder), lattice=lattice, support=support, fwing=fwing, freeform=freeform)
     except Exception as e:                                           # noqa: BLE001
         return {"legal": False, "why": f"builder crashed: {e!r}"[:500], "genes": list(map(float, x))}
 
@@ -566,7 +566,8 @@ class Campaign:
         # 2) build what is pending (in parallel); the legal cars go to CFD
         pb = st.get("pending_build") or {}
         if pb:
-            jobs = [(v["x"], str((self.root / "cars" / cid).resolve()), v.get("lattice"), v.get("support"), v.get("fwing"))
+            jobs = [(v["x"], str((self.root / "cars" / cid).resolve()), v.get("lattice"), v.get("support"), v.get("fwing"),
+                     v.get("freeform"))
                     for cid, v in pb.items()]
             with ProcessPoolExecutor(BUILD_WORKERS) as pool:
                 recs = list(pool.map(_build_one, jobs))

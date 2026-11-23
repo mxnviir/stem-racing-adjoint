@@ -262,8 +262,11 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
           target_body_kg: float | None = None, machinable: bool = True,
           skin_offset_mm: float | None = None, field_mm=None,
           rear_len_mm: float | None = None, with_cargo: bool = True,
-          cargo_placement: dict | None = None, lattice: dict | None = None):
+          cargo_placement: dict | None = None, lattice: dict | None = None, freeform=None):
     """UnifiedGeometry whose body is `bp`, with every rule mask applied.
+
+    freeform: the searches' free-form body (freeform.Freeform: top, bottom and side surfaces), drawn instead
+      of `bp`'s loft; the same rules, milling, joins and mass sizing follow.
 
     field_mm: a body given as a signed distance field on this car's grid (mm, negative
       inside), e.g. one carved from the block, used instead of `bp`'s loft. It goes through
@@ -320,6 +323,11 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, bp: BodyParams,
         # The machined body ends at Ref A: ahead of it is the printed nose cone (T1.7).
         phi0 = np.maximum(np.asarray(field_mm, dtype=float), x_ref_a - X)
         # the field is the body: its tunnel (ft_h > 0) is cut from the skinned field in make()
+    elif freeform is not None:
+        import freeform as fr
+        phi0 = fr.field(freeform, X, Y, Z, freeform.x_tip_mm, freeform.x_rear_mm,
+                        axles=(x_front_mm, x_front_mm + W_mm, None))
+        phi0 = np.maximum(phi0, np.maximum(x_ref_a - X, X - x_rear_mm))      # the milled body: Ref A .. rear face
     else:
         phi0 = phi_mm(bp, X, Y, Z, x_ref_a, x_rear_mm)
     if lattice:

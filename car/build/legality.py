@@ -818,7 +818,10 @@ def as_drawn_solids(assembly: dict, body_half_stl: str) -> dict:
         mir = m.copy()
         mir.vertices[:, 1] *= -1.0
         mir.invert()
-        u = trimesh.boolean.union([m, mir], engine="manifold")
+        try:
+            u = trimesh.boolean.union([m, mir], engine="manifold")
+        except ValueError:                       # an open part: kept as it is, and the checks that need a
+            u = None                             # solid say so (manufactured_files_measurable)
         return u if u is not None and not u.is_empty else trimesh.util.concatenate([m, mir])
     out = {"machined_body": full(body_half_stl)}
     front = [full(stl[n]) for n in ("nose", "fwing") if n in stl]

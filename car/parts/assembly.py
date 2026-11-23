@@ -149,7 +149,7 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
           rotate_wheels: bool = True, nose: "ns.NoseCone | None" = None,
           support: "bsm.BeamSupport | None" = None, support_modes: dict | None = None,
           supports: bool = True, tethers: bool = True, rear_face_mm: float | None = None,
-          tether_offsets_mm: tuple = (5.0, 5.0)) -> dict:
+          tether_offsets_mm: tuple = (5.0, 5.0), freeform=None) -> dict:
     """support: None = the team's v2 CAD supports (reference), or a BeamSupport.
     supports / tethers False: no wheel supports / tether guides at all (the layout search,
     search/layout/layout_car.py, adds them later); the wheels then float in the CFD.
@@ -254,7 +254,15 @@ def build(W_mm: float, x_front_mm: float, d_halo_mm: float, body_half_stl: str,
     # -- nose cone (printed, ahead of Ref A) --------------------------------
     nm = None
     if nose is not None:
-        nm = ns.build_nose(nose, x_front_mm, body)
+        if freeform is not None:
+            # the free-form car's nose: its own surfaces ahead of Ref A (car/body/freeform.py)
+            import freeform as fr
+            nm = fr.build_nose(freeform, freeform.x_tip_mm, freeform.x_rear_mm, cc.ref_plane_A(x_front_mm),
+                               blend_after_mm=nose.blend_after_ref_a_mm)
+            if nm is None:
+                raise ValueError("illegal car: the free-form surfaces leave no nose ahead of Ref A")
+        else:
+            nm = ns.build_nose(nose, x_front_mm, body)
         gates.update(ns.nose_gates(nose, nm, x_front_mm))
         _export_half(nm["nose"], out / "nose.stl")
         surfaces.append({"name": "nose", "stl": str(out / "nose.stl"), "rotating": None})

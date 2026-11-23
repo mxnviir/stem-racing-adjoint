@@ -15,11 +15,16 @@ So the work is split by what each number is:
    is fitted after every batch; every legal layout (66 934 on a 1 mm grid), each with several settings
    of the other numbers, is scored on the model, and only the 8 most promising are built and timed.
    The first 16 cars are space-filling (Sobol). Budget: 48 cars plus the reference twice.
-2. **Stage 2, shape (search/shape, CMA-ES).** On the best layout from stage 1, a lattice of 4 x 2 x 3
-   control points over the body (mirrored), cubic-interpolated, grows or cuts the drawn body by up to
-   +-6 mm per unit before the rule masks and the milling are applied. So every vector is a legal,
-   millable body. The same CMA vector carries the wheel supports' four shape genes (`mode: shape` in
-   layout_params.json: plate chord, thickness, taper, transition radius), held at their catalogue values in stage 1. CMA-ES, 8 cars a generation, 40 cars.
+2. **Stage 2, shape (search/shape, CMA-ES).** On the best layout from stage 1, everything else is designed
+   freely: the body and nose (car/body/freeform.py: top, bottom and side surfaces, fitted to the stage-1
+   car and moved by a coarse grid of displacements: 5 x 2 top, 5 x 2 bottom, 5 x 3 side, 6/4/6 mm per unit),
+   the front wing (one piece or two, chord, gap, span, root, sweep, dihedral, and its pylons: none, one or
+   two, place, chord, thickness, rake) and the wheel supports' plates (chord, thickness, taper, transition):
+   51 numbers. The rule masks and the milling are applied after, so every vector is a legal, millable body;
+   what a mask cannot force is measured and refused. CMA-ES, 8 cars a generation.
+   The coarse grid is a setting (simscale_shape.COARSE): a finer grid is freer but needs more runs. With
+   one key's worth (about 40 runs, 5 generations) CMA moves the car a few steps from the stage-1 car, not to
+   an optimum in 51 dimensions; more runs buy more of it.
 
 At equal drag the layout changes race time by only ~0.15 ms over its whole legal range (the car is
 always ballasted to 48.2 g), while 1 % of drag is ~0.7 ms: the layout matters through drag, which is

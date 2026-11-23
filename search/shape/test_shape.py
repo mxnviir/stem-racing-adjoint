@@ -32,21 +32,26 @@ class StubEvaluator:
         out = {}
         for cid, folder in list(self.pending.items()):
             rec = json.loads((Path(folder) / "layout_car.json").read_text())
-            v = np.asarray((rec.get("lattice") or {}).get("values") or [0.0])
-            out[cid] = {"ok": True, "D20_N": 0.40 + 0.01 * float((v ** 2).mean()), "L20_N": 0.0, "info": {}}
+            dev = float(rec.get("ffdev", 0.0))
+            out[cid] = {"ok": True, "D20_N": 0.40 + 0.01 * dev ** 2, "L20_N": 0.0, "info": {}}
             self.st["cases"].pop(cid, None)
         self.pending = {}
         return out
 
 
-def stub_build(x, out, timeout_s=0, lattice=None, support=None, fwing=None):
+SEED = {"nu": 3, "nv": 2, "nw": 2, "top": [30.0] * 6, "bottom": [5.0] * 6, "side": [15.0] * 6,
+        "blend_mm": 1.0, "x_tip_mm": 0.0, "x_rear_mm": 240.0}
+
+
+def stub_build(x, out, timeout_s=0, lattice=None, support=None, fwing=None, freeform=None):
     out = Path(out); out.mkdir(parents=True, exist_ok=True)
-    v = (lattice or {}).get("values") or [0.0]
-    if v[0] > 1.0:
+    dev = ((freeform or SEED)["top"][0] - SEED["top"][0]) / 6.0      # CMA's first number, in its own units
+    if dev > 1.0:
         raise RuntimeError("builder crashed")                    # _build_one turns this into an illegal car
+    v = [dev]
     d = LG.decode(x)
     rec = {"genes": list(map(float, x)), "layout": {k: d[k] for k in ("W", "rear", "halo_rear", "x_front", "d_halo")},
-           "decoded": json.loads(json.dumps(d, default=float)), "lattice": lattice,
+           "decoded": json.loads(json.dumps(d, default=float)), "ffdev": dev,
            "legal": not (v[0] < -1.0), "failed": [] if not (v[0] < -1.0) else ["T7.9.3_zone_clear"],
            "mass": {"race_mass_g": 69.35, "com_z_mm": 23.0, "com_x_car_mm": 140.0, "lead_g": 2.0},
            "cfd": {"one_piece": True, "watertight": True, "wrap_pitch_mm": 0.3}}
@@ -65,7 +70,7 @@ def test_shape_loop(tmp_path, monkeypatch):
                                                                                   "wrap_pitch_mm": pitch_mm}})
     monkeypatch.setattr(SL, "ProcessPoolExecutor", _Serial)
     root = tmp_path / "shape"
-    SS.init(root, lay, budget=16, popsize=8)
+    SS.init(root, lay, budget=16, popsize=8, seed_ff=SEED)
     c = SS.ShapeCampaign(root)
     ev = StubEvaluator()
     rng = np.random.default_rng(0)
@@ -92,7 +97,7 @@ def test_shape_loop(tmp_path, monkeypatch):
     # CMA moves the lattice and the supports' shape genes together; every car's row carries both
     built = [r for r in rows if r.get("v") is not None]
     assert built and all(len(r["v"]) == c.dim() for r in built)
-    assert c.dim() == 24 + len(SL.LG.SHAPE_GENES)
+    assert c.dim() == c.fr.n_genes(*SS.COARSE) + len(SL.LG.SHAPE_GENES)
 
 
 class _Serial:

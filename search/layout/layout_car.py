@@ -50,6 +50,8 @@ def run_car_args(d: dict, out: Path, lattice: dict | None = None) -> list[str]:
     bp = LG.body_params(d)
     extra = ["--lattice-json", json.dumps(lattice)] if lattice else []
     extra += ["--support", "engine", "--support-json", json.dumps(d["support"])]
+    if d.get("freeform"):                     # the free-form body and nose (car/body/freeform.py)
+        extra += ["--freeform-json", json.dumps(d["freeform"])]
     return [sys.executable, "-W", "ignore", str(P5 / "run_car.py"), "--out", str(out),
             "--W", str(d["W"]), "--x-front", str(d["x_front"]), "--d-halo", str(d["d_halo"]),
             "--rear-mm", str(d["rear"]), "--no-joints", "--skin-mm", str(d["skin_mm"]),
@@ -59,7 +61,7 @@ def run_car_args(d: dict, out: Path, lattice: dict | None = None) -> list[str]:
 
 
 def build(x, out: Path, timeout_s=3600, lattice: dict | None = None, support: dict | None = None,
-          fwing: dict | None = None) -> dict:
+          fwing: dict | None = None, freeform: dict | None = None) -> dict:
     """Genes -> a built, checked car in `out`. Returns a record (legal, mass, files, why).
     lattice: the shape search's free-form change of the body (part1 param_body.build lattice=).
     support: the shape search's wheel-support design (support_engine.SupportDesign numbers), else the
@@ -70,6 +72,8 @@ def build(x, out: Path, timeout_s=3600, lattice: dict | None = None, support: di
         d["support"] = dict(d["support"], **support)
     if fwing:
         d["fwing"] = dict(d["fwing"], **fwing)
+    if freeform:
+        d["freeform"] = freeform
     rec = {"genes": [float(v) for v in np.clip(x, 0, 1)], "layout": {k: d[k] for k in ("W", "rear", "halo_rear", "x_front", "d_halo")},
            "decoded": d, "legal": False, "lattice": lattice}
     env = dict(os.environ, PYTHONPATH=os.pathsep.join([str(ROOT / "car/parts"), os.environ.get("PYTHONPATH", "")]))
