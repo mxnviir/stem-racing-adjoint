@@ -1298,6 +1298,47 @@ external topology case was **not found** in their material (that is not proof it
     groove-like lift (49.6) and the highest wheel drag of the pod designs (158.2). Less body drag is paid back on the wheels.
   - Queue: blend 50 (started 17:11); done ~19:55 UTC. It gives C2 on fine.
 
+- **2026-11-23 18:10, wall-resolved normal-adjoint test (CI): adjoints done, bump check impossible on this mesh by morphing. Verdict: inconclusive, not an adjoint failure.**
+  - Chain: link 1 on GitHub Actions (run 45125305486, 1000 iterations, 129 min, 5.0 GB peak); steady state on Kaggle (4 vCPU);
+    bumps and both adjoints on Actions (run 45188798730); hand-off through a draft release. Mesh 2,132,871 cells, y+ 0.08-52.7,
+    wall layers on 62 % of wall faces (mark L PASS); production D 181.54 mN.
+  - Steady (upwind U, 400-iteration batches): A1 PASS after 1200 upwind iterations, span 0.040 mN (100-iteration block means
+    190.718-190.757), D 190.73 mN. The raw drag keeps a +/-0.09 mN cycle of ~101 iterations that 100-iteration blocks cancel;
+    A1 still passes with 50/150/200-iteration blocks (0.072/0.024/0.007 mN). A batch-restart bug (writes only at multiples of
+    400 from iteration 0) re-ran 200 iterations per batch and left the state at iteration 2000; fixed for reruns.
+  - Mesh bug found: constant/polyMesh/points held the 1,793,235 pre-layer points; snappy's layer stage left the 2,296,246 final
+    points in 0/polyMesh. Solvers read the time directory and never noticed; esi_on_state.py and the bump morph copy
+    constant/polyMesh alone and foamFormatConvert segfaulted. The workflow now copies the time-directory points into constant/
+    (checkMesh Mesh OK, 2,296,246 points, 2,132,871 cells).
+  - Adjoints (unchanged by everything below): frozen 1000 iterations in 38 min, 5.3 GB, pa residual 3.3e-5 and still falling
+    ~2x per 100 iterations, sensitivities on 32,117 car points; sst 124 min, 6.3 GB, ka 1.3e-6, wa 9.8e-9.
+  - Bumps: all six CI bumps failed the morph checkMesh (pod_front_low 12 inverted cells, pod_front_low_m 6, pod_rear_m 2,
+    pod_rear and the pod_rear_top pair also failed) and fell back to fresh meshes (unusable: pod_rear_top 189.44 and
+    pod_rear_top_m 192.71 mN; the others crashed in mapFields). Morph-only reproduction on this PC (gate.py's own bump path on
+    the Kaggle state, stopped after checkMesh; it reproduced CI's 12 cells and minimum volume exactly). Cells: inverted;
+    faces: incorrectly oriented; OK = checkMesh Mesh OK.
+
+    | bump | 10 mm, as CI | 10 mm quadratic | 10 mm, fixed ref | 10 mm, fixed ref + quadratic | 15 mm, fixed ref (default / quadratic) | 20 mm, fixed ref (default / quadratic) |
+    |---|---|---|---|---|---|---|
+    | pod_front_low | 12 cells | 50 cells | 9 cells | 49 cells | 44 / 148 cells | 73 / 238 cells |
+    | pod_front_low_m | 6 cells | 5 cells | 3 cells | 3 cells | 16 / 15 cells | 24 / 24 cells |
+    | pod_rear | 5 cells | - | 4 cells | 1 cell | 44 / 43 faces | 2 / 1 cells |
+    | pod_rear_m | 2 cells | - | OK | OK | 7 / 7 faces | 34 / 34 faces |
+    | pod_rear_top | 2 cells | - | 10 faces | 9 faces | moveMesh crash / 14 cells | 62 / 60 cells |
+    | pod_rear_top_m | 2 cells | - | 35 faces | 35 faces | error / 59 faces | 68 / 66 faces |
+
+  - The fix that matters: the morph measured the shape change from the surface state A was snapped to (gate/original), not
+    from the bumps' base (original_rm); they differ by up to 0.205 mm near edges (99th percentile 71 um), so even a no-bump
+    morph moved the wall and inverted the same 2 cells as several bumps. With GATE_MORPH_REF_RM=1 (opt-in) a no-bump morph moves
+    nothing and is Mesh OK. Quadratic inverseDistance (owner's rule 1) does not help with or without it; adding the ground patch
+    to the diffusivity does not either (10 and 5 cells); wider footprints (rule 4) are worse at every registered site.
+  - Site survey (10 mm, fixed ref): Mesh OK at both signs only for tail_side (not registered); pod_rear_m and pod_rear_low_m
+    alone; nose_top/nose_side worst (76-81 cells, checkMesh crash at -1 mm). A 1 mm bump folds the 15 um layer at most sites.
+  - Per RESOLVED_TEST.md rule 4 (stop at 20 mm): morph failure; no bump was re-run, no pass mark touched. Kept: the opt-in
+    morph switches (P2_MORPH_DIFFUSIVITY, P2_MORPH_STRICT, P2_MORPH_REF_STL / GATE_MORPH_REF_RM, GATE_BUMP_R_MM; Part 2
+    defaults unchanged), strict + fixed-ref on in the workflow's bump jobs. Open: a stepped morph (the wall moved in increments
+    with mesh updates) is the untried route to a usable resolved bump pair.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)

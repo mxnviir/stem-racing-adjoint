@@ -580,6 +580,9 @@ jobs:
           export P2_JOB_DEADLINE=$(( $(date +%s) + 250*60 )) P2_CHECKPOINT_FILE=$PWD/ckpt_path.txt
           export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1000 GATE_TIMEOUT=18000 \
                  CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1
+          # RESOLVED_TEST.md "Reshaping the layered mesh": morph from the bumps' own base surface (original_rm),
+          # and a morph that fails checkMesh stops the bump (a fresh mesh is not a usable pair)
+          export GATE_MORPH_REF_RM=1 P2_MORPH_STRICT=1
           T0=$(date +%s)
           ( i=0; while true; do echo "$(date +%s) $(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}/SwapTotal/{st=$2}/SwapFree/{sf=$2}END{print int((t-a+st-sf)/1024)}' /proc/meminfo)" >> mem_trace.txt; \
                  i=$((i+1)); if [ $((i % 4)) = 0 ]; then f=$(ls -t ../../part2-simulation/cfd_case_template/runs/*/postProcessing/forces/*/force.dat /tmp/case/run/postProcessing/forces/*/force.dat 2>/dev/null | head -1); [ -n "$f" ] && echo "PROG $(tail -n1 "$f" | cut -c1-120)"; fi; sleep 15; done ) & MON=$!
@@ -588,6 +591,7 @@ jobs:
           RC=$?
           set -e
           kill $MON 2>/dev/null || true
+          grep -h "morph checkMesh" gate/bump_link.log | tee gate_results_resolved_up/morph_checkmesh_"$SITE".txt || true
           python - "$T0" "$RC" <<'PY'
           import json, sys
           peak = max((int(l.split()[1]) for l in open('mem_trace.txt') if l.strip()), default=0)
@@ -638,9 +642,10 @@ jobs:
         env:
           SITE: ${{ matrix.site }}
         run: |
-          tar czf ../../bump.tgz gate_results_resolved_up/bump_"$SITE".json \
+          tar czf ../../bump.tgz gate_results_resolved_up/bump_"$SITE".json gate_results_resolved_up/morph_checkmesh_"$SITE".txt \
                  gate_results_resolved_up/resources_bump_"$SITE".json gate_results_resolved_up/forces/bump_"$SITE" 2>/dev/null || \
-          tar czf ../../bump.tgz gate_results_resolved_up/bump_"$SITE".json gate_results_resolved_up/resources_bump_"$SITE".json
+          tar czf ../../bump.tgz gate_results_resolved_up/bump_"$SITE".json gate_results_resolved_up/resources_bump_"$SITE".json \
+                 gate_results_resolved_up/morph_checkmesh_"$SITE".txt
       - if: steps.solve.outputs.chained != 'true'
         uses: actions/upload-artifact@v4
         with: { name: "bump-${{ matrix.site }}", path: bump.tgz, retention-days: 14 }

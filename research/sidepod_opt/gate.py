@@ -29,6 +29,7 @@ RES = os.environ.get("GATE_RES", "medium")
 ITERS_BASE, ITERS = int(os.environ.get("GATE_ITERS_BASE", 2000)), int(os.environ.get("GATE_ITERS", 1000))
 REF_A = Path(os.environ["GATE_REF"]) if os.environ.get("GATE_REF") else G / ("refA" if RES == "medium" else f"refA_{RES}")
 BUMP_R_M, BUMP_A_M = 0.010, 0.001                           # Part 3: 10 mm radius, 1 mm height
+BUMP_R_M = float(os.environ.get("GATE_BUMP_R_MM", BUMP_R_M * 1e3)) * 1e-3   # RESOLVED_TEST.md rule 4 may widen it
 # centres in the car frame (m): x from the nose, z up; y on the +y side. Front/attached vs rear/wake.
 CENTRES = {"nose_top": (0.030, 0.000, 0.022), "nose_side": (0.040, 0.008, 0.019),
            "pod_front": (0.085, 0.030, 0.012), "pod_front_low": (0.095, 0.022, 0.004),
@@ -272,6 +273,7 @@ def cmd_bump(k, n_sub):
         return cmd_adjoint(n_sub, matched=True)
     ref = ref_dir()
     folder = G / f"bump_{k}"
+    morph_ref_rm()
     half, health, secs = solve(folder, n_sub, ITERS, extra={"morph_from": ref, "warm_from": ref}, keep=True)
     run = latest_run_of(os.getpid())
     fell_back = bool(run and (Path(run) / "MORPH_FALLBACK").exists())
@@ -283,9 +285,18 @@ def cmd_bump(k, n_sub):
     print(json.dumps(d, default=float), flush=True)
 
 
+def morph_ref_rm():
+    """GATE_MORPH_REF_RM=1: morph from ORIG's surface (the bumps' own base) instead of the one state A was
+    snapped to. The two differ by up to 0.2 mm near edges, which inverted 15 um wall-layer cells."""
+    if os.environ.get("GATE_MORPH_REF_RM") == "1":
+        import stopwatch as SW
+        os.environ["P2_MORPH_REF_STL"] = str(SW.body_stl(ORIG / "car_half.stl", ORIG / "_body_half.stl"))
+
+
 def cmd_reference_repeat(n_sub):
     """The ORIGINAL on the morph path from state A: the zero of every bump difference (and a noise point)."""
     ref = ref_dir()
+    morph_ref_rm()
     half, health, secs = solve(ORIG, n_sub, ITERS, extra={"morph_from": ref, "warm_from": ref}, keep=True)
     run = latest_run_of(os.getpid())
     d = rec(half, health, secs, morph_fallback=bool(run and (Path(run) / "MORPH_FALLBACK").exists()), run_dir_kept=run)

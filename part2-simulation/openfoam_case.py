@@ -1676,7 +1676,9 @@ def _morph(run: Path, cfg: OpenFOAMRunConfig, bashrc: str, timeout_s: int) -> No
     """Replace snapping by moving the reference mesh onto this car (see morph_from)."""
     ref_case = Path(cfg.morph_from)
     ref = ref_case / "constant" / "polyMesh"
-    ref_stl = ref_case / "constant" / "triSurface" / "car.stl"
+    # opt-in (P2_MORPH_REF_STL): measure the shape change from the surface the new car was derived from,
+    # when that is not the one the reference mesh was snapped to (their gap would be morphed in too)
+    ref_stl = Path(os.environ.get("P2_MORPH_REF_STL") or ref_case / "constant" / "triSurface" / "car.stl")
     if not (ref / "points").exists() or not ref_stl.exists():
         raise FileNotFoundError(f"morph_from has no mesh or car.stl: {ref_case}")
     dest = run / "constant" / "polyMesh"
@@ -1705,8 +1707,12 @@ def _morph(run: Path, cfg: OpenFOAMRunConfig, bashrc: str, timeout_s: int) -> No
             f"p99 {np.quantile(np.linalg.norm(disp, axis=1), 0.99):.3e} m\n"
             f"largest jumps raw (dd/dx, at mm): {largest_jumps(pts, raw)}\n"
             f"largest jumps smoothed: {largest_jumps(pts, disp)}\n")
+        # opt-in (P2_MORPH_DIFFUSIVITY): wall-resolved meshes need "quadratic inverseDistance (car)" so the
+        # thin layer cells ride with the wall; the default inverseDistance sheared 15 um cells inside-out
+        diffusivity = os.environ.get("P2_MORPH_DIFFUSIVITY", "inverseDistance (car)")
         _write(run / "constant" / "dynamicMeshDict",
-               _header("dictionary", "dynamicMeshDict") + _MORPH_DYNAMIC_MESH)
+               _header("dictionary", "dynamicMeshDict")
+               + _MORPH_DYNAMIC_MESH.replace("inverseDistance (car)", diffusivity))
         _write(run / "0" / "pointDisplacement", morph_point_displacement(disp))
         # the motion solver needs its own linear solver, inside the existing block
         _write(run / "system" / "fvSolution",
@@ -1796,6 +1802,14 @@ def _mesh(run: Path, cfg: OpenFOAMRunConfig, bashrc: str, timeout_s: int) -> str
     if cfg.morph_from:
         _morph(run, cfg, bashrc, timeout_s)
         check = _run("checkMesh", run, bashrc, "checkMesh_morph.log", timeout_s)
+        if os.environ.get("P2_MORPH_STRICT") == "1":
+            # opt-in: a study that may only use morphed meshes stops here instead of meshing fresh
+            bad = [l.strip() for l in check.splitlines() if l.strip().startswith(("***", "Failed"))]
+            print(f"[openfoam_case] morph checkMesh: {'Mesh OK' if 'Mesh OK' in check else '; '.join(bad)[:300]}", flush=True)
+            if "Mesh OK" not in check:
+                _write(run / "MORPH_FAILED", "\n".join(bad or ["checkMesh did not report Mesh OK"]) + "\n")
+                raise RuntimeError(f"morphed mesh failed checkMesh and P2_MORPH_STRICT=1 forbids a fresh mesh: "
+                                   f"{'; '.join(bad)[:300]}")
         if "Mesh OK" not in check and morph_mesh_acceptable(check):
             _write(run / "MORPH_WARNING", "\n".join(
                 l.strip() for l in check.splitlines() if l.strip().startswith("***")) + "\n")

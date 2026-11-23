@@ -82,6 +82,36 @@ predicted/measured is between 0.5 and 2 at all three sites. The script prints th
 | a bump `morph_fallback: true` | reshaping the layered mesh failed for that bump; that pair is unusable; report which |
 | ESI crash (SIGFPE in `adjointkOmegaSST`) | report it; the frozen result still counts on its own |
 
+## Reshaping the layered mesh onto the bumps (rule added 2026-11-23, before the bump rerun)
+
+The first CI bump run (inverseDistance morph, the Part 2 default) failed checkMesh on all six bumps
+(2-12 inverted wall-layer cells where counted) and every one fell back to a fresh mesh, so no usable
+pair was left. Owner's ruling for this test only:
+
+1. The bumps are morphed with `diffusivity quadratic inverseDistance (car)` (opt-in:
+   `P2_MORPH_DIFFUSIVITY`; Part 2's default stays `inverseDistance`), so the thin layer cells ride
+   with the wall.
+2. Strict: a morph whose checkMesh is not `Mesh OK` stops that bump with an error
+   (`P2_MORPH_STRICT=1`); no fresh-mesh fallback.
+3. Accepted only if checkMesh says `Mesh OK` for both `pod_front_low` (+1 mm) and `pod_front_low_m`
+   (-1 mm) in a morph-only test first; then all six bumps are re-run with it. The adjoints are not
+   re-run (their state is unchanged).
+4. If quadratic still inverts cells on any bump: keep the 1 mm height and widen the footprint of
+   all six bumps together, Gaussian radius 10 mm -> 15 mm, then 20 mm; stop at 20 mm and report a
+   morph failure if it still fails. The predictions for the new shapes come from the existing
+   sensitivities (`pair_judge.py` integrates `esi_sens_*.npz` against the new bump surfaces); no
+   adjoint re-run. The pass marks above do not change.
+
+**Outcome (2026-11-23): morph failure.** Rule 3's test failed (quadratic: 50 and 5 inverted cells on
+the pod_front_low pair), so no bump was re-run. Testing found a separate defect and fixed it: the
+morph measured the shape change from the surface state A was snapped to (`gate/original`), not from
+the bumps' base (`original_rm`); the two differ by up to 0.2 mm, which a no-bump morph pushed into
+the 15 um layer. With that fixed (opt-in `GATE_MORPH_REF_RM=1`) a no-bump morph moves nothing and is
+`Mesh OK`, but the registered bumps still fold layer cells at 10 mm, and rule 4's 15 mm and 20 mm
+footprints are worse at all three sites under both diffusivities. Only `tail_side` (not registered)
+morphs cleanly at both signs. The bump check cannot be made on this mesh by morphing; the verdict is
+inconclusive, not an adjoint failure. Full checkMesh tables: ROUTES.md, 2026-11-23.
+
 ## Report back (to the owner, and append a dated entry to `research/sidepod_opt/ROUTES.md`)
 
 1. Mesh: cells, y+ min/max, and the layer coverage line (`Extruding X out of Y faces`).
