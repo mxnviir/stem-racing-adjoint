@@ -381,9 +381,20 @@ def _clip(mesh, normal, origin):
 
 
 def _wing_split(mesh_mm):
+    """(wing elements, supports and end plates). An element spans at least WING_ELEMENT_MIN_Y_MM a side and
+    runs along the span: its longest direction (the principal axis of its surface) within 35 deg of y (a
+    dihedral is capped well under that). A strut leaning sideways can be as wide as an element (a pair
+    splayed onto a narrow tail: 15.7 mm, gallery 5 G01, measured as a second element): its longest
+    direction is up and down."""
     pieces = mesh_mm.split(only_watertight=False)
-    el = [p for p in pieces if p.extents[1] >= WING_ELEMENT_MIN_Y_MM]
-    rest = [p for p in pieces if p.extents[1] < WING_ELEMENT_MIN_Y_MM]
+
+    def along_span(p):
+        P = p.sample(2000) if p.area > 0 else p.vertices
+        P = P - P.mean(axis=0)
+        w, V = np.linalg.eigh(P.T @ P)
+        return abs(V[1, -1]) >= np.cos(np.radians(35.0))
+    el = [p for p in pieces if p.extents[1] >= WING_ELEMENT_MIN_Y_MM and along_span(p)]
+    rest = [p for p in pieces if not any(p is e for e in el)]
     return el, rest
 
 
