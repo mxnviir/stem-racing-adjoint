@@ -765,7 +765,7 @@ jobs:
     name: "4 verdict + ROUTES.md + push results"
     needs: [init, proda, bumps, adjoint]
     if: >-
-      always() && needs.init.outputs.stage != 'none' &&
+      always() && !cancelled() && needs.init.outputs.stage != 'none' &&
       ((needs.init.outputs.stage == 'bumps' && needs.init.outputs.steady_release == '') ||
        needs.init.outputs.stage == 'adjoint' || needs.init.outputs.stage == 'verdict' ||
        (needs.init.outputs.stage == 'all' && needs.proda.result == 'success' &&
