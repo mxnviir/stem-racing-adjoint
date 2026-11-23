@@ -901,7 +901,9 @@ jobs:
           a, b = rj('gate_results_resolved/prodcheck_stateA.json'), rj('gate_results_resolved_up/base.json')
           snap = sp / 'gate/refA_resolved/logs/snappyHexMesh.log'
           cov = ''
-          if snap.exists():
+          if b.get('layer_coverage_pct') is not None:   # mark L's own count; snappy's last "Extruding" line reads 0 %
+              cov = f"{b['layer_coverage_pct']} % of wall faces (mark L)"
+          elif snap.exists():
               m = re.findall(r'Extruding [0-9]+ out of [0-9]+ faces \([0-9.]+%\)', snap.read_text(errors='replace'))
               cov = m[-1] if m else ''
           if a:

@@ -1353,6 +1353,9 @@ external topology case was **not found** in their material (that is not proof it
   - judge json: `gate_results_resolved_up/esi/pair_judge_frozen.json`
   - judge json: `gate_results_resolved_up/esi/pair_judge_sst.json`
   - Peak memory / wall time per stage (GitHub runner, 4 vCPU + swap): resources_stateA: peak 4988 MB, wall 129 min; resources_esi_frozen: peak 5340 MB, wall 38 min; resources_esi_sst: peak 6335 MB, wall 124 min.
+  - Reading this entry (added by hand): the "0 %" layer coverage is the last snappy pass's line; the true coverage is 62 %
+    (mark L PASS, 2026-11-23 18:10 entry). Both FAILs mean no usable bump pair (the morph failed; pod_rear_top is a
+    fresh-mesh pair), so the verdict is inconclusive, not an adjoint failure.
 
 ## Sources
 
