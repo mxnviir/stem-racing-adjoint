@@ -108,7 +108,10 @@ decided), *withdrawn*.
   the size. Ruled out as causes: turbulence treatment (frozen = full, within 1 %), Reynolds number (same flow),
   missing grid terms (adding them made it worse). Suspect: no boundary-layer cells (y+ up to 180).
 - **Decision rule:** the normal adjoint is used only if, on a wall-resolved mesh, r ≥ 0.9, all signs agree and
-  predicted/measured lies within 0.5–2 at every site (`esi/RESOLVED_TEST.md`; running on the owner's PC).
+  predicted/measured lies within 0.5–2 at every site (`esi/RESOLVED_TEST.md`).
+- **Status 2026-11-23:** the test ran (2.13 M cells, layers on 62 % of wall faces, A1 PASS, both adjoints clean) but is
+  inconclusive: every registered bump folded the wall layer when morphed, so no bump pair was measured. The
+  next step (locate the folded cells, then a direct-field or stepped morph) needs a written amendment to the test first.
   Otherwise the discrete adjoint, but only on a mesh that passes D8 (medium ≈ 128 GB; fine ≈ 500 GB,
   extrapolated), or steps scored by CFD without a gradient.
 - **Interaction with D8:** the PC test is on the `resolved` mesh (wall layers); D8's evidence is on `fine` (no
