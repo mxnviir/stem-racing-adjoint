@@ -547,6 +547,12 @@ jobs:
             gh run download "$SRC" -R "${{ github.repository }}" -n steadystate -D /tmp/ss
           fi
           tar xzf /tmp/ss/steadystate.tgz -C research/sidepod_opt
+          # snappy's layer stage left the layered mesh's points in <time>/polyMesh; constant/polyMesh still holds the
+          # pre-layer points, which tools copying constant/polyMesh alone (bump morph, esi_on_state) pair with the layered faces
+          D=research/sidepod_opt/gate/refA_resolved_up
+          for t in $(ls "$D" | grep -E '^[0-9]+$' | sort -n -r); do
+            if [ -f "$D/$t/polyMesh/points" ]; then cp "$D/$t/polyMesh/points" "$D/constant/polyMesh/points"; echo "constant/polyMesh/points <- $t/polyMesh/points"; break; fi
+          done
           BG="$SRC"; [ "$STAGE" = kbumps ] && BG="${{ github.run_id }}"   # kbumps made the bump geometry itself
           gh run download "$BG" -R "${{ github.repository }}" -n bumpgeom -D /tmp/bg
           tar xzf /tmp/bg/bumpgeom.tgz -C research/sidepod_opt
@@ -702,6 +708,12 @@ jobs:
             gh run download "${{ needs.init.outputs.src_run || github.run_id }}" -R "${{ github.repository }}" -n steadystate -D /tmp/ss
           fi
           tar xzf /tmp/ss/steadystate.tgz -C research/sidepod_opt
+          # snappy's layer stage left the layered mesh's points in <time>/polyMesh; constant/polyMesh still holds the
+          # pre-layer points, which tools copying constant/polyMesh alone (bump morph, esi_on_state) pair with the layered faces
+          D=research/sidepod_opt/gate/refA_resolved_up
+          for t in $(ls "$D" | grep -E '^[0-9]+$' | sort -n -r); do
+            if [ -f "$D/$t/polyMesh/points" ]; then cp "$D/$t/polyMesh/points" "$D/constant/polyMesh/points"; echo "constant/polyMesh/points <- $t/polyMesh/points"; break; fi
+          done
       - name: "solve (${{ matrix.turb }} turbulence adjoint)"
         id: solve
         working-directory: research/sidepod_opt
