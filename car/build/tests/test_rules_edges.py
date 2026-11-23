@@ -101,7 +101,8 @@ def build(tmp, W=130.0, **o):
         p = tmp / f"{tag}_wheel.stl"
         wheel(d, w).export(str(p))
         files[tag] = str(p)
-    asm = {"W_mm": W, "x_front_mm": xf, "wheel_files": files,
+    # a block with the halo sunk in it: check()'s own rules only, not the as-drawn ones (legality.check)
+    asm = {"W_mm": W, "x_front_mm": xf, "wheel_files": files, "as_drawn_checks": o.get("as_drawn_checks", False),
            "extra_surfaces": [{"name": k, "stl": _save(tmp, k, m)} for k, m in parts.items()]}
     return _save(tmp, "body", body), asm
 

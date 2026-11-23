@@ -225,6 +225,12 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
     struts = [s for s in d.struts if s.t_mm >= cc.BUILD_WALL_MM]
     info["struts_asked"] = len(d.struts)
     info["struts_thick_enough"] = len(struts)
+    if not struts and d.struts:
+        # every strut under the print wall: the wing would stand on nothing; the thickest is kept, at the
+        # wall (repaired, and said so), rather than the car refused
+        k = int(np.argmax([s.t_mm for s in d.struts]))
+        struts = [dataclasses.replace(d.struts[k], t_mm=cc.BUILD_WALL_MM)]
+        info["strut_thickened_to_wall"] = k
     plans = []
     for s in struts:
         c = float(np.clip(s.chord_mm, cc.BUILD_WALL_MM * 2, chord * 0.8))
@@ -281,10 +287,42 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
                 break
             z += max(a_, b_) + 0.05
     wing_tm = se._to_trimesh(_wing(d, x_le, z))
-    z_low = z
-    if d.lift_mm > 0:
-        z += d.lift_mm
+    # T9.4.3 / T3.5: the wing's top under 65 mm -- a dihedral that lifts the tip over it is reduced (the
+    # lowest height found again), then the search's lift is what room is left
+    for _ in range(6):
+        over = float(wing_tm.bounds[1, 2]) - (cc.REAR_Z_MAX - MARGIN_MM)
+        if over <= 0 or abs(d.dihedral_deg) < 0.05:
+            break
+        rise = math.tan(math.radians(d.dihedral_deg)) * hs
+        new_rise = math.copysign(max(abs(rise) - over - 0.05, 0.0), rise)
+        dih = math.degrees(math.atan(new_rise / hs))
+        d = dataclasses.replace(d, dihedral_deg=dih)
+        info["dihedral_used_deg"] = dih
+        info["dihedral_reduced_for_height"] = True
+        dhk = math.tan(math.radians(dih))
+        base = se._to_trimesh(_wing(d, x_le, 0.0))
+        pts0, _ = trimesh.sample.sample_surface_even(base, 1500, seed=1)
+        keep = np.ones(len(pts0), bool)
+        for a_, b_ in joint_bands():
+            keep &= ~((pts0[:, 1] >= a_) & (pts0[:, 1] <= b_))
+        q0 = pts0[keep] if keep.any() else pts0
+        lo0 = float(base.bounds[0, 2])
+        lo, hi = 0.0, cc.REAR_Z_MAX
+        for _ in range(16):
+            mid = 0.5 * (lo + hi)
+            if max(short(mid)) > 0:
+                lo = mid
+            else:
+                hi = mid
+        z = hi
         wing_tm = se._to_trimesh(_wing(d, x_le, z))
+    z_low = z
+    room = (cc.REAR_Z_MAX - MARGIN_MM) - float(wing_tm.bounds[1, 2])
+    lift = float(np.clip(d.lift_mm, 0.0, max(room, 0.0)))
+    if lift > 0:
+        z += lift
+        wing_tm = se._to_trimesh(_wing(d, x_le, z))
+    info["lift_used_mm"] = lift
     info.update(z_root_mm=z, z_lowest_mm=z_low)
     # -- struts, cast to the body ------------------------------------------------------------------------
     solids, plugs, placed = [], [], []

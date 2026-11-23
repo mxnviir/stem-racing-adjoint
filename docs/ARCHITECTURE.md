@@ -54,7 +54,19 @@ face (user 2026-11-23: no fixed stations, squareness or constant-width sidepods)
 part behind Ref A (param_body.build(freeform=...), through the same masks and milling); the printed nose is
 the same surfaces ahead of it, clipped to T8.5.1's box, T8.2's 40 mm and T3.7. Nothing outboard of the
 12.5 mm spine between the wheels is over 27.175 mm (the team's sidepod top). `fit()` reads the surfaces
-off any car (IoU 0.85 on L0044 at 24 x 9 x 12 control points), so stage 2 starts from the stage-1 car.
+off any car (IoU 0.85 on L0044 at 24 x 9 x 12 control points), so stage 2 starts from the stage-1 car;
+its nose is not the stage-1 cone but the body's own Ref A section carried forward and rounded off just ahead
+of the front wing (`seed_nose`), the fields ahead of it empty but free.
+
+`halo_seat.py` (user 2026-11-23: no recess, nothing blocking the halo, its whole face lofted to the
+canister): the halo sits in what the 6.35 mm ball cuts round the OFFICIAL halo, 3.175 mm deep with the floor
+at 24.0 (App. ix, T4.4.4) -- quarter-round walls that the halo's rounded base sits in, 0.1 mm off it, flush
+at the rim. Air over its plan outline (T4.4.3); in front of it and beside it nothing above the rim up to its
+top (T4.4.2, stricter than the rule's 4 mm fillet). One definition serves the coarse mask, the exact zones,
+the exact cut and the pocket mask. The body must hold the loft: the halo's whole rear face (+0.3 mm) blended
+into the T5.5 safety tube's circle at the chamber's front, required in the field and united exactly with the
+mesh (the referee's `team_halo_face_joined`: all of the face above the rim has body behind it). No ceiling
+over it. The void under the halo is App. ix's ballast container (the lead goes there).
 
 ### car/parts (was Part 4)
 `assembly.build(...)`: the team's wheels (their measured files), the official halo in its pocket, the
@@ -84,6 +96,15 @@ pylon on the centre line or two, each cast to the nose's surface and printed wit
 rather than refuses (sweep within T8.2's 40 mm, segments out to 25 mm, dihedral within T8.5.2 and the
 track's 5 mm, roots into the nose, a wing lowered to keep 5 mm under a nose that does not hold it) and
 measures every T8 rule. The referee measures it again (T8.5-T8.8).
+`rear_wing_engine.py` designs the searches' rear wing and its supports, one representation with no modes
+(user 2026-11-23): a NACA section (camber either way, angle of attack), span, chord, thickness, sweep and
+dihedral, a lift over the lowest height T9.6 and T9.7 allow; and up to two strut pairs, each only continuous
+numbers -- thickness (off under the print wall), where on the span and the chord, chord, rake, splay, root
+(glued, or a slot this deep). Each strut is cast from the wing along its lean to whatever body is there (the
+chamber's top, a sidepod, a rearpod); a slot is a plug the ball can cut, above the T5.5 wall with 3 mm of
+foam round it, else glued; a strut that meets nothing is leaned back towards the vertical, else reported.
+A tip swept into T7.9's full-height wheel zones is moved aft. Gates: T9.4.1-3, T9.5.1-4, T9.6 (but 5 mm
+either side of each strut), T9.7, T3.4, the struts' wall, wheel and T7.9 clearance, the slots.
 `joints.make_all` cuts pockets for the printed parts and writes the manufacturing files (skipped in
 searches with `--no-joints`; rebuild finalists without it).
 

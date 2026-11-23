@@ -51,7 +51,9 @@ import beam_support as bsm          # the disc and the axle (stub, flare, hubcap
 import component_contract as cc
 
 EDGE_STEP_MM = 0.3                  # the slot's depth where its ends meet the underside
-SLOT_TOL_MM = 0.1                   # machining tolerance on foam left under the slot
+SLOT_TOL_MM = 0.2                   # foam left under the slot: a sliver this thin is taken by the cutter that
+                                    # cuts the slot from below (0.12-0.17 mm at the root's rounded edge on random
+                                    # bodies, gallery 2026-11-23); the gate is for a slot that does not open below
 WELD_MM = 0.002                     # vertices closer than this are one (see _weld)
 ROOT_IN_MM = 2.0                    # the plate's root, inside the body's side, when the floor has no flat part
 ROOT_SEARCH_MM = 8.0                # where to look for the floor's flat part, inward of the side
@@ -140,13 +142,17 @@ def _closed(M, r=0.05, tries=4):
     """M as a closed solid in an STL: where two of its pieces only touch along an edge (a pinch that
     merges into an edge with four faces), a capsule of radius r along that edge joins them."""
     import manifold3d as mf
-    for _ in range(tries):
+    for k in range(tries + 2):
         t = _to_trimesh(M)
         bad = _bad_edges(t)
         if not bad:
             return M, 0
-        caps = [mf.Manifold.batch_hull([mf.Manifold.sphere(r, 12).translate(list(map(float, t.vertices[a]))),
-                                        mf.Manifold.sphere(r, 12).translate(list(map(float, t.vertices[b])))])
+        if k == tries:                         # still pinched: merge the Boolean's slivers (0.01 mm)
+            M = _clean(M.simplify(0.01))
+            continue
+        rk = r * (1 + k)                       # bigger capsules each round (gallery G03: four of 0.05 mm were not enough)
+        caps = [mf.Manifold.batch_hull([mf.Manifold.sphere(rk, 12).translate(list(map(float, t.vertices[a]))),
+                                        mf.Manifold.sphere(rk, 12).translate(list(map(float, t.vertices[b])))])
                 for a, b in bad]
         M = _clean(mf.Manifold.batch_boolean([M] + caps, mf.OpType.Add))
     return M, len(_bad_edges(_to_trimesh(M)))

@@ -1,6 +1,6 @@
 # Layout search: every parameter of the car
 
-141 parameters, 10 evolved in stage 1 (the layout search), 16 in stage 2 (`shape`: the shape search, with the body's lattice), 115 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
+159 parameters, 10 evolved in stage 1 (the layout search), 38 in stage 2 (`shape`: the shape search, with the body's lattice), 111 fixed. The searches read `layout_params.json`; change a `mode` there (`evolve` / `shape` / `fixed`), a `value` (used when fixed, and the start when evolved) or a range, then run `python layout_catalogue.py --md`.
 
 x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, Ref B = rear axle + 16.
 
@@ -174,19 +174,37 @@ x is measured from the nose tip, z from the track, mm. Ref A = front axle - 16, 
 | `fw_pylon_t` | **shape** | 2.0 | 1.05 - 4.0 mm | pylon thickness | the printer's wall |  |
 | `fw_pylon_rake` | **shape** | 0.0 | -20.0 - 20.0 deg | pylon leaning forward at the top (+) |  |  |
 
-## rear wing (1 of 9 evolved)
+## rear wing (23 of 27 evolved)
 
 | name | mode | value | range | what | rule | why |
 | --- | --- | --- | --- | --- | --- | --- |
-| `rw_chord` | **fixed** | 15.3 | 15.0 - 25.0 mm | chord | T9.5.2 15-25 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
+| `rw_chord` | **shape** | 15.3 | 15.3 - 25.0 mm | chord | T9.5.2 15-25 | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
 | `rw_t_frac` | **fixed** | 0.15 | 0.13 - 0.4 - | thickness / chord | T9.5.3 2-6 mm | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `rw_camber` | **fixed** | 0.0 | 0.0 - 0.08 - | camber |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `rw_aoa` | **fixed** | 0.0 | -5.0 - 15.0 deg | angle of attack | T9.4.3, T9.6 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
-| `rw_half_span` | **fixed** | 25.5 | 25.5 - 45.0 mm | half span | T9.5.1 >= 50 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
+| `rw_camber` | **shape** | 0.0 | -0.06 - 0.06 - | camber (fraction of chord): + lifts, - presses down |  | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rw_aoa` | **shape** | 0.0 | -8.0 - 12.0 deg | angle of attack, nose up (+) | T9.4.3, T9.6 | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rw_half_span` | **shape** | 25.5 | 25.5 - 42.0 mm | half span | T9.5.1 >= 50; T3.4 85 wide | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
 | `rw_x_le` | **evolve** | 3.5 | 0.0 - 20.0 mm | leading edge behind Ref B | T9.4.1 behind Ref B; T9.4.2 <= 40 behind Ref B; T5.6 nothing round the cartridge behind the rear face (the gates check each car) | user 2026-11-22: rear wing position is a parameter |
 | `rw_clear_air_margin` | **fixed** | 0.5 | 0.2 - 2.0 mm | margin over the 5 mm clear air | T9.6 | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `rw_pylon_t` | **fixed** | 2.0 | 1.5 - 4.0 mm | pylon thickness |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
 | `rw_pylon_chord` | **fixed** | 10.0 | 6.0 - 20.0 mm | pylon chord |  | user 2026-11-22: a flat NACA 0015 at the minimum legal size is the low-drag, low-lift wing; nothing here is searched |
+| `rw_t` | **shape** | 2.3 | 2.3 - 6.0 mm | wing thickness | T9.5.3 2-6 | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rw_lift` | **shape** | 0.0 | 0.0 - 15.0 mm | height above the lowest T9.6 / T9.7 allow | T9.4.3 65 mm | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rw_sweep` | **shape** | 0.0 | -20.0 - 25.0 deg | leading edge back towards the tip (+) | T9.4.2 (the engine reduces a sweep that would not fit) | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rw_dihedral` | **shape** | 0.0 | -25.0 - 25.0 deg | tip up (+) | T9.5.4 <= 15 mm along the span (capped) | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws0_t` | **shape** | 2.0 | 0.0 - 6.0 mm | strut pair 0: thickness; under the print wall it is not there | print wall | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws0_y` | **shape** | 0.0 | 0.0 - 1.0 - | strut pair 0: where on the span (0 the centre line, 1 the tip) |  | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws0_x` | **shape** | 0.5 | 0.15 - 0.85 - | strut pair 0: where along the chord |  | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws0_chord` | **shape** | 10.0 | 4.0 - 20.0 mm | strut pair 0: chord |  | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws0_rake` | **shape** | 0.0 | -30.0 - 30.0 deg | strut pair 0: lean, foot aft (+) | T9.4.1 behind Ref B (gate) | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws0_splay` | **shape** | 0.0 | -10.0 - 45.0 deg | strut pair 0: lean, foot outboard (+): onto pods, sidepods, whatever body is there |  | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws0_slot` | **shape** | 0.0 | -3.0 - 8.0 mm | strut pair 0: root; <= 0 glued, > 0 a ball-cut slot this deep | T5.5 wall, 3 mm of foam round it (the engine makes it shallower or glues it) | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws1_t` | **shape** | 0.0 | 0.0 - 6.0 mm | strut pair 1: thickness; under the print wall it is not there | print wall | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws1_y` | **shape** | 0.6 | 0.0 - 1.0 - | strut pair 1: where on the span (0 the centre line, 1 the tip) |  | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws1_x` | **shape** | 0.5 | 0.15 - 0.85 - | strut pair 1: where along the chord |  | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws1_chord` | **shape** | 10.0 | 4.0 - 20.0 mm | strut pair 1: chord |  | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws1_rake` | **shape** | 0.0 | -30.0 - 30.0 deg | strut pair 1: lean, foot aft (+) | T9.4.1 behind Ref B (gate) | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws1_splay` | **shape** | 0.0 | -10.0 - 45.0 deg | strut pair 1: lean, foot outboard (+): onto pods, sidepods, whatever body is there |  | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
+| `rws1_slot` | **shape** | 0.0 | -3.0 - 8.0 mm | strut pair 1: root; <= 0 glued, > 0 a ball-cut slot this deep | T5.5 wall, 3 mm of foam round it (the engine makes it shallower or glues it) | user 2026-11-23: the rear wing and its supports designed by the search (rear_wing_engine.py); starts at the flat NACA 0015 at minimum size (user 2026-11-22's low-drag choice) |
 
 ## tether guides (0 of 2 evolved)
 

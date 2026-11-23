@@ -89,3 +89,19 @@ def test_limits_are_repaired_into_t9():
     for k in ("T9.4.1_rw_behind_ref_B", "T9.4.2_rw_overhang", "T9.5.1_rw_span", "T9.5.2_rw_chord_max",
               "T9.5.3_rw_thick_max", "T9.5.4_rw_height_change"):
         assert r["gates"][k] >= 0, (k, r["gates"][k], r["info"])
+
+
+def test_struts_all_under_the_wall_keep_the_thickest_at_the_wall():
+    r = rwe.build(rwe.RearWingDesign(struts=(S(t_mm=0.7), S(t_mm=0.5, y_frac=0.6))), BODY, XF, W, WHEEL,
+                  forward_parts=[BODY])
+    assert r["info"].get("strut_thickened_to_wall") == 0 and r["info"]["supported"]
+    assert r["gates"]["rw_supported"] > 0
+
+
+def test_a_dihedral_over_65_mm_is_reduced_not_refused():
+    """A tall tail and the steepest dihedral: the tip would pass T9.4.3's 65 mm; the dihedral comes down."""
+    tall = trimesh.creation.box(bounds=[[150.0, 0.0, 8.0], [240.0, 14.0, 52.0]])
+    tall.apply_scale(1e-3)
+    r = rwe.build(rwe.RearWingDesign(dihedral_deg=30.0, lift_mm=15.0), tall, XF, W, WHEEL, forward_parts=[tall])
+    assert r["gates"]["T9.4.3_rw_height"] >= 0, r["info"]
+    assert r["info"].get("dihedral_reduced_for_height")

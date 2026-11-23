@@ -19,8 +19,9 @@ So the work is split by what each number is:
    freely: the body and nose (car/body/freeform.py: top, bottom and side surfaces, fitted to the stage-1
    car and moved by a coarse grid of displacements: 5 x 2 top, 5 x 2 bottom, 5 x 3 side, 6/4/6 mm per unit),
    the front wing (one piece or two, chord, gap, span, root, sweep, dihedral, and its pylons: none, one or
-   two, place, chord, thickness, rake) and the wheel supports' plates (chord, thickness, taper, transition):
-   51 numbers. The rule masks and the milling are applied after, so every vector is a legal, millable body;
+   two, place, chord, thickness, rake), the rear wing and its two strut pairs (section, span, sweep,
+   dihedral, lift; each strut's thickness, place, chord, rake, splay, root: car/parts/rear_wing_engine.py)
+   and the wheel supports' plates (chord, thickness, taper, transition): 73 numbers. The rule masks and the milling are applied after, so every vector is a legal, millable body;
    what a mask cannot force is measured and refused. CMA-ES, 8 cars a generation.
    The coarse grid is a setting (simscale_shape.COARSE): a finer grid is freer but needs more runs. With
    one key's worth (about 40 runs, 5 generations) CMA moves the car a few steps from the stage-1 car, not to
@@ -39,8 +40,9 @@ take each into stage 2 rather than pick one.
 
 `search/layout/layout_params.json` holds every number of the car (137), each `evolve` (a gene,
 between `lo` and `hi`) or `fixed` (held at `value`); `python search/layout/layout_catalogue.py --md`
-rewrites [PARAMETERS.md](PARAMETERS.md). Fixed by choice: flat NACA 0015 wings at the minimum legal
-size (low drag, low lift), the loft stations (set so the body meets the nose), the underfloor tunnel
+rewrites [PARAMETERS.md](PARAMETERS.md). The wings start at the flat NACA 0015 at the minimum legal
+size (user 2026-11-22: low drag, low lift) and stage 2 evolves them and their supports from there.
+Fixed by choice: the loft stations (set so the body meets the nose), the underfloor tunnel
 (off), the 56 sculpt bumps (stage 2's lattice does that job). Fixed by the build: the thrust line
 (31 mm), the team's wheels, the wheel track. The wheel supports are generated for every car
 (car/parts/support_engine.py); what the air sees of them is evolved in stage 2, what it does not (the

@@ -289,6 +289,8 @@ def measure(d, wing, pyl, nose, ref_a, wheel, body_half_m, info) -> dict:
     # the 5 mm ball on its rod cannot enter is the fillet the rule allows: a spanwise band 5 mm wide
     # outboard of the nose where it cuts the wing, and 5 mm either side of each pylon (as the referee).
     near_joint = np.zeros(len(pts), bool)
+    # as the referee (legality: points within 5 mm sideways of the nose's widest are its joint's fillet)
+    near_joint |= pts[:, 1] < float(nose.bounds[1, 1]) + CLEAR_MM
     if info.get("held_by_nose"):
         near_joint |= pts[:, 1] < max(info["nose_cut_y_mm"], info.get("nose_half_width_mm", 0.0)) + CLEAR_MM
     for yp in info.get("pylon_y_placed_mm", []):

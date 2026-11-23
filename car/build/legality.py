@@ -1312,9 +1312,11 @@ def check(body_half_stl: str, assembly: dict, mass_state: dict | None = None,
     j = assembly.get("joints")
     if j is not None and any("file" in v for v in j.get("manufactured", {}).values()):
         r.update(manufactured_checks(assembly))
-    else:
+    elif assembly.get("as_drawn_checks", True):
         # no manufacturing files (the searches build with --no-joints): the zone, visibility, clear-air,
-        # chamber, cargo and halo rules on the car as drawn, so no rule goes unmeasured
+        # chamber, cargo and halo rules on the car as drawn, so no rule goes unmeasured. (Off only for
+        # test_rules_edges' synthetic box car, a block with the halo sunk in it that tests check()'s own
+        # rules: it was never a car as drawn.)
         r.update(manufactured_checks(assembly, solids=as_drawn_solids(assembly, body_half_stl)))
     if j is not None:
         # every manufacturing file, RE-READ from disk, must be closed solids
