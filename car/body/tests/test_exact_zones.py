@@ -129,13 +129,10 @@ def test_halo_zone_fields_match_their_masks(spacing):
     import fixed_hardware as fh
     g, X, Y, Z, right, d = _setup(spacing)
     r, hw = g.region, g.fixed_hardware
-    mask = (hw.halo_void_mask
-            | fh.halo_visibility_air_mask(hw.halo_void_mask, z_origin_m=r.origin_m[2], dz_m=d / 1e3)
-            | fh.halo_canister_loft_air_mask(hw.halo_void_mask, hw.canister_cylinder, x_origin_m=r.origin_m[0],
-                                             y_origin_m=r.origin_m[1], z_origin_m=r.origin_m[2], d_m=d / 1e3))
+    import halo_seat as hs
+    x0 = g.landmarks["ref_plane_A_m"] * 1e3 + g.d_halo_mm
+    mask = hw.halo_void_mask | fh.halo_seat_mask(r.shape, r.origin_m, x0, field=hs.view_air, views=True)
     f = ez.halo_zones(X, np.abs(Y), Z, g.landmarks["ref_plane_A_m"] * 1e3, g.d_halo_mm, hw.canister_cylinder)
-    # the loft mask starts its smoothstep at the halo's last cell (up to a cell before its
-    # true rear face) and rounds its ceiling up a cell: up to two cells inside the exact zone
     _agree(f, mask, right, d, grown=d, name="halo", shrunk=2.0 * d)
 
 
@@ -156,12 +153,11 @@ def test_slot_corners_are_sharp_in_the_half_body():
     inside = h.intersection(slot, engine="manifold").volume
     assert inside < 0.5, f"{inside:.2f} mm3 of body inside the block slot"
     import halo_pocket as hp
-    import fixed_hardware as fh
-    from geometry_contract import HALO_MIN_Z_MM
+    import halo_seat as hs
     b = hp.compute_halo_pocket_box_m(g.landmarks["ref_plane_A_m"], g.d_halo_mm)
-    zf = HALO_MIN_Z_MM + fh.HALO_VISIBILITY_FILLET_MM
-    front = trimesh.creation.box(bounds=[[b["x_min_m"] * 1e3 - 300.0, -fh.HALO_CROSS_SECTION_HALF_WIDTH_MM, zf],
-                                         [b["x_min_m"] * 1e3, fh.HALO_CROSS_SECTION_HALF_WIDTH_MM, fh.HALO_CROSS_SECTION_TOP_MM]])
+    o = hs.outlines()
+    front = trimesh.creation.box(bounds=[[b["x_min_m"] * 1e3 - 300.0, -o["half_w"], hs.RIM_Z_MM],
+                                         [b["x_min_m"] * 1e3, o["half_w"], o["top"]]])
     ahead = h.intersection(front, engine="manifold").volume
     assert ahead < 0.5, f"{ahead:.2f} mm3 of body in the halo's front view (T4.4.2)"
 

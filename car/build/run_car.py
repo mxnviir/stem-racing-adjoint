@@ -254,11 +254,32 @@ def export_body(geom, path: Path) -> dict:
         half.remove_unreferenced_vertices()
         half.merge_vertices()
     half.export(str(path), file_type="stl_ascii")
-    _, n = label(geom.phi.grid < 0)
+    lab, n = label(geom.phi.grid < 0)
     if not half.is_watertight:
         raise SystemExit(f"body STL {path.name} is not watertight; Part 2 would reject it")
+    # A piece of the field apart from the main one is a second body -- unless the body as made holds it:
+    # the halo's loft is united with the mesh exactly (exact_zones.cut_boxes), and on the field's grid it can
+    # stand a cell off the rest (gallery G01: "2 bodies", the mesh one piece). Each piece is recorded.
+    pieces, n_apart = [], 0
+    if n > 1:
+        import numpy as np
+        r, d = geom.region, None
+        from geometry_contract import GRID_SPACING_M as d
+        sizes = np.bincount(lab.ravel())
+        sizes[0] = 0
+        main = int(sizes.argmax())
+        for i in range(1, n + 1):
+            idx = np.argwhere(lab == i)
+            P = (np.asarray(r.origin_m) + idx * d)
+            P[:, 1] = np.abs(P[:, 1])
+            # (its cells' centres in the made body: 90 %, as a boundary cell's centre can sit just outside)
+            held = float(half.contains(P[np.linspace(0, len(P) - 1, min(len(P), 64)).astype(int)]).mean()) >= 0.9
+            pieces.append({"cells": int(sizes[i]), "bounds_mm": np.round(np.r_[P.min(0), P.max(0)] * 1e3, 1).tolist(),
+                           "main": i == main, "in_the_mesh": held})
+            n_apart += int(i != main and not held)
     return {"faces": len(half.faces), "watertight": bool(half.is_watertight),
-            "field_bodies": int(n), "t55_cells_protected": getattr(geom, "t55_cells_protected", 0)}
+            "field_bodies": 1 + n_apart if n > 1 else int(n), "field_pieces": pieces,
+            "t55_cells_protected": getattr(geom, "t55_cells_protected", 0)}
 
 
 # --------------------------------------------------------------------------- mass

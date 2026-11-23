@@ -203,6 +203,20 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
     x_le = float(np.clip(ref_b + d.x_le_mm, ref_b + MARGIN_MM + fwd_tip, ref_b + MARGIN_MM + room - back))
     dh_lim = math.degrees(math.atan((cc.REAR_HEIGHT_DEVIATION_MAX - MARGIN_MM) / hs))
     dih = float(np.clip(d.dihedral_deg, -dh_lim, dh_lim))
+    # T7.9: the wheels' zones run the car's full height (behind the rear wheel, outboard of its inner face):
+    # a wing tip swept forward into one is moved aft until it is clear (T9.4.2 then measured as ever)
+    import exact_zones as ez
+    sw_ = math.tan(math.radians(sweep))
+    ys_ = np.linspace(0.0, hs, 60)
+    zs_ = np.linspace(0.0, cc.REAR_Z_MAX, 14)
+    for _ in range(40):
+        Y_, Z_ = np.meshgrid(ys_, zs_, indexing="ij")
+        X_ = x_le + sw_ * Y_ - MARGIN_MM
+        zv = ez.t79_zones(X_.ravel(), Y_.ravel(), Z_.ravel(), W_mm, x_front_mm)
+        if not (zv > -MARGIN_MM).any():
+            break
+        x_le += float(zv.max()) + MARGIN_MM + 0.05
+        info["moved_aft_of_T7.9_mm"] = info.get("moved_aft_of_T7.9_mm", 0.0) + float(zv.max()) + MARGIN_MM + 0.05
     d = dataclasses.replace(d, half_span_mm=hs, chord_mm=chord, t_mm=t, sweep_deg=sweep, dihedral_deg=dih)
     info.update(half_span_mm=hs, chord_mm=chord, t_mm=t, sweep_used_deg=sweep, dihedral_used_deg=dih, x_le_mm=x_le)
     sec = section(d)
@@ -435,6 +449,10 @@ def measure(d, wing, struts, plugs, body, others, fwd, ref_b, wheel_rear, x_fron
         import exact_zones as ez
         zv = ez.t79_zones(P[:, 0], np.abs(P[:, 1]), P[:, 2], W_mm, x_front_mm)
         g["rw_strut_T7.9_zones"] = -float(zv.max()) if (zv > 0).any() else 1.0
+    import exact_zones as ez
+    Pw = wing.sample(3000)
+    zw = ez.t79_zones(Pw[:, 0], np.abs(Pw[:, 1]), Pw[:, 2], W_mm, x_front_mm)
+    g["rw_T7.9_zones"] = -float(zw.max()) if (zw > 0).any() else 1.0
     if plugs:
         lows = []
         for pl, p in zip(plugs, [p for p in placed if p["slot_mm"] > 0]):

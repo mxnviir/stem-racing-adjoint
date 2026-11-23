@@ -15,6 +15,8 @@ from __future__ import annotations
 import numpy as np
 
 MARGIN_MM = 0.05     # clear of every zone by the same amount at any grid (referee's zone checks)
+SEAT_FIELD_SLACK_MM = 0.03  # see air_at_points: half the seat field's 0.05 mm sampling, at the outline's corners
+SEAT_FACET_MM = 0.0   # the halo seat's solid grown over its field (see _seat_cut_at; its facets stand outside the round)
 
 
 def _box(X, Y, Z, x=(None, None), y=(None, None), z=(None, None)):
@@ -254,7 +256,10 @@ def air_at_points(g, P):
         t79_zones(X, aY, Z, g.W_mm, g.x_front_mm) + MARGIN_MM,
         t851_cap(X, aY, Z, ref_A) + MARGIN_MM,
         block_slot(X, aY, Z) - 1e-6,
-        halo_zones(X, aY, Z, ref_A, g.d_halo_mm, part="above") - 1e-6,
+        # the seat's field is sampled every 0.05 mm (halo_seat._H): up to half that out at the outline's
+        # corners (its distance field has a crease there), where the exact solid (the cut, the authority)
+        # is right; read with that much slack
+        halo_zones(X, aY, Z, ref_A, g.d_halo_mm, part="above") - SEAT_FIELD_SLACK_MM,
         halo_zones(X, aY, Z, ref_A, g.d_halo_mm, _canister(g), part="shadows") + MARGIN_MM,
     ])
 
@@ -419,7 +424,9 @@ def _seat_cut(g, e):
 @__import__("functools").lru_cache(maxsize=32)
 def _seat_cut_at(x0, e):
     import halo_seat as hs
-    c = hs.seat_manifold_m(x0, grow_mm=e)
+    # the solid's facets (a 48-gon ball, the outline's buffered corners) stand up to ~0.04 mm inside the
+    # field the zones are measured with: the cut is that much bigger, so no vertex it leaves reads inside
+    c = hs.seat_manifold_m(x0, grow_mm=e + SEAT_FACET_MM, floor_grow_mm=e)     # the floor stays on 24.0
     for v in hs.view_manifolds_m(x0, grow_mm=MARGIN_MM + e):
         c = c + v
     return c

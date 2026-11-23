@@ -36,6 +36,7 @@ RIM_Z_MM = HALO_MIN_Z_MM + DEPTH_MM
 _H = 0.05                     # mm: the 2-D distance grids
 REAR_FACE_MM = 3.0            # the halo's rear face: what shows from behind over its last 3 mm
 LOFT_COVER_MM = 0.3           # the loft starts this much larger than the rear face all round
+LOFT_GAP_MM = 0.1             # ...and this far behind the seat (whose field is sampled at _H: no shared face)
 
 
 @functools.lru_cache(maxsize=1)
@@ -131,8 +132,9 @@ def view_air(X, aY, Z, x_front_mm, margin_mm=0.0):
     x = np.asarray(X, float) - x_front_mm
     Z = np.asarray(Z, float)
     zs = np.minimum(Z - RIM_Z_MM + margin_mm, o["top"] + margin_mm - Z)
-    front = np.minimum.reduce([margin_mm - x, o["half_w"] + margin_mm - aY, zs])
-    side = np.minimum.reduce([x + margin_mm, o["length"] + margin_mm - x, zs])
+    m = margin_mm + TOL_MM                       # over the seat's own extent (the halo + TOL_MM)
+    front = np.minimum.reduce([m - x, o["half_w"] + m - aY, zs])
+    side = np.minimum.reduce([x + m, o["length"] + m - x, zs])
     return np.maximum(front, side)
 
 
@@ -142,7 +144,7 @@ def box_mm(x_front_mm):
     return x_front_mm, x_front_mm + o["length"], o["half_w"], o["top"]
 
 
-def seat_manifold_m(x_front_mm, grow_mm=0.0):
+def seat_manifold_m(x_front_mm, grow_mm=0.0, floor_grow_mm=None):
     """seat_air as a closed solid (manifold3d, metres): the plan outline from the rim up, and below the rim
     the ball swept round the rim outline set in by its radius, cut at the floor."""
     import manifold3d as mf
@@ -153,14 +155,15 @@ def seat_manifold_m(x_front_mm, grow_mm=0.0):
         from shapely.geometry.polygon import orient
         polys = [P] if P.geom_type == "Polygon" else list(P.geoms)
         return mf.CrossSection([np.asarray(orient(q, 1.0).exterior.coords)[:-1] for q in polys])   # counter-clockwise
-    plan = o["plan"].buffer(TOL_MM + grow_mm)
+    plan = o["plan"].buffer(TOL_MM + grow_mm, quad_segs=32)
     prism = mf.Manifold.extrude(xsec(plan), up).translate([0.0, 0.0, RIM_Z_MM])
-    inset = o["rim"].buffer(-BALL_R_MM)
+    inset = o["rim"].buffer(-BALL_R_MM, quad_segs=64)
     path = mf.Manifold.extrude(xsec(inset), 1e-3).translate([0.0, 0.0, RIM_Z_MM - 5e-4])
-    ball = mf.Manifold.sphere(BALL_R_MM + TOL_MM + grow_mm, 48)
+    ball = mf.Manifold.sphere((BALL_R_MM + TOL_MM + grow_mm) / np.cos(np.pi / 128), 128)   # facets outside the round
     swept = path.minkowski_sum(ball)
-    cut = mf.Manifold.cube([1e3, 1e3, RIM_Z_MM - HALO_MIN_Z_MM + grow_mm + 1e-3]).translate(
-        [-500.0, -500.0, HALO_MIN_Z_MM - grow_mm])
+    fg = grow_mm if floor_grow_mm is None else floor_grow_mm      # the floor (24.0) moves by its own amount
+    cut = mf.Manifold.cube([1e3, 1e3, RIM_Z_MM - HALO_MIN_Z_MM + grow_mm + fg + 1e-3]).translate(
+        [-500.0, -500.0, HALO_MIN_Z_MM - fg])
     seat = (swept ^ cut) + prism
     return seat.translate([x_front_mm, 0.0, 0.0]).scale([1e-3, 1e-3, 1e-3])
 
@@ -169,8 +172,8 @@ def view_manifolds_m(x_front_mm, grow_mm=0.0):
     """view_air's two boxes as solids (metres), each grown by grow_mm."""
     import manifold3d as mf
     o = outlines()
-    g = grow_mm
-    z0, z1 = RIM_Z_MM - g, o["top"] + g
+    g = grow_mm + TOL_MM
+    z0, z1 = RIM_Z_MM - grow_mm, o["top"] + grow_mm
     front = mf.Manifold.cube([500.0, 2 * (o["half_w"] + g), z1 - z0]).translate([x_front_mm + g - 500.0, -(o["half_w"] + g), z0])
     side = mf.Manifold.cube([o["length"] + 2 * g, 1000.0, z1 - z0]).translate([x_front_mm - g, -500.0, z0])
     return [b.scale([1e-3, 1e-3, 1e-3]) for b in (front, side)]
@@ -201,7 +204,7 @@ def loft_manifold_m(x_rear_mm, x_can_mm, z_can_mm, r_can_mm, n_x=24, n_ring=160,
     import trimesh
     from skimage import measure
     import support_engine as se
-    xs = np.linspace(x_rear_mm + TOL_MM, x_can_mm + 0.5, n_x)
+    xs = np.linspace(x_rear_mm + TOL_MM + LOFT_GAP_MM, x_can_mm + 0.5, n_x)
     ys = np.arange(-22.0, 22.0 + h, h)
     zs = np.arange(10.0, z_can_mm + r_can_mm + 6.0, h)
     YY, ZZ = np.meshgrid(ys, zs, indexing="ij")

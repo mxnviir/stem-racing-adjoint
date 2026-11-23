@@ -812,7 +812,10 @@ def halo_face_joined(halo_half_mm, body_mm, gap_mm=0.6, step=0.5) -> dict:
     loc, ri, _ = h.ray.intersects_location(O, np.tile([-1.0, 0.0, 0.0], (len(O), 1)), multiple_hits=False)
     face = np.full(len(O), np.nan)
     face[ri] = loc[:, 0]                                        # the halo's rearmost point in each row
-    on = np.isfinite(face) & (face > b[1, 0] - 3.0)             # rows that are its rear face
+    # rows that are its rear face, above the pocket's rim: below it the halo's rounded base sits in the
+    # App. ix pocket the ball cuts, whose wall is the regulation's, not the loft
+    rim = rc.HALO_POCKET_FLOOR_Z_MM + rc.HALO_POCKET_DEPTH_MM
+    on = np.isfinite(face) & (face > b[1, 0] - 3.0) & (O[:, 2] >= rim)
     if not on.any():
         return {"team_halo_face_joined": _entry(-1.0, "no rear face found on the halo")}
     P = np.c_[face[on] + 1e-3, O[on, 1], O[on, 2]]
