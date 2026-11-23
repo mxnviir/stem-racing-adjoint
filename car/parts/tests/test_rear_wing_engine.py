@@ -105,3 +105,14 @@ def test_a_dihedral_over_65_mm_is_reduced_not_refused():
     r = rwe.build(rwe.RearWingDesign(dihedral_deg=30.0, lift_mm=15.0), tall, XF, W, WHEEL, forward_parts=[tall])
     assert r["gates"]["T9.4.3_rw_height"] >= 0, r["info"]
     assert r["info"].get("dihedral_reduced_for_height")
+
+
+def test_coinciding_struts_come_out_as_one_closed_solid():
+    """Both pairs at the same numbers (the middle of every range): one solid, closed through an STL."""
+    import io
+    r = rwe.build(rwe.RearWingDesign(), BODY, XF, W, WHEEL, forward_parts=[BODY])
+    assert len(r["struts"]) == 1
+    m = r["struts"][0]
+    back = trimesh.load(io.BytesIO(trimesh.util.concatenate([r["wing"], m]).export(file_type="stl_ascii").encode()),
+                        file_type="stl")
+    assert back.is_volume

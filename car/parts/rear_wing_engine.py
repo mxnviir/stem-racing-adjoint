@@ -378,6 +378,12 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
         placed.append(dict(index=i, y_mm=round(p.y_frac, 2), foot_mm=[round(float(v), 2) for v in foot],
                            lean_deg=[round(v, 2) for v in used], slot_mm=round(slot if plug is not None else 0.0, 2),
                            t_mm=p.t_mm, chord_mm=p.chord_mm))
+    if len(solids) > 1:
+        # the struts as one solid (two pairs may overlap or coincide -- they did, both at the middle of
+        # their ranges -- and coincident solids in one file merged into a torn mesh, gallery 5 G00)
+        import manifold3d as mf
+        U = mf.Manifold.batch_boolean([se._to_manifold(q) for q in solids], mf.OpType.Add)
+        solids = [se._to_trimesh(q) for q in sorted(U.decompose(), key=lambda q: -q.volume())]
     info["struts"] = placed
     info["supported"] = bool(placed)
     gates = measure(d, wing_tm, solids, plugs, body, others, fwd, ref_b, wheel_rear, x_front_mm, W_mm,
