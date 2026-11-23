@@ -239,7 +239,9 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
         c = float(np.clip(q.chord_mm, 2 * cc.BUILD_WALL_MM, 0.8 * d.chord_mm))
         tt = float(np.clip(q.t_mm, cc.BUILD_WALL_MM, 8.0))
         y_lo = (max(y0, 0.0) + tt / 2 + 0.5) if d.pieces == 2 else 0.0
-        y_hi = min(SUPPORT_BAND_MM, tip) - tt / 2 - MARGIN_MM
+        # a support breaks the span (T8.6.1): one stands no further out than leaves the tip's 25 mm beyond it
+        y_out = min(SUPPORT_BAND_MM, tip - SEGMENT_MIN_MM - MARGIN_MM)
+        y_hi = y_out - tt / 2 - MARGIN_MM
         yp = y_lo + float(np.clip(q.y_frac, 0.0, 1.0)) * max(y_hi - y_lo, 0.0)
         if d.pieces == 1 and yp < tt / 2 + 0.5:
             yp = 0.0                                      # one strut on the centre line
@@ -261,6 +263,19 @@ def _build_once(d: FrontWingDesign, nose_half_m, x_front_mm, wheel, body_half_m=
             if best is not None and abs(best[1]) + tt / 2 <= SUPPORT_BAND_MM - MARGIN_MM and abs(best[2] - zw) < 30.0:
                 hit = best
                 break
+        if hit is None:
+            # nothing of the nose along any lean of it: aimed at the nose's nearest point instead
+            import trimesh as _tm
+            o = np.array([xm, max(yp, 0.05), zw])
+            q_, dist, _ = _tm.proximity.closest_point(nose, o[None])
+            v = q_[0] - o
+            if dist[0] < 30.0:
+                h = _ray_hit(nose, o, v)
+                if h is not None and abs(h[1]) + tt / 2 <= SUPPORT_BAND_MM - MARGIN_MM:
+                    hit = h
+                    info.setdefault("struts_aimed_at_the_nose", []).append(i)
+        if hit is not None and abs(hit[1]) + tt / 2 > y_out:
+            hit = None                                    # leaned out past where the span allows a support
         if hit is None:
             info.setdefault("struts_not_placed", []).append(i)
             continue

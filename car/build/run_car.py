@@ -233,6 +233,9 @@ def part4_kwargs(a) -> dict:
     return kw
 
 
+SPECK_MM3 = 20.0          # a field piece this small, not in the made body, is not a second body (T4.1)
+
+
 def export_body(geom, path: Path) -> dict:
     import unified_phi as up
     from scipy.ndimage import label
@@ -276,7 +279,10 @@ def export_body(geom, path: Path) -> dict:
             held = float(half.contains(P[np.linspace(0, len(P) - 1, min(len(P), 64)).astype(int)]).mean()) >= 0.9
             pieces.append({"cells": int(sizes[i]), "bounds_mm": np.round(np.r_[P.min(0), P.max(0)] * 1e3, 1).tolist(),
                            "main": i == main, "in_the_mesh": held})
-            n_apart += int(i != main and not held)
+            # a speck the mesh dropped (under SPECK_MM3) is not in the car that gets made: recorded, not a body
+            speck = sizes[i] * (d * 1e3) ** 3 < SPECK_MM3
+            pieces[-1]["speck"] = bool(speck)
+            n_apart += int(i != main and not held and not speck)
     return {"faces": len(half.faces), "watertight": bool(half.is_watertight),
             "field_bodies": 1 + n_apart if n > 1 else int(n), "field_pieces": pieces,
             "t55_cells_protected": getattr(geom, "t55_cells_protected", 0)}

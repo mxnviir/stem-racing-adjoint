@@ -345,6 +345,17 @@ def build(d: RearWingDesign, body_half_m, x_front_mm, W_mm, wheel_rear, clear_of
                 foot, used = hit, (p.rake_deg * k, p.splay_deg * k)
                 break
         if foot is None:
+            # nothing under it whatever its lean: aimed at the nearest point of the body instead
+            import trimesh as _tm
+            q, dist, _ = _tm.proximity.closest_point(body, start[None])
+            v = q[0] - start
+            if v[2] < -0.5 and dist[0] < 60.0:
+                hit = _hit(body, start, v)
+                if hit is not None:
+                    foot = hit
+                    used = (math.degrees(math.atan2(v[0], -v[2])), math.degrees(math.atan2(v[1] - 0.0, -v[2])))
+                    info.setdefault("struts_aimed_at_the_body", []).append(i)
+        if foot is None:
             info.setdefault("struts_not_placed", []).append(i)
             continue
         if foot[1] - p.t_mm / 2 < CENTRE_CLEAR_MM or foot[1] + p.t_mm / 2 > HALF_WIDTH_MAX_MM - MARGIN_MM:
