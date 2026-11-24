@@ -1,0 +1,13 @@
+{
+ "D20_half_N": 0.21824603614962637,
+ "wall_s": 1196.4,
+ "converged": true,
+ "residual_p": 5.651313992814373e-06,
+ "force_osc": 5.2675010341807346e-05,
+ "force_drift": 7.938129600260779e-08,
+ "run_dir": "",
+ "force_mean_stderr": 7.155109605236464e-07,
+ "run_dir_kept": "gate/refA_hyb",
+ "folder": "gate/bump_daf05",
+ "iters": 5000
+}
