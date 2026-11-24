@@ -91,3 +91,9 @@ Predictions on record: `hybrid/pred_r1b.json` (linear; raw normals): daf -8.7 / 
 ESI 0.5 mm -2.7 (coarse DAFoam) / -1.6 (resolved ESI). Linear scaling of the measured 0.125 mm results gives rnd1 -4.2.
 - **Mark E (the new morph reads the same):** |D(rnd1_qE) - D(rnd1_q)| <= 3 SE.
 - Reported: drag vs step size along each direction (is the response linear to 1 mm; where does it bend?).
+
+## DAFoam on a GitHub runner (smoke test, run 45462436057, 2026-11-24 18:42-20:08)
+Fresh coarse mesh + steady upwind state from the exact CAD (5000 its, 18 min, D 228.76 mN vs stored 228.72), then DAFoam
+Krylov (PC fill 0, level 1) in Docker on the 16 GB runner with 16 GB swap: primal 63 s, adjoint 59 min. Against the stored
+coarse gradient: point cosine 0.9985; predictions for the 18 round-1 moves r 0.999999, slope 0.998. **Passed: a fresh
+coarse DAFoam gradient for any design costs ~1.5 h on a free runner.**
