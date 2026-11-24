@@ -1,7 +1,6 @@
 {
- "note": "hybrid: fresh coarse DAFoam gradients at moved designs (how fast does the gradient change with a 0.5 / 1 mm step along DAFoam?)",
+ "note": "hybrid: fresh coarse DAFoam gradient at the generation-2 parent (DAFoam 1.0 mm design), retry",
  "bumpgeom_run": 45188798730,
- "cases": [{"name": "daf05", "field": "daf", "amp": "0.5", "iters": 5000},
-           {"name": "daf10", "field": "daf", "amp": "1.0", "iters": 5000}],
- "attempt": 2
+ "cases": [{"name": "daf10b", "field": "daf", "amp": "1.0", "iters": 5000}],
+ "attempt": 3
 }
