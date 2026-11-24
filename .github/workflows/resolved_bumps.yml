@@ -11,11 +11,11 @@ on:
     paths: [".github/resolved_bumps_request.json"]
 
 permissions: { contents: write, actions: read }
-concurrency: { group: resolved_bumps, cancel-in-progress: false }
 
 env:
   PY_DEPS: numpy==2.4.6 scipy==1.17.1 pandas trimesh==5.2.0 scikit-image shapely rtree==1.4.1 mapbox-earcut manifold3d==3.5.4 fast_simplification==0.2.0 jax jaxlib matplotlib pymeshlab==2025.7.post1 numba cadquery-ocp
   GH_TOKEN: ${{ github.token }}
+  OMPI_MCA_rmaps_base_oversubscribe: "1"   # 4 vCPU = 2 cores x 2 threads; Open MPI counts cores (as in resolved_adjoint.yml)
 
 jobs:
   init:
