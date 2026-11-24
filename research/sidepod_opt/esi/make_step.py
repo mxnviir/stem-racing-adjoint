@@ -125,7 +125,10 @@ def main(name, field, amp_mm):
     if field == "zero" or amp == 0.0:
         w = np.zeros(len(V))
     else:
-        f = taper * field_on_vertices(field, V, N, A)
+        if field.startswith("vec:"):                    # a precomputed per-vertex field (hybrid/combine.py), tapered
+            f = np.load(HERE / field[4:])
+        else:
+            f = taper * field_on_vertices(field, V, N, A)
         f -= taper * (A * f).sum() / (A * taper).sum()   # volume-neutral (first order)
         core = taper > 0.5
         f /= np.percentile(np.abs(f[core]), 95)

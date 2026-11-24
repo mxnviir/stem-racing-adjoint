@@ -27,7 +27,7 @@ G = {k: np.load(p) for k, p in GRADS.items()}
 def move(field, amp_mm):
     if field == "zero" or float(amp_mm) == 0:
         return np.zeros(len(V))
-    f = taper * MS.field_on_vertices(field, V, N, A)
+    f = np.load(HERE / field[4:]) if field.startswith("vec:") else taper * MS.field_on_vertices(field, V, N, A)
     f -= taper * (A * f).sum() / (A * taper).sum()
     f /= np.percentile(np.abs(f[taper > 0.5]), 95)
     return np.clip(f, -1.0, 1.0) * float(amp_mm) * 1e-3
