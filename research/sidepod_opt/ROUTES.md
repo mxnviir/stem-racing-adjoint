@@ -1496,6 +1496,37 @@ external topology case was **not found** in their material (that is not proof it
     owner's choice: Plan C (DAFoam discrete adjoint on fine, ~500 GB, paid machine, only after a sizing run and the
     owner's OK on instance and cost) or gradient by bump-by-bump differencing (2 CFD runs per site).
 
+- **2026-11-24 10:40, why the normal (ESI) adjoint fails: diagnosis (owner asked; checks on existing data, no solves).**
+  - Ruled out, each checked:
+    - Sign: morph and prediction both use new minus reference surface; proven on the wing (20/20).
+    - Area weighting: dropping it puts predictions ~1e5x off, and no weighting changes a sign.
+    - Units: the wing test held at half speed.
+    - Bump mapping: the same code gives DAFoam 66-109 %.
+    - Primal: ESI's drag x rho = 0.2284 N vs forward D20 0.2287 N on coarse.
+    - Adjoint convergence: residuals 8e-7 / 3e-5.
+    - Measurement: symmetric +/- pairs, two estimators agree.
+  - Point noise is not the difference. The ESI map is rough (neighbour roughness 0.70 resolved, 0.79 coarse) and cancels 50-90 %
+    inside each bump, but DAFoam's coarse map is rougher (0.91) and still predicts right.
+  - The fault is ESI's normal sensitivity itself.
+    - On the identical coarse flow it correlates 0.18 with DAFoam's normal field (0.26 smoothed at 6 mm) and is 1-4 % of its size.
+    - DAFoam's normal-only part alone predicts 0.91 / 0.70 / 1.15 of measured, so the answer is in the normal component.
+  - Not mesh fineness:
+    - Part 3's wing test (PROOF.md section 1, 2026-11-13) used second-order schemes and failed: r 0.53. ESI's own shipped full
+      setup failed too (r 0.42-0.55), and a 4x finer wing mesh was worse (r about -0.5).
+    - On the car, the wall-function coarse mesh gave the wrong size; the wall-resolved mesh gave the wrong signs.
+    - Three cases; refinement never helped.
+  - Best explanation (not proven):
+    - The continuous adjoint differentiates the ideal equations, not the solver that produces the drag. A discrete adjoint matches
+      finite differences by construction.
+    - On this problem the solver's own numerical effects are as large as the bump effects. Upper-bound estimate on the coarse
+      steady state: first-order upwind diffusion 0.5|U| cbrt(V) is 40-60x nu + nu_t near the car (p10 6-20x). The steady model
+      also reads 26 % more drag than production (D10).
+    - ESI's surface formulas: the simple one was ~66x off on the wing; the full one had the right size but the wrong pattern.
+    - Contributing setting: ATC damped near walls (zeroATCPatchTypes wall, nSmooth 30); undamped crashed on coarse.
+  - Conclusion: no fixable fault in our chain was found. The ESI continuous adjoint does not give usable drag gradients on
+    this problem at any mesh tried. A full-setup ESI re-run on the resolved car would be a diagnostic only (D12: a repaired
+    adjoint needs fresh sites) and the wing results give it low odds.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
