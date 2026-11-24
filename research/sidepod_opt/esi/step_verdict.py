@@ -5,7 +5,8 @@ Run from research/sidepod_opt once the step solves are on the branch:
 Drag of a run: mean of total drag (forces.dat column 1, half car) over the last 404 iterations; SE = sd of the four
 101-iteration block means / 2 (as RESOLVED_TEST.md amendment 2026-11-24). A difference is "by >= 3 SE" when it
 exceeds 3 * sqrt(SE_a^2 + SE_b^2). A run that left the morphed mesh (morph_fallback) or is missing makes the
-verdict INVALID. A candidate re-made at half height under the fold rule is read from its own name (suffix _h).
+verdict INVALID. Amendment 2026-11-24 (owner): every moving candidate at a common 0.125 mm, read as step_<field>_q;
+esi_a10 is dropped (it cannot morph clean).
 Marks (STEP_TEST.md): M1 esi_a05 < zero; M2 esi_a05 < opp_a05; M3 esi_a05 < min(rnd1_a05, rnd2_a05); PASS = all three.
 """
 import json, re, sys
@@ -19,7 +20,8 @@ NAMES = ['zero', 'esi_a05', 'esi_a10', 'sst_a05', 'opp_a05', 'rnd1_a05', 'rnd2_a
 
 def resolve(k):
     """The candidate as run: step_<k>, or its half-height remake step_<k>_h if only that exists."""
-    for n in (f'step_{k}', f'step_{k}_h'):
+    q = [f'step_{k[:-4]}_q'] if k.endswith('_a05') else []      # amendment 2026-11-24: common 0.125 mm
+    for n in q + [f'step_{k}', f'step_{k}_h']:
         if (R / 'forces' / f'bump_{n}' / 'forces.dat').exists():
             return n
     return None

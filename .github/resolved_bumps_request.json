@@ -1,13 +1,44 @@
 {
- "note": "RESOLVED_TEST.md amendment 2026-11-24; attempt 5: pod_front_low_h025_m alone (its attempt-3 job failed on MPI slots too); the other five run in attempt 4",
+ "note": "esi/STEP_TEST.md step test, amendment 2026-11-24 (common 0.125 mm, approved by the owner): six solves",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "pod_front_low_h025_m",
-   "site": "pod_front_low",
-   "amp": "-0.25"
+   "name": "step_zero",
+   "site": "step",
+   "field": "zero",
+   "amp": "0"
+  },
+  {
+   "name": "step_esi_q",
+   "site": "step",
+   "field": "esi_frozen",
+   "amp": "0.125"
+  },
+  {
+   "name": "step_sst_q",
+   "site": "step",
+   "field": "esi_sst",
+   "amp": "0.125"
+  },
+  {
+   "name": "step_opp_q",
+   "site": "step",
+   "field": "opp_frozen",
+   "amp": "0.125"
+  },
+  {
+   "name": "step_rnd1_q",
+   "site": "step",
+   "field": "rnd1",
+   "amp": "0.125"
+  },
+  {
+   "name": "step_rnd2_q",
+   "site": "step",
+   "field": "rnd2",
+   "amp": "0.125"
   }
  ],
- "attempt": 5
+ "attempt": 1
 }

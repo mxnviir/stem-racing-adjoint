@@ -1,5 +1,5 @@
 name: resolved_bumps
-run-name: "Wall-resolved bump solves at the amended heights (RESOLVED_TEST.md 2026-11-24)"
+run-name: "Wall-resolved morph solves (bumps or step-test candidates)"
 
 # RESOLVED_TEST.md amendment 2026-11-24 (plan B step 2, DECISIONS.md D9): the six bumps at the heights that morph
 # clean, one runner per bump in parallel: morph the tested wall-resolved mesh (strict, fixed reference), warm-start

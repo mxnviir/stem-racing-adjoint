@@ -82,5 +82,6 @@ test (2026-11-24) and stays failed as a gradient. This tests a different use of 
 
 Runs 45386092002, 45387356849, 45389614783. The folds sit in the 15 um wall layer, along the pod's sharp edges (top edge
 z ~ 27 mm, front edge x ~ 88 mm, near the ground). Under the fold rule, the uphill control and one random control
-are dropped, so M2 and M3 cannot be evaluated and the verdict as written would be INVALID. Proposed amendment
-(owner decides; no solve has run): every moving candidate at a common 0.125 mm, marks unchanged.
+are dropped, so M2 and M3 cannot be evaluated and the verdict as written would be INVALID. Amendment **approved by the owner 2026-11-24, before any solve**: every moving candidate at a common 0.125 mm
+(`step_esi_q`, `step_sst_q`, `step_opp_q`, `step_rnd1_q`, `step_rnd2_q`) plus `step_zero`; marks unchanged; the 1.0 mm
+comparison is dropped. `esi/step_verdict.py` reads the `_q` runs.
