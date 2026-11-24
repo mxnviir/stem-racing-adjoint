@@ -68,3 +68,26 @@ Folds at >= 0.25 mm sit on the pod's sharp edges. Hypothesis: there the morph's 
 raw vertex normals jump. Test: morph-only checks of the same fields at 0.25 / 0.5 / 1 mm with the car-patch points
 moved directly by the smooth field (env flag, default unchanged), then one re-solve of `step_rnd1_q` under the new
 morph to check that it reproduces -1.04 mN.
+
+## Morph diagnostics (2026-11-24 18:40-19:07, morph-only, no solves)
+- Run 45461955558: direct-field morph (car points moved by the design's smooth field instead of the STL-to-STL
+  nearest-point change), smoothed normals, sharp-edge mask: **all fold at >= 0.5 mm**. Bad cells sit in the wall layer
+  2-12 mm from sharp edges, so the edges were not the cause; the Laplacian mesh motion is.
+- Run 45465008793: **explicit morph** (`P2_MORPH_EXPLICIT=1`, no Laplacian solve: every point within 0.5 mm of the car
+  moves exactly with it, the move fades to zero at 5 mm, and linearly to zero towards any other boundary), with the
+  direct field and 1.5 mm smoothed normals: rnd2 at 0.5 mm **Mesh OK** (the old morph folded it at 0.25 mm); at 1.0 mm
+  rnd2 and daf leave 1 face at skewness 4.0-4.2 (inside the existing acceptance rule: <= 10 faces, skew <= 8), ESI
+  25 faces at 5.9 (outside it); at 2.0 mm rnd2 folds (~1000 cells; the pod's underside reaches the ground there).
+
+## Round 1b (written before these solves): does the explicit morph agree, and do larger steps pay?
+| name | move | morph |
+|---|---|---|
+| `step_rnd1_qE` | rnd1, 0.125 mm, raw normals (the same STL as `step_rnd1_q`) | explicit, STL surface change |
+| `step_rnd1_qD` | rnd1, 0.125 mm, 1.5 mm smoothed normals | explicit, direct field |
+| `step_rnd1_05E` | rnd1, 0.5 mm | explicit, direct field |
+| `step_daf_05E`, `step_daf_10E` | DAFoam downhill, 0.5 / 1.0 mm | explicit, direct field |
+| `step_esi_05E` | ESI downhill, 0.5 mm | explicit, direct field |
+Predictions on record: `hybrid/pred_r1b.json` (linear; raw normals): daf -8.7 / -17.4 mN (coarse DAFoam), rnd1 0.5 mm -1.1,
+ESI 0.5 mm -2.7 (coarse DAFoam) / -1.6 (resolved ESI). Linear scaling of the measured 0.125 mm results gives rnd1 -4.2.
+- **Mark E (the new morph reads the same):** |D(rnd1_qE) - D(rnd1_q)| <= 3 SE.
+- Reported: drag vs step size along each direction (is the response linear to 1 mm; where does it bend?).

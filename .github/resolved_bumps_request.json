@@ -1,86 +1,68 @@
 {
- "note": "hybrid/HYBRID_TEST.md round 1 (H1): coarse-DAFoam step vs 8 more random steps, linearity, zero repeat",
+ "note": "hybrid/HYBRID_TEST.md round 1b: explicit morph consistency and larger steps",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "step_zero_r",
-   "site": "step",
-   "field": "zero",
-   "amp": "0"
-  },
-  {
-   "name": "step_daf_q",
-   "site": "step",
-   "field": "daf",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_dafopp_q",
-   "site": "step",
-   "field": "daf_opp",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd3_q",
-   "site": "step",
-   "field": "rnd3",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd4_q",
-   "site": "step",
-   "field": "rnd4",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd5_q",
-   "site": "step",
-   "field": "rnd5",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd6_q",
-   "site": "step",
-   "field": "rnd6",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd7_q",
-   "site": "step",
-   "field": "rnd7",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd8_q",
-   "site": "step",
-   "field": "rnd8",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd9_q",
-   "site": "step",
-   "field": "rnd9",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd10_q",
-   "site": "step",
-   "field": "rnd10",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd1m_q",
-   "site": "step",
-   "field": "rnd1m",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd1h_q",
+   "name": "step_rnd1_qE",
    "site": "step",
    "field": "rnd1",
-   "amp": "0.0625"
+   "amp": "0.125",
+   "direct": "",
+   "nsig": "0",
+   "mask": "0",
+   "explicit": "1"
+  },
+  {
+   "name": "step_rnd1_qD",
+   "site": "step",
+   "field": "rnd1",
+   "amp": "0.125",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1"
+  },
+  {
+   "name": "step_rnd1_05E",
+   "site": "step",
+   "field": "rnd1",
+   "amp": "0.5",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1"
+  },
+  {
+   "name": "step_daf_05E",
+   "site": "step",
+   "field": "daf",
+   "amp": "0.5",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1"
+  },
+  {
+   "name": "step_daf_10E",
+   "site": "step",
+   "field": "daf",
+   "amp": "1.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1"
+  },
+  {
+   "name": "step_esi_05E",
+   "site": "step",
+   "field": "esi_frozen",
+   "amp": "0.5",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1"
   }
  ],
- "attempt": 1
+ "attempt": 2
 }
