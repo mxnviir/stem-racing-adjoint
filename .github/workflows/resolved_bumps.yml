@@ -101,6 +101,15 @@ jobs:
           cp gate_results_resolved_up/bump_"${{ matrix.case.name }}".json ../../out/gate_results_resolved_up/ 2>/dev/null || true
           cp -r gate_results_resolved_up/forces/bump_"${{ matrix.case.name }}" ../../out/gate_results_resolved_up/forces/ 2>/dev/null || true
           mkdir -p ../../out/logs && cp gate/bump_link.log ../../out/logs/bump_"${{ matrix.case.name }}".log
+          if [ "$RC" != 0 ]; then   # failed run: its solver logs and what the warm start read
+            K=$(ls -dt ../../part2-simulation/cfd_case_template/runs/*/ 2>/dev/null | head -1)
+            [ -n "$K" ] && for f in "$K"logs/*.log; do cp "$f" ../../out/logs/"${{ matrix.case.name }}"_$(basename "$f"); done
+            { echo "== state times"; ls gate/refA_resolved_up; L=$(ls gate/refA_resolved_up | grep -E '^[0-9.]+$' | sort -g | tail -1);
+              echo "== latest $L"; ls -la gate/refA_resolved_up/$L; echo "== run 0/"; ls -la "$K"0;
+              for f in U p nut k omega; do echo "== $f types (run 0)"; grep -a -E '^\s+type' "$K"0/$f 2>/dev/null | sort | uniq -c; done
+              echo "== solver.log tail"; tail -60 "$K"logs/solver.log; } > ../../out/logs/"${{ matrix.case.name }}"_diag.txt 2>&1
+            tail -80 ../../out/logs/"${{ matrix.case.name }}"_diag.txt
+          fi
           { echo "## ${{ matrix.case.name }}: rc $RC"; grep -h "morph checkMesh" gate/bump_link.log;
             cat gate_results_resolved_up/bump_"${{ matrix.case.name }}".json 2>/dev/null | head -c 600; } >> "$GITHUB_STEP_SUMMARY"
           exit $RC
