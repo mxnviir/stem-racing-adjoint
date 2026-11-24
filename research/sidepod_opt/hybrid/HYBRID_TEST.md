@@ -137,3 +137,14 @@ The base flow (and every 0.125 mm move) carries a slow drag oscillation (about +
   both opposite moves raise drag vs zero (change > 0). If either lowers drag, the 0.5 mm gains are not read as shape.
 - `step_zero_P`, `step_daf_05EP`: base and DAFoam 0.5 mm under the production scheme (linearUpwind), 2000 iterations from
   the steady state. **Mark P:** D(daf_05EP) < D(zero_P) by >= 3 SE. Reported: the size ratio vs the steady model.
+
+## Morph diagnostic 4: chained explicit morphs (run 45486612820, morph only)
+Morph the mesh onto A (1 mm), then morph THAT mesh onto A + increment:
+| A | increment | total peak | A | B |
+|---|---|---|---|---|
+| DAFoam 1.0 | rnd2 0.5 | 1.49 mm | acceptable (1 face skew 4.2) | **acceptable** (1 face skew 4.5) |
+| DAFoam 1.0 | rnd2 1.0 | 1.98 mm | acceptable | **acceptable** (1 face skew 4.8) |
+| DAFoam 1.0 | DAFoam 1.0 | 2.0 mm | acceptable | 1 inverted face |
+| GUIDED 1.0 | rnd3 1.0 | 2.0 mm | acceptable (9 faces skew 5.2) | 7 inverted faces |
+Chaining reaches 1.5-2 mm where one 2 mm morph never passed; it is not reliable at 2 mm. Larger totals: smaller
+chained steps (untested) or a new mesh.
