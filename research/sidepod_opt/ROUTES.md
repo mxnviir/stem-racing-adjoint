@@ -1527,6 +1527,22 @@ external topology case was **not found** in their material (that is not proof it
     this problem at any mesh tried. A full-setup ESI re-run on the resolved car would be a diagnostic only (D12: a repaired
     adjoint needs fresh sites) and the wing results give it low odds.
 
+- **2026-11-24 11:40, owner: no DAFoam at all; make the normal adjoint work or change the method. Step test approved and launched.**
+  - The accuracy route is exhausted within the rules. The adjoint wall function was active (primal uses
+    nutUSpaldingWallFunction). The one untested formulation (FI, volumetric B-splines) needs a control-lattice
+    shape parameterisation, which the rules forbid.
+  - Method change: "adjoint-proposed, CFD-decided". The loop never needed gradient sizes: every step is CFD'd
+    and kept only if it is faster.
+  - Coarse evidence, with DAFoam's validated gradient as the reference (pod region, mean removed):
+    - At 4.5 mm smoothing, ESI's step gets 0.20 of the best step's first-order gain; the random-field p95 is 0.10.
+    - At 10 mm, random fields catch up (centred cos 0.42 vs p95 0.39).
+    - Across meshes, the smoothed wall-resolved ESI map correlates only 0.25 with the coarse reference, so this is
+      tested on a good mesh before any loop.
+  - Test: `esi/STEP_TEST.md`, with marks fixed before building. On the wall-resolved mesh it compares a 0.5 mm
+    ESI step with a zero move, an uphill step and two random smooth steps; a 1.0 mm and an SST step are reported.
+    - Built by `esi/make_step.py`; verdict by `esi/step_verdict.py` (committed first).
+    - Morph-only check: Actions run 45386092002. The solves follow it.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
