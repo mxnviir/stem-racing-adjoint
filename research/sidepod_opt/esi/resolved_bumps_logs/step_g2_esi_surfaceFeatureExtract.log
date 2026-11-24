@@ -1,0 +1,150 @@
+/*---------------------------------------------------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2412                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+Build  : _b8cf4d35-20260127 OPENFOAM=2412 patch=260127 version=2412
+Arch   : "LSB;label=32;scalar=64"
+Exec   : surfaceFeatureExtract
+Date   : Nov 24 2026
+Time   : 22:35:38
+Host   : runnervmeozm8
+PID    : 6446
+I/O    : uncollated
+Case   : /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4338_69705b3b1241
+nProcs : 1
+trapFpe: Floating point exception trapping enabled (FOAM_SIGFPE).
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 5, maxFileModificationPolls 20)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+
+Note: Feature line extraction only valid on closed manifold surfaces
+
+Reading surfaceFeatureExtractDict
+
+Surfaces     : car.stl
+Output       : car
+Load options : offset
+Write options: writeObj=no writeVTK=off
+
+Statistics:
+Triangles    : 51242 in 1 region(s)
+Vertices     : 25621
+Bounding Box : (0 0 0.00074793084058910608) (0.25712499022483826 0.033500000834465027 0.042500000447034836)
+
+Constructing feature set from included angle 150
+Selecting edges based purely on geometric tests: no
+
+Initial Feature set:
+    points : 227
+    edges  : 2125
+    of which
+        region edges   : 0
+        external edges : 1400
+        internal edges : 725
+
+Final Feature set:
+    points : 2059
+    of which
+        convex             : 46
+        concave            : 64
+        mixed              : 117
+        non-feature        : 1832
+    edges  : 2125
+    of which
+        external edges     : 1427
+        internal edges     : 698
+        flat edges         : 0
+        open edges         : 0
+        multiply connected : 0
+
+Writing extendedFeatureEdgeMesh to "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4338_69705b3b1241/constant/extendedFeatureEdgeMesh/car.extendedFeatureEdgeMesh"
+
+Writing featureEdgeMesh to "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4338_69705b3b1241/constant/triSurface/car.eMesh"
+Surfaces     : wheelF.stl
+Output       : wheelF
+Load options : offset
+Write options: writeObj=no writeVTK=off
+
+Statistics:
+Triangles    : 248 in 1 region(s)
+Vertices     : 126
+Bounding Box : (0.041267562657594681 0.019249999895691872 -0.00029560970142483711) (0.069499999284744263 0.036499999463558197 0.027945609763264656)
+
+Constructing feature set from included angle 150
+Selecting edges based purely on geometric tests: no
+
+Initial Feature set:
+    points : 0
+    edges  : 126
+    of which
+        region edges   : 0
+        external edges : 126
+        internal edges : 0
+
+Final Feature set:
+    points : 126
+    of which
+        convex             : 0
+        concave            : 0
+        mixed              : 0
+        non-feature        : 126
+    edges  : 126
+    of which
+        external edges     : 126
+        internal edges     : 0
+        flat edges         : 0
+        open edges         : 0
+        multiply connected : 0
+
+Writing extendedFeatureEdgeMesh to "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4338_69705b3b1241/constant/extendedFeatureEdgeMesh/wheelF.extendedFeatureEdgeMesh"
+
+Writing featureEdgeMesh to "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4338_69705b3b1241/constant/triSurface/wheelF.eMesh"
+Surfaces     : wheelR.stl
+Output       : wheelR
+Load options : offset
+Write options: writeObj=no writeVTK=off
+
+Statistics:
+Triangles    : 248 in 1 region(s)
+Vertices     : 126
+Bounding Box : (0.17926755547523499 0.016249999403953552 -0.00029560970142483711) (0.20749999582767487 0.033500000834465027 0.027945609763264656)
+
+Constructing feature set from included angle 150
+Selecting edges based purely on geometric tests: no
+
+Initial Feature set:
+    points : 0
+    edges  : 126
+    of which
+        region edges   : 0
+        external edges : 126
+        internal edges : 0
+
+Final Feature set:
+    points : 126
+    of which
+        convex             : 0
+        concave            : 0
+        mixed              : 0
+        non-feature        : 126
+    edges  : 126
+    of which
+        external edges     : 126
+        internal edges     : 0
+        flat edges         : 0
+        open edges         : 0
+        multiply connected : 0
+
+Writing extendedFeatureEdgeMesh to "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4338_69705b3b1241/constant/extendedFeatureEdgeMesh/wheelR.extendedFeatureEdgeMesh"
+
+Writing featureEdgeMesh to "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4338_69705b3b1241/constant/triSurface/wheelR.eMesh"
+ExecutionTime = 0.17999999999999999 s  ClockTime = 0 s
+
+End
+
