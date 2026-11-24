@@ -1,0 +1,6 @@
+MORPH_RESULT pod_rear_low_a1 amp=1: FAILED ['***Error in face pyramids: 2 faces are incorrectly oriented.']
+MORPH_DISPLACEMENT points 32117 max 9.201e-04 m p99 5.669e-04 m | largest jumps raw (dd/dx, at mm): [(1.6181271712713885, (168.83, 20.55, 2.0)), (1.6181271712713885, (168.48, 20.9, 2.0)), (1.535743152163251, (163.55, 25.82, 2.67)), (1.5355794849624833, (164.52, 23.98, 2.0)), (1.5040708089337633, (166.37, 23.01, 2.67))] | largest jumps smoothed: [(0.7158028908784807, (166.37, 23.01, 3.37)), (0.7079184409628673, (167.07, 22.3, 3.37)), (0.7062648629794421, (165.66, 23.71, 3.37)), (0.6896710524197186, (167.77, 21.6, 3.37)), (0.6872040229754022, (166.37, 23.01, 2.67))] | 
+SET_FILES ['postProcessing/constant/wrongOrientedFaces/wrongOrientedFaces.raw', 'postProcessing/constant/nonOrthoFaces/nonOrthoFaces.raw']
+BAD_CELLS {"wrongOrientedFaces": {"n_points": 2, "sharp_edge_mm": [1.23, 1.974], "wall_mm": [0.103, 0.128], "z_mm": [2.31, 3.28], "centre_mm": [1.53, 6.6, 11.67], "bbox_mm": [167.39, 14.63, 2.31, 173.56, 23.31, 3.28]}}
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4156_ef7ce6254294
+rc 0

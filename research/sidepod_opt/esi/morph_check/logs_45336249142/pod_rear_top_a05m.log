@@ -1,0 +1,4 @@
+MORPH_RESULT pod_rear_top_a05m amp=1: Mesh OK
+MORPH_DISPLACEMENT points 32117 max 4.965e-04 m p99 2.975e-04 m | largest jumps raw (dd/dx, at mm): [(0.9666183376821171, (154.61, 31.51, 27.17)), (0.7741534858820032, (148.98, 32.0, 27.17)), (0.7741534858820032, (148.98, 32.0, 26.69)), (0.7138545488820747, (145.47, 31.51, 27.17)), (0.7044466840347531, (142.66, 31.51, 27.17))] | largest jumps smoothed: [(0.22669550501362973, (148.98, 30.9, 27.17)), (0.22245455611053602, (149.69, 30.9, 27.17)), (0.21719100934454105, (150.39, 30.9, 27.17)), (0.21556608151772394, (148.28, 30.9, 27.17)), (0.21272875875899178, (146.88, 30.9, 27.17))] | 
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4277_c3a8bcd7a2e8
+rc 0

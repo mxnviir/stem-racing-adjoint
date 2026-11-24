@@ -1,0 +1,6 @@
+MORPH_RESULT pod_front_low_a05m amp=1: FAILED ['***Max skewness = 4.168124768863338, 1 highly skew faces detected which may impair the quality of the results']
+MORPH_DISPLACEMENT points 32117 max 4.964e-04 m p99 2.973e-04 m | largest jumps raw (dd/dx, at mm): [(0.8785486908113462, (96.95, 32.0, 2.0)), (0.8785486908113462, (96.95, 31.47, 2.0)), (0.8589933867393597, (94.05, 32.0, 2.04)), (0.8589933867393597, (94.08, 31.85, 2.01)), (0.8279629313305115, (89.18, 21.82, 2.0))] | largest jumps smoothed: [(0.2626332335420452, (91.18, 25.39, 2.0)), (0.2537206763383676, (89.59, 23.63, 2.71)), (0.24824758538943983, (91.91, 26.79, 2.0)), (0.23003841282094853, (90.04, 24.48, 2.68)), (0.22873912936848978, (94.84, 14.75, 2.0))] | 
+SET_FILES ['postProcessing/constant/nonOrthoFaces/nonOrthoFaces.raw', 'postProcessing/constant/skewFaces/skewFaces.raw']
+BAD_CELLS {"skewFaces": {"n_points": 1, "sharp_edge_mm": [0.026, 0.026], "wall_mm": [0.026, 0.026], "z_mm": [2.24, 2.24], "centre_mm": [5.32, 5.32, 5.32], "bbox_mm": [89.78, 23.47, 2.24, 89.78, 23.47, 2.24]}}
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4439_32ae29a4cbb6
+rc 0
