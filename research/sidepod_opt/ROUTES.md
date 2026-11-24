@@ -1417,6 +1417,26 @@ external topology case was **not found** in their material (that is not proof it
   - Fine marks, all in: M1 fail, M2 fail (pooled σ 2.28), C1 pass, C2 fail, C3 fail (groove not resolved), C5 pass.
   - Queue finished; this machine is idle. Next on fine needs the owner: state-controlled scoring (method A), or repeats.
 
+- **2026-11-24 05:30, morph-only checks on the fine scoring mesh (no solves): 15 of 16 ±1 mm bumps morph cleanly. Plan B step 1 launched on GitHub Actions for the wall-resolved mesh.**
+  - Fine (3.36 M cells, 3-layer wall-function stack), team car's own surface bumped at the 8 gate.py sites, Part 2's
+    default morph, checkMesh only (`esi/fine_morph_probe.py`, results `esi/fine_morph_results_20261124.txt`, ~2.3 min each):
+    Mesh OK at nose_top ±, nose_side ±, pod_front ±, pod_rear ±, pod_rear_low ±, pod_rear_top ±, tail_side ±,
+    pod_front_low −1. **Fails: pod_front_low +1 mm** (36 negative-volume cells, 257 wrong-oriented faces).
+  - Where (`esi/morph_diag_probe.py` classification, `checkMesh -writeSets raw`): every folded cell sits **on the ground**
+    (z = 0.00 mm), 2.0–3.2 mm from the bump centre, 6.5–7.6 mm from the nearest sharp edge, 1.0 mm below the bumped wall.
+    The bump pushes the pod's underside down into its ~2 mm ground gap and the gap's cells fold against the ground:
+    a geometry limit of that site, not a morph-settings problem. The raw displacement's largest jumps also sit there
+    (z 2.1–2.4 mm, dd/dx up to 4.2).
+  - **For the software:** the shape loop and method A reshape the reference mesh on the scoring mesh; on fine that works
+    for ±1 mm changes everywhere except a pod pushed into the ground gap, and a failed morph falls back to a re-based
+    fresh mesh (shape_loop.py), so it does not stop the loop. The 15 µm wall-resolved mesh is the fragile one.
+  - **Plan B step 1 on Actions** (owner's instruction 2026-11-24: morph-only on this machine or GitHub Actions, no solves;
+    the owner's PC is busy): `.github/workflows/morph_check.yml`, 22 parallel morph-only jobs on the tested wall-resolved
+    mesh (Kaggle steady state, fixed reference, strict): the six registered ±1 mm bumps (reproduce, locate folds), the
+    three registered sites at ±0.5 and ±0.25 mm (do folds scale with height?), and pod_front / pod_rear_low at ±1 mm
+    (replacement candidates). Run https://github.com/mxnviir/stem-racing-paper/actions/runs/45332912510; results are
+    committed to `esi/morph_check/`.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
