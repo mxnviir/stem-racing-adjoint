@@ -68,3 +68,19 @@ test (2026-11-24) and stays failed as a gradient. This tests a different use of 
   heavy-tailed, so clipping is lopsided. All changes are < 0.4 % of the 67 cm³ pod.
 - At the same peak move, the random controls move ~35 % more surface (RMS) than the ESI steps, because the ESI field
   is spikier. Noted, not corrected: the normalisation was fixed before building.
+
+## Morph checks (2026-11-24, no solves yet)
+| candidate | at the registered A | at half A (fold rule) | at a common 0.125 mm (diagnostic) |
+|---|---|---|---|
+| `step_zero` | Mesh OK | | |
+| `step_esi` | 0.5: 4 bad cells | 0.25: **Mesh OK** | Mesh OK |
+| `step_esi_a10` | 1.0: 76 bad cells | 0.5: 4 bad cells -> dropped | |
+| `step_sst` | 0.5: 4 bad cells | 0.25: **Mesh OK** | Mesh OK |
+| `step_opp` | 0.5: 13 bad cells | 0.25: 2 bad cells -> dropped | Mesh OK |
+| `step_rnd1` | 0.5: 6 bad cells | 0.25: **Mesh OK** | Mesh OK |
+| `step_rnd2` | 0.5: 20 bad cells | 0.25: 6 faces -> dropped | Mesh OK |
+
+Runs 45386092002, 45387356849, 45389614783. The folds sit in the 15 um wall layer, along the pod's sharp edges (top edge
+z ~ 27 mm, front edge x ~ 88 mm, near the ground). Under the fold rule, the uphill control and one random control
+are dropped, so M2 and M3 cannot be evaluated and the verdict as written would be INVALID. Proposed amendment
+(owner decides; no solve has run): every moving candidate at a common 0.125 mm, marks unchanged.
