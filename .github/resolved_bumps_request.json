@@ -1,33 +1,13 @@
 {
- "note": "RESOLVED_TEST.md amendment 2026-11-24: six bumps at the heights that morph clean; attempt 2: warm start copies the steady state cell for cell (mapFields segfaulted in run 45339624216); attempt 3: solver logs kept on failure; attempt 4: MPI oversubscribe (runners have 2 physical cores); pod_front_low_h025_m is solving in run 45345428798, so this attempt runs the other five",
+ "note": "RESOLVED_TEST.md amendment 2026-11-24; attempt 5: pod_front_low_h025_m alone (its attempt-3 job failed on MPI slots too); the other five run in attempt 4",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "pod_rear_h05",
-   "site": "pod_rear",
-   "amp": "0.5"
-  },
-  {
-   "name": "pod_rear_h05_m",
-   "site": "pod_rear",
-   "amp": "-0.5"
-  },
-  {
-   "name": "pod_rear_top_h05",
-   "site": "pod_rear_top",
-   "amp": "0.5"
-  },
-  {
-   "name": "pod_rear_top_h05_m",
-   "site": "pod_rear_top",
-   "amp": "-0.5"
-  },
-  {
-   "name": "pod_front_low_h025",
+   "name": "pod_front_low_h025_m",
    "site": "pod_front_low",
-   "amp": "0.25"
+   "amp": "-0.25"
   }
  ],
- "attempt": 4
+ "attempt": 5
 }
