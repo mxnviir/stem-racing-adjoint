@@ -1,0 +1,4 @@
+[openfoam_case] morph checkMesh: ***Max skewness = 5.1975133799459385, 9 highly skew faces detected which may impair the quality of the results; Failed 1 mesh checks.
+[openfoam_case] warm start copied from /home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate/refA_resolved_up/2000: U, k, nut, omega, p
+[openfoam_case] partition sha 54313d9da403af8c
+{"D20_half_N": 0.1840818292212963, "wall_s": 5722.8, "converged": true, "residual_p": 2.0504166277566042e-05, "force_osc": 1.0899603286051224e-05, "force_drift": 3.2563023604792e-06, "run_dir": "", "force_mean_stderr": 2.1761774551433403e-07, "bump": "step_guided_10E", "morph_fallback": false, "run_dir_kept": "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4360_9351ba36e931"}
