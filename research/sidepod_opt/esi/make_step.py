@@ -138,6 +138,12 @@ def main(name, field, amp_mm):
     m = base.copy()
     D = Nmove * w[:, None]
     D[np.abs(V[:, 1]) < 1e-9, 1] = 0.0
+    zmin = float(os.environ.get("STEP_ZMIN_MM", "0") or 0) * 1e-3
+    if zmin > 0:                     # opt-in: no surface point pushed below zmin (ground clearance), move scaled down there
+        low = (D[:, 2] < 0) & (V[:, 2] + D[:, 2] < zmin)
+        s = np.clip((V[low, 2] - zmin) / np.maximum(-D[low, 2], 1e-12), 0.0, 1.0)
+        D[low] *= s[:, None]
+        info["zmin_scaled_vertices"] = int(low.sum())
     nv = V + D
     m.vertices = nv
     folder = gate.G / f"bump_{name}"

@@ -83,6 +83,7 @@ jobs:
         env:
           STEP_EDGE_MASK_MM: ${{ matrix.case.mask || '0' }}
           STEP_NORMAL_SIGMA_MM: ${{ matrix.case.nsig || '0' }}
+          STEP_ZMIN_MM: ${{ matrix.case.zmin || '0' }}
         run: |
           GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up python -W ignore esi/make_step.py \
             "${{ matrix.case.name }}" "${{ matrix.case.field }}" "${{ matrix.case.amp }}"
