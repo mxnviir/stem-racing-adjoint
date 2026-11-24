@@ -181,3 +181,7 @@ Predictions on record: `hybrid/pred_r3.json`.
 DAFoam 0.5 (-4.84). Reported, not marked (a post-result follow-up of H2). Predictions: `hybrid/pred_r2b.json`.
 Round 1c, first result in (job log; the commit waits for the production runs): DAFoam's opposite at 0.5 mm **+4.05 mN**
 (DAFoam itself -4.84): the 0.5 mm gain is shape, not a flow-state switch, along this direction.
+- Round 3, first launch (run 45501421243): all 12 jobs failed in the morph, the parent's re-run included. Cause: the
+  chained solve built the moves in the solve stage, where the workflow does not pass the smoothed-normal / clearance
+  settings, so the 1 mm parent was built on raw normals (which fold at 1 mm). Fixed in `chain_solve.py`; relaunched
+  unchanged otherwise (same candidates, same marks).

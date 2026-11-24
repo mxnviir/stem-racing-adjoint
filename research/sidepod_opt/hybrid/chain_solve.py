@@ -16,6 +16,11 @@ import cadio as CI  # noqa: E402
 name, parent, field, amp = sys.argv[1:5]
 G = SP / 'gate'; R = Path(os.environ['GATE_RESULTS'])
 env = {k: v for k, v in os.environ.items() if k != 'STEP_PARENT'}
+# the moves are built here (the solve stage), not in the workflow's step-candidate stage: give them that stage's
+# settings (smoothed normals, ground clearance), or a 1 mm parent is built on raw normals and folds (2026-11-24 22:35)
+for k, v in (('STEP_NORMAL_SIGMA_MM', '1.5'), ('STEP_ZMIN_MM', '1.5')):
+    if not env.get(k) or env[k] == '0':
+        env[k] = v
 levels = [l for l in parent.split('|') if l] + [f'{field}@{amp}']
 D = []
 for i, lv in enumerate(levels):                       # each level's own displacement on the base STL vertices
