@@ -45,12 +45,12 @@ def vertex_area(m):
 DAF = HERE / "gate_results_coarse_up" / "dafoam" / "dafoam_sens.npz"
 
 
-def daf_density(V, N, A):
+def daf_density(V, N, A, path=None):
     """The coarse DAFoam gradient as a per-area OUTWARD-normal density on the STL vertices: the exact transpose of
     dafoam/judge.py's mapping (dD = sum_i G_i . dX_i, dX_i = inverse-distance mix of the 4 nearest vertex moves
     w_v N_v), so a move w along N changes drag by sum_v g_v w_v (N); density = g_v / A_v."""
     from scipy.spatial import cKDTree
-    S = np.load(DAF)
+    S = np.load(path or DAF)
     X, Gd = S["Xs"], S["dD_dXs"]
     d, i = cKDTree(V).query(X, k=4)
     w = 1.0 / np.maximum(d, 1e-9) ** 2
@@ -61,14 +61,14 @@ def daf_density(V, N, A):
 
 
 def field_on_vertices(field, V, N=None, A=None):
-    if field in ("daf", "daf_opp"):
-        X, area = V, A
-        s = daf_density(V, N, A)
-        val = -s if field == "daf" else s
+    if field in ("daf", "daf_opp") or field.startswith("dafnpz:"):
+        X, area = V, A                               # dafnpz:<path rel. to sidepod_opt>: a fresh DAFoam gradient, downhill
+        s = daf_density(V, N, A, HERE / field[7:] if field.startswith("dafnpz:") else None)
+        val = -s if field != "daf_opp" else s
     else:
         S = np.load(SENS / ("esi_sens_sst.npz" if field == "esi_sst" else "esi_sens_frozen.npz"))
         X, area = S["Xs"], S["area"]
-    if field in ("daf", "daf_opp"):
+    if field in ("daf", "daf_opp") or field.startswith("dafnpz:"):
         pass
     elif field in ("esi_frozen", "esi_sst"):
         val = -S["s_out"]                                  # downhill
