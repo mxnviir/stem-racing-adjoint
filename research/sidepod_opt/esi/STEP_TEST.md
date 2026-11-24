@@ -85,3 +85,29 @@ z ~ 27 mm, front edge x ~ 88 mm, near the ground). Under the fold rule, the uphi
 are dropped, so M2 and M3 cannot be evaluated and the verdict as written would be INVALID. Amendment **approved by the owner 2026-11-24, before any solve**: every moving candidate at a common 0.125 mm
 (`step_esi_q`, `step_sst_q`, `step_opp_q`, `step_rnd1_q`, `step_rnd2_q`) plus `step_zero`; marks unchanged; the 1.0 mm
 comparison is dropped. `esi/step_verdict.py` reads the `_q` runs.
+
+## Result (2026-11-24, Actions run 45391021727): **FAIL** (M1 met, M2 met, M3 not met)
+All six runs converged on the morphed mesh (no fallback). Half-car drag, mN, mean of the last 404 iterations, SE from four
+101-iteration blocks (`gate_results_resolved_up/esi/STEP_VERDICT.txt`):
+
+| run (all moving at 0.125 mm) | drag | change vs zero |
+|---|---|---|
+| `step_zero` | 190.730 ± 0.000 | — |
+| `step_esi_q` (−ESI frozen) | 190.086 ± 0.002 | **−0.644** |
+| `step_sst_q` (−ESI SST, reported) | 190.117 ± 0.002 | −0.613 |
+| `step_opp_q` (+ESI frozen, uphill) | 191.254 ± 0.002 | +0.524 |
+| `step_rnd1_q` (random, seed 1) | 189.687 ± 0.002 | **−1.043** |
+| `step_rnd2_q` (random, seed 2) | 191.138 ± 0.000 | +0.408 |
+
+- M1 met (−0.644 mN, 3 SE 0.005). M2 met (−1.168 mN vs uphill, 3 SE 0.007). M3 **not met**: random seed 1 is
+  0.398 mN lower than the ESI step (3 SE 0.008). Verdict FAIL, as the marks were written.
+- What it shows (not marked): the ESI direction does carry the right sign at this broad scale. Downhill lowers drag,
+  uphill raises it by a similar amount (−0.64 / +0.52), and the frozen and SST maps agree (0.03 mN apart). But it is
+  not better than a blind smooth move: the two random fields gave −1.04 and +0.41, so the ESI step sits inside the
+  random spread. The random fields move ~35 % more surface (RMS, noted before the runs); per unit RMS move seed 1 is
+  still ahead (−19 vs −16 mN/mm). Two random draws cannot rank ESI among random fields; they only show it is not
+  clearly better, which is what M3 tested.
+- Block SE (≤ 0.002 mN) is iteration noise on a shared morphed mesh. The runs' own whole-signal SE is ~0.11–0.15 mN;
+  every difference above except SST vs ESI clears 3 × that too.
+- Per the plan above: the normal adjoint gives no direction better than luck on a good mesh. The fallback is a
+  search that needs no gradient, every proposal CFD'd, no adjoint.

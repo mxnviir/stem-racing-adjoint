@@ -1,0 +1,14 @@
+Step test (esi/STEP_TEST.md): drag of each candidate, half car, mN (mean of last 404 its, SE from 4 blocks)
+  zero      190.7299 +/- 0.0001  (step_zero, fallback False, converged True)
+  esi_a05   190.0857 +/- 0.0017  (step_esi_q, fallback False, converged True)
+  esi_a10   MISSING
+  sst_a05   190.1171 +/- 0.0018  (step_sst_q, fallback False, converged True)
+  opp_a05   191.2538 +/- 0.0017  (step_opp_q, fallback False, converged True)
+  rnd1_a05  189.6874 +/- 0.0021  (step_rnd1_q, fallback False, converged True)
+  rnd2_a05  191.1379 +/- 0.0001  (step_rnd2_q, fallback False, converged True)
+M1 esi_a05 < zero: met (difference -0.6442 mN, 3 SE 0.0052)
+M2 esi_a05 < opp_a05: met (difference -1.1681 mN, 3 SE 0.0073)
+M3 esi_a05 < rnd1_a05 (better random): NOT met (difference +0.3984 mN, 3 SE 0.0082)
+VERDICT: FAIL
+  reported, not marked: sst_a05 - esi_a05 = +0.0314 mN (3 SE 0.0075)
+  reported, not marked: sst_a05 - zero = -0.6128 mN (3 SE 0.0054)

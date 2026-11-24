@@ -138,6 +138,11 @@ decided), *withdrawn*.
     testable". **The normal adjoint is not used.** The re-test is closed (D12): no further amendment.
     Next route, owner's choice: Plan C (discrete adjoint on fine, needs the owner's OK on machine and cost) or
     bump-by-bump differencing. Also: frozen vs SST differ ~2× at pod_rear here, so "turbulence ruled out" above is coarse-only.
+  - **Step test 2026-11-24 (`esi/STEP_TEST.md`, a different use: ESI as a step proposer, CFD decides): FAIL.** At a
+    common 0.125 mm on the wall-resolved mesh, the ESI downhill step lowered drag 0.64 mN and the uphill step raised it
+    0.52 mN (right sign), but a random smooth step lowered it 1.04 mN (M3 not met). The owner ruled out DAFoam
+    (2026-11-24), so Plan C is closed. Under the test's fixed fallback, the loop uses no adjoint: a gradient-free
+    search, every candidate CFD'd. Its design is proposed in ROUTES.md and needs the owner's approval.
   - Not fixed by any of this: fine-mesh scoring scatter (two flow states, team sd 3 mN) still needs method A or repeats.
   Otherwise the discrete adjoint, but only on a mesh that passes D8 (medium ≈ 128 GB; fine ≈ 500 GB,
   extrapolated), or steps scored by CFD without a gradient.

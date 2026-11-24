@@ -1543,6 +1543,18 @@ external topology case was **not found** in their material (that is not proof it
     - Built by `esi/make_step.py`; verdict by `esi/step_verdict.py` (committed first).
     - Morph-only check: Actions run 45386092002. The solves follow it.
 
+- **2026-11-24 14:20, step test result: FAIL (M1, M2 met; M3 not met). Actions run 45391021727.**
+  - Six wall-resolved solves, all moving candidates at a common 0.125 mm, all converged, no morph fallback.
+  - Drag change vs the unmoved base (half car, mN): ESI downhill −0.64, SST downhill −0.61, ESI uphill +0.52,
+    random seed 1 −1.04, random seed 2 +0.41 (block SE ≤ 0.002; whole-signal SE ~0.12).
+  - Read: the smoothed ESI direction has the right sign at broad scale (down lowers, up raises, frozen = SST), unlike
+    the local bump test. But one of two blind smooth moves beat it by 0.40 mN, so it is not a better proposer than
+    luck. Fixed marks: FAIL. Details in `esi/STEP_TEST.md`.
+  - Consequence (fixed before the runs): the loop drops the adjoint. Next is a gradient-free, every-candidate-CFD'd
+    search. Also learned: on a shared morphed mesh, 0.125 mm smooth moves change drag by ~0.5 mN, resolved far above
+    noise, so CFD can rank small moves cheaply; the morph limit (~0.125 mm per step at the pod's sharp edges) is
+    what blocks larger changes.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)

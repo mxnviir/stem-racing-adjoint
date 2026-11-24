@@ -1,0 +1,107 @@
+{
+ "runs": {
+  "zero": {
+   "name": "step_zero",
+   "D_mN": 190.72991709251085,
+   "se_mN": 5.87375671161233e-05,
+   "iters": 1000,
+   "blocks": [
+    190.7297,
+    190.7299,
+    190.73,
+    190.73
+   ],
+   "morph_fallback": false,
+   "converged": true
+  },
+  "esi_a05": {
+   "name": "step_esi_q",
+   "D_mN": 190.0857439456524,
+   "se_mN": 0.0017293374249273564,
+   "iters": 1000,
+   "blocks": [
+    190.0902,
+    190.0866,
+    190.0838,
+    190.0824
+   ],
+   "morph_fallback": false,
+   "converged": true
+  },
+  "esi_a10": null,
+  "sst_a05": {
+   "name": "step_sst_q",
+   "D_mN": 190.1171017373056,
+   "se_mN": 0.0018115840894304743,
+   "iters": 1000,
+   "blocks": [
+    190.1216,
+    190.1183,
+    190.1151,
+    190.1134
+   ],
+   "morph_fallback": false,
+   "converged": true
+  },
+  "opp_a05": {
+   "name": "step_opp_q",
+   "D_mN": 191.25384766919126,
+   "se_mN": 0.0016916227979346247,
+   "iters": 1000,
+   "blocks": [
+    191.2577,
+    191.2552,
+    191.2527,
+    191.2498
+   ],
+   "morph_fallback": false,
+   "converged": true
+  },
+  "rnd1_a05": {
+   "name": "step_rnd1_q",
+   "D_mN": 189.68737153614276,
+   "se_mN": 0.00213379346244284,
+   "iters": 1000,
+   "blocks": [
+    189.6925,
+    189.6888,
+    189.6856,
+    189.6826
+   ],
+   "morph_fallback": false,
+   "converged": true
+  },
+  "rnd2_a05": {
+   "name": "step_rnd2_q",
+   "D_mN": 191.13794981178017,
+   "se_mN": 0.00014712675034938929,
+   "iters": 1000,
+   "blocks": [
+    191.1379,
+    191.1383,
+    191.1376,
+    191.1379
+   ],
+   "morph_fallback": false,
+   "converged": true
+  }
+ },
+ "marks": {
+  "M1 esi_a05 < zero": [
+   true,
+   -0.6441731468584351,
+   0.0051910039760537565
+  ],
+  "M2 esi_a05 < opp_a05": [
+   true,
+   -1.1681037235388487,
+   0.007257393511290327
+  ],
+  "M3 esi_a05 < rnd1_a05 (better random)": [
+   false,
+   0.3983724095096477,
+   0.0082397294995991
+  ]
+ },
+ "verdict": "FAIL"
+}
