@@ -1,0 +1,82 @@
+{
+ "step_esi_q": {
+  "field": "esi_frozen",
+  "amp_mm": 0.125,
+  "dF_mN": -0.6441731468584351
+ },
+ "step_sst_q": {
+  "field": "esi_sst",
+  "amp_mm": 0.125,
+  "dF_mN": -0.6128153552052709
+ },
+ "step_opp_q": {
+  "field": "opp_frozen",
+  "amp_mm": 0.125,
+  "dF_mN": 0.5239305766803852
+ },
+ "step_daf_q": {
+  "field": "daf",
+  "amp_mm": 0.125,
+  "dF_mN": -1.0655965901601405
+ },
+ "step_dafopp_q": {
+  "field": "daf_opp",
+  "amp_mm": 0.125,
+  "dF_mN": 0.9030440259921306
+ },
+ "step_rnd1m_q": {
+  "field": "rnd1m",
+  "amp_mm": 0.125,
+  "dF_mN": 0.46818756176426746
+ },
+ "step_rnd1_q": {
+  "field": "rnd1",
+  "amp_mm": 0.125,
+  "dF_mN": -1.0425455563680828
+ },
+ "step_rnd2_q": {
+  "field": "rnd2",
+  "amp_mm": 0.125,
+  "dF_mN": 0.40803271926932894
+ },
+ "step_rnd3_q": {
+  "field": "rnd3",
+  "amp_mm": 0.125,
+  "dF_mN": 0.26969454404184035
+ },
+ "step_rnd4_q": {
+  "field": "rnd4",
+  "amp_mm": 0.125,
+  "dF_mN": 0.293602473063288
+ },
+ "step_rnd5_q": {
+  "field": "rnd5",
+  "amp_mm": 0.125,
+  "dF_mN": 0.4129000244269605
+ },
+ "step_rnd6_q": {
+  "field": "rnd6",
+  "amp_mm": 0.125,
+  "dF_mN": -0.04600576890001662
+ },
+ "step_rnd7_q": {
+  "field": "rnd7",
+  "amp_mm": 0.125,
+  "dF_mN": -0.8301158696673383
+ },
+ "step_rnd8_q": {
+  "field": "rnd8",
+  "amp_mm": 0.125,
+  "dF_mN": 0.05812372994563475
+ },
+ "step_rnd9_q": {
+  "field": "rnd9",
+  "amp_mm": 0.125,
+  "dF_mN": -0.06094258385280682
+ },
+ "step_rnd10_q": {
+  "field": "rnd10",
+  "amp_mm": 0.125,
+  "dF_mN": -0.03885220919525523
+ }
+}

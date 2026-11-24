@@ -41,7 +41,7 @@ if __name__ == "__main__":
     out = {}
     moved = taper > 0.5
     for spec in sys.argv[2:]:
-        name, field, amp = spec.split(":")
+        name, rest = spec.split(":", 1); field, amp = rest.rsplit(":", 1)
         w = move(field, amp)
         rms = float(np.sqrt((A[moved] * w[moved] ** 2).sum() / A[moved].sum()) * 1e3)
         out[name] = {"field": field, "amp_mm": float(amp), "peak_mm": float(np.abs(w).max() * 1e3), "rms_mm": rms,

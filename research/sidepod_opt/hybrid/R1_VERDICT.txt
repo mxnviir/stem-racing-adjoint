@@ -1,0 +1,40 @@
+H1 (hybrid/HYBRID_TEST.md): drag, half car, mN; change vs step_zero; SE = whole-signal force_mean_stderr
+  zero     190.7299 +/- 0.1309  change +0.0000  fallback False  pred: 
+  zero_r   190.7302 +/- 0.1307  change +0.0003  fallback False  pred: dafoam_coarse +0.000  esi_coarse +0.000  esi_resolved +0.000
+  daf      189.6643 +/- 0.1076  change -1.0656  fallback False  pred: dafoam_coarse -2.171  esi_coarse -0.111  esi_resolved -0.182
+  daf_opp  191.6330 +/- 0.1391  change +0.9030  fallback False  pred: dafoam_coarse +2.171  esi_coarse +0.111  esi_resolved +0.182
+  rnd1m    191.1981 +/- 0.1287  change +0.4682  fallback False  pred: dafoam_coarse +0.278  esi_coarse -0.021  esi_resolved +0.002
+  rnd1_h   190.3748 +/- 0.1205  change -0.3552  fallback False  pred: dafoam_coarse -0.139  esi_coarse +0.011  esi_resolved -0.001
+  rnd1     189.6874 +/- 0.1187  change -1.0425  fallback False  pred: dafoam_coarse -0.278  esi_coarse +0.021  esi_resolved -0.002
+  rnd2     191.1379 +/- 0.1286  change +0.4080  fallback False  pred: dafoam_coarse +0.260  esi_coarse +0.001  esi_resolved +0.017
+  rnd3     190.9996 +/- 0.1338  change +0.2697  fallback False  pred: dafoam_coarse +0.117  esi_coarse +0.023  esi_resolved -0.035
+  rnd4     191.0235 +/- 0.1331  change +0.2936  fallback False  pred: dafoam_coarse +0.435  esi_coarse -0.033  esi_resolved +0.022
+  rnd5     191.1428 +/- 0.1391  change +0.4129  fallback False  pred: dafoam_coarse +0.420  esi_coarse -0.008  esi_resolved -0.059
+  rnd6     190.6839 +/- 0.1195  change -0.0460  fallback False  pred: dafoam_coarse +0.168  esi_coarse -0.019  esi_resolved +0.055
+  rnd7     189.8998 +/- 0.1333  change -0.8301  fallback False  pred: dafoam_coarse -0.039  esi_coarse -0.082  esi_resolved -0.041
+  rnd8     190.7880 +/- 0.1330  change +0.0581  fallback False  pred: dafoam_coarse +0.061  esi_coarse +0.004  esi_resolved +0.027
+  rnd9     190.6690 +/- 0.1106  change -0.0609  fallback False  pred: dafoam_coarse -0.176  esi_coarse -0.066  esi_resolved -0.054
+  rnd10    190.6911 +/- 0.1175  change -0.0389  fallback False  pred: dafoam_coarse -0.122  esi_coarse +0.037  esi_resolved +0.107
+M1 daf < zero: met (difference -1.0656 mN, 3 SE 0.5082)
+M2 daf < daf_opp: met (difference -1.9686 mN, 3 SE 0.5276)
+M3 daf below all 10 random steps (best rnd1): met (difference -0.0231 mN, 3 SE 0.0000)
+VERDICT H1: PASS
+fidelity dafoam_coarse: n 11  r 0.85  signs 10/11  slope meas/pred 0.48
+fidelity esi_resolved: n 11  r 0.67  signs 7/11  slope meas/pred 4.00
+fidelity esi_coarse: n 11  r 0.81  signs 7/11  slope meas/pred 6.92
+F (coarse DAFoam fidelity, r >= 0.7 and signs >= 80 %): met
+reported, not marked:
+  rnd1m: change +0.4682 vs rnd1 change -1.0425
+  rnd1_h: change -0.3552 vs rnd1 change -1.0425
+  zero_r: change +0.0003 vs zero change +0.0000
+  per RMS mm: daf -25.89 mN/mm
+  per RMS mm: rnd1 -17.73 mN/mm
+  per RMS mm: rnd2 +7.11 mN/mm
+  per RMS mm: rnd3 +4.54 mN/mm
+  per RMS mm: rnd4 +5.34 mN/mm
+  per RMS mm: rnd5 +6.92 mN/mm
+  per RMS mm: rnd6 -0.78 mN/mm
+  per RMS mm: rnd7 -14.76 mN/mm
+  per RMS mm: rnd8 +0.98 mN/mm
+  per RMS mm: rnd9 -1.01 mN/mm
+  per RMS mm: rnd10 -0.69 mN/mm

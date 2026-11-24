@@ -97,3 +97,18 @@ Fresh coarse mesh + steady upwind state from the exact CAD (5000 its, 18 min, D 
 Krylov (PC fill 0, level 1) in Docker on the 16 GB runner with 16 GB swap: primal 63 s, adjoint 59 min. Against the stored
 coarse gradient: point cosine 0.9985; predictions for the 18 round-1 moves r 0.999999, slope 0.998. **Passed: a fresh
 coarse DAFoam gradient for any design costs ~1.5 h on a free runner.**
+
+## Round 1 result (2026-11-24 20:32, run 45461604257): **H1 PASS, F met** (`hybrid/R1_VERDICT.txt`)
+- DAFoam step -1.066 mN, its opposite +0.903 (M1, M2 met by > 3 SE); below all 10 random steps (M3 met, but only
+  0.023 mN below the best, rnd1 -1.043; the random steps spread -1.04 .. +0.41, mean -0.06).
+- Fidelity (11 new moves): coarse DAFoam r 0.85, signs 10/11, **size about 2x too large** (slope 0.48); resolved ESI
+  r 0.67, signs 7/11, size 4x too small; coarse ESI r 0.81, signs 7/11, 7x too small.
+- Per RMS move: DAFoam -25.9 mN/mm, best random -17.7.
+- Repeat: zero_r +0.0003 (the pipeline is deterministic). Linearity: rnd1 -1.04, -rnd1 +0.47, rnd1/2 -0.36 (a curved
+  response along rnd1: about -0.29 of curvature at this size); DAFoam nearly linear (-1.07 / +0.90).
+
+## Round 2 as launched (directions from `hybrid/r2_build.py`, 16 measured moves; before any round-2 solve)
+Linear-model values at 0.125 mm (`hybrid/r2/combine.json`): ES -1.34, GUIDED -1.74, GUIDED-DAF -1.58, GUIDED-ESI -1.50
+(DAFoam alone measured -1.07). Marked runs as written above (0.125 mm, old morph). Reported: GUIDED at 0.5 and 1.0 mm,
+ES at 1.0 mm, DAFoam at 1.0 mm again (all explicit morph, smoothed normals, 1.5 mm ground clearance; DAFoam 1.0 mm
+re-run because the strict rule refused its one skewed face in round 1b). Verdict script: `hybrid/r2_verdict.py`.

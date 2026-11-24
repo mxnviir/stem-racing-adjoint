@@ -1,68 +1,76 @@
 {
- "note": "hybrid/HYBRID_TEST.md round 1b: explicit morph consistency and larger steps",
+ "note": "hybrid/HYBRID_TEST.md round 2 (H2): combined directions at 0.125 mm (marked) + larger steps with the explicit morph (reported)",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "step_rnd1_qE",
+   "name": "step_es_q",
    "site": "step",
-   "field": "rnd1",
-   "amp": "0.125",
-   "direct": "",
-   "nsig": "0",
-   "mask": "0",
-   "explicit": "1"
+   "field": "vec:hybrid/r2/es.npy",
+   "amp": "0.125"
   },
   {
-   "name": "step_rnd1_qD",
+   "name": "step_guided_q",
    "site": "step",
-   "field": "rnd1",
-   "amp": "0.125",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1"
+   "field": "vec:hybrid/r2/guided.npy",
+   "amp": "0.125"
   },
   {
-   "name": "step_rnd1_05E",
+   "name": "step_guidedaf_q",
    "site": "step",
-   "field": "rnd1",
+   "field": "vec:hybrid/r2/guided_daf.npy",
+   "amp": "0.125"
+  },
+  {
+   "name": "step_guidedesi_q",
+   "site": "step",
+   "field": "vec:hybrid/r2/guided_esi.npy",
+   "amp": "0.125"
+  },
+  {
+   "name": "step_guided_05E",
+   "site": "step",
+   "field": "vec:hybrid/r2/guided.npy",
    "amp": "0.5",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
-   "explicit": "1"
+   "explicit": "1",
+   "zmin": "1.5"
   },
   {
-   "name": "step_daf_05E",
+   "name": "step_guided_10E",
    "site": "step",
-   "field": "daf",
-   "amp": "0.5",
+   "field": "vec:hybrid/r2/guided.npy",
+   "amp": "1.0",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
-   "explicit": "1"
+   "explicit": "1",
+   "zmin": "1.5"
   },
   {
-   "name": "step_daf_10E",
+   "name": "step_es_10E",
+   "site": "step",
+   "field": "vec:hybrid/r2/es.npy",
+   "amp": "1.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5"
+  },
+  {
+   "name": "step_daf_10E2",
    "site": "step",
    "field": "daf",
    "amp": "1.0",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
-   "explicit": "1"
-  },
-  {
-   "name": "step_esi_05E",
-   "site": "step",
-   "field": "esi_frozen",
-   "amp": "0.5",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1"
+   "explicit": "1",
+   "zmin": "1.5"
   }
  ],
- "attempt": 2
+ "attempt": 3
 }

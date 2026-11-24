@@ -1,0 +1,139 @@
+{
+ "runs": {
+  "zero": {
+   "D": 190.72991709251085,
+   "se": 0.13086428315622378,
+   "fallback": false,
+   "converged": true
+  },
+  "zero_r": {
+   "D": 190.73017787244424,
+   "se": 0.13066267983287563,
+   "fallback": false,
+   "converged": true
+  },
+  "daf": {
+   "D": 189.66432050235073,
+   "se": 0.10757281735601473,
+   "fallback": false,
+   "converged": true
+  },
+  "daf_opp": {
+   "D": 191.63296111850298,
+   "se": 0.13912979942899237,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd1m": {
+   "D": 191.1981046542751,
+   "se": 0.12870192227249072,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd1_h": {
+   "D": 190.37475965175432,
+   "se": 0.12047814729548033,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd1": {
+   "D": 189.68737153614276,
+   "se": 0.1186823461273445,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd2": {
+   "D": 191.13794981178015,
+   "se": 0.1285560432420755,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd3": {
+   "D": 190.99961163655271,
+   "se": 0.13380237539208595,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd4": {
+   "D": 191.02351956557413,
+   "se": 0.13308959312634613,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd5": {
+   "D": 191.1428171169378,
+   "se": 0.1390679573224483,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd6": {
+   "D": 190.68391132361083,
+   "se": 0.11950836135932988,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd7": {
+   "D": 189.8998012228435,
+   "se": 0.13330476162422014,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd8": {
+   "D": 190.78804082245648,
+   "se": 0.13295689509934835,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd9": {
+   "D": 190.66897450865804,
+   "se": 0.11057009110330077,
+   "fallback": false,
+   "converged": true
+  },
+  "rnd10": {
+   "D": 190.69106488331562,
+   "se": 0.11754544463651574,
+   "fallback": false,
+   "converged": true
+  }
+ },
+ "marks": {
+  "M1 daf < zero": [
+   true,
+   -1.065596590160112,
+   0.5082089577714322
+  ],
+  "M2 daf < daf_opp": [
+   true,
+   -1.9686406161522427,
+   0.527599383156917
+  ],
+  "M3 daf below all 10 random steps (best rnd1)": [
+   true,
+   -0.02305103379202933,
+   0.0
+  ]
+ },
+ "verdict": "PASS",
+ "fidelity": {
+  "dafoam_coarse": {
+   "n": 11,
+   "r": 0.8466310262517338,
+   "signs": 10,
+   "slope": 0.47985838207474146
+  },
+  "esi_resolved": {
+   "n": 11,
+   "r": 0.6748219741529669,
+   "signs": 7,
+   "slope": 3.996038008575222
+  },
+  "esi_coarse": {
+   "n": 11,
+   "r": 0.8117444982072689,
+   "signs": 7,
+   "slope": 6.9203902670378445
+  }
+ },
+ "F": true
+}

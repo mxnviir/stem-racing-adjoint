@@ -1,0 +1,98 @@
+{
+ "es_q": {
+  "field": "vec:hybrid/r2/es.npy",
+  "amp_mm": 0.125,
+  "peak_mm": 0.125,
+  "rms_mm": 0.058832750467239917,
+  "dV_mm3": -2.7454362845130853,
+  "predicted_mN": {
+   "dafoam_coarse": -0.5278172954901081,
+   "esi_coarse": -0.022530445569962223,
+   "esi_resolved": 0.00667700754755258
+  }
+ },
+ "guided_q": {
+  "field": "vec:hybrid/r2/guided.npy",
+  "amp_mm": 0.125,
+  "peak_mm": 0.125,
+  "rms_mm": 0.0521014473889772,
+  "dV_mm3": -5.9411895017880045,
+  "predicted_mN": {
+   "dafoam_coarse": -1.890069426909007,
+   "esi_coarse": -0.1537358404403465,
+   "esi_resolved": -0.2649457984647536
+  }
+ },
+ "guidedaf_q": {
+  "field": "vec:hybrid/r2/guided_daf.npy",
+  "amp_mm": 0.125,
+  "peak_mm": 0.125,
+  "rms_mm": 0.04887147867382634,
+  "dV_mm3": -3.2281534112317263,
+  "predicted_mN": {
+   "dafoam_coarse": -1.9426880289930062,
+   "esi_coarse": -0.11353002897245171,
+   "esi_resolved": -0.15660543769502794
+  }
+ },
+ "guidedesi_q": {
+  "field": "vec:hybrid/r2/guided_esi.npy",
+  "amp_mm": 0.125,
+  "peak_mm": 0.125,
+  "rms_mm": 0.054885335808853505,
+  "dV_mm3": -1.6520810074294714,
+  "predicted_mN": {
+   "dafoam_coarse": -0.7150734887376179,
+   "esi_coarse": -0.13007858230977526,
+   "esi_resolved": -0.27663190939185994
+  }
+ },
+ "guided_05E": {
+  "field": "vec:hybrid/r2/guided.npy",
+  "amp_mm": 0.5,
+  "peak_mm": 0.5,
+  "rms_mm": 0.2084057895559088,
+  "dV_mm3": -23.764758007152018,
+  "predicted_mN": {
+   "dafoam_coarse": -7.560277707636028,
+   "esi_coarse": -0.614943361761386,
+   "esi_resolved": -1.0597831938590143
+  }
+ },
+ "guided_10E": {
+  "field": "vec:hybrid/r2/guided.npy",
+  "amp_mm": 1.0,
+  "peak_mm": 1.0,
+  "rms_mm": 0.4168115791118176,
+  "dV_mm3": -47.529516014304036,
+  "predicted_mN": {
+   "dafoam_coarse": -15.120555415272056,
+   "esi_coarse": -1.229886723522772,
+   "esi_resolved": -2.1195663877180286
+  }
+ },
+ "es_10E": {
+  "field": "vec:hybrid/r2/es.npy",
+  "amp_mm": 1.0,
+  "peak_mm": 1.0,
+  "rms_mm": 0.47066200373791933,
+  "dV_mm3": -21.963490276104682,
+  "predicted_mN": {
+   "dafoam_coarse": -4.222538363920865,
+   "esi_coarse": -0.18024356455969778,
+   "esi_resolved": 0.05341606038042064
+  }
+ },
+ "daf_10E2": {
+  "field": "daf",
+  "amp_mm": 1.0,
+  "peak_mm": 1.0,
+  "rms_mm": 0.32933200245912103,
+  "dV_mm3": -88.35320094332037,
+  "predicted_mN": {
+   "dafoam_coarse": -17.366409942150515,
+   "esi_coarse": -0.8847640864245286,
+   "esi_resolved": -1.456478819756081
+  }
+ }
+}
