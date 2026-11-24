@@ -113,6 +113,29 @@ footprints are worse at all three sites under both diffusivities. Only `tail_sid
 morphs cleanly at both signs. The bump check cannot be made on this mesh by morphing; the verdict is
 inconclusive, not an adjoint failure. Full checkMesh tables: ROUTES.md, 2026-11-23.
 
+## Amendment 2026-11-24: smaller bumps (approved by the owner, written before any resolved bump is measured)
+
+Plan B step 1 (morph-only checks, GitHub Actions run 45336249142, ROUTES.md 2026-11-24 06:15) showed that the
+wall-layer folds shrink with bump height. The same three sites and the same 10 mm Gaussian are kept; only the height
+changes, to the largest that morphs to `Mesh OK` at both signs (strict, fixed reference `GATE_MORPH_REF_RM=1`):
+
+| site | height | bump folders |
+|---|---|---|
+| pod_rear | ±0.5 mm | `bump_pod_rear_h05`, `bump_pod_rear_h05_m` |
+| pod_rear_top | ±0.5 mm | `bump_pod_rear_top_h05`, `bump_pod_rear_top_h05_m` |
+| pod_front_low | ±0.25 mm | `bump_pod_front_low_h025`, `bump_pod_front_low_h025_m` |
+
+1. Made with `gate.py variant <name> <site> <±height>` from `gate/original_rm`; solved as before (steady model, warm from
+   the Kaggle steady state, 1000 iterations, strict morph, no fresh-mesh fallback). The adjoints are not rerun; the
+   predictions are recomputed on these STLs (`dafoam/pair_judge.py`, `esi/predict_sites.py`).
+2. **Measured drag of a bump run** (fixed now, because the signals are 0.03–0.11 mN): the mean over the last 404
+   iterations (4 × the steady state's ~101-iteration drag cycle). Its SE is the sd of the four 101-iteration block
+   means / 2; a half-difference's SE is ½·√(SE₊² + SE₋²). The 200-iteration `D20_half_N` is reported alongside.
+3. Pass marks unchanged (r ≥ 0.9, every sign agrees, predicted/measured within 0.5–2 at all three sites). A pair whose
+   measured half-difference is below 3 SE is "not clear"; with any pair not clear the verdict is **inconclusive**, not
+   PASS or FAIL.
+4. Compute: one GitHub runner per bump, in parallel (`.github/workflows/resolved_bumps.yml`); nothing on the owner's PC.
+
 ## Report back (to the owner, and append a dated entry to `research/sidepod_opt/ROUTES.md`)
 
 1. Mesh: cells, y+ min/max, and the layer coverage line (`Extruding X out of Y faces`).
