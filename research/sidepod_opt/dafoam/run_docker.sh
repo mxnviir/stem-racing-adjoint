@@ -10,7 +10,7 @@ cp "$HERE/runScript.py" "$CASE/"
 chmod -R a+rwX "$CASE"                       # the image runs as dafoamuser
 docker run --rm -u dafoamuser --shm-size=2g \
   --mount "type=bind,src=$CASE,target=/home/dafoamuser/case" -w /home/dafoamuser/case \
-  -e DAF_GMRES_TOL -e DAF_GMRES_ITERS -e DAF_GMRES_RESTART -e DAF_PC_FILL -e DAF_PC_LEVEL -e DAF_ADJ -e DAF_FP_ITERS -e DAF_FP_TOL -e DAF_PRIMAL_ONLY "$IMAGE" bash -c '
+  -e OMPI_MCA_rmaps_base_oversubscribe -e OMPI_MCA_hwloc_base_use_hwthreads_as_cpus -e DAF_GMRES_TOL -e DAF_GMRES_ITERS -e DAF_GMRES_RESTART -e DAF_PC_FILL -e DAF_PC_LEVEL -e DAF_ADJ -e DAF_FP_ITERS -e DAF_FP_TOL -e DAF_PRIMAL_ONLY "$IMAGE" bash -c '
     . /home/dafoamuser/dafoam/loadDAFoam.sh >/dev/null
     set -e
     if [ ! -f .renumbered ]; then

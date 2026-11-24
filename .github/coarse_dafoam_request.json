@@ -1,0 +1,6 @@
+{
+ "note": "hybrid smoke test: reproduce the stored coarse DAFoam gradient (base design) on a GitHub runner",
+ "bumpgeom_run": 45188798730,
+ "cases": [{"name": "base", "field": "base", "amp": "0", "iters": 5000}],
+ "attempt": 1
+}
