@@ -38,7 +38,15 @@ workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
   expectation whatever the adjoints' bias) and uses the adjoints where they help (`RESEARCH.md`).
 
 ## 4. Schedule and cost (proposed)
-[filled in below]
+All on free GitHub runners (public repository); no paid machine is needed for any step below.
+
+| phase | what | cost per unit | gate to the next phase |
+|---|---|---|---|
+| A. Local loop | `hybrid/loop.py next <k>` each generation: parent re-run + fresh DAFoam move + ESI move + 6 random moves + 4 combination moves, chained explicit morph, 0.5 mm moves | ~2 h, ~13 runners, one fresh DAFoam gradient (~1.5 h, in parallel with the previous generation) | stop when 2 generations in a row accept nothing, or the chained morph refuses (~1.5-2 mm total) |
+| B. New mesh | rebuild the wall-resolved mesh and its steady state on the accepted design, then continue A | the first build took several chained 6 h jobs (Actions + Kaggle); expect ~1 day | needed after every ~1.5-2 mm of accumulated change |
+| C. Several starts (evolution's global part) | run A from 3-4 different starting pods (team pod, groove, a 50 % blend, no pod) in parallel lanes | lanes share the ~20 runners | the space has a valley (a half-grown pod is worse than none): one start is not enough |
+| D. Confirmation | best designs under the production model, fresh meshes, repeats (D8, D10) | production runs ~3 h each | only confirmed gains count |
+| E. Legalisation | milling, 27 mm ceiling, wall thickness, mass back on; re-measure | as A | the final car |
 
 ## 5. Decisions for the owner
 [filled in below]
