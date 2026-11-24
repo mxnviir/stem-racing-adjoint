@@ -18,3 +18,5 @@ Next: generation 2 (round 3) = best <= 0.5 mm design + 0.5 mm children (fresh DA
 | Round 2 (H2) | 45482339933 | FAIL at 0.125 (ES -1.84 > GUIDED -1.40); DAFoam 1.0 mm -6.93 best |
 | Generation 2 (round 3), 12 chained solves from daf@1.0 | resolved_bumps 45501421243 (22:29) | running |
 | DAFoam at daf@1.0 retry | coarse_dafoam (22:31) | running |
+| Round 2b (ES/GUIDED-DAF/GUIDED-ESI at 0.5 mm) | resolved_bumps 45501709693 (22:31) | running |
+| Round 1c | 45486415307 | dafopp_05E done (+4.05, job log); rnd1m_05E and the production pair (2000 its) still running |
