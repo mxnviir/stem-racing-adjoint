@@ -1,0 +1,37 @@
+[openfoam_case] morph checkMesh: Mesh OK
+[openfoam_case] partition sha aaad9e2437f894b7
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4403_f340873a2f82
+Traceback (most recent call last):
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_wrapper.py", line 138, in _invoke_openfoam_pipeline
+    return openfoam_case.invoke(stl_path, case_dir, cfg=run_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/openfoam_case.py", line 2184, in invoke
+    logs = run_stages(run_dir, cfg, resolved_bashrc, resume=bool(resume_dir))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/openfoam_case.py", line 1888, in run_stages
+    solver_log = _solve_with_budget(f"mpirun {cfg.mpi_args} -np {cfg.n_subdomains} {solver} -parallel",
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/openfoam_case.py", line 2000, in _solve_with_budget
+    return _run(cmd, run, bashrc, log_name, timeout_s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/openfoam_case.py", line 1540, in _run
+    raise subprocess.CalledProcessError(proc.returncode, cmd, output=proc.stdout)
+subprocess.CalledProcessError: Command 'mpirun  -np 4 simpleFoam -parallel' returned non-zero exit status 1.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate.py", line 482, in <module>
+    cmd_bump(sys.argv[2], npar(3))
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate.py", line 277, in cmd_bump
+    half, health, secs = solve(folder, n_sub, ITERS, extra={"morph_from": ref, "warm_from": ref}, keep=True)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate.py", line 69, in solve
+    half, health = run_half_car_cfd(str(body), n_subdomains=n_sub, extra_surfaces=SW.extra_surfaces(folder),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_wrapper.py", line 307, in run_half_car_cfd
+    result = _invoke_openfoam_pipeline(str(path), str(case_dir), run_config=run_config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_wrapper.py", line 142, in _invoke_openfoam_pipeline
+    raise CFDRunError(
+cfd_wrapper.CFDRunError: OpenFOAM stage failed (exit 1): mpirun  -np 4 simpleFoam -parallel. See logs/ in the run directory (kept on failure).
