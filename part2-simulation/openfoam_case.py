@@ -1839,9 +1839,36 @@ def _mesh(run: Path, cfg: OpenFOAMRunConfig, bashrc: str, timeout_s: int) -> str
     if cfg.warm_from:
         if not (Path(cfg.warm_from) / "system" / "controlDict").exists():
             raise FileNotFoundError(f"warm_from is not a case directory: {cfg.warm_from}")
-        _run(f"mapFields '{cfg.warm_from}' -sourceTime latestTime -consistent",
-             run, bashrc, "mapFields.log", timeout_s)
+        same_mesh = cfg.morph_from and Path(cfg.morph_from).resolve() == Path(cfg.warm_from).resolve()
+        if os.environ.get("P2_WARM_COPY") == "1" and same_mesh and not (run / "MORPH_FALLBACK").exists():
+            # opt-in: a morphed mesh keeps the reference's cells and their order, so the reference flow is copied
+            # cell for cell (exact). mapFields -consistent segfaulted on the wall-resolved state (2026-11-24).
+            copy_latest_fields(Path(cfg.warm_from), run / "0")
+        else:
+            _run(f"mapFields '{cfg.warm_from}' -sourceTime latestTime -consistent",
+                 run, bashrc, "mapFields.log", timeout_s)
     return _run("checkMesh", run, bashrc, "checkMesh.log", timeout_s)
+
+
+def copy_latest_fields(src_case: Path, zero: Path) -> list:
+    """Copy every field of `zero` from src_case's latest time directory (plain or .gz). Returns the names copied."""
+    times = [d for d in src_case.iterdir() if d.is_dir() and re.fullmatch(r"[0-9.eE+-]+", d.name)]
+    latest = max(times, key=lambda d: float(d.name))
+    copied = []
+    for f in sorted(p for p in zero.iterdir() if p.is_file()):
+        name = f.name[:-3] if f.name.endswith(".gz") else f.name
+        for cand in (latest / name, latest / (name + ".gz")):
+            if cand.exists():
+                f.unlink()
+                for stale in (zero / name, zero / (name + ".gz")):
+                    stale.unlink(missing_ok=True)
+                shutil.copy(cand, zero / cand.name)
+                copied.append(name)
+                break
+    if not copied:
+        raise FileNotFoundError(f"no fields of {zero} in {latest}")
+    print(f"[openfoam_case] warm start copied from {latest}: {', '.join(copied)}", flush=True)
+    return copied
 
 
 def run_stages(run_dir: str, cfg: OpenFOAMRunConfig, bashrc: str,

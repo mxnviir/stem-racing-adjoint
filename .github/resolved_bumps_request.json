@@ -1,5 +1,5 @@
 {
- "note": "RESOLVED_TEST.md amendment 2026-11-24: six bumps at the heights that morph clean",
+ "note": "RESOLVED_TEST.md amendment 2026-11-24: six bumps at the heights that morph clean; attempt 2: warm start copies the steady state cell for cell (mapFields segfaulted in run 45339624216)",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
@@ -33,5 +33,6 @@
    "site": "pod_front_low",
    "amp": "-0.25"
   }
- ]
+ ],
+ "attempt": 2
 }
