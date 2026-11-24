@@ -44,4 +44,17 @@ workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
 [filled in below]
 
 ## 6. Evidence, in order
-[filled in below]
+All on the wall-resolved mesh (2.1 M cells), steady model, morphs of one tested mesh, change of half-car drag vs the
+unmoved team pod (190.73 mN). Whole-signal SE ~0.12 mN at small moves, < 0.01 mN at 0.5-1 mm.
+
+| test (marks fixed before) | result | what it decided |
+|---|---|---|
+| Step test (ESI proposes, 0.125 mm) | FAIL: ESI -0.64, a random move -1.04 | ESI alone is no better than luck at tiny steps |
+| Retro check (post hoc) | coarse DAFoam predicts 8 measured good-mesh moves r 0.82 | worth a prospective test |
+| **H1** coarse DAFoam proposes (0.125 mm, vs 10 randoms) | **PASS**: -1.07, opposite +0.90; tied with the best random (-1.04), 46 % more per RMS move; fidelity r 0.85, signs 10/11, sizes 2x too big | DAFoam is a usable *direction*, never a step size |
+| DAFoam on a free GitHub runner | reproduces the stored gradient (cos 0.9985); ~1.5 h | fresh gradients each generation are affordable |
+| Morph limits | old morph 0.125 mm; explicit morph (wall layer moved rigidly) **1 mm** per morph; chained morphs 1.5-2 mm (2 of 4) | larger changes without new meshes, up to ~2 mm |
+| Mark E (explicit morph agrees) | met (-1.18 vs -1.04) | the new morph does not change the answer |
+| Larger steps (reported) | 0.5 mm: DAFoam -4.84, ESI -3.57, random -2.70; 1.0 mm: DAFoam **-6.93**, GUIDED -6.65 | step sizes of 0.5-1 mm pay; the adjoints win at this size |
+| Mark S (shape, not flow state), partial | DAFoam's opposite at 0.5 mm: +4.05 | the DAFoam gain is shape |
+| **H2** combined vs evolution-only vs DAFoam (0.125 mm) | **FAIL**: evolution-only -1.84 beat combined -1.40; combined vs DAFoam not separable | at tiny steps the adjoints add nothing to evolution's own estimate |
