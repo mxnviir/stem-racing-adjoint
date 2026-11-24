@@ -1,32 +1,10 @@
 {
- "note": "hybrid larger steps, diagnostic 2: explicit morph (no Laplacian; near-wall points move rigidly with the car within 0.5 mm, fade to 0 at 5 mm / 8 mm, fixed towards other boundaries); E = with the direct field, Es = with the STL surface change",
+ "note": "hybrid larger steps, diagnostic 3: explicit morph with 1.5 mm ground clearance at 1.5-2 mm",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "mE_rnd2_05",
-   "site": "step",
-   "field": "rnd2",
-   "amp": "0.5",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "delta": "5"
-  },
-  {
-   "name": "mE_rnd2_10",
-   "site": "step",
-   "field": "rnd2",
-   "amp": "1.0",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "delta": "5"
-  },
-  {
-   "name": "mE_rnd2_20",
+   "name": "mEz_rnd2_20",
    "site": "step",
    "field": "rnd2",
    "amp": "2.0",
@@ -34,52 +12,81 @@
    "nsig": "1.5",
    "mask": "0",
    "explicit": "1",
-   "delta": "5"
+   "delta": "5",
+   "zmin": "1.5"
   },
   {
-   "name": "mE_daf_10",
+   "name": "mEz8_rnd2_20",
+   "site": "step",
+   "field": "rnd2",
+   "amp": "2.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "delta": "8",
+   "zmin": "1.5"
+  },
+  {
+   "name": "mEz_daf_15",
    "site": "step",
    "field": "daf",
-   "amp": "1.0",
+   "amp": "1.5",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
    "explicit": "1",
-   "delta": "5"
+   "delta": "5",
+   "zmin": "1.5"
   },
   {
-   "name": "mE_esi_10",
+   "name": "mEz_daf_20",
    "site": "step",
-   "field": "esi_frozen",
-   "amp": "1.0",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "delta": "5"
-  },
-  {
-   "name": "mEs_rnd2_10",
-   "site": "step",
-   "field": "rnd2",
-   "amp": "1.0",
-   "direct": "",
-   "nsig": "0",
-   "mask": "0",
-   "explicit": "1",
-   "delta": "5"
-  },
-  {
-   "name": "mE8_rnd2_20",
-   "site": "step",
-   "field": "rnd2",
+   "field": "daf",
    "amp": "2.0",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
    "explicit": "1",
-   "delta": "8"
+   "delta": "5",
+   "zmin": "1.5"
+  },
+  {
+   "name": "mEz_guided_15",
+   "site": "step",
+   "field": "vec:hybrid/r2/guided.npy",
+   "amp": "1.5",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "delta": "5",
+   "zmin": "1.5"
+  },
+  {
+   "name": "mEz_guided_20",
+   "site": "step",
+   "field": "vec:hybrid/r2/guided.npy",
+   "amp": "2.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "delta": "5",
+   "zmin": "1.5"
+  },
+  {
+   "name": "mEz8_guided_20",
+   "site": "step",
+   "field": "vec:hybrid/r2/guided.npy",
+   "amp": "2.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "delta": "8",
+   "zmin": "1.5"
   }
  ],
- "attempt": 2
+ "attempt": 3
 }
