@@ -3,7 +3,8 @@
     python esi/make_step.py <name> <field> <amp_mm>      (run from research/sidepod_opt)
       field: esi_frozen | esi_sst   downhill (-ESI sensitivity)
              opp_frozen             uphill control (+ESI frozen)
-             rnd1 | rnd2            random smooth control (numpy default_rng seed 1 / 2)
+             daf | daf_opp          downhill / uphill along the coarse-mesh DAFoam gradient (HYBRID_TEST.md)
+             rnd<k> | rnd<k>m       random smooth field, numpy default_rng seed k (m: its negative)
              zero                   no move (the base, same pipeline)
     -> gate/bump_<name>/car_half.stl (+ move_m.npy, step_info.json), and an entry in $GATE_RESULTS/bumps.json,
        the same folder layout as `gate.py variant`, so `gate.py bump <name>` morphs and solves it unchanged.
@@ -41,15 +42,41 @@ def vertex_area(m):
     return a
 
 
-def field_on_vertices(field, V):
-    S = np.load(SENS / ("esi_sens_sst.npz" if field == "esi_sst" else "esi_sens_frozen.npz"))
-    X, area = S["Xs"], S["area"]
-    if field in ("esi_frozen", "esi_sst"):
+DAF = HERE / "gate_results_coarse_up" / "dafoam" / "dafoam_sens.npz"
+
+
+def daf_density(V, N, A):
+    """The coarse DAFoam gradient as a per-area OUTWARD-normal density on the STL vertices: the exact transpose of
+    dafoam/judge.py's mapping (dD = sum_i G_i . dX_i, dX_i = inverse-distance mix of the 4 nearest vertex moves
+    w_v N_v), so a move w along N changes drag by sum_v g_v w_v (N); density = g_v / A_v."""
+    from scipy.spatial import cKDTree
+    S = np.load(DAF)
+    X, Gd = S["Xs"], S["dD_dXs"]
+    d, i = cKDTree(V).query(X, k=4)
+    w = 1.0 / np.maximum(d, 1e-9) ** 2
+    w /= w.sum(1, keepdims=True)
+    g = np.zeros(len(V))
+    np.add.at(g, i.ravel(), (w * np.einsum("pj,pkj->pk", Gd, N[i])).ravel())
+    return g / np.maximum(A, 1e-12)
+
+
+def field_on_vertices(field, V, N=None, A=None):
+    if field in ("daf", "daf_opp"):
+        X, area = V, A
+        s = daf_density(V, N, A)
+        val = -s if field == "daf" else s
+    else:
+        S = np.load(SENS / ("esi_sens_sst.npz" if field == "esi_sst" else "esi_sens_frozen.npz"))
+        X, area = S["Xs"], S["area"]
+    if field in ("daf", "daf_opp"):
+        pass
+    elif field in ("esi_frozen", "esi_sst"):
         val = -S["s_out"]                                  # downhill
     elif field == "opp_frozen":
         val = S["s_out"].copy()                            # uphill control
-    elif field in ("rnd1", "rnd2"):
-        val = np.random.default_rng(int(field[-1])).standard_normal(len(X))
+    elif field.startswith("rnd"):
+        k = field[3:].rstrip("m")
+        val = np.random.default_rng(int(k)).standard_normal(len(X)) * (-1.0 if field.endswith("m") else 1.0)
     else:
         raise SystemExit(f"unknown field {field}")
     out = np.zeros(len(V))
@@ -74,7 +101,7 @@ def main(name, field, amp_mm):
     if field == "zero" or amp == 0.0:
         w = np.zeros(len(V))
     else:
-        f = taper * field_on_vertices(field, V)
+        f = taper * field_on_vertices(field, V, N, A)
         f -= taper * (A * f).sum() / (A * taper).sum()   # volume-neutral (first order)
         core = taper > 0.5
         f /= np.percentile(np.abs(f[core]), 95)
