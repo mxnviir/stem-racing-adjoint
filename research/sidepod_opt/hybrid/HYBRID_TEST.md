@@ -185,3 +185,6 @@ Round 1c, first result in (job log; the commit waits for the production runs): D
   chained solve built the moves in the solve stage, where the workflow does not pass the smoothed-normal / clearance
   settings, so the 1 mm parent was built on raw normals (which fold at 1 mm). Fixed in `chain_solve.py`; relaunched
   unchanged otherwise (same candidates, same marks).
+- Round 1c, second result (job log, D20 of the run record; the committed forces will give the 404-iteration mean):
+  rnd1's opposite at 0.5 mm **+1.86 mN** (rnd1 itself -2.70). With DAFoam's opposite +4.05: **Mark S met** (both
+  opposites raise drag): the 0.5 mm gains are shape, not a switch of flow state.
