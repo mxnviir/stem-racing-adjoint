@@ -1496,7 +1496,7 @@ external topology case was **not found** in their material (that is not proof it
     owner's choice: Plan C (DAFoam discrete adjoint on fine, ~500 GB, paid machine, only after a sizing run and the
     owner's OK on instance and cost) or gradient by bump-by-bump differencing (2 CFD runs per site).
 
-- **2026-11-24 10:40, why the normal (ESI) adjoint fails: diagnosis (owner asked; checks on existing data, no solves).**
+- **2026-11-24 11:10, why the normal (ESI) adjoint fails: diagnosis (owner asked; checks on existing data, no solves).**
   - Ruled out, each checked:
     - Sign: morph and prediction both use new minus reference surface; proven on the wing (20/20).
     - Area weighting: dropping it puts predictions ~1e5x off, and no weighting changes a sign.
