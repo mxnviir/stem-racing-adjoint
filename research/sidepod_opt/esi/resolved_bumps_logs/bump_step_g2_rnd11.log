@@ -1,0 +1,36 @@
+step_g2_rnd11_inc {"field": "rnd11", "amp_mm": 0.5, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "edge_mask_mm": 0.0, "normal_sigma_mm": 0.0, "moved_gt_0p1mm_frac": 0.6379913274583858, "max_out_mm": 0.5, "max_in_mm": 0.5, "dV_mm3": 20.963100377419956}
+step_g2_rnd11_par {"field": "zero", "amp_mm": 0.0, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "parent": "daf@1.0", "total_peak_mm": 1.0, "dV_mm3": -29.8222094661702}
+CHAIN child total peak mm 1.4990284301992012
+CHAIN parent morph: FAILED
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4179_3945a1b45ac1
+[openfoam_case] morph checkMesh: ***High aspect ratio cells found, Max aspect ratio: 1.2832005576091004e+93, number of cells 12; ***Zero or negative cell volume detected.  Minimum negative volume: -3.3992545588811724e-12, Number of negative volume cells: 12; ***Number of non-orthogonality errors: 32.; ***Error in face pyramids: 106
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4179_0e90a43c2360
+Traceback (most recent call last):
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/hybrid/chain_solve.py", line 68, in <module>
+    runpy.run_path(str(SP / 'gate.py'), run_name='__main__')
+  File "<frozen runpy>", line 291, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate.py", line 482, in <module>
+    cmd_bump(sys.argv[2], npar(3))
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate.py", line 277, in cmd_bump
+    half, health, secs = solve(folder, n_sub, ITERS, extra={"morph_from": ref, "warm_from": ref}, keep=True)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate.py", line 69, in solve
+    half, health = run_half_car_cfd(str(body), n_subdomains=n_sub, extra_surfaces=SW.extra_surfaces(folder),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_wrapper.py", line 307, in run_half_car_cfd
+    result = _invoke_openfoam_pipeline(str(path), str(case_dir), run_config=run_config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_wrapper.py", line 138, in _invoke_openfoam_pipeline
+    return openfoam_case.invoke(stl_path, case_dir, cfg=run_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/openfoam_case.py", line 2273, in invoke
+    logs = run_stages(run_dir, cfg, resolved_bashrc, resume=bool(resume_dir))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/openfoam_case.py", line 1974, in run_stages
+    checkmesh = _mesh(run, cfg, bashrc, timeout_s)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/openfoam_case.py", line 1873, in _mesh
+    raise RuntimeError(f"morphed mesh failed checkMesh and P2_MORPH_STRICT=1 forbids a fresh mesh: "
+RuntimeError: morphed mesh failed checkMesh and P2_MORPH_STRICT=1 forbids a fresh mesh: ***High aspect ratio cells found, Max aspect ratio: 1.2832005576091004e+93, number of cells 12; ***Zero or negative cell volume detected.  Minimum negative volume: -3.3992545588811724e-12, Number of negative volume cells: 12; ***Number of non-orthogonality errors: 32.; ***Error in face pyramids: 106
