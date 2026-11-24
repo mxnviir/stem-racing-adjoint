@@ -1,0 +1,13 @@
+{
+ "D20_half_N": 0.22875759351051528,
+ "wall_s": 1070.1,
+ "converged": true,
+ "residual_p": 1.8949741648422357e-05,
+ "force_osc": 0.00012156999162296369,
+ "force_drift": 6.648662244232022e-07,
+ "run_dir": "",
+ "force_mean_stderr": 1.5523225707273502e-06,
+ "run_dir_kept": "gate/refA_hyb",
+ "folder": "gate/original",
+ "iters": 5000
+}
