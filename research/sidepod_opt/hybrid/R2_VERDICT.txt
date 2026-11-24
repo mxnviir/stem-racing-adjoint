@@ -1,0 +1,20 @@
+H2 (hybrid/HYBRID_TEST.md): change vs step_zero, half car, mN; SE whole-signal; linear-model and DAFoam predictions
+  zero        190.7299 +/- 0.1309  change +0.0000
+  es          MISSING / failed
+  guided      MISSING / failed
+  guided_daf  MISSING / failed
+  guided_esi  MISSING / failed
+  daf         189.6643 +/- 0.1076  change -1.0656  DAFoam -2.171
+  rnd1        189.6874 +/- 0.1187  change -1.0425
+  guided_05E  MISSING / failed
+  guided_10E  MISSING / failed
+  es_10E      MISSING / failed
+  daf_10E2    MISSING / failed
+  daf_05E     185.8868 +/- 0.0017  change -4.8431  DAFoam -8.683
+  daf_10E     MISSING / failed
+  rnd1_05E    188.0275 +/- 0.0026  change -2.7024  DAFoam -1.114
+  esi_05E     187.1586 +/- 0.0006  change -3.5713  DAFoam -2.669
+  rnd1_qE     189.5485 +/- 0.1214  change -1.1815  DAFoam -0.278
+  rnd1_qD     189.4332 +/- 0.1217  change -1.2967  DAFoam -0.278
+VERDICT H2: INVALID (a marked run missing or fell back)
+Mark E (explicit morph reads the same as the old one, rnd1 0.125): met (difference -0.1389, 3 SE 0.5093)

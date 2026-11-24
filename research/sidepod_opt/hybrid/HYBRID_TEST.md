@@ -112,3 +112,20 @@ Linear-model values at 0.125 mm (`hybrid/r2/combine.json`): ES -1.34, GUIDED -1.
 (DAFoam alone measured -1.07). Marked runs as written above (0.125 mm, old morph). Reported: GUIDED at 0.5 and 1.0 mm,
 ES at 1.0 mm, DAFoam at 1.0 mm again (all explicit morph, smoothed normals, 1.5 mm ground clearance; DAFoam 1.0 mm
 re-run because the strict rule refused its one skewed face in round 1b). Verdict script: `hybrid/r2_verdict.py`.
+
+## Round 1b result (2026-11-24 20:54, run 45467103535)
+| run | change vs zero (mN) | linear from its 0.125 mm result | coarse DAFoam predicted |
+|---|---|---|---|
+| `step_rnd1_qE` (explicit morph, same STL as rnd1_q) | -1.18 | (rnd1_q -1.04) | -0.28 |
+| `step_rnd1_qD` (explicit, direct field, smoothed normals) | -1.30 | | -0.28 |
+| `step_daf_05E` (DAFoam, 0.5 mm) | **-4.84** | -4.26 | -8.68 |
+| `step_esi_05E` (ESI, 0.5 mm) | -3.57 | -2.58 | -2.67 |
+| `step_rnd1_05E` (rnd1, 0.5 mm) | -2.70 | -4.17 | -1.11 |
+| `step_daf_10E` | refused by the strict rule (1 skewed face), re-run in round 2 | | |
+- **Mark E met:** the explicit morph reads the same as the old morph at 0.125 mm (-1.18 vs -1.04, 3 SE 0.51).
+- Steps of 0.5 mm pay 2.5-5 mN (1.4-2.5 % of the half car); DAFoam's direction stays the best, and scales slightly
+  better than linear; the random direction scales worse than linear (its curvature, seen in round 1).
+- The 0.5 mm explicit runs have a whole-signal SE of 0.001-0.003 mN (a steadier flow than the base's 0.13).
+- Diagnostic 3 (morph only, run 45482441995): with 1.5 mm ground clearance, 1.5 and 2 mm moves still fold a few cells
+  (2-24) for every direction: **one morph from a mesh reaches about 1 mm**. Larger total changes need chained morphs
+  (each generation morphs its parent's mesh) or a new mesh.

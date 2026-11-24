@@ -1,0 +1,55 @@
+{
+ "runs": {
+  "zero": {
+   "D": 190.72991709251085,
+   "se": 0.13086428315622378,
+   "fallback": false
+  },
+  "es": null,
+  "guided": null,
+  "guided_daf": null,
+  "guided_esi": null,
+  "daf": {
+   "D": 189.66432050235073,
+   "se": 0.10757281735601473,
+   "fallback": false
+  },
+  "rnd1": {
+   "D": 189.68737153614276,
+   "se": 0.1186823461273445,
+   "fallback": false
+  },
+  "guided_05E": null,
+  "guided_10E": null,
+  "es_10E": null,
+  "daf_10E2": null,
+  "daf_05E": {
+   "D": 185.8867722850683,
+   "se": 0.0016574726016783722,
+   "fallback": false
+  },
+  "daf_10E": null,
+  "rnd1_05E": {
+   "D": 188.02746817829112,
+   "se": 0.0025677410652749093,
+   "fallback": false
+  },
+  "esi_05E": {
+   "D": 187.15860593674896,
+   "se": 0.0005605404550383872,
+   "fallback": false
+  },
+  "rnd1_qE": {
+   "D": 189.54845762823336,
+   "se": 0.12138799424046073,
+   "fallback": false
+  },
+  "rnd1_qD": {
+   "D": 189.43323374910622,
+   "se": 0.12173096162866218,
+   "fallback": false
+  }
+ },
+ "marks": {},
+ "verdict": "INVALID (a marked run missing or fell back)"
+}
