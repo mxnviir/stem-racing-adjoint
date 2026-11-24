@@ -1865,7 +1865,10 @@ def _mesh(run: Path, cfg: OpenFOAMRunConfig, bashrc: str, timeout_s: int) -> str
             # opt-in: a study that may only use morphed meshes stops here instead of meshing fresh
             bad = [l.strip() for l in check.splitlines() if l.strip().startswith(("***", "Failed"))]
             print(f"[openfoam_case] morph checkMesh: {'Mesh OK' if 'Mesh OK' in check else '; '.join(bad)[:300]}", flush=True)
-            if "Mesh OK" not in check:
+            # opt-in P2_MORPH_STRICT_RULE=acceptable: the strict study accepts what the remesh rule accepts (a few
+            # moderately skewed faces, morph_mesh_acceptable), still never a fresh mesh
+            ok = morph_mesh_acceptable(check) if os.environ.get("P2_MORPH_STRICT_RULE") == "acceptable" else "Mesh OK" in check
+            if not ok:
                 _write(run / "MORPH_FAILED", "\n".join(bad or ["checkMesh did not report Mesh OK"]) + "\n")
                 raise RuntimeError(f"morphed mesh failed checkMesh and P2_MORPH_STRICT=1 forbids a fresh mesh: "
                                    f"{'; '.join(bad)[:300]}")
