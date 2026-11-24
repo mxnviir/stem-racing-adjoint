@@ -148,3 +148,30 @@ Morph the mesh onto A (1 mm), then morph THAT mesh onto A + increment:
 | GUIDED 1.0 | rnd3 1.0 | 2.0 mm | acceptable (9 faces skew 5.2) | 7 inverted faces |
 Chaining reaches 1.5-2 mm where one 2 mm morph never passed; it is not reliable at 2 mm. Larger totals: smaller
 chained steps (untested) or a new mesh.
+
+## Round 2 result (2026-11-24 22:26, run 45482339933): **H2 FAIL** (`hybrid/R2_VERDICT.txt`)
+| run (0.125 mm, old morph; marked) | change (mN) | linear model |
+|---|---|---|
+| ES (span of 11 random probes only) | **-1.84** | -1.34 |
+| GUIDED (randoms + DAFoam + ESI frozen/SST) | -1.40 | -1.74 |
+| GUIDED-DAF | -1.45 | -1.58 |
+| GUIDED-ESI | -1.77 | -1.50 |
+| DAFoam alone (round 1) | -1.07 | |
+- G1 not met: GUIDED is 0.43 mN *worse* than ES (3 SE 0.40). G2 not met: GUIDED vs DAFoam -0.34 (3 SE 0.38). At
+  0.125 mm, adding the adjoint directions to evolution's own estimate did not help; every combined direction still
+  beat the best single probe.
+- Reported (explicit morph): GUIDED 0.5 mm **-5.24**, 1.0 mm -6.65; DAFoam 1.0 mm **-6.93** (best so far, 3.6 % of the
+  half car; 0.5 -> 1.0 mm adds only -2.1: diminishing); ES 1.0 mm folded 2 cells (no result).
+- Fresh DAFoam gradient at the 0.5 mm DAFoam design (run 45477836968): coarse drag 228.7 -> 218.2 mN; its predictions
+  correlate 0.95 with the base gradient's, 0.74x the size. The 1.0 mm design's DAFoam job died in the adjoint (runner
+  lost after 1.5 h; 1 of 4 runner DAFoam jobs so far).
+
+## Round 3 = generation 2 (written before these solves)
+Parent: DAFoam 1.0 mm (`daf@1.0`, -6.93). Children: the mesh is morphed onto the parent, then that mesh is morphed by
+each child's 0.5 mm increment (chained, `hybrid/chain_solve.py`), warm start from the base flow, 1000 iterations:
+`g2_zero` (the parent itself through the chained pipeline), `g2_daffresh` (DAFoam gradient at the 0.5 mm DAFoam design),
+`g2_dafbase` (base DAFoam), `g2_esi`, `g2_guided`, `g2_es` (round-2 directions), `g2_rnd11`-`g2_rnd16`.
+Predictions on record: `hybrid/pred_r3.json`.
+- **Mark L (the loop keeps going):** the best child is below `g2_zero` by >= 3 SE.
+- Reported: fresh vs base DAFoam guide; adjoint-guided children vs random/ES children; parent through the chained
+  pipeline vs its from-base value (-6.93).

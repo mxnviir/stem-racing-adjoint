@@ -5,10 +5,26 @@
    "se": 0.13086428315622378,
    "fallback": false
   },
-  "es": null,
-  "guided": null,
-  "guided_daf": null,
-  "guided_esi": null,
+  "es": {
+   "D": 188.89396975344968,
+   "se": 0.11613120339718705,
+   "fallback": false
+  },
+  "guided": {
+   "D": 189.32677225122615,
+   "se": 0.06400589587583083,
+   "fallback": false
+  },
+  "guided_daf": {
+   "D": 189.28071992237693,
+   "se": 0.07862923777836363,
+   "fallback": false
+  },
+  "guided_esi": {
+   "D": 188.95908795047725,
+   "se": 0.09667865989072626,
+   "fallback": false
+  },
   "daf": {
    "D": 189.66432050235073,
    "se": 0.10757281735601473,
@@ -19,10 +35,22 @@
    "se": 0.1186823461273445,
    "fallback": false
   },
-  "guided_05E": null,
-  "guided_10E": null,
+  "guided_05E": {
+   "D": 185.48998666024343,
+   "se": 0.0010326978708122905,
+   "fallback": false
+  },
+  "guided_10E": {
+   "D": 184.08160034602878,
+   "se": 0.00021761774551433402,
+   "fallback": false
+  },
   "es_10E": null,
-  "daf_10E2": null,
+  "daf_10E2": {
+   "D": 183.80293895310598,
+   "se": 0.0014695768066070672,
+   "fallback": false
+  },
   "daf_05E": {
    "D": 185.8867722850683,
    "se": 0.0016574726016783722,
@@ -50,6 +78,17 @@
    "fallback": false
   }
  },
- "marks": {},
- "verdict": "INVALID (a marked run missing or fell back)"
+ "marks": {
+  "G1 guided < es": [
+   false,
+   0.4328024977764642,
+   0.3978051030141755
+  ],
+  "G2 guided < daf": [
+   false,
+   -0.33754825112458775,
+   0.3755236233141716
+  ]
+ },
+ "verdict": "FAIL"
 }

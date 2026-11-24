@@ -78,7 +78,7 @@ jobs:
           d['run_dir_kept'] = str(pathlib.Path('gate/refA_resolved_up').resolve()); p.write_text(json.dumps(d, indent=1))
           PY
       - name: step candidate (esi/STEP_TEST.md)
-        if: matrix.case.field
+        if: matrix.case.field && !matrix.case.chainparent
         working-directory: research/sidepod_opt
         env:
           STEP_EDGE_MASK_MM: ${{ matrix.case.mask || '0' }}
@@ -105,7 +105,9 @@ jobs:
           if [ "${{ matrix.case.explicit }}" = "1" ]; then export P2_MORPH_EXPLICIT=1 P2_MORPH_D0_MM=${{ matrix.case.d0 || '0.5' }} P2_MORPH_DELTA_MM=${{ matrix.case.delta || '5' }}; export P2_MORPH_STRICT_RULE=acceptable; echo "explicit morph (strict rule: acceptable)"; fi
           T0=$(date +%s)
           set +e
-          python -W ignore -u gate.py bump "${{ matrix.case.name }}" 4 > gate/bump_link.log 2>&1
+          if [ -n "${{ matrix.case.chainparent }}" ]; then
+            python -W ignore -u hybrid/chain_solve.py "${{ matrix.case.name }}" "${{ matrix.case.chainparent }}" "${{ matrix.case.field }}" "${{ matrix.case.amp }}" > gate/bump_link.log 2>&1
+          else python -W ignore -u gate.py bump "${{ matrix.case.name }}" 4 > gate/bump_link.log 2>&1; fi
           RC=$?
           set -e
           echo "rc $RC, $(( ($(date +%s) - T0) / 60 )) min"
