@@ -130,7 +130,7 @@ decided), *withdrawn*.
      "no parameters, no predictors" the only step proposer is bump-by-bump differencing, i.e. a gradient at 2 CFD runs per site.
   - **Step 1 result (2026-11-24, Actions run 45336249142):** folds scale with height; at 0.25 mm all three registered
     pairs are Mesh OK, at 0.5 mm pod_rear and pod_rear_top are. Proposed step 2: smaller bumps (pod_rear ±0.5,
-    pod_rear_top ±0.5, pod_front_low ±0.25 mm), awaiting the owner's approval (ROUTES.md 2026-11-24 06:30).
+    pod_rear_top ±0.5, pod_front_low ±0.25 mm), awaiting the owner's approval (ROUTES.md 2026-11-24 06:15).
   - Not fixed by any of this: fine-mesh scoring scatter (two flow states, team sd 3 mN) still needs method A or repeats.
   Otherwise the discrete adjoint, but only on a mesh that passes D8 (medium ≈ 128 GB; fine ≈ 500 GB,
   extrapolated), or steps scored by CFD without a gradient.

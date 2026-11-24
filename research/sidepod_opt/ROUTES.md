@@ -1437,7 +1437,7 @@ external topology case was **not found** in their material (that is not proof it
     (replacement candidates). Run https://github.com/mxnviir/stem-racing-paper/actions/runs/45332912510; results are
     committed to `esi/morph_check/`.
 
-- **2026-11-24 06:30, plan B step 1 done (GitHub Actions run 45336249142, morph-only, no solves): on the wall-resolved mesh the folds shrink with bump height; at 0.25 mm all three registered pairs morph clean.**
+- **2026-11-24 06:15, plan B step 1 done (GitHub Actions run 45336249142, morph-only, no solves): on the wall-resolved mesh the folds shrink with bump height; at 0.25 mm all three registered pairs morph clean.**
   - Setup reproduces the PC exactly (fixed reference, strict): pod_front_low 9 cells, pod_front_low_m 3, pod_rear 4,
     pod_rear_m OK, pod_rear_top 10 faces, pod_rear_top_m 35 faces. Results: `esi/morph_check/results_45336249142.md`
     (run 45332912510 stopped before any morph: a hard-coded path in the probe, fixed).
