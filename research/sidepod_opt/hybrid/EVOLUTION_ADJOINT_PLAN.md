@@ -1,28 +1,47 @@
-# Evolution + adjoint for the most aerodynamic sidepod: the tested plan (draft, results filled in as they land)
+# Evolution + adjoint for the most aerodynamic sidepod: the tested plan
 
-Scope (owner, 2026-11-24): aerodynamics of the sidepod only. Constraints kept: the sidepod region (x 0.07-0.20 m,
-y > 12 mm, faded at its edges), symmetry, the ground. Dropped for this stage: milling, cargo, mass/ballast, the 27 mm
-ceiling, wall thickness. They come back as a final legalisation step, measured by CFD like everything else.
+Owner's request (2026-11-24 ~18:15 UTC): combine evolution with both adjoints (discrete DAFoam, normal ESI) to make the
+most aerodynamic sidepod; aerodynamics only; research first; bring over the evolution branch's parts; test; 18 hours.
+Every number below is a wall-resolved CFD result on GitHub Actions unless it says otherwise. Marks were written before
+each round's solves (`HYBRID_TEST.md`); where a mark failed, it says so.
 
-## 1. The method in one paragraph
-**Guided evolution, judged by good-mesh CFD.** The design is a smooth normal-displacement field on the pod's surface (no
-shape parameters). Each round, one batch of good-mesh CFD runs in parallel on GitHub Actions (free, ~20 at once,
-~2 h): the current design re-run; a population of random smooth mutations (evolution); one probe along each adjoint
-direction (coarse DAFoam, wall-resolved ESI, last accepted step); and a fan of steps along the steepest descent
-inside the span of every direction measured so far. The best candidate replaces the design if it beats it by >= 3 SE
-(Lamarckian selection). The adjoints never decide anything: each one is weighted by the drag change its own probe
-actually produced, measured in the same batch. Evolution supplies exploration and the safety net; the adjoints supply
-direction where they are right.
+## 1. The method: guided evolution, judged by good-mesh CFD
+The design is a smooth normal-displacement field on the pod's surface: no shape parameters, no predictor. Each round is
+one batch of good-mesh CFD runs in parallel (free runners, ~20 at once, ~1.5-2 h):
 
-## 2. Why this and not the alternatives (evidence)
-- [to fill: R1, R1b, R2 results; DAFoam smoke test; morph]
+| member of the batch | where it comes from | why |
+|---|---|---|
+| parent re-run | the current design | the reference for this round (the pipeline is deterministic: repeat 0.0003 mN) |
+| ~6-10 random smooth moves | evolution's mutation | exploration, and an unbiased measured gradient estimate |
+| one move along each adjoint | DAFoam (coarse, fresh each round), ESI | the cheap guess at "downhill"; measured, not trusted |
+| moves along the combination of everything measured | least squares in the span of measured moves (`combine.py`) | evolution's recombination; uses every measurement |
+| a fan of sizes (0.5 / 1.0 mm) along the best directions | | the step size is chosen by CFD |
 
-## 3. Pipeline
-- Good mesh: the wall-resolved mesh (2.1 M cells, y+ ~1), steady upwind model (D10), warm start, 1000 iterations.
-- Moves: explicit morph of that mesh (`P2_MORPH_EXPLICIT`, wall layer moved rigidly), tested clean to 1 mm per move.
-- DAFoam: coarse mesh of the current design + DAFoam on a GitHub runner (`coarse_dafoam.yml`), ~1 h, free.
-- ESI: on the good mesh (as in the 2026-11-23 test).
-- Optimiser: `hybrid/guided_es.py` (ask/tell, resumable), round builder, verdict scripts.
+The best member replaces the parent if it beats it by >= 3 SE (Lamarckian selection: the improved design is what the
+next generation starts from). The adjoints never decide; each adjoint's move is measured in the same batch it is used.
+Implementation: `hybrid/guided_es.py` (ask/tell, resumable, the interface of the evolution branch's CMA wrapper, ported
+in `hybrid/evolution_methods.py`), `esi/make_step.py` (moves), `hybrid/combine.py`, `hybrid/chain_solve.py` (chained morph),
+workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
 
-## 4. Schedule, costs, decisions for the owner
-- [to fill]
+## 2. What the tests showed (2026-11-24 18:37 onward)
+[filled in below, section 6]
+
+## 3. Why this design, and not the alternatives
+- **Plain CMA-ES (the evolution branch):** 96 SimScale cars over a 72-number lattice never beat the team pod (best 4 %
+  worse). Probable causes (not tested here): ~6 mm random steps where 0.125 mm already moves drag by +-1 mN; a fresh
+  mesh per car (that mesh changed the team car's drag by 6 %); milling and rule masks applied after each sample. Its
+  ask/tell interface is kept; its lattice is not (shape parameters).
+- **Adjoint descent alone:** the coarse DAFoam direction is the best single direction at 0.5-1 mm, but on its own it
+  sizes steps 2x wrong and goes flat after ~1 mm (0.5 -> 1.0 mm adds only 2.1 mN of 6.9).
+- **ESI alone:** fails every gradient test; as a move it lowers drag (0.5 mm: -3.6 mN) but less than DAFoam's.
+- **Guided ES (Maheswaranathan et al. 2019) as the frame:** keeps evolution's guarantee (it is a descent method in
+  expectation whatever the adjoints' bias) and uses the adjoints where they help (`RESEARCH.md`).
+
+## 4. Schedule and cost (proposed)
+[filled in below]
+
+## 5. Decisions for the owner
+[filled in below]
+
+## 6. Evidence, in order
+[filled in below]

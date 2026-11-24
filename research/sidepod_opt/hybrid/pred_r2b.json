@@ -1,0 +1,38 @@
+{
+ "es_05E": {
+  "field": "vec:hybrid/r2/es.npy",
+  "amp_mm": 0.5,
+  "peak_mm": 0.5,
+  "rms_mm": 0.23533100186895967,
+  "dV_mm3": -10.981745138052341,
+  "predicted_mN": {
+   "dafoam_coarse": -2.1112691819604326,
+   "esi_coarse": -0.09012178227984889,
+   "esi_resolved": 0.02670803019021032
+  }
+ },
+ "guidedaf_05E": {
+  "field": "vec:hybrid/r2/guided_daf.npy",
+  "amp_mm": 0.5,
+  "peak_mm": 0.5,
+  "rms_mm": 0.19548591469530535,
+  "dV_mm3": -12.912613644926905,
+  "predicted_mN": {
+   "dafoam_coarse": -7.770752115972025,
+   "esi_coarse": -0.45412011588980683,
+   "esi_resolved": -0.6264217507801118
+  }
+ },
+ "guidedesi_05E": {
+  "field": "vec:hybrid/r2/guided_esi.npy",
+  "amp_mm": 0.5,
+  "peak_mm": 0.5,
+  "rms_mm": 0.21954134323541402,
+  "dV_mm3": -6.608324029717886,
+  "predicted_mN": {
+   "dafoam_coarse": -2.8602939549504716,
+   "esi_coarse": -0.520314329239101,
+   "esi_resolved": -1.1065276375674398
+  }
+ }
+}

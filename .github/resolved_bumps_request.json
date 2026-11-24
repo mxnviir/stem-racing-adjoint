@@ -1,152 +1,41 @@
 {
- "note": "hybrid round 3 = generation 2: parent daf@1.0 (chained morph) + one 0.5 mm move each",
+ "note": "hybrid round 2b: the remaining round-2 arms at 0.5 mm (ES, GUIDED-DAF, GUIDED-ESI), explicit morph",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "step_g2_zero",
-   "field": "zero",
-   "amp": "0",
+   "name": "step_es_05E",
    "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
-  },
-  {
-   "name": "step_g2_daffresh",
-   "field": "dafnpz:hybrid/dafoam_actions/45477836968/daf-daf05/dafoam_sens.npz",
-   "amp": "0.5",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
-  },
-  {
-   "name": "step_g2_dafbase",
-   "field": "daf",
-   "amp": "0.5",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
-  },
-  {
-   "name": "step_g2_esi",
-   "field": "esi_frozen",
-   "amp": "0.5",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
-  },
-  {
-   "name": "step_g2_guided",
-   "field": "vec:hybrid/r2/guided.npy",
-   "amp": "0.5",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
-  },
-  {
-   "name": "step_g2_es",
    "field": "vec:hybrid/r2/es.npy",
    "amp": "0.5",
-   "site": "step",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
    "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
+   "zmin": "1.5"
   },
   {
-   "name": "step_g2_rnd11",
-   "field": "rnd11",
-   "amp": "0.5",
+   "name": "step_guidedaf_05E",
    "site": "step",
+   "field": "vec:hybrid/r2/guided_daf.npy",
+   "amp": "0.5",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
    "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
+   "zmin": "1.5"
   },
   {
-   "name": "step_g2_rnd12",
-   "field": "rnd12",
-   "amp": "0.5",
+   "name": "step_guidedesi_05E",
    "site": "step",
+   "field": "vec:hybrid/r2/guided_esi.npy",
+   "amp": "0.5",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
    "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
-  },
-  {
-   "name": "step_g2_rnd13",
-   "field": "rnd13",
-   "amp": "0.5",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
-  },
-  {
-   "name": "step_g2_rnd14",
-   "field": "rnd14",
-   "amp": "0.5",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
-  },
-  {
-   "name": "step_g2_rnd15",
-   "field": "rnd15",
-   "amp": "0.5",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
-  },
-  {
-   "name": "step_g2_rnd16",
-   "field": "rnd16",
-   "amp": "0.5",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0"
+   "zmin": "1.5"
   }
  ],
- "attempt": 5
+ "attempt": 6
 }

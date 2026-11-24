@@ -175,3 +175,9 @@ Predictions on record: `hybrid/pred_r3.json`.
 - **Mark L (the loop keeps going):** the best child is below `g2_zero` by >= 3 SE.
 - Reported: fresh vs base DAFoam guide; adjoint-guided children vs random/ES children; parent through the chained
   pipeline vs its from-base value (-6.93).
+
+## Round 2b (written before these solves): the round-2 arms at 0.5 mm
+`step_es_05E`, `step_guidedaf_05E`, `step_guidedesi_05E` (explicit morph), to set beside GUIDED 0.5 (-5.24) and
+DAFoam 0.5 (-4.84). Reported, not marked (a post-result follow-up of H2). Predictions: `hybrid/pred_r2b.json`.
+Round 1c, first result in (job log; the commit waits for the production runs): DAFoam's opposite at 0.5 mm **+4.05 mN**
+(DAFoam itself -4.84): the 0.5 mm gain is shape, not a flow-state switch, along this direction.
