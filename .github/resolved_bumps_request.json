@@ -1,36 +1,12 @@
 {
- "note": "hybrid/HYBRID_TEST.md round 2 (H2): combined directions at 0.125 mm (marked) + larger steps with the explicit morph (reported)",
+ "note": "hybrid checks on round 1b: (a) opposite moves at 0.5 mm (is the gain shape or a flow-state switch?), (b) base vs DAFoam 0.5 mm under the production scheme, 2000 its",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "step_es_q",
+   "name": "step_dafopp_05E",
    "site": "step",
-   "field": "vec:hybrid/r2/es.npy",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_guided_q",
-   "site": "step",
-   "field": "vec:hybrid/r2/guided.npy",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_guidedaf_q",
-   "site": "step",
-   "field": "vec:hybrid/r2/guided_daf.npy",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_guidedesi_q",
-   "site": "step",
-   "field": "vec:hybrid/r2/guided_esi.npy",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_guided_05E",
-   "site": "step",
-   "field": "vec:hybrid/r2/guided.npy",
+   "field": "daf_opp",
    "amp": "0.5",
    "direct": "1",
    "nsig": "1.5",
@@ -39,10 +15,10 @@
    "zmin": "1.5"
   },
   {
-   "name": "step_guided_10E",
+   "name": "step_rnd1m_05E",
    "site": "step",
-   "field": "vec:hybrid/r2/guided.npy",
-   "amp": "1.0",
+   "field": "rnd1m",
+   "amp": "0.5",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
@@ -50,27 +26,26 @@
    "zmin": "1.5"
   },
   {
-   "name": "step_es_10E",
+   "name": "step_zero_P",
    "site": "step",
-   "field": "vec:hybrid/r2/es.npy",
-   "amp": "1.0",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5"
+   "field": "zero",
+   "amp": "0",
+   "prod": "1",
+   "iters": "2000"
   },
   {
-   "name": "step_daf_10E2",
+   "name": "step_daf_05EP",
    "site": "step",
    "field": "daf",
-   "amp": "1.0",
+   "amp": "0.5",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
    "explicit": "1",
-   "zmin": "1.5"
+   "zmin": "1.5",
+   "prod": "1",
+   "iters": "2000"
   }
  ],
- "attempt": 3
+ "attempt": 4
 }

@@ -1,0 +1,38 @@
+{
+ "dafopp_05E": {
+  "field": "daf_opp",
+  "amp_mm": 0.5,
+  "peak_mm": 0.5,
+  "rms_mm": 0.16466600122956052,
+  "dV_mm3": 44.17660047166019,
+  "predicted_mN": {
+   "dafoam_coarse": 8.683204971075257,
+   "esi_coarse": 0.4423820432122643,
+   "esi_resolved": 0.7282394098780405
+  }
+ },
+ "rnd1m_05E": {
+  "field": "rnd1m",
+  "amp_mm": 0.5,
+  "peak_mm": 0.5,
+  "rms_mm": 0.23520919901287066,
+  "dV_mm3": 0.4095855537892129,
+  "predicted_mN": {
+   "dafoam_coarse": 1.113940324831636,
+   "esi_coarse": -0.08401302351082883,
+   "esi_resolved": 0.009398947132187547
+  }
+ },
+ "daf_05EP": {
+  "field": "daf",
+  "amp_mm": 0.5,
+  "peak_mm": 0.5,
+  "rms_mm": 0.16466600122956052,
+  "dV_mm3": -44.17660047166019,
+  "predicted_mN": {
+   "dafoam_coarse": -8.683204971075257,
+   "esi_coarse": -0.4423820432122643,
+   "esi_resolved": -0.7282394098780405
+  }
+ }
+}

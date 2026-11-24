@@ -97,8 +97,9 @@ jobs:
         working-directory: research/sidepod_opt
         timeout-minutes: 320
         run: |
-          export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1000 GATE_TIMEOUT=18000 \
+          export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=${{ matrix.case.iters || 1000 }} GATE_TIMEOUT=18000 \
                  CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1 GATE_MORPH_REF_RM=1 P2_MORPH_STRICT=1 P2_WARM_COPY=1
+          if [ "${{ matrix.case.prod }}" = "1" ]; then unset CFD_DIV_U; echo "production scheme (linearUpwind), ${GATE_ITERS} iterations"; fi
           if [ "${{ matrix.case.direct }}" = "1" ]; then export P2_MORPH_FIELD=$PWD/gate/bump_${{ matrix.case.name }}/morph_field.npz; echo "direct-field morph: $P2_MORPH_FIELD"; fi
           if [ "${{ matrix.case.explicit }}" = "1" ]; then export P2_MORPH_EXPLICIT=1 P2_MORPH_D0_MM=${{ matrix.case.d0 || '0.5' }} P2_MORPH_DELTA_MM=${{ matrix.case.delta || '5' }}; export P2_MORPH_STRICT_RULE=acceptable; echo "explicit morph (strict rule: acceptable)"; fi
           T0=$(date +%s)

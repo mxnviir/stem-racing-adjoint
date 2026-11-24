@@ -129,3 +129,11 @@ re-run because the strict rule refused its one skewed face in round 1b). Verdict
 - Diagnostic 3 (morph only, run 45482441995): with 1.5 mm ground clearance, 1.5 and 2 mm moves still fold a few cells
   (2-24) for every direction: **one morph from a mesh reaches about 1 mm**. Larger total changes need chained morphs
   (each generation morphs its parent's mesh) or a new mesh.
+
+## Round 1c (written before these solves): is the 0.5 mm gain shape, and does it survive the production scheme?
+The base flow (and every 0.125 mm move) carries a slow drag oscillation (about +-0.9 mN, ~101-iteration cycle); all three
+0.5 mm moves are steady (oscillation 0.01-0.03 mN). A switch of flow state could lower drag whatever the shape.
+- `step_dafopp_05E`, `step_rnd1m_05E`: the opposite moves at 0.5 mm (explicit morph). **Mark S (shape, not state):**
+  both opposite moves raise drag vs zero (change > 0). If either lowers drag, the 0.5 mm gains are not read as shape.
+- `step_zero_P`, `step_daf_05EP`: base and DAFoam 0.5 mm under the production scheme (linearUpwind), 2000 iterations from
+  the steady state. **Mark P:** D(daf_05EP) < D(zero_P) by >= 3 SE. Reported: the size ratio vs the steady model.
