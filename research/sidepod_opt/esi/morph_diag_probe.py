@@ -4,7 +4,7 @@ After the morph's checkMesh it runs `checkMesh -writeSets raw` and classifies ev
 import os, runpy, sys, glob, json, re
 from pathlib import Path
 import numpy as np
-SP = Path('/home/user/esp32-line-follower/research/sidepod_opt'); site = sys.argv[1]
+SP = Path(__file__).resolve().parents[1]; site = sys.argv[1]
 os.chdir(SP); sys.path.insert(0, str(SP.parents[1] / 'part2-simulation')); sys.path.insert(0, str(SP))
 import openfoam_case as oc  # noqa: E402
 orig = oc._run

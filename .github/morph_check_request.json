@@ -1,5 +1,5 @@
 {
- "note": "plan B step 1: morph-only checks, no solves (DECISIONS.md D9)",
+ "note": "plan B step 1: morph-only checks, no solves (DECISIONS.md D9); attempt 2: probe path fixed (run 45332912510 stopped before any morph)",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
@@ -113,5 +113,6 @@
    "site": "pod_rear_low",
    "amp": "-1"
   }
- ]
+ ],
+ "attempt": 2
 }
