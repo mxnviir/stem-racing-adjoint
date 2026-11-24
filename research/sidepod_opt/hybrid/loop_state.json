@@ -1,0 +1,57 @@
+{
+ "parent": "daf@1.0",
+ "dafoam_latest": "dafnpz:hybrid/dafoam_actions/45477836968/daf-daf05/dafoam_sens.npz",
+ "next_seed": 17,
+ "generations": {
+  "2": {
+   "parent": "daf@1.0",
+   "children": {
+    "g2_daffresh": [
+     "dafnpz:hybrid/dafoam_actions/45477836968/daf-daf05/dafoam_sens.npz",
+     0.5
+    ],
+    "g2_dafbase": [
+     "daf",
+     0.5
+    ],
+    "g2_esi": [
+     "esi_frozen",
+     0.5
+    ],
+    "g2_guided": [
+     "vec:hybrid/r2/guided.npy",
+     0.5
+    ],
+    "g2_es": [
+     "vec:hybrid/r2/es.npy",
+     0.5
+    ],
+    "g2_rnd11": [
+     "rnd11",
+     0.5
+    ],
+    "g2_rnd12": [
+     "rnd12",
+     0.5
+    ],
+    "g2_rnd13": [
+     "rnd13",
+     0.5
+    ],
+    "g2_rnd14": [
+     "rnd14",
+     0.5
+    ],
+    "g2_rnd15": [
+     "rnd15",
+     0.5
+    ],
+    "g2_rnd16": [
+     "rnd16",
+     0.5
+    ]
+   }
+  }
+ },
+ "note": "generation 1 = rounds 1-2 from the base (accepted: daf@1.0, -6.93 mN); generation 2 = round 3"
+}

@@ -20,11 +20,11 @@ A = PC.A
 
 
 def is_rnd(k): return meas[k]["field"].startswith("rnd")
-def is_daf(k): return meas[k]["field"] in ("daf", "daf_opp")
+def is_daf(k): return meas[k]["field"].startswith("daf")
 def is_esi(k): return meas[k]["field"] in ("esi_frozen", "esi_sst", "opp_frozen")
 
 
-ARMS = {"es": lambda k: is_rnd(k), "guided": lambda k: is_rnd(k) or is_daf(k) or is_esi(k),
+ARMS = {"es": lambda k: is_rnd(k), "guided": lambda k: True,     # guided: every measured direction (incl. earlier combinations)
         "guided_daf": lambda k: is_rnd(k) or is_daf(k), "guided_esi": lambda k: is_rnd(k) or is_esi(k)}
 info = {}
 for arm, sel in ARMS.items():
