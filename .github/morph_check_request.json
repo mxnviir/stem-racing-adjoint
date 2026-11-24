@@ -1,92 +1,44 @@
 {
- "note": "hybrid larger steps, diagnostic 3: explicit morph with 1.5 mm ground clearance at 1.5-2 mm",
+ "note": "hybrid larger steps, diagnostic 4: chained explicit morphs (morph a morphed mesh), morph-only",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "mEz_rnd2_20",
+   "name": "chain_daf10_rnd2_05",
    "site": "step",
-   "field": "rnd2",
-   "amp": "2.0",
+   "chain": "daf 1.0 rnd2 0.5",
+   "explicit": "1",
    "direct": "1",
    "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "delta": "5",
    "zmin": "1.5"
   },
   {
-   "name": "mEz8_rnd2_20",
+   "name": "chain_daf10_rnd2_10",
    "site": "step",
-   "field": "rnd2",
-   "amp": "2.0",
+   "chain": "daf 1.0 rnd2 1.0",
+   "explicit": "1",
    "direct": "1",
    "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "delta": "8",
    "zmin": "1.5"
   },
   {
-   "name": "mEz_daf_15",
+   "name": "chain_daf10_daf10",
    "site": "step",
-   "field": "daf",
-   "amp": "1.5",
+   "chain": "daf 1.0 daf 1.0",
+   "explicit": "1",
    "direct": "1",
    "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "delta": "5",
    "zmin": "1.5"
   },
   {
-   "name": "mEz_daf_20",
+   "name": "chain_guided10_rnd3_10",
    "site": "step",
-   "field": "daf",
-   "amp": "2.0",
+   "chain": "vec:hybrid/r2/guided.npy 1.0 rnd3 1.0",
+   "explicit": "1",
    "direct": "1",
    "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "delta": "5",
-   "zmin": "1.5"
-  },
-  {
-   "name": "mEz_guided_15",
-   "site": "step",
-   "field": "vec:hybrid/r2/guided.npy",
-   "amp": "1.5",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "delta": "5",
-   "zmin": "1.5"
-  },
-  {
-   "name": "mEz_guided_20",
-   "site": "step",
-   "field": "vec:hybrid/r2/guided.npy",
-   "amp": "2.0",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "delta": "5",
-   "zmin": "1.5"
-  },
-  {
-   "name": "mEz8_guided_20",
-   "site": "step",
-   "field": "vec:hybrid/r2/guided.npy",
-   "amp": "2.0",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "delta": "8",
    "zmin": "1.5"
   }
  ],
- "attempt": 3
+ "attempt": 4
 }

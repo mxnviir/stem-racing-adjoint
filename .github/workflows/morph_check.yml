@@ -103,12 +103,13 @@ jobs:
           if [ "${{ matrix.case.direct }}" = "1" ]; then export P2_MORPH_FIELD=$PWD/gate/bump_${{ matrix.case.name }}/morph_field.npz; echo "direct-field morph: $P2_MORPH_FIELD"; fi
           if [ "${{ matrix.case.explicit }}" = "1" ]; then export P2_MORPH_EXPLICIT=1 P2_MORPH_D0_MM=${{ matrix.case.d0 || '0.5' }} P2_MORPH_DELTA_MM=${{ matrix.case.delta || '5' }}; echo "explicit morph"; fi
           set +e
-          python -W ignore -u esi/morph_diag_probe.py "${{ matrix.case.name }}" > probe.log 2>&1
+          if [ -n "${{ matrix.case.chain }}" ]; then python -W ignore -u hybrid/chain_probe.py ${{ matrix.case.chain }} > probe.log 2>&1
+          else python -W ignore -u esi/morph_diag_probe.py "${{ matrix.case.name }}" > probe.log 2>&1; fi
           echo "rc $?" >> probe.log
           set -e
           mkdir -p ../../out
           { echo "## ${{ matrix.case.name }} (site ${{ matrix.case.site }}, amp ${{ matrix.case.amp || '±1 (bumpgeom)' }} mm)";
-            grep -E "^(MORPH_RESULT|MORPH_DISPLACEMENT|BAD_CELLS|SET_FILES|CLASSIFY_ERROR)" probe.log || tail -30 probe.log; } \
+            grep -E "^(MORPH_RESULT|MORPH_DISPLACEMENT|BAD_CELLS|SET_FILES|CLASSIFY_ERROR|CHAIN)" probe.log || tail -30 probe.log; } \
             | tee "../../out/${{ matrix.case.name }}.md" >> "$GITHUB_STEP_SUMMARY"
           cp probe.log "../../out/${{ matrix.case.name }}.log"
       - uses: actions/upload-artifact@v4
