@@ -78,8 +78,14 @@ jobs:
           p = pathlib.Path('gate_results_resolved_up/base.json'); d = json.loads(p.read_text())
           d['run_dir_kept'] = str(pathlib.Path('gate/refA_resolved_up').resolve()); p.write_text(json.dumps(d, indent=1))
           PY
+      - name: step candidate (esi/STEP_TEST.md)
+        if: matrix.case.field
+        working-directory: research/sidepod_opt
+        run: |
+          GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up python -W ignore esi/make_step.py \
+            "${{ matrix.case.name }}" "${{ matrix.case.field }}" "${{ matrix.case.amp }}"
       - name: bump variant (other height or site)
-        if: matrix.case.amp != ''
+        if: matrix.case.amp != '' && !matrix.case.field
         working-directory: research/sidepod_opt
         run: |
           GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up python -W ignore gate.py variant \

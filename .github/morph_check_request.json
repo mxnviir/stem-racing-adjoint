@@ -1,118 +1,50 @@
 {
- "note": "plan B step 1: morph-only checks, no solves (DECISIONS.md D9); attempt 2: probe path fixed (run 45332912510 stopped before any morph)",
+ "note": "esi/STEP_TEST.md (approved 2026-11-24): morph-only check of the 7 step candidates before any solve",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "pod_front_low",
-   "site": "pod_front_low",
-   "amp": ""
+   "name": "step_zero",
+   "site": "step",
+   "field": "zero",
+   "amp": "0"
   },
   {
-   "name": "pod_front_low_m",
-   "site": "pod_front_low",
-   "amp": ""
-  },
-  {
-   "name": "pod_rear",
-   "site": "pod_rear",
-   "amp": ""
-  },
-  {
-   "name": "pod_rear_m",
-   "site": "pod_rear",
-   "amp": ""
-  },
-  {
-   "name": "pod_rear_top",
-   "site": "pod_rear_top",
-   "amp": ""
-  },
-  {
-   "name": "pod_rear_top_m",
-   "site": "pod_rear_top",
-   "amp": ""
-  },
-  {
-   "name": "pod_front_low_a05",
-   "site": "pod_front_low",
+   "name": "step_esi_a05",
+   "site": "step",
+   "field": "esi_frozen",
    "amp": "0.5"
   },
   {
-   "name": "pod_front_low_a05m",
-   "site": "pod_front_low",
-   "amp": "-0.5"
+   "name": "step_esi_a10",
+   "site": "step",
+   "field": "esi_frozen",
+   "amp": "1.0"
   },
   {
-   "name": "pod_front_low_a025",
-   "site": "pod_front_low",
-   "amp": "0.25"
-  },
-  {
-   "name": "pod_front_low_a025m",
-   "site": "pod_front_low",
-   "amp": "-0.25"
-  },
-  {
-   "name": "pod_rear_a05",
-   "site": "pod_rear",
+   "name": "step_sst_a05",
+   "site": "step",
+   "field": "esi_sst",
    "amp": "0.5"
   },
   {
-   "name": "pod_rear_a05m",
-   "site": "pod_rear",
-   "amp": "-0.5"
-  },
-  {
-   "name": "pod_rear_a025",
-   "site": "pod_rear",
-   "amp": "0.25"
-  },
-  {
-   "name": "pod_rear_a025m",
-   "site": "pod_rear",
-   "amp": "-0.25"
-  },
-  {
-   "name": "pod_rear_top_a05",
-   "site": "pod_rear_top",
+   "name": "step_opp_a05",
+   "site": "step",
+   "field": "opp_frozen",
    "amp": "0.5"
   },
   {
-   "name": "pod_rear_top_a05m",
-   "site": "pod_rear_top",
-   "amp": "-0.5"
+   "name": "step_rnd1_a05",
+   "site": "step",
+   "field": "rnd1",
+   "amp": "0.5"
   },
   {
-   "name": "pod_rear_top_a025",
-   "site": "pod_rear_top",
-   "amp": "0.25"
-  },
-  {
-   "name": "pod_rear_top_a025m",
-   "site": "pod_rear_top",
-   "amp": "-0.25"
-  },
-  {
-   "name": "pod_front_a1",
-   "site": "pod_front",
-   "amp": "1"
-  },
-  {
-   "name": "pod_front_a1m",
-   "site": "pod_front",
-   "amp": "-1"
-  },
-  {
-   "name": "pod_rear_low_a1",
-   "site": "pod_rear_low",
-   "amp": "1"
-  },
-  {
-   "name": "pod_rear_low_a1m",
-   "site": "pod_rear_low",
-   "amp": "-1"
+   "name": "step_rnd2_a05",
+   "site": "step",
+   "field": "rnd2",
+   "amp": "0.5"
   }
  ],
- "attempt": 2
+ "attempt": 1
 }

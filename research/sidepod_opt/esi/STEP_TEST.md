@@ -1,4 +1,4 @@
-# Step test: can the normal (ESI) adjoint steer a CFD-decided loop? (PROPOSED 2026-11-24, awaiting the owner)
+# Step test: can the normal (ESI) adjoint steer a CFD-decided loop? (approved by the owner 2026-11-24, before any step was built)
 
 Written before any step is built or solved. Nothing here changes D9: the normal adjoint failed its accuracy
 test (2026-11-24) and stays failed as a gradient. This tests a different use of it, and a different method.
@@ -54,3 +54,17 @@ test (2026-11-24) and stays failed as a gradient. This tests a different use of 
   ≥ 3 SE; an opposite-direction control in the first iterations; scored and confirmed per D8.
 - **If FAIL:** the normal adjoint gives no usable direction on a good mesh. The fallback is a search that
   needs no gradient: every proposal is CFD'd and the method uses no adjoint.
+
+## Built (2026-11-24, before any morph or solve; `esi/make_step.py`)
+| candidate | moved > 0.1 mm (of region) | RMS move (moved region) | volume change |
+|---|---|---|---|
+| `step_esi_a05` | 38 % | 0.158 mm | +110 mm³ |
+| `step_esi_a10` | 74 % | 0.316 mm | +250 mm³ |
+| `step_sst_a05` | 50 % | 0.161 mm | +152 mm³ |
+| `step_opp_a05` | 38 % | 0.158 mm | −78 mm³ |
+| `step_rnd1_a05` / `step_rnd2_a05` | 69 % / 67 % | 0.215 / 0.210 mm | +24 / +8 mm³ |
+
+- The volume is only first-order neutral: the mean is removed before the clip (as fixed above) and the ESI field is
+  heavy-tailed, so clipping is lopsided. All changes are < 0.4 % of the 67 cm³ pod.
+- At the same peak move, the random controls move ~35 % more surface (RMS) than the ESI steps, because the ESI field
+  is spikier. Noted, not corrected: the normalisation was fixed before building.
