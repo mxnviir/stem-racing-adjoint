@@ -17,7 +17,7 @@ decided), *withdrawn*.
 | D6 | The coarse mesh (~105 k cells) is not used for any design decision | settled |
 | D7 | Repeat meshes shift the meshing frame; the geometry is never nudged | settled |
 | D8 | Which mesh scores designs (medium vs fine or finer) | medium ruled out (M1 fails); how to score on fine is open |
-| D9 | Which adjoint drives the shape steps (discrete vs normal) | open |
+| D9 | Which adjoint drives the shape steps (discrete vs normal) | normal failed both tests, DAFoam ruled out by the owner: no adjoint; gradient-free replacement awaits the owner |
 | D10 | The adjoint runs on a steady (first-order) flow model; gains are confirmed on the production model | provisional |
 | D11 | Several different starting shapes (the valley seen on medium is absent on fine) | settled |
 | D12 | Pass marks are fixed in writing before each result | settled |
@@ -142,7 +142,8 @@ decided), *withdrawn*.
     common 0.125 mm on the wall-resolved mesh, the ESI downhill step lowered drag 0.64 mN and the uphill step raised it
     0.52 mN (right sign), but a random smooth step lowered it 1.04 mN (M3 not met). The owner ruled out DAFoam
     (2026-11-24), so Plan C is closed. Under the test's fixed fallback, the loop uses no adjoint: a gradient-free
-    search, every candidate CFD'd. Its design is proposed in ROUTES.md and needs the owner's approval.
+    search, every candidate CFD'd. Its design is still to be proposed and needs the owner's approval. This revises Plan C's
+    "a gradient-free route is not proposed": that was written before the owner ruled out DAFoam.
   - Not fixed by any of this: fine-mesh scoring scatter (two flow states, team sd 3 mN) still needs method A or repeats.
   Otherwise the discrete adjoint, but only on a mesh that passes D8 (medium ≈ 128 GB; fine ≈ 500 GB,
   extrapolated), or steps scored by CFD without a gradient.

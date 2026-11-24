@@ -6,7 +6,7 @@ Started 2026-11-20. This is a living log: every result gets a dated entry under 
 (channels, tunnels, undercuts, organic surfaces), judged by real turbulent CFD at the car's
 Reynolds number (~2.7×10⁵, k-ω SST).
 
-## SELECTED ROUTE (current, 2026-11-21 17:20): multi-start free-form adjoint shaping, every step checked by CFD
+## SELECTED ROUTE (2026-11-21 17:20; SUPERSEDED 2026-11-24: both adjoint tests failed and DAFoam is ruled out, the replacement route awaits the owner's choice, see the status log): multi-start free-form adjoint shaping, every step checked by CFD
 
 This replaces the earlier plans below (route A as first written, the parts-kit "recipes" of route G, and any
 neural-network predictor). The status log keeps the history.
@@ -1550,10 +1550,14 @@ external topology case was **not found** in their material (that is not proof it
   - Read: the smoothed ESI direction has the right sign at broad scale (down lowers, up raises, frozen = SST), unlike
     the local bump test. But one of two blind smooth moves beat it by 0.40 mN, so it is not a better proposer than
     luck. Fixed marks: FAIL. Details in `esi/STEP_TEST.md`.
+  - Under the stricter whole-signal SE (0.11-0.15 mN), "uphill raises drag" does not clear 3 SE; M3 fails under
+    either SE. Two random draws cannot rank ESI among random fields, only show it is not clearly better.
   - Consequence (fixed before the runs): the loop drops the adjoint. Next is a gradient-free, every-candidate-CFD'd
-    search. Also learned: on a shared morphed mesh, 0.125 mm smooth moves change drag by ~0.5 mN, resolved far above
-    noise, so CFD can rank small moves cheaply; the morph limit (~0.125 mm per step at the pod's sharp edges) is
-    what blocks larger changes.
+    search; its proposer and test are still to be designed and need the owner's approval. This revises D9's Plan C
+    note ("a gradient-free route is not proposed"): that predates the owner ruling out DAFoam.
+  - Also measured: on a shared morphed mesh, 0.125 mm smooth moves changed drag by 0.4-1.0 mN, against a whole-signal
+    SE of ~0.12 mN; each solve took 85-110 min on Actions. Morphs are clean at 0.125 mm per step on this mesh;
+    chaining steps (morphing an already-morphed mesh) is untested.
 
 ## Sources
 

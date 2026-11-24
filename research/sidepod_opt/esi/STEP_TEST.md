@@ -107,7 +107,11 @@ All six runs converged on the morphed mesh (no fallback). Half-car drag, mN, mea
   random spread. The random fields move ~35 % more surface (RMS, noted before the runs); per unit RMS move seed 1 is
   still ahead (−19 vs −16 mN/mm). Two random draws cannot rank ESI among random fields; they only show it is not
   clearly better, which is what M3 tested.
-- Block SE (≤ 0.002 mN) is iteration noise on a shared morphed mesh. The runs' own whole-signal SE is ~0.11–0.15 mN;
-  every difference above except SST vs ESI clears 3 × that too.
+- Block SE (≤ 0.002 mN, the fixed estimator) measures iteration noise on a shared morphed mesh. Each run's own
+  whole-signal SE (`force_mean_stderr`) is larger, 0.11–0.15 mN. All six runs have 1000 iterations, so the windows
+  match. Against 3 × the whole-signal SE: ESI − zero (−0.64 vs 0.52), ESI − uphill (−1.17 vs 0.57) and random 1 − zero
+  (−1.04 vs 0.53) still clear; uphill − zero (+0.52 vs 0.60), random 2 − zero (+0.41 vs 0.55) and ESI − random 1
+  (+0.40 vs 0.49) do not. So "uphill raises drag" rests on the block SE only. M3 is not met under either SE (the
+  difference has the wrong sign), so the verdict does not depend on the estimator.
 - Per the plan above: the normal adjoint gives no direction better than luck on a good mesh. The fallback is a
   search that needs no gradient, every proposal CFD'd, no adjoint.
