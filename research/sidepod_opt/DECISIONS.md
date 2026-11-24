@@ -105,7 +105,7 @@ decided), *withdrawn*.
   σ 2.28 mN, team sd 3.08 between flow states). Scoring is therefore on fine, and small differences there need
   state-controlled scoring (method A) or repeats; the method is the owner's call.
 
-## D9. Which adjoint (open)
+## D9. Which adjoint (normal adjoint failed its test; next route open)
 - **Evidence:** discrete adjoint (DAFoam) predicts 66–109 % of measured ±1 mm bump effects (r = 0.98), but
   needs ~150 kB of memory per cell. The normal (OpenFOAM) adjoint on the same flow gets all signs but 2–25 % of
   the size. Ruled out as causes: turbulence treatment (frozen = full, within 1 %), Reynolds number (same flow),
@@ -131,11 +131,19 @@ decided), *withdrawn*.
   - **Step 1 result (2026-11-24, Actions run 45336249142):** folds scale with height; at 0.25 mm all three registered
     pairs are Mesh OK, at 0.5 mm pod_rear and pod_rear_top are. Proposed step 2: smaller bumps (pod_rear ±0.5,
     pod_rear_top ±0.5, pod_front_low ±0.25 mm), awaiting the owner's approval (ROUTES.md 2026-11-24 06:15).
+  - **Result 2026-11-24 (amended heights, Actions runs 45348750147 / 45348782587): FAIL for frozen and SST.** All six
+    morphs Mesh OK, all pairs clear of 3 SE. Measured half-differences −1.177 / −0.637 / −0.255 mN (pod_rear / pod_rear_top /
+    pod_front_low); predicted frozen −0.078 / +0.031 / +0.096, SST −0.035 / +0.052 / +0.110. Two of three signs disagree;
+    |predicted/measured| ≤ 0.43. The decision rule failed on a measured test; this is not the stop rule's "not
+    testable". **The normal adjoint is not used.** The re-test is closed (D12): no further amendment.
+    Next route, owner's choice: Plan C (discrete adjoint on fine, needs the owner's OK on machine and cost) or
+    bump-by-bump differencing. Also: frozen vs SST differ ~2× at pod_rear here, so "turbulence ruled out" above is coarse-only.
   - Not fixed by any of this: fine-mesh scoring scatter (two flow states, team sd 3 mN) still needs method A or repeats.
   Otherwise the discrete adjoint, but only on a mesh that passes D8 (medium ≈ 128 GB; fine ≈ 500 GB,
   extrapolated), or steps scored by CFD without a gradient.
 - **Interaction with D8:** the PC test is on the `resolved` mesh (wall layers); D8's evidence is on `fine` (no
   layers). If the normal adjoint passes, `resolved` becomes the loop mesh and must itself be scored for D8.
+  (Moot since 2026-11-24: the normal adjoint failed, so `resolved` does not become the loop mesh.)
 
 ## D10. Steady model for the adjoint
 - **Decision:** the adjoint is taken on a first-order-upwind flow model that settles to a fixed solution;

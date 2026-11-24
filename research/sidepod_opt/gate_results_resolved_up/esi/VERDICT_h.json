@@ -1,0 +1,104 @@
+{
+ "pairs": [
+  {
+   "site": "pod_rear",
+   "name": "pod_rear_h05",
+   "measured_half_mN": -1.1773125968002773,
+   "se_mN": 0.008735240460567442,
+   "clear": 1.0,
+   "D_plus": 189.20245559103876,
+   "D_minus": 191.5570807846393,
+   "iters": [
+    1000,
+    1000
+   ],
+   "blocks_plus": [
+    189.248,
+    189.2097,
+    189.1848,
+    189.1674
+   ],
+   "blocks_minus": [
+    191.557,
+    191.557,
+    191.5571,
+    191.5572
+   ],
+   "D20_half_mN": -1.19072129528984,
+   "morph_fallback": [
+    false,
+    false
+   ],
+   "pred_frozen_mN": -0.07844610094598181,
+   "pred_sst_mN": -0.0345817322456677
+  },
+  {
+   "site": "pod_rear_top",
+   "name": "pod_rear_top_h05",
+   "measured_half_mN": -0.6369638445964654,
+   "se_mN": 0.0006344631721829587,
+   "clear": 1.0,
+   "D_plus": 190.0842440220789,
+   "D_minus": 191.35817171127184,
+   "iters": [
+    1000,
+    1000
+   ],
+   "blocks_plus": [
+    190.0869,
+    190.0855,
+    190.0834,
+    190.0811
+   ],
+   "blocks_minus": [
+    191.3585,
+    191.3584,
+    191.3581,
+    191.3578
+   ],
+   "D20_half_mN": -0.6384507460004962,
+   "morph_fallback": [
+    false,
+    false
+   ],
+   "pred_frozen_mN": 0.03149904061809339,
+   "pred_sst_mN": 0.052113234407887274
+  },
+  {
+   "site": "pod_front_low",
+   "name": "pod_front_low_h025",
+   "measured_half_mN": -0.2551257104850464,
+   "se_mN": 5.635186192388558e-05,
+   "clear": 1.0,
+   "D_plus": 190.47422131224087,
+   "D_minus": 190.98447273321096,
+   "iters": [
+    1000,
+    1000
+   ],
+   "blocks_plus": [
+    190.474,
+    190.4742,
+    190.4743,
+    190.4743
+   ],
+   "blocks_minus": [
+    190.9843,
+    190.9844,
+    190.9845,
+    190.9847
+   ],
+   "D20_half_mN": -0.2556647136015139,
+   "morph_fallback": [
+    false,
+    false
+   ],
+   "pred_frozen_mN": 0.09623130954625136,
+   "pred_sst_mN": 0.10946673928824392
+  }
+ ],
+ "verdict": {
+  "frozen": "FAIL: r 0.999, signs disagree, predicted/measured 0.07, -0.05, -0.38",
+  "sst": "FAIL: r 1.000, signs disagree, predicted/measured 0.03, -0.08, -0.43"
+ }
+}

@@ -54,9 +54,9 @@ neural-network predictor). The status log keeps the history.
    (~5 M cells, wall layers; marks L, A1, r ≥ 0.9, signs, size within 0.5–2×).
    **Ran 2026-11-23 (Actions + Kaggle): inconclusive.** Mesh, steady state and both adjoints are sound, but every
    registered ±1 mm bump folded the 15 µm wall layer when morphed, so no pair could be measured (18:10 and 18:20 entries).
-   - If it passes, the loop uses the normal adjoint on a wall-resolved mesh.
-   - If it fails, it uses the discrete adjoint (DAFoam, 66–109 % accurate) on the medium mesh with
-     ~128 GB of memory, or steps are scored without an adjoint.
+   **Re-run 2026-11-24 with smaller bumps (approved amendment): FAIL.** All six morphs clean, all three pairs clear of
+   3 SE, but two of three signs disagree and predicted/measured is at most 0.43 (2026-11-24 09:30 entry). The normal
+   adjoint is not used. Next is the owner's choice: discrete adjoint on fine (paid machine) or bump-by-bump differencing.
 3. **Steady model on that mesh:** the adjoint needs a flow that settles (mark A1); the first-order
    scheme must still settle there.
 
@@ -1464,6 +1464,37 @@ external topology case was **not found** in their material (that is not proof it
     clear of 3 SE, the existing rule already counts it as "not clear"; D9 then stays open rather than failing.
   - Cost if approved: six bump solves (steady model, 1000 iterations, warm from the Kaggle state), one GitHub runner each in
     parallel (~1.5–2 h), adjoints reused, then the verdict. No solve on this machine.
+
+- **2026-11-24 09:30, wall-resolved normal-adjoint test with the amended bump heights: FAIL for both adjoints.**
+  - Runs: GitHub Actions 45348750147 (five bumps) and 45348782587 (pod_front_low_h025_m), steady model, 1000
+    iterations each, warm-copied from the Kaggle state. All six morphs Mesh OK, no fallback, all converged.
+    Verdict by the script committed before the results (`esi/resolved_verdict_h.py` -> `gate_results_resolved_up/esi/VERDICT_h.txt`).
+  - Half-differences, mN (measured = mean of the last 404 iterations; SE from four 101-iteration blocks):
+
+    | pair | measured ± SE | D20 check | ESI frozen | ESI SST |
+    |---|---|---|---|---|
+    | pod_rear ±0.5 | −1.177 ± 0.009 | −1.191 | −0.078 | −0.035 |
+    | pod_rear_top ±0.5 | −0.637 ± 0.001 | −0.639 | +0.031 | +0.052 |
+    | pod_front_low ±0.25 | −0.255 ± 0.000 | −0.256 | +0.096 | +0.110 |
+
+  - frozen: r 0.999, signs disagree (2 of 3), predicted/measured 0.07, −0.05, −0.38 -> **FAIL**.
+    SST: r 1.000, signs disagree (2 of 3), predicted/measured 0.03, −0.08, −0.43 -> **FAIL**.
+  - The high r is not a partial pass: three points at mixed heights, two with the wrong sign. A step along this
+    gradient would move pod_rear_top and pod_front_low the way that raises drag.
+  - The fail does not hinge on sign conventions: even with either side's sign flipped, one sign still disagrees and
+    every |predicted/measured| stays below 0.5. (Code check as well: the morph and the prediction both use new minus
+    reference surface.)
+  - The measurement looks clean: pod_rear_top and pod_front_low sit symmetric about the base (190.73 mN; −0.64/+0.63 and
+    −0.25/+0.26 mN), the 404-iteration means match the D20 means, and the earlier ±1 mm pod_rear_top pair had the same
+    sign (−1.63 mN). Caveat: pod_rear's SE understates its error. The + run still drifts (block means 189.248 ->
+    189.167) and the pair is lopsided about the base (−1.52/+0.83), which does not change the verdict.
+  - Scope: the decision rule is not met at these three sites on this mesh (layers on 62 % of wall faces). That does not prove
+    wall resolution is irrelevant, but the normal adjoint is now under-sized or wrong-signed on both a wall-function mesh
+    and a wall-resolved one. Frozen and SST now differ ~2× at pod_rear, so "turbulence treatment within 1 %" is a
+    coarse-mesh finding only.
+  - Consequence (D9): the normal adjoint is not used, and no further amendment to re-test it is proposed (D12). Next step,
+    owner's choice: Plan C (DAFoam discrete adjoint on fine, ~500 GB, paid machine, only after a sizing run and the
+    owner's OK on instance and cost) or gradient by bump-by-bump differencing (2 CFD runs per site).
 
 ## Sources
 
