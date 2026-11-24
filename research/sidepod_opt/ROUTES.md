@@ -1437,6 +1437,34 @@ external topology case was **not found** in their material (that is not proof it
     (replacement candidates). Run https://github.com/mxnviir/stem-racing-paper/actions/runs/45332912510; results are
     committed to `esi/morph_check/`.
 
+- **2026-11-24 06:30, plan B step 1 done (GitHub Actions run 45336249142, morph-only, no solves): on the wall-resolved mesh the folds shrink with bump height; at 0.25 mm all three registered pairs morph clean.**
+  - Setup reproduces the PC exactly (fixed reference, strict): pod_front_low 9 cells, pod_front_low_m 3, pod_rear 4,
+    pod_rear_m OK, pod_rear_top 10 faces, pod_rear_top_m 35 faces. Results: `esi/morph_check/results_45336249142.md`
+    (run 45332912510 stopped before any morph: a hard-coded path in the probe, fixed).
+
+    | site (strict: Mesh OK only) | ±1 mm | ±0.5 mm | ±0.25 mm |
+    |---|---|---|---|
+    | pod_front_low | 9 cells / 3 cells | 3 faces / 1 skew face (4.2) | **OK / OK** |
+    | pod_rear | 4 cells / OK | **OK / OK** | **OK / OK** |
+    | pod_rear_top | 10 faces / 35 faces | **OK / OK** | **OK / OK** |
+    | pod_front (candidate) | 20 faces / 11 cells | - | - |
+    | pod_rear_low (candidate) | 2 faces / OK | - | - |
+
+  - Where the 1 mm folds sit: inside the layer stack (0.03–0.4 mm from the wall), at 0.1–0.7 mm from a sharp edge at
+    pod_front, pod_front_low_m and pod_rear_top_m; 1.3–2.5 mm from an edge at pod_front_low (+, z 1.2–3.4 mm: the
+    ground-gap side of the pod's underside, on the bump's flank) and pod_rear (+, near the bump centre). So both edges
+    and plain steep layer shear; the common factor is height, which settles the repair: **a smaller bump**, no new code.
+    The swap candidates fail at 1 mm too, so no site swap is needed or useful.
+  - **Proposed amendment (owner decides; nothing runs until it is written into RESOLVED_TEST.md):** the largest height
+    that morphs clean at both signs, per site: pod_rear ±0.5, pod_rear_top ±0.5, pod_front_low ±0.25 mm (10 mm radius,
+    same sites, chosen on morphability alone; no resolved bump has been measured). Predicted half-differences (frozen /
+    sst, linear in height): pod_front_low +0.096 / +0.110, pod_rear −0.078 / −0.035, pod_rear_top +0.031 / +0.052 mN.
+    That needs a measurement noise of ~0.01 mN or better: the steady state's block means hold within 0.002 mN, and the
+    ±0.09 mN ~101-iteration cycle must be averaged over whole cycles (the 200-iteration mean spans ~2). If a pair is not
+    clear of 3 SE, the existing rule already counts it as "not clear"; D9 then stays open rather than failing.
+  - Cost if approved: six bump solves (steady model, 1000 iterations, warm from the Kaggle state), one GitHub runner each in
+    parallel (~1.5–2 h), adjoints reused, then the verdict. No solve on this machine.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
