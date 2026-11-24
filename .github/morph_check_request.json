@@ -1,71 +1,85 @@
 {
- "note": "hybrid/HYBRID_TEST.md larger steps, diagnostic: direct-field morph (D), plus sharp-edge mask (DM), mask alone (M); old morph folded rnd2 at 0.25 mm and esi at 0.5 mm",
+ "note": "hybrid larger steps, diagnostic 2: explicit morph (no Laplacian; near-wall points move rigidly with the car within 0.5 mm, fade to 0 at 5 mm / 8 mm, fixed towards other boundaries); E = with the direct field, Es = with the STL surface change",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "mD_rnd2_05",
+   "name": "mE_rnd2_05",
    "site": "step",
    "field": "rnd2",
    "amp": "0.5",
    "direct": "1",
    "nsig": "1.5",
-   "mask": "0"
+   "mask": "0",
+   "explicit": "1",
+   "delta": "5"
   },
   {
-   "name": "mD_rnd2_10",
+   "name": "mE_rnd2_10",
    "site": "step",
    "field": "rnd2",
    "amp": "1.0",
    "direct": "1",
    "nsig": "1.5",
-   "mask": "0"
+   "mask": "0",
+   "explicit": "1",
+   "delta": "5"
   },
   {
-   "name": "mD_esi_10",
-   "site": "step",
-   "field": "esi_frozen",
-   "amp": "1.0",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0"
-  },
-  {
-   "name": "mD_daf_10",
-   "site": "step",
-   "field": "daf",
-   "amp": "1.0",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0"
-  },
-  {
-   "name": "mDM_rnd2_10",
-   "site": "step",
-   "field": "rnd2",
-   "amp": "1.0",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "2"
-  },
-  {
-   "name": "mDM_rnd2_20",
+   "name": "mE_rnd2_20",
    "site": "step",
    "field": "rnd2",
    "amp": "2.0",
    "direct": "1",
    "nsig": "1.5",
-   "mask": "2"
+   "mask": "0",
+   "explicit": "1",
+   "delta": "5"
   },
   {
-   "name": "mM_rnd2_10",
+   "name": "mE_daf_10",
+   "site": "step",
+   "field": "daf",
+   "amp": "1.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "delta": "5"
+  },
+  {
+   "name": "mE_esi_10",
+   "site": "step",
+   "field": "esi_frozen",
+   "amp": "1.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "delta": "5"
+  },
+  {
+   "name": "mEs_rnd2_10",
    "site": "step",
    "field": "rnd2",
    "amp": "1.0",
    "direct": "",
    "nsig": "0",
-   "mask": "2"
+   "mask": "0",
+   "explicit": "1",
+   "delta": "5"
+  },
+  {
+   "name": "mE8_rnd2_20",
+   "site": "step",
+   "field": "rnd2",
+   "amp": "2.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "delta": "8"
   }
  ],
- "attempt": 1
+ "attempt": 2
 }

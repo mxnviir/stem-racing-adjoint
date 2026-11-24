@@ -1735,11 +1735,56 @@ def _morph(run: Path, cfg: OpenFOAMRunConfig, bashrc: str, timeout_s: int) -> No
         _write(run / "system" / "controlDict",
                re.sub(r"\nendTime\s+\S+;", f"\nendTime         {MORPH_STEPS};", ascii_control)
                .replace(f"writeInterval   {cfg.max_iterations};", f"writeInterval   {MORPH_STEPS};"))
-        _run("moveMesh -noFunctionObjects", run, bashrc, "moveMesh.log", timeout_s)
-        moved = run / str(MORPH_STEPS) / "polyMesh" / "points"
-        if not moved.exists():
-            raise FileNotFoundError(f"moveMesh wrote no points at {moved}")
-        shutil.copy(moved, dest / "points")
+        if os.environ.get("P2_MORPH_EXPLICIT") == "1":
+            # opt-in (research/sidepod_opt/hybrid, larger steps): no Laplacian solve. Every mesh point within D0 of
+            # the car moves exactly with the car (inverse-distance mix of its 8 nearest car points), so the thin
+            # wall-layer cells translate rigidly; farther out the move fades smoothly to zero at DELTA, and towards
+            # any other boundary (ground, wheels, far field) it fades linearly with the distance to it.
+            from scipy.spatial import cKDTree
+            allp = read_ascii_points((dest / "points").read_text())
+            faces = read_ascii_faces((dest / "faces").read_text())
+            names = re.findall(r"\n\s*([A-Za-z_][\w.]*)\s*\n\s*\{[^}]*?nFaces", _foam_body((dest / "boundary").read_text()))
+            fixed = set()
+            for nm in names:
+                if nm in ("car",) or "symmetry" in nm.lower():
+                    continue
+                s0, nn = patch_range((dest / "boundary").read_text(), nm)
+                fixed.update(patch_mesh_points(faces, s0, nn))
+            d0 = float(os.environ.get("P2_MORPH_D0_MM", "0.5")) * 1e-3
+            delta = float(os.environ.get("P2_MORPH_DELTA_MM", "5")) * 1e-3
+            near = np.where(cKDTree(pts).query(allp, k=1, distance_upper_bound=delta)[0] < delta)[0]
+            dc, ic = cKDTree(pts).query(allp[near], k=8)
+            wc = 1.0 / np.maximum(dc, 1e-9) ** 2
+            wc /= wc.sum(1, keepdims=True)
+            dnear = (disp[ic] * wc[..., None]).sum(1)
+            dcar = dc[:, 0]
+            t = np.clip((dcar - d0) / (delta - d0), 0.0, 1.0)
+            r = 0.5 * (1.0 + np.cos(np.pi * t))
+            fl = np.array(sorted(fixed))
+            dfix = cKDTree(allp[fl]).query(allp[near], k=1)[0] if len(fl) else np.full(len(near), np.inf)
+            g = dfix / (dfix + np.maximum(dcar - d0, 0.0) + 1e-12)
+            moved_pts = allp.copy()
+            moved_pts[near] += dnear * (r * g)[:, None]
+            moved_pts[labels] = allp[labels] + disp                 # the car itself exactly
+            if len(fl):
+                moved_pts[fl] = allp[fl]                            # other boundaries never move
+            sym = np.abs(allp[:, 1]) < 1e-9
+            moved_pts[sym, 1] = 0.0
+            text = (dest / "points").read_text()
+            head = text[: text.index("FoamFile")]
+            body_start = text.index("}", text.index("FoamFile")) + 1
+            rows = "\n".join(f"({x:.16e} {y:.16e} {z:.16e})" for x, y, z in moved_pts)
+            (dest / "points").write_text(text[:body_start] + f"\n\n{len(moved_pts)}\n(\n{rows}\n)\n")
+            (run / "logs" / "morph_displacement.txt").write_text(
+                (run / "logs" / "morph_displacement.txt").read_text()
+                + f"explicit morph: {len(near)} points within {delta * 1e3:.1f} mm moved, rigid within {d0 * 1e3:.2f} mm, "
+                  f"{len(fl)} fixed boundary points\n")
+        else:
+            _run("moveMesh -noFunctionObjects", run, bashrc, "moveMesh.log", timeout_s)
+            moved = run / str(MORPH_STEPS) / "polyMesh" / "points"
+            if not moved.exists():
+                raise FileNotFoundError(f"moveMesh wrote no points at {moved}")
+            shutil.copy(moved, dest / "points")
     finally:
         shutil.rmtree(run / str(MORPH_STEPS), ignore_errors=True)
         for p in (run / "constant" / "dynamicMeshDict", run / "0" / "pointDisplacement"):

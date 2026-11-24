@@ -100,6 +100,7 @@ jobs:
           export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1000 GATE_TIMEOUT=3600 \
                  CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1 GATE_MORPH_REF_RM=1 P2_MORPH_STRICT=1
           if [ "${{ matrix.case.direct }}" = "1" ]; then export P2_MORPH_FIELD=$PWD/gate/bump_${{ matrix.case.name }}/morph_field.npz; echo "direct-field morph: $P2_MORPH_FIELD"; fi
+          if [ "${{ matrix.case.explicit }}" = "1" ]; then export P2_MORPH_EXPLICIT=1 P2_MORPH_D0_MM=${{ matrix.case.d0 || '0.5' }} P2_MORPH_DELTA_MM=${{ matrix.case.delta || '5' }}; echo "explicit morph"; fi
           set +e
           python -W ignore -u esi/morph_diag_probe.py "${{ matrix.case.name }}" > probe.log 2>&1
           echo "rc $?" >> probe.log
