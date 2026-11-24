@@ -1,44 +1,38 @@
 {
- "note": "esi/STEP_TEST.md fold rule: attempt 1 (run 45386092002) folded all six moving candidates; each re-made once at half its amplitude",
+ "note": "diagnostic only (no rule change yet): after the fold rule dropped step_opp and step_rnd2 at 0.25 mm (run 45387356849), do all five moving candidates morph clean at a common 0.125 mm? An amendment needs the owner.",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "step_esi_a05_h",
+   "name": "step_esi_q",
    "site": "step",
    "field": "esi_frozen",
-   "amp": "0.25"
+   "amp": "0.125"
   },
   {
-   "name": "step_esi_a10_h",
-   "site": "step",
-   "field": "esi_frozen",
-   "amp": "0.5"
-  },
-  {
-   "name": "step_sst_a05_h",
+   "name": "step_sst_q",
    "site": "step",
    "field": "esi_sst",
-   "amp": "0.25"
+   "amp": "0.125"
   },
   {
-   "name": "step_opp_a05_h",
+   "name": "step_opp_q",
    "site": "step",
    "field": "opp_frozen",
-   "amp": "0.25"
+   "amp": "0.125"
   },
   {
-   "name": "step_rnd1_a05_h",
+   "name": "step_rnd1_q",
    "site": "step",
    "field": "rnd1",
-   "amp": "0.25"
+   "amp": "0.125"
   },
   {
-   "name": "step_rnd2_a05_h",
+   "name": "step_rnd2_q",
    "site": "step",
    "field": "rnd2",
-   "amp": "0.25"
+   "amp": "0.125"
   }
  ],
- "attempt": 2
+ "attempt": 3
 }
