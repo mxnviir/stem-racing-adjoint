@@ -1,7 +1,7 @@
 [openfoam_case] morph checkMesh: Mesh OK
 [openfoam_case] warm start copied from /home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate/refA_resolved_up/2000: U, k, nut, omega, p
-[openfoam_case] partition sha 47debe2fb4dd352c
-[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4291_348a0881faf0
+[openfoam_case] partition sha 08dab985f6f4d4c0
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4381_b7ca58689aa3
 Traceback (most recent call last):
   File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_wrapper.py", line 138, in _invoke_openfoam_pipeline
     return openfoam_case.invoke(stl_path, case_dir, cfg=run_config)
