@@ -25,6 +25,8 @@ G = {k: np.load(p) for k, p in GRADS.items()}
 
 
 def move(field, amp_mm):
+    if "+" in field or "@" in field:                     # parent sum "f1@a1+f2@a2" (make_step STEP_PARENT), plus this step
+        return sum(move(*p.rsplit("@", 1)) for p in field.split("+"))
     if field == "zero" or float(amp_mm) == 0:
         return np.zeros(len(V))
     f = np.load(HERE / field[4:]) if field.startswith("vec:") else taper * MS.field_on_vertices(field, V, N, A)

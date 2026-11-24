@@ -122,19 +122,31 @@ def main(name, field, amp_mm):
     mask = edge_mask(base, V, em * 1e-3) if em > 0 else np.ones(len(V))
     info = {"field": field, "amp_mm": float(amp_mm), "sigma_mm": SIGMA * 1e3, "taper_mm": TAPER * 1e3,
             "region": {"x": [X0, X1], "y_min": Y0}}
-    if field == "zero" or amp == 0.0:
-        w = np.zeros(len(V))
-    else:
+    core = taper > 0.5
+
+    def step_w(field, amp):
+        if field == "zero" or amp == 0.0:
+            return np.zeros(len(V))
         if field.startswith("vec:"):                    # a precomputed per-vertex field (hybrid/combine.py), tapered
             f = np.load(HERE / field[4:])
         else:
             f = taper * field_on_vertices(field, V, N, A)
         f -= taper * (A * f).sum() / (A * taper).sum()   # volume-neutral (first order)
-        core = taper > 0.5
         f /= np.percentile(np.abs(f[core]), 95)
-        w = np.clip(f, -1.0, 1.0) * amp * mask
+        return np.clip(f, -1.0, 1.0) * amp * mask
+
+    w = step_w(field, amp)
+    if w.any():
         info.update(edge_mask_mm=em, normal_sigma_mm=ns, moved_gt_0p1mm_frac=float(np.mean(np.abs(w[core]) > 1e-4)),
                     max_out_mm=float(w.max() * 1e3), max_in_mm=float(-w.min() * 1e3))
+    # opt-in STEP_PARENT="field@amp[+field@amp...]": the design is parent + this step (each part normalised on its own,
+    # then added: the step is not renormalised against the parent), e.g. generation 2 of the loop
+    parent = os.environ.get("STEP_PARENT", "")
+    for part in filter(None, parent.split("+")):
+        pf, pa = part.rsplit("@", 1)
+        w = w + step_w(pf, float(pa) * 1e-3)
+    if parent:
+        info.update(parent=parent, total_peak_mm=float(np.abs(w).max() * 1e3))
     m = base.copy()
     D = Nmove * w[:, None]
     D[np.abs(V[:, 1]) < 1e-9, 1] = 0.0
