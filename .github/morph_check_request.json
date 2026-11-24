@@ -1,0 +1,117 @@
+{
+ "note": "plan B step 1: morph-only checks, no solves (DECISIONS.md D9)",
+ "steady_release": "resolved-steady-45125305486",
+ "bumpgeom_run": 45188798730,
+ "cases": [
+  {
+   "name": "pod_front_low",
+   "site": "pod_front_low",
+   "amp": ""
+  },
+  {
+   "name": "pod_front_low_m",
+   "site": "pod_front_low",
+   "amp": ""
+  },
+  {
+   "name": "pod_rear",
+   "site": "pod_rear",
+   "amp": ""
+  },
+  {
+   "name": "pod_rear_m",
+   "site": "pod_rear",
+   "amp": ""
+  },
+  {
+   "name": "pod_rear_top",
+   "site": "pod_rear_top",
+   "amp": ""
+  },
+  {
+   "name": "pod_rear_top_m",
+   "site": "pod_rear_top",
+   "amp": ""
+  },
+  {
+   "name": "pod_front_low_a05",
+   "site": "pod_front_low",
+   "amp": "0.5"
+  },
+  {
+   "name": "pod_front_low_a05m",
+   "site": "pod_front_low",
+   "amp": "-0.5"
+  },
+  {
+   "name": "pod_front_low_a025",
+   "site": "pod_front_low",
+   "amp": "0.25"
+  },
+  {
+   "name": "pod_front_low_a025m",
+   "site": "pod_front_low",
+   "amp": "-0.25"
+  },
+  {
+   "name": "pod_rear_a05",
+   "site": "pod_rear",
+   "amp": "0.5"
+  },
+  {
+   "name": "pod_rear_a05m",
+   "site": "pod_rear",
+   "amp": "-0.5"
+  },
+  {
+   "name": "pod_rear_a025",
+   "site": "pod_rear",
+   "amp": "0.25"
+  },
+  {
+   "name": "pod_rear_a025m",
+   "site": "pod_rear",
+   "amp": "-0.25"
+  },
+  {
+   "name": "pod_rear_top_a05",
+   "site": "pod_rear_top",
+   "amp": "0.5"
+  },
+  {
+   "name": "pod_rear_top_a05m",
+   "site": "pod_rear_top",
+   "amp": "-0.5"
+  },
+  {
+   "name": "pod_rear_top_a025",
+   "site": "pod_rear_top",
+   "amp": "0.25"
+  },
+  {
+   "name": "pod_rear_top_a025m",
+   "site": "pod_rear_top",
+   "amp": "-0.25"
+  },
+  {
+   "name": "pod_front_a1",
+   "site": "pod_front",
+   "amp": "1"
+  },
+  {
+   "name": "pod_front_a1m",
+   "site": "pod_front",
+   "amp": "-1"
+  },
+  {
+   "name": "pod_rear_low_a1",
+   "site": "pod_rear_low",
+   "amp": "1"
+  },
+  {
+   "name": "pod_rear_low_a1m",
+   "site": "pod_rear_low",
+   "amp": "-1"
+  }
+ ]
+}

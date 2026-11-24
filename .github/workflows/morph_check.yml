@@ -1,0 +1,125 @@
+name: morph_check
+run-name: "Morph-only checks on the wall-resolved mesh (no flow solves)"
+
+# Plan B step 1 (DECISIONS.md D9): reshape the wall-resolved mesh onto each bump and run checkMesh, one
+# runner per case, in parallel. No solve runs: the probe stops right after the morph's checkMesh
+# (esi/morph_diag_probe.py), and on a failed morph it writes checkMesh's bad-cell sets and reports where
+# they sit (sharp edge, ground gap, bump rim). The mesh is the tested one: the Kaggle steady state
+# (draft release) plus the bump geometry of the resolved run. Launch: commit .github/morph_check_request.json.
+on:
+  push:
+    branches: [claude/dazzling-ritchie-3q792g]
+    paths: [".github/morph_check_request.json"]
+
+permissions: { contents: write, actions: read }
+concurrency: { group: morph_check, cancel-in-progress: false }
+
+env:
+  PY_DEPS: numpy==2.4.6 scipy==1.17.1 pandas trimesh==5.2.0 scikit-image shapely rtree==1.4.1 mapbox-earcut manifold3d==3.5.4 fast_simplification==0.2.0 jax jaxlib matplotlib pymeshlab==2025.7.post1 numba cadquery-ocp
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  init:
+    runs-on: ubuntu-24.04
+    outputs:
+      cases: ${{ steps.r.outputs.cases }}
+      steady_release: ${{ steps.r.outputs.steady_release }}
+      bumpgeom_run: ${{ steps.r.outputs.bumpgeom_run }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: r
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          r = json.load(open('.github/morph_check_request.json'))
+          print('cases=' + json.dumps(r['cases']))
+          print('steady_release=' + r['steady_release'])
+          print('bumpgeom_run=' + str(r['bumpgeom_run']))
+          PY
+
+  check:
+    name: "morph ${{ matrix.case.name }}"
+    needs: init
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        case: ${{ fromJSON(needs.init.outputs.cases) }}
+    steps:
+      - name: room (free disk, 10 GB swap)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo fallocate -l 10G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: OpenFOAM v2412 + python deps
+        timeout-minutes: 25
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          for i in 1 2 3 4 5; do (curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash) && sudo apt-get install -y -q openfoam2412-default && break; sleep 30; done
+          test -d /usr/lib/openfoam/openfoam2412/tutorials
+          pip install $PY_DEPS
+      - name: tested mesh (steady state) + bump geometry
+        run: |
+          gh release download "${{ needs.init.outputs.steady_release }}" -R "${{ github.repository }}" -p 'steadystate.tgz.part*' -D /tmp/ss
+          cat /tmp/ss/steadystate.tgz.part* | tar xz -C research/sidepod_opt && rm -rf /tmp/ss
+          D=research/sidepod_opt/gate/refA_resolved_up
+          for t in $(ls "$D" | grep -E '^[0-9]+$' | sort -n -r); do
+            if [ -f "$D/$t/polyMesh/points" ]; then cp "$D/$t/polyMesh/points" "$D/constant/polyMesh/points"; echo "constant/polyMesh/points <- $t/polyMesh/points"; break; fi
+          done
+          gh run download "${{ needs.init.outputs.bumpgeom_run }}" -R "${{ github.repository }}" -n bumpgeom -D /tmp/bg
+          tar xzf /tmp/bg/bumpgeom.tgz -C research/sidepod_opt
+          cd research/sidepod_opt && python3 - <<'PY'
+          import json, pathlib
+          p = pathlib.Path('gate_results_resolved_up/base.json'); d = json.loads(p.read_text())
+          d['run_dir_kept'] = str(pathlib.Path('gate/refA_resolved_up').resolve()); p.write_text(json.dumps(d, indent=1))
+          PY
+      - name: bump variant (other height or site)
+        if: matrix.case.amp != ''
+        working-directory: research/sidepod_opt
+        run: |
+          GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up python -W ignore gate.py variant \
+            "${{ matrix.case.name }}" "${{ matrix.case.site }}" "${{ matrix.case.amp }}"
+      - name: morph + checkMesh (no solve)
+        working-directory: research/sidepod_opt
+        timeout-minutes: 45
+        run: |
+          export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1000 GATE_TIMEOUT=3600 \
+                 CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1 GATE_MORPH_REF_RM=1 P2_MORPH_STRICT=1
+          set +e
+          python -W ignore -u esi/morph_diag_probe.py "${{ matrix.case.name }}" > probe.log 2>&1
+          echo "rc $?" >> probe.log
+          set -e
+          mkdir -p ../../out
+          { echo "## ${{ matrix.case.name }} (site ${{ matrix.case.site }}, amp ${{ matrix.case.amp || '±1 (bumpgeom)' }} mm)";
+            grep -E "^(MORPH_RESULT|MORPH_DISPLACEMENT|BAD_CELLS|SET_FILES|CLASSIFY_ERROR)" probe.log || tail -30 probe.log; } \
+            | tee "../../out/${{ matrix.case.name }}.md" >> "$GITHUB_STEP_SUMMARY"
+          cp probe.log "../../out/${{ matrix.case.name }}.log"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "morph-${{ matrix.case.name }}", path: out/, retention-days: 14 }
+
+  collect:
+    needs: check
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: claude/dazzling-ritchie-3q792g, fetch-depth: 0 }
+      - uses: actions/download-artifact@v4
+        with: { pattern: "morph-*", merge-multiple: true, path: /tmp/morph }
+      - name: commit the results table
+        run: |
+          F=research/sidepod_opt/esi/morph_check/results_${{ github.run_id }}.md
+          mkdir -p "$(dirname "$F")" research/sidepod_opt/esi/morph_check/logs_${{ github.run_id }}
+          { echo "# Morph-only checks, wall-resolved mesh, run ${{ github.run_id }} ($(date -u +%F' '%H:%M) UTC)"; echo;
+            for f in /tmp/morph/*.md; do cat "$f"; echo; done; } > "$F"
+          cp /tmp/morph/*.log research/sidepod_opt/esi/morph_check/logs_${{ github.run_id }}/ 2>/dev/null || true
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add research/sidepod_opt/esi/morph_check
+          git commit -m "morph_check: results of run ${{ github.run_id }}" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase origin claude/dazzling-ritchie-3q792g && git push origin HEAD:claude/dazzling-ritchie-3q792g && break; sleep $((i*10)); done
