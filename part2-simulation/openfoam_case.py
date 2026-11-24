@@ -1698,8 +1698,22 @@ def _morph(run: Path, cfg: OpenFOAMRunConfig, bashrc: str, timeout_s: int) -> No
         start, n = patch_range((dest / "boundary").read_text(), "car")
         labels = patch_mesh_points(read_ascii_faces((dest / "faces").read_text()), start, n)
         pts = read_ascii_points((dest / "points").read_text())[labels]
-        raw = surface_change(pts, str(ref_stl), str(run / "constant" / "triSurface" / "car.stl"), sigma=0.0)
-        disp = smooth_displacement(pts, raw, MORPH_SMOOTH_M)
+        field = os.environ.get("P2_MORPH_FIELD", "")
+        if field and Path(field).exists():
+            # opt-in (P2_MORPH_FIELD, research/sidepod_opt/hybrid): the design's own smooth displacement field
+            # (npz: V = surface points it is defined on, D = their displacement vectors), carried to the mesh's car
+            # points by inverse distance (4 nearest) instead of the nearest-point change between two STLs, which
+            # jumps at sharp edges and folded the wall layer there (esi/morph_check, 2026-11-24)
+            from scipy.spatial import cKDTree
+            F = np.load(field)
+            dd, ii = cKDTree(F["V"]).query(pts, k=4)
+            ww = 1.0 / np.maximum(dd, 1e-9) ** 2
+            ww /= ww.sum(1, keepdims=True)
+            raw = (F["D"][ii] * ww[..., None]).sum(1)
+            disp = raw.copy()
+        else:
+            raw = surface_change(pts, str(ref_stl), str(run / "constant" / "triSurface" / "car.stl"), sigma=0.0)
+            disp = smooth_displacement(pts, raw, MORPH_SMOOTH_M)
         disp[np.abs(pts[:, 1]) < 1e-9, 1] = 0.0
         (run / "logs").mkdir(exist_ok=True)
         (run / "logs" / "morph_displacement.txt").write_text(

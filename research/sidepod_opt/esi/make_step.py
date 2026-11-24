@@ -89,6 +89,23 @@ def field_on_vertices(field, V, N=None, A=None):
     return out
 
 
+def smooth_normals(V, N, A, sigma):
+    """Area-weighted Gaussian average of the vertex normals (radius 3 sigma), renormalised: a move direction that
+    turns smoothly round sharp edges instead of jumping (hybrid/HYBRID_TEST.md, larger steps)."""
+    out = np.empty_like(N)
+    for i, nb in enumerate(cKDTree(V).query_ball_point(V, 3 * sigma)):
+        w = np.exp(-((V[nb] - V[i]) ** 2).sum(1) / sigma ** 2) * A[nb]
+        out[i] = w @ N[nb]
+    return out / np.maximum(np.linalg.norm(out, axis=1, keepdims=True), 1e-12)
+
+
+def edge_mask(m, V, width):
+    """0 on sharp edges (> 30 deg), smoothstep to 1 at `width` from them."""
+    e = m.face_adjacency_edges[m.face_adjacency_angles > np.radians(30)]
+    P = np.concatenate([V[e[:, 0]] + t * (V[e[:, 1]] - V[e[:, 0]]) for t in np.linspace(0, 1, 6)])
+    return smoothstep(cKDTree(P).query(V)[0] / width)
+
+
 def main(name, field, amp_mm):
     amp = float(amp_mm) * 1e-3
     base = trimesh.load(gate.ORIG / "car_half.stl")       # as gate.cmd_variant loads it
@@ -96,6 +113,13 @@ def main(name, field, amp_mm):
     A = vertex_area(base)
     taper = (smoothstep((V[:, 0] - X0) / TAPER) * smoothstep((X1 - V[:, 0]) / TAPER)
              * smoothstep((V[:, 1] - Y0) / TAPER))
+    # opt-in, larger steps (default off = the step test's construction): STEP_EDGE_MASK_MM fades the move to zero
+    # on sharp edges; STEP_NORMAL_SIGMA_MM moves along smoothed normals. The field is applied to the normalised
+    # step, so the field's shape is unchanged away from edges.
+    em = float(os.environ.get("STEP_EDGE_MASK_MM", "0") or 0)
+    ns = float(os.environ.get("STEP_NORMAL_SIGMA_MM", "0") or 0)
+    Nmove = smooth_normals(V, N, A, ns * 1e-3) if ns > 0 else N
+    mask = edge_mask(base, V, em * 1e-3) if em > 0 else np.ones(len(V))
     info = {"field": field, "amp_mm": float(amp_mm), "sigma_mm": SIGMA * 1e3, "taper_mm": TAPER * 1e3,
             "region": {"x": [X0, X1], "y_min": Y0}}
     if field == "zero" or amp == 0.0:
@@ -105,12 +129,13 @@ def main(name, field, amp_mm):
         f -= taper * (A * f).sum() / (A * taper).sum()   # volume-neutral (first order)
         core = taper > 0.5
         f /= np.percentile(np.abs(f[core]), 95)
-        w = np.clip(f, -1.0, 1.0) * amp
-        info.update(moved_gt_0p1mm_frac=float(np.mean(np.abs(w[core]) > 1e-4)),
+        w = np.clip(f, -1.0, 1.0) * amp * mask
+        info.update(edge_mask_mm=em, normal_sigma_mm=ns, moved_gt_0p1mm_frac=float(np.mean(np.abs(w[core]) > 1e-4)),
                     max_out_mm=float(w.max() * 1e3), max_in_mm=float(-w.min() * 1e3))
     m = base.copy()
-    nv = V + N * w[:, None]
-    nv[np.abs(V[:, 1]) < 1e-9, 1] = 0.0
+    D = Nmove * w[:, None]
+    D[np.abs(V[:, 1]) < 1e-9, 1] = 0.0
+    nv = V + D
     m.vertices = nv
     folder = gate.G / f"bump_{name}"
     if folder.exists():
@@ -118,6 +143,7 @@ def main(name, field, amp_mm):
     shutil.copytree(gate.ORIG, folder, ignore=shutil.ignore_patterns("_body_half.stl"))
     CI.write_ascii_named(m, folder / "car_half.stl", "car", m.volume, 0.01)
     np.save(folder / "move_m.npy", w)
+    np.savez(folder / "morph_field.npz", V=V, D=D)       # used only with P2_MORPH_FIELD (direct-field morph)
     info["dV_mm3"] = float((m.volume - base.volume) * 1e9)
     (folder / "step_info.json").write_text(json.dumps(info, indent=1))
     p = gate.R / "bumps.json"

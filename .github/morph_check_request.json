@@ -1,38 +1,71 @@
 {
- "note": "diagnostic only (no rule change yet): after the fold rule dropped step_opp and step_rnd2 at 0.25 mm (run 45387356849), do all five moving candidates morph clean at a common 0.125 mm? An amendment needs the owner.",
+ "note": "hybrid/HYBRID_TEST.md larger steps, diagnostic: direct-field morph (D), plus sharp-edge mask (DM), mask alone (M); old morph folded rnd2 at 0.25 mm and esi at 0.5 mm",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "step_esi_q",
-   "site": "step",
-   "field": "esi_frozen",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_sst_q",
-   "site": "step",
-   "field": "esi_sst",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_opp_q",
-   "site": "step",
-   "field": "opp_frozen",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd1_q",
-   "site": "step",
-   "field": "rnd1",
-   "amp": "0.125"
-  },
-  {
-   "name": "step_rnd2_q",
+   "name": "mD_rnd2_05",
    "site": "step",
    "field": "rnd2",
-   "amp": "0.125"
+   "amp": "0.5",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0"
+  },
+  {
+   "name": "mD_rnd2_10",
+   "site": "step",
+   "field": "rnd2",
+   "amp": "1.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0"
+  },
+  {
+   "name": "mD_esi_10",
+   "site": "step",
+   "field": "esi_frozen",
+   "amp": "1.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0"
+  },
+  {
+   "name": "mD_daf_10",
+   "site": "step",
+   "field": "daf",
+   "amp": "1.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0"
+  },
+  {
+   "name": "mDM_rnd2_10",
+   "site": "step",
+   "field": "rnd2",
+   "amp": "1.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "2"
+  },
+  {
+   "name": "mDM_rnd2_20",
+   "site": "step",
+   "field": "rnd2",
+   "amp": "2.0",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "2"
+  },
+  {
+   "name": "mM_rnd2_10",
+   "site": "step",
+   "field": "rnd2",
+   "amp": "1.0",
+   "direct": "",
+   "nsig": "0",
+   "mask": "2"
   }
  ],
- "attempt": 3
+ "attempt": 1
 }

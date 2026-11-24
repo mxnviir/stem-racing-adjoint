@@ -80,6 +80,9 @@ jobs:
       - name: step candidate (esi/STEP_TEST.md)
         if: matrix.case.field
         working-directory: research/sidepod_opt
+        env:
+          STEP_EDGE_MASK_MM: ${{ matrix.case.mask || '0' }}
+          STEP_NORMAL_SIGMA_MM: ${{ matrix.case.nsig || '0' }}
         run: |
           GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up python -W ignore esi/make_step.py \
             "${{ matrix.case.name }}" "${{ matrix.case.field }}" "${{ matrix.case.amp }}"
@@ -95,6 +98,7 @@ jobs:
         run: |
           export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=1000 GATE_TIMEOUT=18000 \
                  CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1 GATE_MORPH_REF_RM=1 P2_MORPH_STRICT=1 P2_WARM_COPY=1
+          if [ "${{ matrix.case.direct }}" = "1" ]; then export P2_MORPH_FIELD=$PWD/gate/bump_${{ matrix.case.name }}/morph_field.npz; echo "direct-field morph: $P2_MORPH_FIELD"; fi
           T0=$(date +%s)
           set +e
           python -W ignore -u gate.py bump "${{ matrix.case.name }}" 4 > gate/bump_link.log 2>&1
