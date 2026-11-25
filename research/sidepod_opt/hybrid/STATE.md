@@ -35,3 +35,7 @@ Next: generation 2 (round 3) = best <= 0.5 mm design + 0.5 mm children (fresh DA
 | Fresh ESI at gen-3 parent | 45519814660 | done: works (hybrid/esi_after/45519814660) |
 | Fresh ESI at gen-4 parent | resolved_bumps 45535603829 (02:49) | running -> hybrid/esi_after/45535603829 (LOOP_ESI=esinpz:... for gen 5) |
 | DAFoam at gen-4 parent | coarse_dafoam (02:30) | running |
+| Mark P2 | 45520314673 | MET: -6.32 mN production (3.5 %) |
+| Generation 4 | 45533175628 | fresh DAFoam 0.25 accepted (-1.02), total -9.50 |
+| Generation 5 (0.25 mm) | resolved_bumps 45547505675 (04:32) | running; next LOOP_AMP=0.25 LOOP_ESI=esinpz:... loop.py next 6 |
+| Mark P3 (gen-5 parent under production) | resolved_bumps 45547527633 (04:33) | running; verdict python hybrid/p3_verdict.py |
