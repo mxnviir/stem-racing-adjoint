@@ -1,0 +1,13 @@
+{
+ "D20_half_N": 0.1837778802918167,
+ "wall_s": 5092.6,
+ "converged": true,
+ "residual_p": 2.9415292939152057e-05,
+ "force_osc": 3.6123452086688024e-05,
+ "force_drift": 2.2703128614148353e-06,
+ "run_dir": "",
+ "force_mean_stderr": 1.7665199278761483e-06,
+ "bump": "step_g2_dafbase",
+ "morph_fallback": false,
+ "run_dir_kept": "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4166_31a8dc963afb"
+}
