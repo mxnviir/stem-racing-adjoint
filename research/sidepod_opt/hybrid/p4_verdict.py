@@ -15,5 +15,5 @@ def blocks(n):
 
 z, sz = blocks('step_zero_P'); b, sb = blocks('step_final_P')
 d, s = b - z, 3 * np.hypot(sz, sb)
-print(f'zero_P {z:.3f} +/- {sz:.3f}; best2_P {b:.3f} +/- {sb:.3f}; difference {d:+.3f} (3 SE {s:.3f}); '
+print(f'zero_P {z:.3f} +/- {sz:.3f}; final_P {b:.3f} +/- {sb:.3f}; difference {d:+.3f} (3 SE {s:.3f}); '
       f"Mark P4 {'met' if d <= -s else 'NOT met'}; ratio to the steady model's -9.94: {d / -9.94:.2f}")

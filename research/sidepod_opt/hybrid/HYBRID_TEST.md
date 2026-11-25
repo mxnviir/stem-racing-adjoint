@@ -307,3 +307,10 @@ Script: `hybrid/increments_verdict.py`.
   does not net to zero (110 vertices near the ground left up to 0.5 mm off: the ground-clearance limit acts one way),
   so it was not run. Evidence so far: mark E (0.125 mm, one level: the explicit morph reads like the old one), and the
   generation-2 parent read 183.803 mN both from its own one-level morph and through the chained pipeline.
+
+## Mark P3 and I34 results (2026-11-25 08:34, run 45547527633): **both met**
+Production scheme, block-mean SE: team pod 181.808 +/- 0.121; generation-3 design 175.487 +/- 0.060; **generation-5
+parent (steady -9.50) 173.611 +/- 0.060: -8.20 mN (3 SE 0.40), 4.5 % of the production half car, 0.86 of the steady
+gain.** I34 (generations 3-4 under production): **-1.88 mN (3 SE 0.25), met** (steady: -1.29). Same verdicts with the
+first 200-iteration block dropped (-8.08, -1.84). `hybrid/P3_VERDICT.txt`, `hybrid/INCREMENTS_VERDICT.txt`.
+(The P3 script first printed a stale "best2" label beside the right number; fixed before the record above.)

@@ -47,7 +47,8 @@ opt-in), workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
    -0.27 (evolution-only), -1.02 (fresh DAFoam), -0.25 (combination, mostly DAFoam), -0.19 (evolution-only): **-9.94 mN,
    5.2 % of the half-car drag** (steady model), six generations, 87 completed good-mesh solves since 18:37 (all tests
    included). Adjoint-led steps: 9.48 of 9.94; evolution-only: 0.46.
-5. **It survives the production scheme**: the -8.21 design keeps -6.32 mN (3.5 %) under linearUpwind (Mark P2 met).
+5. **It survives the production scheme**: the -8.21 design keeps -6.32 mN (Mark P2), the -9.50 design **-8.20 mN, 4.5 %**
+   (Mark P3), and generations 3-4 add -1.88 there (I34): 0.77-0.86 of the steady gains (same mesh family).
 6. **The limit is the mesh**: the explicit morph (new, opt-in) moves the wall layer rigidly and allows ~1 mm per morph,
    chained to ~2 mm (5 levels); after that even 0.25 mm adjoint moves fold. Beyond that the mesh must be rebuilt
    (untested here). DAFoam on a runner failed 2 of 7 times (a lost runner; one unconverged adjoint).
@@ -86,8 +87,8 @@ All on free GitHub runners (public repository); no paid machine is needed for an
 4. **Caveat: the morph's own error at ~2 mm of chained moves is not measured** (mark E covered 0.125 mm, one level); the
    production checks share the same morphed meshes, so only a fresh mesh (phase B) removes this doubt.
 5. **What is confirmed and what is not:** the loop runs on the steady upwind model (D10). Under the production scheme
-   the best design keeps 0.77 of its gain (Mark P2 met: -6.32 mN, 3.5 %); Mark P (an earlier pair, whole-signal SE)
-   was not met. Still open: fresh meshes and repeats (D8), and the full race-time effect.
+   the gains hold at 0.77-0.86 (Marks P2, P3 and I34 met: -6.32 and -8.20 mN); Mark P (an earlier pair, whole-signal SE)
+   was not met. Generations 5-6 under production: Mark P4 / I56. Still open: fresh meshes and repeats (D8), and the full race-time effect.
 6. **Mesh rebuilds (phase B) and several starts (phase C) are untested here.** The chained morph ran out at ~1.5 mm
    (generation 3: the strongest +0.5 mm moves folded), so B is the next engineering task.
 
@@ -114,6 +115,7 @@ unmoved team pod (190.73 mN). Whole-signal SE ~0.12 mN at small moves, < 0.01 mN
 | **Generation 5** (0.25 mm moves) | **met (just)**: combined 0.125 mm -0.25 (accepted); fresh DAFoam and ESI moves folded at 0.25 mm; DAFoam at the new parent did not converge | total **-9.75 mN (5.1 %)**; the chained morph (~2 mm) is now the limit |
 | **Generation 6** (0.125 mm moves) | **met**: evolution-only recombination -0.19 (accepted); every adjoint move folded, even at 0.125 mm | **final -9.94 mN (5.2 %)**; the mesh is spent: stop for a new mesh |
 | **Mark P2** (best design under the production scheme, block-mean SE) | **met**: 175.49 vs 181.81, **-6.32 mN (3.5 %)**, 0.77 of the steady gain | the gain is not a steady-model artefact (same mesh family; fresh meshes still to do) |
+| **Mark P3** (generation-5 parent, steady -9.50, under production) and **I34** (generations 3-4 under production) | **both met**: 173.61 vs 181.81, **-8.20 mN (4.5 %)**, 0.86 of the steady gain; generations 3-4 add -1.88 under production | the loop's later generations hold up too, not only the big first step |
 
 ## 7. What to do next, in order
 1. **Production confirmation of the final design** (Mark P4, running at the time of writing) and, per D8, on fresh

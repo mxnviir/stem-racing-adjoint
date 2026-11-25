@@ -1,0 +1,16 @@
+--- blocks dropped: 0
+  step_zero_P    181.808 +/- 0.121
+  step_best2_P   175.487 +/- 0.060
+  step_best4_P   173.611 +/- 0.060
+  step_final_P   missing
+  P2 best2 < zero    -6.322 (3 SE 0.404): met
+  P3 best4 < zero    -8.197 (3 SE 0.404): met
+  I34 best4 < best2  -1.876 (3 SE 0.254): met
+--- blocks dropped: 1
+  step_zero_P    181.729 +/- 0.101
+  step_best2_P   175.491 +/- 0.066
+  step_best4_P   173.649 +/- 0.052
+  step_final_P   missing
+  P2 best2 < zero    -6.238 (3 SE 0.364): met
+  P3 best4 < zero    -8.080 (3 SE 0.342): met
+  I34 best4 < best2  -1.842 (3 SE 0.253): met
