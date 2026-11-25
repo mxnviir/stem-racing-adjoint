@@ -290,3 +290,11 @@ mesh takes no adjoint move at all; the next step is a new mesh (plan phase B). F
 ## Mark P4 (written before this solve): the final design (steady -9.94 mN) under the production scheme
 `step_final_P`, as Marks P2/P3 (production scheme, 2000 iterations, block-mean SE, against `step_zero_P`).
 **Mark P4:** D(final_P) < D(zero_P) by >= 3 SE. Reported: the ratio to -9.94.
+
+## Production increments (written 2026-11-25 07:55, before Mark P3's and P4's results)
+"Final < team pod" is no longer a test (P2 already showed -6.32). The discriminating marks, all production scheme,
+block-mean SE (ten 200-iteration blocks; also reported with the first block dropped):
+- **Mark I34:** D(best4_P) < D(best2_P) by >= 3 SE (generations 3-4; steady -1.29).
+- **Mark I56:** D(final_P) < D(best4_P) by >= 3 SE (generations 5-6; steady -0.44). Underpowered (3 SE ~0.3-0.4 mN):
+  "not met" will mean unresolved, and generations 5-6 then stay steady-model results only.
+Script: `hybrid/increments_verdict.py`.
