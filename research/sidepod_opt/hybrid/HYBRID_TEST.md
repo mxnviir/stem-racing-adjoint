@@ -286,3 +286,7 @@ Parent 180.986 (-9.744). Children vs the parent (0.125 mm): **evolution-only rec
 -9.94 mN vs the team pod, 5.2 % of the half car, steady model)**; combined 0.0625 -0.161; random -0.10 .. +0.22.
 **Folded in the chained morph: DAFoam, ESI, combined 0.125, two random moves.** With 6 chained levels (~2 mm) the
 mesh takes no adjoint move at all; the next step is a new mesh (plan phase B). Final design: `loop_state.json` "final".
+
+## Mark P4 (written before this solve): the final design (steady -9.94 mN) under the production scheme
+`step_final_P`, as Marks P2/P3 (production scheme, 2000 iterations, block-mean SE, against `step_zero_P`).
+**Mark P4:** D(final_P) < D(zero_P) by >= 3 SE. Reported: the ratio to -9.94.
