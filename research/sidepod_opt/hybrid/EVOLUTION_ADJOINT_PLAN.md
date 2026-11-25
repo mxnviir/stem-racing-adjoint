@@ -35,16 +35,17 @@ opt-in), workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
    (-1.28 on top of DAFoam's 1 mm). The two adjoints point in nearly unrelated directions (cosine 0.0-0.2) and found
    different improvements. Fresh ESI at a moved design works (~2 h), but ESI's direction hardly changes with the design
    (cosine 0.8-1.0) while DAFoam's does (0.05 after 1.5 mm): refresh DAFoam every generation, ESI rarely.
-3. **Evolution's part**: random moves alone are weak (most are worse than the parent in every generation), but
-   recombining the measured moves (least squares in their span) gave generation 3's step (-0.27) when the adjoints' own
-   directions were blocked, and at 0.5 mm the combination of evolution's measurements with both adjoints beat either
-   alone (-5.24 vs DAFoam -4.84, evolution alone -2.62; reported, not marked). At 0.125 mm the marked test (H2) failed:
-   at tiny steps the adjoints added nothing.
+3. **Evolution's part is small in the tested loop.** Random moves alone are weak (most were worse than the parent in
+   every generation). Recombining the measured moves (least squares in their span) helps in two ways: it carried the
+   adjoint's direction forward (generation 5's accepted step is 0.80-aligned with the DAFoam move it was built from), and
+   evolution-only recombinations gave the steps of generations 3 and 6 (-0.27, -0.19), both after the mesh had refused
+   the adjoints' moves. At 0.5 mm (reported, not marked) the combination beat either part alone (-5.24 vs DAFoam -4.84,
+   evolution alone -2.62); at 0.125 mm the marked test (H2) failed. **What was tested is an adjoint-proposed loop with
+   evolution's recombination as the fallback; evolution's global role (several starts, phase C) is untested.**
 4. **The loop works**: every generation kept a step under a rule fixed beforehand: -6.93 (DAFoam 1 mm), -1.28 (ESI),
-   -0.27 (recombination), -1.02 (fresh DAFoam), -0.25 and -0.19 (recombination): **-9.94 mN, 5.2 % of the half-car drag**
-   (steady model), six generations, 87 completed good-mesh solves since 18:37 (all tests included). Adjoint moves made
-   9.23 of the 9.94; evolution's
-   recombination made the last three steps once the mesh could no longer take the adjoints' moves.
+   -0.27 (evolution-only), -1.02 (fresh DAFoam), -0.25 (combination, mostly DAFoam), -0.19 (evolution-only): **-9.94 mN,
+   5.2 % of the half-car drag** (steady model), six generations, 87 completed good-mesh solves since 18:37 (all tests
+   included). Adjoint-led steps: 9.48 of 9.94; evolution-only: 0.46.
 5. **It survives the production scheme**: the -8.21 design keeps -6.32 mN (3.5 %) under linearUpwind (Mark P2 met).
 6. **The limit is the mesh**: the explicit morph (new, opt-in) moves the wall layer rigidly and allows ~1 mm per morph,
    chained to ~2 mm (5 levels); after that even 0.25 mm adjoint moves fold. Beyond that the mesh must be rebuilt
@@ -101,7 +102,7 @@ unmoved team pod (190.73 mN). Whole-signal SE ~0.12 mN at small moves, < 0.01 mN
 | Mark E (explicit morph agrees) | met (-1.18 vs -1.04) | the new morph does not change the answer |
 | Larger steps (reported) | 0.5 mm: DAFoam -4.84, ESI -3.57, random -2.70; 1.0 mm: DAFoam **-6.93**, GUIDED -6.65 | step sizes of 0.5-1 mm pay; the adjoints win at this size |
 | **H2** combined vs evolution-only vs DAFoam (0.125 mm) | **FAIL**: evolution-only -1.84 beat combined -1.40; combined vs DAFoam not separable | at tiny steps the adjoints add nothing to evolution's own estimate |
-| Mark S (shape, not flow state) | met: both opposite 0.5 mm moves raise drag (DAFoam +4.05, random +1.86) | the 0.5 mm gains are shape |
+| Mark S (opposite moves raise drag) | met: DAFoam +4.05, random +1.86 at 0.5 mm; but the opposite moves stayed oscillating (0.03 vs 1-3 mN) while the downhill ones went steady | drag is antisymmetric in the move; it does not prove the flow state was unchanged (P2's 0.77 ratio is the better evidence) |
 | All arms at 0.5 mm (reported, post-H2) | combined **-5.24**, evolution+DAFoam -5.03, DAFoam -4.84, evolution+ESI -3.77, ESI -3.57, random -2.70, evolution alone **-2.62** | at the working step size, evolution + adjoints beats either alone |
 | Mark P (production scheme confirms) | not met: base 181.7 +/- 2.8, DAFoam 0.5 mm 177.6 +/- 3.1 (2000 iterations; same sign, unresolved) | production confirmation needs a better protocol (section 4 D) |
 | **Generation 2** (parent DAFoam 1 mm, chained morph; Mark L) | **met**: ESI 0.5 mm -1.28 on top (accepted); DAFoam moves ~0 (spent); combined -0.19; 5 of 6 random moves worse | total **-8.21 mN (4.3 %)**; the second adjoint found what the first had used up |

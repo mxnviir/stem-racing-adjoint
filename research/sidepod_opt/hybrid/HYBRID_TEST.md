@@ -298,3 +298,8 @@ block-mean SE (ten 200-iteration blocks; also reported with the first block drop
 - **Mark I56:** D(final_P) < D(best4_P) by >= 3 SE (generations 5-6; steady -0.44). Underpowered (3 SE ~0.3-0.4 mN):
   "not met" will mean unresolved, and generations 5-6 then stay steady-model results only.
 Script: `hybrid/increments_verdict.py`.
+
+- **Attribution (diagnostic, 2026-11-25 08:00):** generation 5's accepted combined direction is 0.80-aligned with the
+  DAFoam move it was built from; generation 6's evolution-only step is not (-0.08). Adjoint-led steps 9.48 of 9.94 mN,
+  evolution-only 0.46. **Mark S reading, softened:** the opposite 0.5 mm moves stayed oscillating (force_osc 3.0 / 1.2 mN)
+  while the downhill moves went steady (0.01-0.03): S shows drag antisymmetry, not an unchanged flow state.

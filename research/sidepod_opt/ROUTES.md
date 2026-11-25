@@ -1580,8 +1580,9 @@ external topology case was **not found** in their material (that is not proof it
     recombination 0.25 mm -0.27; DAFoam recomputed at the moved design 0.25 mm -1.02; recombination -0.25; -0.19.
   - Adjoint directions: DAFoam's changes with the design (refresh it every generation, ~1.5 h on a runner; 2 of 7 runner
     jobs failed), ESI's hardly does (cosine 0.8-1.0); the two are nearly orthogonal and found different gains.
-  - Random moves: most were worse than the parent in every generation; evolution contributes through recombining the
-    measured moves, which gave the last three steps.
+  - Random moves: most were worse than the parent in every generation. Adjoint-led steps made 9.48 of the 9.94 mN
+    (generation 5's accepted combination is 0.80-aligned with the DAFoam move); evolution-only recombination 0.46
+    (generations 3 and 6, after the mesh refused the adjoints' moves). Evolution's global role (several starts) is untested.
   - Limit: ~2 mm of chained explicit morphs (6 levels); then every adjoint move folds. Next: a new wall-resolved mesh
     on the final design (~5 h, free) and continue (`hybrid/EVOLUTION_ADJOINT_PLAN.md` section 7).
 
