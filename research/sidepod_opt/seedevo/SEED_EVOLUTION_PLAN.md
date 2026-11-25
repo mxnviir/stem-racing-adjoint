@@ -181,6 +181,35 @@ About 250 runs plus one per seed before polish. On the wall-resolved mesh a run 
     of the runs, never more.
   - **T3d (reported, not marked):** `memetic_g` against `memetic`; rho 0.5; problem instances 2 and 3.
 
+### Amendment B (2026-11-25, after T3 failed as registered on instance 1; written before any held-out run)
+Diagnosis on instance 1 (`results/t3_problem1.json`): (1) parents were drawn uniformly over niches, so most
+children came from poor niches (the random-parents arm drew only from the 12 seeds and did better); (2) a
+small real improvement could not win a duel: two noisy fresh runs cannot show a 0.2-sigma gain at 2 SE.
+Changes (`engine.py`, `run_t3.py --amend B --reserve 12`):
+- parents by a tournament of 3 from the map; control children still uniform;
+- an explore child that is a small, topology-keeping move of its parent (within the 2 mm morph range) is
+  scored on the parent's morphed mesh, like a refinement; big or topology-changing children keep fresh meshes;
+- duel: both sides at >= 2 runs, the lower mean wins (0 SE); up to 3 runs each while the child looks better;
+- 12 runs kept back to re-run the best five by estimate before hand-over (all arms).
+Checked on instance 1 only (development, not a test): memetic 2.72, evo_polish 2.80, polish 2.98, evo
+3.33, randpar 3.56 (mean noise-free score of the handed design; best seed 4.15).
+**Held-out test, marks unchanged from T3a-T3c, on problem instances 2, 3 and 4** (never run before this
+commit), random seeds 1-5, budget 300, rho 0.85 / 0 / -0.3. A mark passes on an instance at >= 4 of 5
+seeds; **it passes overall if it passes on >= 2 of the 3 instances.** Instance 1 stays reported as failed.
+- If T3b passes and T3c passes: the adjoint goes in the loop (subject to the owner's decision).
+- If T3b fails only against `evo_polish`: the adjoint goes at the end (version 1), as the plan already says.
+- If T3c fails: an inaccurate adjoint costs more than its share; the in-loop adjoint needs a stop rule
+  (stop refining an elite after k rejected steps) before it can be used, re-tested on instances 5-7.
+
+### Owner's decisions, 2026-11-25
+- **T0 surface mark:** 0.5 mm of edge rounding is accepted for now (measured p99 0.46 mm built-to-CAD,
+  0.35 mm round trip). Volumes pass (within 0.5 %).
+- **CFD runs on GitHub Actions** (as the hybrid loop did). Wheel supports stay out for now.
+- **T0b result (marks as registered):** splice, graft, line, pattern, offset pass; combine, bump, cut and
+  fill fail on the clone rate (31-68 % of legal children overlap a parent by more than 98 %), not on
+  legality (88-100 %) or mill refill (<= 2.5 %, the lattice CMA ~25 %). They are kept out of any CFD
+  run until fixed and re-tested.
+
 ### Coarse CFD on this machine: plumbing only (DECISIONS D6: no design conclusion from the coarse mesh)
 - **TP The whole chain runs on real CFD with a real adjoint** (`real.py`, `run_plumbing.py`). The trial
   car, coarse mesh (~105 k cells), steady model, 4 cores. Census of 5 seeds on fresh meshes (team pod,
