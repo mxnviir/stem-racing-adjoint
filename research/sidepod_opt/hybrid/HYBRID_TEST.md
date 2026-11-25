@@ -1,4 +1,4 @@
-# Evolution + adjoint: tests (written before any of these solves, 2026-11-24 ~19:30 UTC)
+# Evolution + adjoint: tests (written before any of these solves, 2026-11-24 ~18:30 UTC; first launch 18:37)
 
 The owner asked (2026-11-24): a tested plan for combining evolution with both adjoints (discrete DAFoam and normal
 ESI) to make the most aerodynamic sidepod; aerodynamics only for now (fewer constraints). This reverses the owner's
@@ -213,3 +213,17 @@ DAFoam (gradient at the 0.5 mm design) +0.11; DAFoam (base gradient) -0.03; evol
 Parent `daf@1.0|esi_frozen@0.5` (two chained levels). Children (0.5 mm unless noted): DAFoam (gradient at the 1 mm
 design), ESI (base), combined and evolution-only directions from generation 2's measurements (0.5 and 0.25 mm),
 random seeds 17-22. Mark L as before. A fresh DAFoam gradient at this parent runs alongside, for generation 4.
+
+- **Amendment to the loop's acceptance rule (2026-11-25 00:45, before generation 3's results):** a child must also be
+  >= 0.15 mN below the parent (at these designs 3 SE is ~0.007 mN, below the 0.14 mN two morphs of the same shape differ
+  by, mark E). Generation 2's accepted child (-1.28) passes either way.
+- **Mark P, post-hoc diagnostic (not a re-scoring):** both production histories are stationary from the start (ten
+  200-iteration block means: base 181.2-182.5, DAFoam 0.5 mm 177.1-178.9) and decorrelate within ~5 iterations (std ~4
+  mN). From the block means: base 181.81 +/- 0.12, DAFoam 0.5 mm 177.67 +/- 0.16, difference **-4.13 +/- 0.20** (steady
+  model: -4.84). Mark P stays "not met" as written (its SE was fixed as the whole-signal one).
+
+## Mark P2 (written before this solve): does the current best design hold up under the production scheme?
+`step_best2_P`: the generation-3 parent (`daf@1.0|esi_frozen@0.5`, steady -8.21 mN), chained morph, production scheme
+(linearUpwind), 2000 iterations from the base steady state, against `step_zero_P` (same pipeline). SE: from the ten
+200-iteration block means (sd / sqrt 10). **Mark P2:** D(best2_P) < D(zero_P) by >= 3 SE. Reported: the ratio to the
+steady model's -8.21.

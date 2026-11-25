@@ -2,7 +2,8 @@
 State: hybrid/loop_state.json. Rules (fixed 2026-11-24 before generation 3; same as guided_es.py):
 - every child of generation k is the parent plus ONE move (peak AMP mm), chained morph (chain_solve.py);
 - the parent is re-run as g{k}_zero; the best child replaces the parent if it is below g{k}_zero by >= 3 SE
-  (whole-signal SE), else the parent stays;
+  (whole-signal SE) AND by >= FLOOR = 0.15 mN (amended 2026-11-25 00:45, before generation 3's results: at these
+  designs 3 SE is ~0.007 mN, below the 0.14 mN two morphs of the same shape differ by (mark E)), else the parent stays;
 - children: one move along each guide (fresh coarse DAFoam at the parent when available, else the newest one; ESI);
   N_RND new random smooth moves; and moves along the steepest descent in the span of the previous generation's
   measured moves (all of them: 'comb'; random ones only: 'es'), each at AMP and AMP/2.
@@ -12,7 +13,7 @@ from pathlib import Path
 import numpy as np
 SP = Path(__file__).resolve().parents[1]
 R = SP / 'gate_results_resolved_up'; H = SP / 'hybrid'; ST = H / 'loop_state.json'
-AMP, N_RND = 0.5, 6
+AMP, N_RND, FLOOR = 0.5, 6, 0.15
 
 
 def run(n):
@@ -31,17 +32,22 @@ def main():
     S = json.loads(ST.read_text())
     prev = S['generations'][str(k - 1)]
     z = run(f'step_g{k - 1}_zero')
+    if z is None:
+        raise SystemExit(f'generation {k - 1}: the parent re-run is missing; nothing can be accepted')
     res = {n: run(f'step_{n}') for n in prev['children']}
     ok = {n: v for n, v in res.items() if v is not None}
     log = {'zero': z, 'children': {n: (v[0] - z[0], v[1]) for n, v in ok.items()}, 'failed': [n for n in res if res[n] is None]}
-    best = min(ok, key=lambda n: ok[n][0]) if ok else None
-    acc = best if best and ok[best][0] - z[0] <= -3 * np.hypot(ok[best][1], z[1]) else None
+    if not ok:
+        raise SystemExit(f'generation {k - 1}: no child survived (morph range exhausted?)')
+    best = min(ok, key=lambda n: ok[n][0])
+    d = ok[best][0] - z[0]
+    acc = best if d <= -3 * np.hypot(ok[best][1], z[1]) and d <= -FLOOR else None
     log['accepted'] = acc
     if acc:
         f, a = prev['children'][acc]
         S['parent'] = (S['parent'] + '|' if S['parent'] else '') + f'{f}@{a}'
     S['generations'][str(k - 1)]['result'] = log
-    print(f'generation {k - 1}: zero {z[0]:.3f}; best {best} {ok[best][0] - z[0]:+.3f}; accepted {acc}; parent now {S["parent"]}')
+    print(f'generation {k - 1}: zero {z[0]:.3f}; best {best} {d:+.3f}; accepted {acc}; parent now {S["parent"]}')
     # measured moves of generation k-1 -> directions for generation k (relative to the old parent; small change)
     gdir = H / f'g{k}'; gdir.mkdir(exist_ok=True)
     meas = {n: {'field': prev['children'][n][0], 'amp_mm': prev['children'][n][1], 'dF_mN': d}

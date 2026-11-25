@@ -1,10 +1,10 @@
 {
- "note": "hybrid: fresh ESI (frozen, 1000 its) at the generation-3 parent daf@1.0|esi_frozen@0.5 (re-solve the parent, then the adjoint on that morphed state)",
+ "note": "hybrid Mark P2: the current best design (daf@1.0|esi_frozen@0.5) under the production scheme, 2000 its",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "step_g3p_esi",
+   "name": "step_best2_P",
    "site": "step",
    "field": "zero",
    "amp": "0",
@@ -14,8 +14,9 @@
    "explicit": "1",
    "zmin": "1.5",
    "chainparent": "daf@1.0|esi_frozen@0.5",
-   "esi_after": "1000"
+   "prod": "1",
+   "iters": "2000"
   }
  ],
- "attempt": 200
+ "attempt": 201
 }
