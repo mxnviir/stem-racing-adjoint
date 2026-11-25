@@ -27,3 +27,8 @@ Next: generation 2 (round 3) = best <= 0.5 mm design + 0.5 mm children (fresh DA
 | Generation 3 (loop.py next 3) | resolved_bumps 45519631311 (00:38) | running; then `python hybrid/loop.py next 4 <fresh npz>` |
 | DAFoam at gen-3 parent | coarse_dafoam (00:38) | running |
 | Fresh ESI at gen-3 parent (re-solve + frozen adjoint) | resolved_bumps 45519814660 (00:39) | running; output hybrid/esi_after/45519814660/ |
+| Generation 3 | 45519631311 | Mark L met: evolution-only 0.25 accepted (-0.27), total -8.48; strong 0.5 moves folded |
+| DAFoam at gen-3 parent | coarse_dafoam 45519631165 | done (coarse 211.4; r -0.24 vs base) |
+| Generation 4 (0.25 mm, amended) | resolved_bumps 45533175628 (02:28) | running; next: LOOP_AMP=0.25 python hybrid/loop.py next 5 <npz> |
+| Mark P2 (best under production) | 45520314673 | running |
+| Fresh ESI at gen-3 parent | 45519814660 | running |
