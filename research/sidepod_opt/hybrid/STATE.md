@@ -41,3 +41,6 @@ Next: generation 2 (round 3) = best <= 0.5 mm design + 0.5 mm children (fresh DA
 | Mark P3 (gen-5 parent under production) | resolved_bumps 45547527633 (04:33) | running; verdict python hybrid/p3_verdict.py |
 | Generation 5 | 45547505675 | combined 0.125 accepted (-0.25), total -9.75; adjoint moves fold |
 | Generation 6 (0.125 mm, last) | resolved_bumps 45559159504 (06:14) | running |
+| Generation 6 | 45559159504 | evolution-only 0.125 accepted (-0.19); FINAL -9.94 mN steady; loop stopped (morph exhausted) |
+| Mark P3 (-9.50 design, production) | 45547527633 | running; python hybrid/p3_verdict.py |
+| Mark P4 (final design, production) | resolved_bumps 45571467722 (07:52) | running; python hybrid/p4_verdict.py |
