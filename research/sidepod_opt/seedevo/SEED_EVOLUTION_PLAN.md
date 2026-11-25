@@ -1,11 +1,14 @@
 # Seed evolution: architecture, research and the tests that would prove or kill it
 
-Written 2026-11-25. **Status: plan only. Nothing here is built or run.** Every pass mark below is fixed in
-this file before any result exists (DECISIONS D12). Paths are relative to `research/sidepod_opt/`.
+Written 2026-11-25; **version 2 the same day: the adjoint is inside the loop (section 5b), the engine is
+built (`seedevo/`), and the no-CFD tests and a coarse-CFD plumbing test are run on this machine** (results:
+`SEED_EVOLUTION_RESULTS.md`). Every pass mark below is fixed in this file, and committed, before the result
+it judges exists (DECISIONS D12); amendments made before a run are marked as such. Paths are relative to
+`research/sidepod_opt/`.
 
 **Goal:** new sidepod geometry (not a polished copy of one pod) by evolving a population bred from many
-different seed pods, every candidate legal and millable, every candidate scored by real CFD, the best few
-polished by the existing hybrid loop.
+different seed pods, every candidate legal and millable, every candidate scored by real CFD, with the adjoint working
+on the population's best members all the way through (not only as a polish at the end).
 
 ## 1. The answer to "CPPN or something?"
 
@@ -59,9 +62,10 @@ evolution from many seeds). The parts are published; the combination is ours to 
 | 2. Build | existing | Field -> legal milled body, exact mesh, mass, lead chosen by the race model; reports how much the rules changed (`rules_changed_mm3`) | `shape_loop.build_design`, `export_design`, `objective.best_ballast` |
 | 3. Describe | `seedevo/describe.py` | Numbers of the built body, no CFD: pod volume, openness (through-openings seen from the side and from above), frontal area, overlap (IoU) with every seed | `campaign._descriptor` as the starting point |
 | 4. Vary | `seedevo/operators.py` | Section 4 | `shape_loop.redistance`, `esi/make_step.py`'s smooth random fields |
-| 5. Archive and select | `seedevo/archive.py`, `seedevo/evolve.py` | Section 5; batch ask/tell so it stops and resumes between batches | the ask/tell interface of `methods.py`; `campaign.py`'s state handling |
+| 5. Archive, select, refine | `seedevo/engine.py`, `seedevo/space.py` | Sections 5 and 5b | `shape_loop.step_field`, `grid_gradient` |
 | 6. Score | existing | One fresh-mesh production run per design, repeats by meshing-frame shift only (D7) | `prodcheck.py`, `gate.kw` (`GATE_DOMAIN_DX_MM`), `objective.RaceModel` |
-| 7. Polish | existing | Hybrid loop from the top 2-3 mutually different designs, each on its own wall-resolved mesh | `hybrid/loop.py`, `resolved_bumps.yml` |
+| 7. Refine in the loop | `seedevo/engine.py` (`refine_one`), `seedevo/real.py` | Section 5b: the adjoint's move on elites every generation | `esi/esi_on_state.py`, `dafoam/`, `shape_loop.solve` (morph path) |
+| 8. Final polish | existing | Hybrid loop (adjoints + random moves + recombination) on the finalists, each on its own wall-resolved mesh | `hybrid/loop.py`, `resolved_bumps.yml` |
 
 Objective: race time from CFD drag and lift with the exact mass (D1); drag is reported beside it. Opening
 windows removes foam and adds lead low in the car; the race model prices that without CFD.
@@ -71,7 +75,7 @@ windows removes foam and adds lead low in the car; the race model prices that wi
 | | Operator | What it does | Why |
 |---|---|---|---|
 | X1 | Splice | Front of A, rear of B, joined across a plane with a 6-10 mm smooth blend (also top/bottom, inboard/outboard) | Whole working halves are inherited intact |
-| X2 | Transplant | A's difference from the team pod inside a 10-25 mm window, added to B | Moves one feature (a groove, a window, a bulge) between designs |
+| X2 | Graft | A, with B's geometry inside one 8-20 mm window placed where the two differ | Moves one feature (a groove, a window, a bulge) between designs |
 | X3 | Combine | Inside a window: both designs' cuts (minimum) or both designs' material (maximum) | Stacks features |
 | X4 | Line step | B's field moved a fraction (<= 0.3) towards A, plus a small smooth random field | Mild morph between two elites (Vassiliades and Mouret) |
 | M1 | Bump or dent | Smooth local move, 1-4 mm high, 5-15 mm wide | Local shape change larger than the hybrid loop's |
@@ -89,8 +93,9 @@ not parameters, but they are hand-written operators. Without them new openings c
 
 ## 5. Selection: a map, with noisy scores handled
 
-- **Map:** pod volume (6 bins) x openness (5 bins: closed, 1 opening, 2-3, 4+, slotted array) = 30 niches.
-  Each niche keeps its best design. Seeds fill it first (the census, stage P2).
+- **Map:** pod volume (6 bins) x through-openings seen from the side and from above (4 bins: 0, 1, 2-3,
+  4+) = 24 niches (`space.py`; amended from 30 before any run: a "slotted array" bin had no measurable
+  definition). Each niche keeps its best design. Seeds fill it first (the census, stage P2).
 - **Parents:** a niche drawn uniformly from the occupied ones; crossover takes its second parent from a
   different niche.
 - **Entry rule (adaptive sampling):** a child scored once enters an empty niche at once. Against an
@@ -98,7 +103,31 @@ not parameters, but they are hand-written operators. Without them new openings c
   meshing frames until both have the same count (at most 3), and the child replaces the incumbent if its
   mean is lower by >= 2 SE, SE = sigma x sqrt(1/n + 1/n), sigma from T1. Entry at 2 SE is for searching
   only: **every claim in a report needs 3 SE** on the confirmation meshes (T5).
-- **Batch:** 20 children per generation; 4 of the 20 are control children (T4).
+- **Batch:** about 20 runs per generation (section 5b says how they are split).
+
+## 5b. The adjoint inside the loop (`engine.py`)
+
+Each generation spends its runs on three kinds of children:
+
+| Kind | Made by | Scored on | Enters the map |
+|---|---|---|---|
+| **Explore** (9) | Crossover or mutation of map members (section 4): any topology | A **fresh** mesh: noise sigma_fresh | By the duel above |
+| **Refine** (3 elites x 2 step sizes) | The adjoint's own move on an elite: sensitivity -> `shape_loop.step_field` (smoothing, 95th-percentile scaling, mass price) -> the builder | The elite's own mesh **morphed** onto the child: noise ~100x smaller | Replaces its parent if CFD says it is better by >= 3 SE of the morph and >= the floor; else that elite's step halves |
+| **Control** (2) | The same operators on census seeds only (test T4) | Fresh mesh | Never |
+
+- **The adjoint proposes, CFD decides** (the hybrid loop's rule, unchanged). A sensitivity is solved once
+  per elite and reused until that elite changes. Any adjoint that writes `Xs, dD_dXs` works: DAFoam on a
+  coarse mesh of that elite, or OpenFOAM's own (ESI) on its scoring mesh.
+- **Lamarckian:** the refined field replaces the elite, so later crossover inherits the refinement.
+- **Which elites:** the best two by estimate plus one drawn from the other niches, so the map improves,
+  not only its champion.
+- **Scores through a refinement chain:** child estimate = parent estimate + morph-measured change, carrying
+  the parent's count of fresh runs. After 2 mm of accumulated morph (the measured range of one mesh) the
+  elite is re-run on a fresh mesh of its own and the two estimates are pooled.
+- **Second use of the adjoint (`guided`):** once an elite has a sensitivity map, its mutations are placed
+  by it: cuts where the surface wants to move in, material where it wants out. Tested as arm `memetic_g`.
+- **What the adjoint still cannot do:** change topology. New openings come only from seeds, crossover and
+  the cut / fill / pattern operators.
 
 ## 6. Budget (in CFD runs; cost per run is set by T1's mesh)
 
@@ -118,19 +147,56 @@ About 250 runs plus one per seed before polish. On the wall-resolved mesh a run 
 ## 7. Tests and pass marks (fixed now)
 
 ### No CFD
-- **T0 Ingest is faithful.** (a) Known answer: `cad/trial_car.step` through `ingest.py` reproduces the
-  `original` seed: built mesh volume within 0.5 % of the CAD's 157.522 cm3 and surface distance p99
-  <= 0.05 mm. (b) Every seed: where the rules did not act, built surface to seed surface p99 <= 0.3 mm.
-  A seed with more than 5 % of its pod volume changed by the rules is labelled **altered** in every table.
-- **T0b Operators are usable.** Every operator, >= 10 seed pairs, 20 draws each. Pass per operator:
+- **T0 Ingest is faithful.** (a) Known answer: `cad/trial_car.step` through `ingest.py` and the builder:
+  built mesh volume within 0.5 % of the CAD body's and surface distance p99 <= 0.3 mm both ways in the
+  region. (Amended before any run from 0.05 mm: a body rebuilt from a 1 mm grid rounds sharp edges, and
+  **every design, seeds included, is re-surfaced the same way** so that seeds and children are compared like
+  with like; the re-surfacing offset of the team pod is measured in T1.) (b) Round trip: a built seed with
+  a feature (the grooved pod) written as STL, read back and built again: p99 <= 0.3 mm, volume within 0.5 %.
+  (c) Every real seed: where the rules did not act, built surface to seed surface p99 <= 0.3 mm. A seed
+  with more than 5 % of its pod volume changed by the rules is labelled **altered** in every table.
+- **T0b Operators are usable.** Every operator, 40 draws with parents drawn from 10 test seeds on the real
+  car and the real builder (amended before any run from 20 draws x 10 pairs: a build takes 13 s). Pass per operator:
   legal children >= 50 %; of the legal ones >= 70 % overlap their nearest parent with IoU between 0.50 and
   0.98 (neither a clone nor noise); median volume the mill puts back <= 10 % of the pod (the lattice CMA:
   about 25 %). An operator that fails is fixed or removed before any CFD is spent.
-- **T3 The search machinery works on a known answer.** Score = mismatch to a hidden legal target built
-  from features of three different seeds, plus noise at T1's sigma in the same ratio to the seeds' spread.
-  Arms at 200 evaluations, 5 random seeds each: the full engine; mutation only; random parents (no
-  selection). Pass: the engine's final best (noise-free score) beats both other arms in >= 4 of 5.
-  This proves the machinery and the noise rule, **not the physics**.
+- **T3 The search machinery works on a known answer** (`toy.py`, `run_t3.py`). Score = weighted mismatch
+  to a hidden legal target built from parts of three seeds, one cut no seed has, and a smooth sculpt of
+  the whole surface. Fresh score = truth + noise at 0.25 x the seeds' spread (reliability 0.94, what test
+  E demands); morph score = exact difference with 1/50 of that noise, only for small moves that keep the
+  topology and within 2 mm of a fresh mesh; adjoint = the true surface sensitivity mixed with a fixed bias
+  field to correlation rho, twice the true size; costs: fresh 1, morph 1, adjoint 0.7. 12 seeds, budget
+  300 after the census, problem instance 1, random seeds 1-5 (amended before any marked run from 200
+  evaluations; instance 0 was used only to debug). The score of an arm is the **noise-free** objective of
+  the design it would hand over (its map's best by its own noisy estimate). This proves the machinery, the
+  noise rule and the budget split, **not the physics**.
+  - **T3a Evolution works:** `evo` beats `randpar` (no selection) and `mutonly` (no crossover), each in
+    >= 4 of 5 seeds.
+  - **T3b The adjoint in the loop pays, when the adjoint is decent (rho 0.85):** `memetic` beats `evo`,
+    beats `evo_polish` (evolve for 70 % of the budget, then the adjoint on the best three) and beats
+    `polish` (the adjoint alone from the best seeds), each in >= 4 of 5 seeds. If it beats `evo` but not
+    `evo_polish`, the adjoint goes at the end (version 1 of this plan) and this section says so.
+  - **T3c A bad adjoint is safe (rho 0 and rho -0.3):** `memetic` is no worse than `evo60` (evolution with
+    60 % of the budget) in >= 4 of 5 seeds at each rho: a useless or misleading adjoint may cost its share
+    of the runs, never more.
+  - **T3d (reported, not marked):** `memetic_g` against `memetic`; rho 0.5; problem instances 2 and 3.
+
+### Coarse CFD on this machine: plumbing only (DECISIONS D6: no design conclusion from the coarse mesh)
+- **TP The whole chain runs on real CFD with a real adjoint** (`real.py`, `run_plumbing.py`). The trial
+  car, coarse mesh (~105 k cells), steady model, 4 cores. Census of 5 seeds on fresh meshes (team pod,
+  groove, no pod, and two test seeds with cuts); one generation: 4 explore children on fresh meshes and
+  2 elites refined (OpenFOAM's own adjoint, frozen turbulence, on each elite's own flow; two step sizes
+  each, scored on the elite's mesh morphed onto the child).
+  - **P1:** every stage runs on real files with no hand edit between stages: field -> build -> export ->
+    mesh -> solve -> adjoint -> sensitivity on the grid -> step -> build -> morph solve -> decision.
+  - **P2:** the pipeline reproduces known coarse steady-model numbers: the team pod within 1 % of 449.24 mN
+    whole car (`runs/cloud_original` iteration 0), and no pod worse than the team pod by >= 15 mN half car.
+  - **P3:** each refined elite returns a decision (accepted, or rejected with its step halved) from at
+    least one step scored on a morphed mesh (no fresh-mesh fallback).
+  - **P4:** at least one crossover child and one mutation child whose through-opening count differs from
+    both parents mesh (checkMesh passes) and converge.
+  - Reported, not marked (coarse mesh): every drag number, whether the adjoint's steps lowered drag, the
+    first-order prediction beside the measured change.
 
 ### CFD
 - **T1 Instrument.** Team pod on 4 fresh meshes (frames 0, 0.37, 0.74, 1.11 mm); groove, 3-window pod and
@@ -152,10 +218,16 @@ About 250 runs plus one per seed before polish. On the wall-resolved mesh a run 
   - **D:** median (child - mid-parent) <= +5 mN half car (the lattice CMA's first generation: about +40).
   - Fail either: the operators are destroying what made the parents good. Fix operators, re-run T0b and
     T2 once; a second fail ends the method.
-- **T4 Selection is doing the work.** In every generation 4 of 20 children are bred by the same operators
-  from seeds drawn uniformly from the census, never from evolved designs.
-  - **S2:** over generations 6-9, the mean score of the 64 selected-lineage children is below the mean
-    of the 16 control children by >= 3 SE.
+- **T4 Selection is doing the work.** In every generation 2 of the 11 fresh-mesh children are bred by the
+  same operators from seeds drawn uniformly from the census, never from evolved designs.
+  - **S2:** over generations 6-9, the mean score of the selected-lineage explore children is below the
+    mean of the control children by >= 3 SE.
+- **T4b The adjoint is doing work inside the loop** (the real-CFD counterpart of T3b).
+  - **A1:** over the run, refine children accepted / refine children scored >= 25 %, and the summed
+    morph-measured gain of accepted refinements is >= 3 SE of a fresh-mesh score.
+  - **A2:** on the confirmation meshes (T5), the best refined design beats its own unrefined ancestor (the
+    last explore child or seed in its lineage) by >= 3 SE. Fail: the refinements were morph or model
+    artefacts, and the adjoint is taken out of the loop.
 - **T5 The result is real on fresh meshes.** Best evolved design, best seed and team pod, 4 frame-shifted
   meshes each.
   - **S1:** best evolved < best seed by >= 3 SE. Fail: the claim is "a ranked map of alternatives", not
@@ -203,3 +275,5 @@ About 250 runs plus one per seed before polish. On the wall-resolved mesh a run 
 - Langelaar: [Topology optimization for multi-axis machining (2019)](https://repository.tudelft.nl/record/uuid:83241b69-5818-4b4a-a690-2bedfc8d9b40); Morris et al.: [3-axis milling in level-set topology optimisation](https://arxiv.org/pdf/2002.10246)
 - Rothlauf: Representations for genetic and evolutionary algorithms (locality); Jones, Forrest: Fitness distance correlation (1995)
 - Kontoleontos, Asouti, Giannakoglou (2012); Bons, He, Mader, Martins (2019): as in `ROUTES.md`
+- Gradients inside a quality-diversity search: Nilsson, Cully: [Policy gradient assisted MAP-Elites (2021)](https://hal.archives-ouvertes.fr/hal-03135723v2/file/PGA_MAP_Elites_GECCO.pdf) (half the offspring from a gradient operator, half from the genetic one; a later ablation found the gradient operator matters most early and that both are needed: [Flageat, Chalumeau, Cully 2022](https://arxiv.org/abs/2210.13156)); Fontaine, Nikolaidis: [Differentiable quality diversity (2021)](https://arxiv.org/pdf/2106.03894)
+- Writing the locally improved design back into the population (Lamarckian) or not (Baldwinian): Whitley, Gordon, Mathias: [Lamarckian evolution, the Baldwin effect and function optimization (1994)](https://www.doi.org/10.1007/3-540-58484-6_245). Lamarckian converges faster and is more easily trapped; the map's many niches are the guard against that here
