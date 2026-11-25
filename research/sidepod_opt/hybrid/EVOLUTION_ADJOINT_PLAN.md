@@ -67,3 +67,5 @@ unmoved team pod (190.73 mN). Whole-signal SE ~0.12 mN at small moves, < 0.01 mN
 | **H2** combined vs evolution-only vs DAFoam (0.125 mm) | **FAIL**: evolution-only -1.84 beat combined -1.40; combined vs DAFoam not separable | at tiny steps the adjoints add nothing to evolution's own estimate |
 | Mark S (shape, not flow state) | met: both opposite 0.5 mm moves raise drag (DAFoam +4.05, random +1.86) | the 0.5 mm gains are shape |
 | All arms at 0.5 mm (reported, post-H2) | combined **-5.24**, evolution+DAFoam -5.03, DAFoam -4.84, evolution+ESI -3.77, ESI -3.57, random -2.70, evolution alone **-2.62** | at the working step size, evolution + adjoints beats either alone |
+| Mark P (production scheme confirms) | not met: base 181.7 +/- 2.8, DAFoam 0.5 mm 177.6 +/- 3.1 (2000 iterations; same sign, unresolved) | production confirmation needs a better protocol (section 4 D) |
+| **Generation 2** (parent DAFoam 1 mm, chained morph; Mark L) | **met**: ESI 0.5 mm -1.28 on top (accepted); DAFoam moves ~0 (spent); combined -0.19; 5 of 6 random moves worse | total **-8.21 mN (4.3 %)**; the second adjoint found what the first had used up |
