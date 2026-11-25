@@ -60,8 +60,9 @@ All on free GitHub runners (public repository); no paid machine is needed for an
    the adjoint moves and the random moves alone (at 0.5 mm the combination gave -5.24 vs DAFoam's -4.84).
 3. **Volume-neutral moves** (mean removed before scaling) are a constraint the aero-only stage could drop; dropping it
    would let the pod shrink or grow freely, which the drag will reward until the mass rules come back.
-4. **What is still unconfirmed:** every number is the steady upwind model (D10). Production checks so far: one pair,
-   noisy (Mark P not met; block means -4.1 +/- 0.2 post hoc) and Mark P2 (the best design) running.
+4. **What is confirmed and what is not:** the loop runs on the steady upwind model (D10). Under the production scheme
+   the best design keeps 0.77 of its gain (Mark P2 met: -6.32 mN, 3.5 %); Mark P (an earlier pair, whole-signal SE)
+   was not met. Still open: fresh meshes and repeats (D8), and the full race-time effect.
 5. **Mesh rebuilds (phase B) and several starts (phase C) are untested here.** The chained morph ran out at ~1.5 mm
    (generation 3: the strongest +0.5 mm moves folded), so B is the next engineering task.
 
@@ -84,3 +85,4 @@ unmoved team pod (190.73 mN). Whole-signal SE ~0.12 mN at small moves, < 0.01 mN
 | Mark P (production scheme confirms) | not met: base 181.7 +/- 2.8, DAFoam 0.5 mm 177.6 +/- 3.1 (2000 iterations; same sign, unresolved) | production confirmation needs a better protocol (section 4 D) |
 | **Generation 2** (parent DAFoam 1 mm, chained morph; Mark L) | **met**: ESI 0.5 mm -1.28 on top (accepted); DAFoam moves ~0 (spent); combined -0.19; 5 of 6 random moves worse | total **-8.21 mN (4.3 %)**; the second adjoint found what the first had used up |
 | **Generation 3** (parent + ESI 0.5; Mark L, 0.15 mN floor) | **met**: evolution's recombination of generation 2's measured moves at 0.25 mm -0.27 (accepted); combined 0.25 mm -0.27; all 6 random moves worse; the 3 strongest 0.5 mm moves folded the chained mesh | total **-8.48 mN**; evolution's part shows once the adjoints' own directions are spent; the morph range is the limit now |
+| **Mark P2** (best design under the production scheme, block-mean SE) | **met**: 175.49 vs 181.81, **-6.32 mN (3.5 %)**, 0.77 of the steady gain | the gain is not a steady-model artefact (same mesh family; fresh meshes still to do) |

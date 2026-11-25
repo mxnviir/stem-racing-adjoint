@@ -1,0 +1,1 @@
+zero_P 181.808 +/- 0.121; best2_P 175.487 +/- 0.060; difference -6.322 (3 SE 0.404); Mark P2 met; ratio to the steady model's -8.21: 0.77

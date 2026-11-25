@@ -241,3 +241,9 @@ measured moves, not from an adjoint's own move.
 - **Fresh ESI at a moved design works** (run 45519814660): the generation-3 parent re-solved through the chained
   pipeline (D20 182.52, matching its generation-3 run), then ESI frozen (1000 its) on that converged morphed state:
   32 117 surface points; the job took ~2 h in all. Usable as a guide via `esinpz:` (generation 5 onward).
+
+## Mark P2 result (2026-11-25 03:45, run 45520314673): **met**
+Production scheme (linearUpwind), 2000 iterations, SE from ten 200-iteration block means: team pod 181.808 +/- 0.121,
+best design (DAFoam 1.0 | ESI 0.5, chained) **175.487 +/- 0.060: -6.32 mN (3 SE 0.40), 3.5 % of the production half-car
+drag**, 0.77 of the steady model's -8.21. The gain survives the production scheme (same mesh family; fresh-mesh and
+repeat confirmation per D8 are still to do). `hybrid/P2_VERDICT.txt`.
