@@ -1574,8 +1574,9 @@ external topology case was **not found** in their material (that is not proof it
   - Evolution branch: its CMA-ES (72-number lattice, SimScale, milling) never beat the team pod; its ask/tell interface is
     ported (`hybrid/evolution_methods.py`), not its lattice.
 
-- **2026-11-25 08:00, evolution + adjoint loop: six generations, -9.94 mN (5.2 %) steady; -6.32 mN confirmed under the
-  production scheme for the generation-3 design (Mark P2). The loop stops because the chained morph is spent.**
+- **2026-11-25 08:00, evolution + adjoint loop: six generations, -9.94 mN (5.2 %) steady; under the production scheme the
+  generation-3 design keeps -6.32 mN (Mark P2) and the generation-5 parent -8.20 mN, 4.5 % (Mark P3, 08:34); generations
+  3-4 add -1.88 there (I34). The loop stops because the chained morph is spent.**
   - Accepted steps (each beat its parent by >= 3 SE and >= 0.15 mN): DAFoam 1 mm -6.93; ESI 0.5 mm -1.28; evolution's
     recombination 0.25 mm -0.27; DAFoam recomputed at the moved design 0.25 mm -1.02; recombination -0.25; -0.19.
   - Adjoint directions: DAFoam's changes with the design (refresh it every generation, ~1.5 h on a runner; 2 of 7 runner
