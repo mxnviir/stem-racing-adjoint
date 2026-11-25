@@ -104,7 +104,8 @@ class ToyEvaluator:
         if moved > self.morph_max or topo:
             self.calls["fold"] += 1
             return None
-        return self.true(child.f) - self.true(parent.f) + self.rng.normal(0.0, self.sigma_morph * np.sqrt(2.0))
+        return {"delta": self.true(child.f) - self.true(parent.f) + self.rng.normal(0.0, self.sigma_morph * np.sqrt(2.0)),
+                "move": moved}
 
     def adjoint(self, ind):
         """Objective change per mm of outward surface move, per cell: the truth mixed with the bias."""

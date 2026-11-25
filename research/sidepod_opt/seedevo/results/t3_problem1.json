@@ -1,0 +1,7239 @@
+{
+ "head": {
+  "problem": 1,
+  "budget": 300.0,
+  "sigma_fresh": 0.5022287760013185,
+  "seed_true": {
+   "s00": 5.890028764721608,
+   "s01": 5.080419325019532,
+   "s02": 11.947678298268343,
+   "s03": 5.919438287492676,
+   "s04": 7.569647651806975,
+   "s05": 4.271600954572661,
+   "s06": 6.209174226224061,
+   "s07": 4.657785002179241,
+   "s08": 5.468272873718501,
+   "s09": 4.149322701827595,
+   "s10": 4.950191843952587,
+   "s11": 5.706399942211492
+  },
+  "best_seed_true": 4.149322701827595,
+  "target_openings": 0,
+  "seed_openings": {
+   "s00": 0,
+   "s01": 0,
+   "s02": 1,
+   "s03": 0,
+   "s04": 0,
+   "s05": 0,
+   "s06": 0,
+   "s07": 0,
+   "s08": 0,
+   "s09": 0,
+   "s10": 0,
+   "s11": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "evo",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 3.9269143922377387,
+   "est_best": 3.3248023459716425,
+   "best_kind": "explore",
+   "best_openings": 1,
+   "spent": 300.0,
+   "generations": 13,
+   "niches": 11,
+   "calls": {
+    "fresh": 316,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 6.28362585163427,
+   "control_mean_late": 6.136328256682062,
+   "n_explore": 198,
+   "n_control": 48,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     30,
+     29,
+     2
+    ],
+    "graft": [
+     27,
+     27,
+     3
+    ],
+    "combine": [
+     29,
+     24,
+     3
+    ],
+    "line": [
+     32,
+     32,
+     3
+    ],
+    "bump": [
+     33,
+     33,
+     3
+    ],
+    "cut": [
+     29,
+     28,
+     1
+    ],
+    "fill": [
+     21,
+     20,
+     0
+    ],
+    "pattern": [
+     26,
+     25,
+     1
+    ],
+    "offset": [
+     30,
+     28,
+     3
+    ]
+   },
+   "wall_s": 4.2
+  },
+  {
+   "arm": "evo",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 4.271600954572661,
+   "est_best": 4.435669417241461,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 11,
+   "niches": 14,
+   "calls": {
+    "fresh": 317,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 7.503725310488007,
+   "control_mean_late": 6.283401915650286,
+   "n_explore": 171,
+   "n_control": 40,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     23,
+     23,
+     5
+    ],
+    "graft": [
+     26,
+     25,
+     5
+    ],
+    "combine": [
+     33,
+     31,
+     0
+    ],
+    "line": [
+     27,
+     27,
+     2
+    ],
+    "bump": [
+     24,
+     24,
+     1
+    ],
+    "cut": [
+     27,
+     27,
+     4
+    ],
+    "fill": [
+     16,
+     10,
+     0
+    ],
+    "pattern": [
+     21,
+     21,
+     1
+    ],
+    "offset": [
+     24,
+     23,
+     4
+    ]
+   },
+   "wall_s": 4.2
+  },
+  {
+   "arm": "evo",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 3.9974104426238237,
+   "est_best": 3.8637958976161397,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 12,
+   "niches": 12,
+   "calls": {
+    "fresh": 318,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 6.655535472279581,
+   "control_mean_late": 6.702421474388354,
+   "n_explore": 189,
+   "n_control": 44,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     28,
+     27,
+     4
+    ],
+    "graft": [
+     26,
+     25,
+     3
+    ],
+    "combine": [
+     41,
+     34,
+     1
+    ],
+    "line": [
+     28,
+     28,
+     0
+    ],
+    "bump": [
+     14,
+     14,
+     0
+    ],
+    "cut": [
+     27,
+     26,
+     4
+    ],
+    "fill": [
+     32,
+     26,
+     1
+    ],
+    "pattern": [
+     27,
+     26,
+     2
+    ],
+    "offset": [
+     28,
+     27,
+     0
+    ]
+   },
+   "wall_s": 4.6
+  },
+  {
+   "arm": "evo",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 3.580584633743505,
+   "est_best": 3.4419334521736844,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 12,
+   "niches": 12,
+   "calls": {
+    "fresh": 319,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 6.094385751432257,
+   "control_mean_late": 6.257393121660325,
+   "n_explore": 184,
+   "n_control": 44,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     26,
+     26,
+     5
+    ],
+    "graft": [
+     24,
+     23,
+     3
+    ],
+    "combine": [
+     31,
+     24,
+     4
+    ],
+    "line": [
+     26,
+     26,
+     1
+    ],
+    "bump": [
+     23,
+     23,
+     0
+    ],
+    "cut": [
+     28,
+     28,
+     1
+    ],
+    "fill": [
+     28,
+     25,
+     0
+    ],
+    "pattern": [
+     27,
+     27,
+     1
+    ],
+    "offset": [
+     26,
+     26,
+     2
+    ]
+   },
+   "wall_s": 4.0
+  },
+  {
+   "arm": "evo",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 4.271600954572661,
+   "est_best": 4.343817510566383,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 12,
+   "niches": 13,
+   "calls": {
+    "fresh": 320,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 7.45149948617537,
+   "control_mean_late": 6.24904771950069,
+   "n_explore": 178,
+   "n_control": 44,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     24,
+     23,
+     2
+    ],
+    "graft": [
+     34,
+     33,
+     6
+    ],
+    "combine": [
+     28,
+     26,
+     4
+    ],
+    "line": [
+     19,
+     19,
+     1
+    ],
+    "bump": [
+     25,
+     25,
+     2
+    ],
+    "cut": [
+     24,
+     23,
+     4
+    ],
+    "fill": [
+     30,
+     27,
+     2
+    ],
+    "pattern": [
+     26,
+     25,
+     3
+    ],
+    "offset": [
+     21,
+     21,
+     2
+    ]
+   },
+   "wall_s": 4.1
+  },
+  {
+   "arm": "randpar",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 3.1347120227013074,
+   "est_best": 3.000446763210743,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 13,
+   "niches": 10,
+   "calls": {
+    "fresh": 316,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 5.841585823880643,
+   "control_mean_late": null,
+   "n_explore": 245,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     30,
+     30,
+     2
+    ],
+    "graft": [
+     27,
+     27,
+     2
+    ],
+    "combine": [
+     28,
+     28,
+     3
+    ],
+    "line": [
+     29,
+     29,
+     0
+    ],
+    "bump": [
+     32,
+     32,
+     0
+    ],
+    "cut": [
+     29,
+     26,
+     1
+    ],
+    "fill": [
+     20,
+     19,
+     2
+    ],
+    "pattern": [
+     26,
+     26,
+     1
+    ],
+    "offset": [
+     29,
+     28,
+     1
+    ]
+   },
+   "wall_s": 4.0
+  },
+  {
+   "arm": "randpar",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 3.6481285701294017,
+   "est_best": 3.5604990632864912,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 13,
+   "niches": 10,
+   "calls": {
+    "fresh": 317,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 6.247206656584549,
+   "control_mean_late": null,
+   "n_explore": 244,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     25,
+     25,
+     3
+    ],
+    "graft": [
+     29,
+     29,
+     2
+    ],
+    "combine": [
+     34,
+     33,
+     2
+    ],
+    "line": [
+     29,
+     29,
+     1
+    ],
+    "bump": [
+     25,
+     25,
+     1
+    ],
+    "cut": [
+     33,
+     32,
+     1
+    ],
+    "fill": [
+     22,
+     20,
+     1
+    ],
+    "pattern": [
+     24,
+     23,
+     1
+    ],
+    "offset": [
+     28,
+     28,
+     5
+    ]
+   },
+   "wall_s": 4.1
+  },
+  {
+   "arm": "randpar",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 3.5076811541252697,
+   "est_best": 3.122585230731362,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 13,
+   "niches": 12,
+   "calls": {
+    "fresh": 318,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 6.514449880604019,
+   "control_mean_late": null,
+   "n_explore": 250,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     29,
+     29,
+     6
+    ],
+    "graft": [
+     27,
+     27,
+     1
+    ],
+    "combine": [
+     43,
+     39,
+     4
+    ],
+    "line": [
+     29,
+     29,
+     1
+    ],
+    "bump": [
+     15,
+     15,
+     0
+    ],
+    "cut": [
+     29,
+     29,
+     0
+    ],
+    "fill": [
+     33,
+     25,
+     0
+    ],
+    "pattern": [
+     28,
+     28,
+     3
+    ],
+    "offset": [
+     29,
+     29,
+     4
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "randpar",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 3.1777771030366098,
+   "est_best": 3.067776336972258,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 12,
+   "niches": 12,
+   "calls": {
+    "fresh": 319,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 6.234275757817227,
+   "control_mean_late": null,
+   "n_explore": 227,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     26,
+     26,
+     4
+    ],
+    "graft": [
+     24,
+     24,
+     0
+    ],
+    "combine": [
+     29,
+     27,
+     4
+    ],
+    "line": [
+     26,
+     26,
+     1
+    ],
+    "bump": [
+     22,
+     22,
+     0
+    ],
+    "cut": [
+     28,
+     28,
+     2
+    ],
+    "fill": [
+     26,
+     21,
+     0
+    ],
+    "pattern": [
+     27,
+     27,
+     1
+    ],
+    "offset": [
+     26,
+     26,
+     4
+    ]
+   },
+   "wall_s": 4.0
+  },
+  {
+   "arm": "randpar",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 4.504992865924691,
+   "est_best": 3.745674263773559,
+   "best_kind": "explore",
+   "best_openings": 1,
+   "spent": 300.0,
+   "generations": 13,
+   "niches": 11,
+   "calls": {
+    "fresh": 320,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 6.199377544582617,
+   "control_mean_late": null,
+   "n_explore": 246,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     27,
+     27,
+     2
+    ],
+    "graft": [
+     35,
+     35,
+     2
+    ],
+    "combine": [
+     33,
+     32,
+     2
+    ],
+    "line": [
+     23,
+     23,
+     2
+    ],
+    "bump": [
+     27,
+     25,
+     0
+    ],
+    "cut": [
+     28,
+     27,
+     1
+    ],
+    "fill": [
+     35,
+     26,
+     0
+    ],
+    "pattern": [
+     29,
+     29,
+     3
+    ],
+    "offset": [
+     23,
+     22,
+     1
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "mutonly",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 4.271600954572661,
+   "est_best": 4.114327785822876,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 12,
+   "niches": 15,
+   "calls": {
+    "fresh": 316,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 9.653788119010482,
+   "control_mean_late": 5.804374498401377,
+   "n_explore": 180,
+   "n_control": 44,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "bump": [
+     52,
+     52,
+     1
+    ],
+    "cut": [
+     51,
+     50,
+     4
+    ],
+    "fill": [
+     39,
+     32,
+     2
+    ],
+    "pattern": [
+     40,
+     38,
+     3
+    ],
+    "offset": [
+     52,
+     52,
+     9
+    ]
+   },
+   "wall_s": 4.2
+  },
+  {
+   "arm": "mutonly",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 4.773201797117327,
+   "est_best": 4.031157404400151,
+   "best_kind": "explore",
+   "best_openings": 1,
+   "spent": 300.0,
+   "generations": 13,
+   "niches": 13,
+   "calls": {
+    "fresh": 317,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 8.7535468980958,
+   "control_mean_late": 7.1989099832431505,
+   "n_explore": 197,
+   "n_control": 48,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "bump": [
+     46,
+     46,
+     3
+    ],
+    "cut": [
+     57,
+     56,
+     4
+    ],
+    "fill": [
+     51,
+     43,
+     2
+    ],
+    "pattern": [
+     46,
+     46,
+     2
+    ],
+    "offset": [
+     55,
+     54,
+     6
+    ]
+   },
+   "wall_s": 4.4
+  },
+  {
+   "arm": "mutonly",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 3.890165218122825,
+   "est_best": 3.7509968966613507,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 12,
+   "niches": 13,
+   "calls": {
+    "fresh": 318,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 9.322890315651623,
+   "control_mean_late": 6.218107711384597,
+   "n_explore": 180,
+   "n_control": 44,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "bump": [
+     49,
+     47,
+     6
+    ],
+    "cut": [
+     39,
+     39,
+     5
+    ],
+    "fill": [
+     59,
+     47,
+     3
+    ],
+    "pattern": [
+     55,
+     54,
+     3
+    ],
+    "offset": [
+     37,
+     37,
+     4
+    ]
+   },
+   "wall_s": 4.6
+  },
+  {
+   "arm": "mutonly",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 4.149322701827595,
+   "est_best": 4.179199114718263,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 12,
+   "niches": 13,
+   "calls": {
+    "fresh": 319,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 7.3278523759855405,
+   "control_mean_late": 6.903437978081352,
+   "n_explore": 184,
+   "n_control": 44,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "bump": [
+     49,
+     49,
+     1
+    ],
+    "cut": [
+     42,
+     42,
+     2
+    ],
+    "fill": [
+     41,
+     34,
+     1
+    ],
+    "pattern": [
+     51,
+     51,
+     3
+    ],
+    "offset": [
+     55,
+     52,
+     9
+    ]
+   },
+   "wall_s": 4.1
+  },
+  {
+   "arm": "mutonly",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 5.080419325019532,
+   "est_best": 4.206662124478727,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 12,
+   "niches": 14,
+   "calls": {
+    "fresh": 320,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 8.611417723240072,
+   "control_mean_late": 6.607458143102283,
+   "n_explore": 183,
+   "n_control": 44,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "bump": [
+     60,
+     60,
+     5
+    ],
+    "cut": [
+     42,
+     41,
+     4
+    ],
+    "fill": [
+     51,
+     40,
+     2
+    ],
+    "pattern": [
+     52,
+     51,
+     3
+    ],
+    "offset": [
+     38,
+     35,
+     5
+    ]
+   },
+   "wall_s": 4.1
+  },
+  {
+   "arm": "polish",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 3.038583581063882,
+   "est_best": 3.136273145502738,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.5,
+   "generations": 126,
+   "niches": 4,
+   "calls": {
+    "fresh": 19,
+    "morph": 287,
+    "adjoint": 15,
+    "fold": 135
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 131,
+   "refine_tried": 144,
+   "refine_gain": -105.44222410032535,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.6
+  },
+  {
+   "arm": "polish",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 3.038583581063882,
+   "est_best": 3.2358361109486347,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.0,
+   "generations": 69,
+   "niches": 4,
+   "calls": {
+    "fresh": 19,
+    "morph": 291,
+    "adjoint": 10,
+    "fold": 72
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 138,
+   "refine_tried": 146,
+   "refine_gain": -108.18730597138703,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.6
+  },
+  {
+   "arm": "polish",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 3.0851743470845663,
+   "est_best": 3.4264492736977212,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.3,
+   "generations": 69,
+   "niches": 4,
+   "calls": {
+    "fresh": 20,
+    "morph": 292,
+    "adjoint": 9,
+    "fold": 73
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 138,
+   "refine_tried": 146,
+   "refine_gain": -109.17285197912322,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.0
+  },
+  {
+   "arm": "polish",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 2.97463441967838,
+   "est_best": 2.728979627808935,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.20000000000005,
+   "generations": 124,
+   "niches": 4,
+   "calls": {
+    "fresh": 22,
+    "morph": 286,
+    "adjoint": 16,
+    "fold": 133
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 131,
+   "refine_tried": 143,
+   "refine_gain": -104.4517772805778,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.5
+  },
+  {
+   "arm": "polish",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 2.9278537612301374,
+   "est_best": 2.8535196606092375,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.4,
+   "generations": 67,
+   "niches": 4,
+   "calls": {
+    "fresh": 22,
+    "morph": 290,
+    "adjoint": 12,
+    "fold": 71
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 137,
+   "refine_tried": 145,
+   "refine_gain": -105.86303288354786,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 5.7
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 2.8580003990419964,
+   "est_best": 2.124814625873102,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.5999999999998,
+   "generations": 19,
+   "niches": 10,
+   "calls": {
+    "fresh": 244,
+    "morph": 60,
+    "adjoint": 18,
+    "fold": 22
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 18,
+   "refine_tried": 30,
+   "refine_gain": -6.737145672665028,
+   "op_stats": {
+    "splice": [
+     24,
+     23,
+     2
+    ],
+    "graft": [
+     17,
+     17,
+     2
+    ],
+    "combine": [
+     18,
+     16,
+     2
+    ],
+    "line": [
+     21,
+     21,
+     3
+    ],
+    "bump": [
+     25,
+     25,
+     3
+    ],
+    "cut": [
+     21,
+     21,
+     1
+    ],
+    "fill": [
+     18,
+     17,
+     0
+    ],
+    "pattern": [
+     20,
+     19,
+     1
+    ],
+    "offset": [
+     23,
+     21,
+     3
+    ]
+   },
+   "wall_s": 4.8
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 3.0851743470845663,
+   "est_best": 2.9673411368993774,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.1999999999998,
+   "generations": 19,
+   "niches": 12,
+   "calls": {
+    "fresh": 246,
+    "morph": 60,
+    "adjoint": 16,
+    "fold": 14
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 21,
+   "refine_tried": 31,
+   "refine_gain": -11.627504151959789,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     5
+    ],
+    "graft": [
+     19,
+     18,
+     4
+    ],
+    "combine": [
+     28,
+     28,
+     0
+    ],
+    "line": [
+     16,
+     16,
+     2
+    ],
+    "bump": [
+     19,
+     19,
+     0
+    ],
+    "cut": [
+     22,
+     22,
+     2
+    ],
+    "fill": [
+     11,
+     10,
+     0
+    ],
+    "pattern": [
+     16,
+     16,
+     1
+    ],
+    "offset": [
+     16,
+     15,
+     2
+    ]
+   },
+   "wall_s": 4.1
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 2.9177800229728015,
+   "est_best": 2.8019275300441704,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.5999999999998,
+   "generations": 21,
+   "niches": 10,
+   "calls": {
+    "fresh": 230,
+    "morph": 76,
+    "adjoint": 18,
+    "fold": 21
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 26,
+   "refine_tried": 39,
+   "refine_gain": -11.742456424479203,
+   "op_stats": {
+    "splice": [
+     22,
+     21,
+     3
+    ],
+    "graft": [
+     17,
+     16,
+     2
+    ],
+    "combine": [
+     22,
+     21,
+     1
+    ],
+    "line": [
+     19,
+     19,
+     0
+    ],
+    "bump": [
+     11,
+     11,
+     0
+    ],
+    "cut": [
+     18,
+     17,
+     4
+    ],
+    "fill": [
+     24,
+     19,
+     1
+    ],
+    "pattern": [
+     22,
+     21,
+     2
+    ],
+    "offset": [
+     15,
+     15,
+     0
+    ]
+   },
+   "wall_s": 4.6
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 2.7908836649104694,
+   "est_best": 2.6596311036036444,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 301.5999999999998,
+   "generations": 18,
+   "niches": 10,
+   "calls": {
+    "fresh": 260,
+    "morph": 48,
+    "adjoint": 18,
+    "fold": 12
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 14,
+   "refine_tried": 25,
+   "refine_gain": -2.5790044305316533,
+   "op_stats": {
+    "splice": [
+     21,
+     21,
+     5
+    ],
+    "graft": [
+     18,
+     17,
+     2
+    ],
+    "combine": [
+     23,
+     19,
+     3
+    ],
+    "line": [
+     23,
+     23,
+     1
+    ],
+    "bump": [
+     20,
+     20,
+     0
+    ],
+    "cut": [
+     22,
+     22,
+     1
+    ],
+    "fill": [
+     21,
+     20,
+     0
+    ],
+    "pattern": [
+     18,
+     18,
+     1
+    ],
+    "offset": [
+     20,
+     20,
+     2
+    ]
+   },
+   "wall_s": 4.2
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 3.0106704849731925,
+   "est_best": 3.0202683169833886,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.6999999999999,
+   "generations": 20,
+   "niches": 12,
+   "calls": {
+    "fresh": 246,
+    "morph": 67,
+    "adjoint": 11,
+    "fold": 2
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 29,
+   "refine_tried": 34,
+   "refine_gain": -18.03571495170471,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     1
+    ],
+    "graft": [
+     23,
+     22,
+     4
+    ],
+    "combine": [
+     19,
+     17,
+     3
+    ],
+    "line": [
+     16,
+     16,
+     1
+    ],
+    "bump": [
+     19,
+     19,
+     1
+    ],
+    "cut": [
+     18,
+     17,
+     4
+    ],
+    "fill": [
+     17,
+     15,
+     2
+    ],
+    "pattern": [
+     22,
+     21,
+     3
+    ],
+    "offset": [
+     17,
+     17,
+     2
+    ]
+   },
+   "wall_s": 4.2
+  },
+  {
+   "arm": "memetic",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 3.038583581063882,
+   "est_best": 2.9771683201967325,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.4999999999999,
+   "generations": 14,
+   "niches": 10,
+   "calls": {
+    "fresh": 221,
+    "morph": 78,
+    "adjoint": 25,
+    "fold": 42
+   },
+   "explore_mean_late": 6.211107877814652,
+   "control_mean_late": 6.844393202856204,
+   "n_explore": 126,
+   "n_control": 28,
+   "refine_accepted": 16,
+   "refine_tried": 40,
+   "refine_gain": -3.358485050693173,
+   "op_stats": {
+    "splice": [
+     18,
+     18,
+     2
+    ],
+    "graft": [
+     21,
+     21,
+     4
+    ],
+    "combine": [
+     17,
+     16,
+     1
+    ],
+    "line": [
+     27,
+     27,
+     4
+    ],
+    "bump": [
+     17,
+     17,
+     2
+    ],
+    "cut": [
+     15,
+     14,
+     1
+    ],
+    "fill": [
+     17,
+     14,
+     1
+    ],
+    "pattern": [
+     13,
+     13,
+     1
+    ],
+    "offset": [
+     14,
+     14,
+     0
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "memetic",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 3.0711563669113717,
+   "est_best": 2.9390960383768263,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.8999999999999,
+   "generations": 14,
+   "niches": 11,
+   "calls": {
+    "fresh": 228,
+    "morph": 78,
+    "adjoint": 17,
+    "fold": 26
+   },
+   "explore_mean_late": 5.639882668163355,
+   "control_mean_late": 5.914322520964618,
+   "n_explore": 119,
+   "n_control": 26,
+   "refine_accepted": 22,
+   "refine_tried": 39,
+   "refine_gain": -10.025306028593251,
+   "op_stats": {
+    "splice": [
+     19,
+     19,
+     3
+    ],
+    "graft": [
+     20,
+     20,
+     4
+    ],
+    "combine": [
+     22,
+     19,
+     2
+    ],
+    "line": [
+     19,
+     19,
+     3
+    ],
+    "bump": [
+     16,
+     16,
+     2
+    ],
+    "cut": [
+     10,
+     10,
+     0
+    ],
+    "fill": [
+     16,
+     15,
+     1
+    ],
+    "pattern": [
+     14,
+     14,
+     3
+    ],
+    "offset": [
+     13,
+     13,
+     0
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "memetic",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 2.9810324315922063,
+   "est_best": 2.983683764090662,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.4999999999999,
+   "generations": 14,
+   "niches": 10,
+   "calls": {
+    "fresh": 223,
+    "morph": 78,
+    "adjoint": 25,
+    "fold": 21
+   },
+   "explore_mean_late": 6.589186397805572,
+   "control_mean_late": 6.102668287981487,
+   "n_explore": 124,
+   "n_control": 26,
+   "refine_accepted": 25,
+   "refine_tried": 39,
+   "refine_gain": -10.645379764429997,
+   "op_stats": {
+    "splice": [
+     29,
+     29,
+     4
+    ],
+    "graft": [
+     14,
+     14,
+     1
+    ],
+    "combine": [
+     21,
+     18,
+     1
+    ],
+    "line": [
+     14,
+     14,
+     3
+    ],
+    "bump": [
+     13,
+     13,
+     1
+    ],
+    "cut": [
+     18,
+     18,
+     0
+    ],
+    "fill": [
+     18,
+     16,
+     1
+    ],
+    "pattern": [
+     13,
+     13,
+     2
+    ],
+    "offset": [
+     15,
+     15,
+     4
+    ]
+   },
+   "wall_s": 4.5
+  },
+  {
+   "arm": "memetic",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 2.987892227372519,
+   "est_best": 2.926004476635474,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.4999999999999,
+   "generations": 14,
+   "niches": 13,
+   "calls": {
+    "fresh": 224,
+    "morph": 78,
+    "adjoint": 25,
+    "fold": 21
+   },
+   "explore_mean_late": 6.101369325228025,
+   "control_mean_late": 5.8454146699973135,
+   "n_explore": 122,
+   "n_control": 26,
+   "refine_accepted": 27,
+   "refine_tried": 39,
+   "refine_gain": -14.568499463738096,
+   "op_stats": {
+    "splice": [
+     21,
+     21,
+     3
+    ],
+    "graft": [
+     24,
+     24,
+     4
+    ],
+    "combine": [
+     16,
+     14,
+     1
+    ],
+    "line": [
+     21,
+     21,
+     1
+    ],
+    "bump": [
+     14,
+     14,
+     1
+    ],
+    "cut": [
+     17,
+     17,
+     1
+    ],
+    "fill": [
+     14,
+     13,
+     2
+    ],
+    "pattern": [
+     14,
+     14,
+     0
+    ],
+    "offset": [
+     10,
+     10,
+     4
+    ]
+   },
+   "wall_s": 4.8
+  },
+  {
+   "arm": "memetic",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 3.0739776044302927,
+   "est_best": 2.7980968275506273,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.69999999999993,
+   "generations": 14,
+   "niches": 10,
+   "calls": {
+    "fresh": 228,
+    "morph": 78,
+    "adjoint": 21,
+    "fold": 11
+   },
+   "explore_mean_late": 8.213404655383737,
+   "control_mean_late": 6.489701450562222,
+   "n_explore": 122,
+   "n_control": 26,
+   "refine_accepted": 29,
+   "refine_tried": 39,
+   "refine_gain": -21.740631885147724,
+   "op_stats": {
+    "splice": [
+     17,
+     17,
+     3
+    ],
+    "graft": [
+     21,
+     21,
+     3
+    ],
+    "combine": [
+     26,
+     25,
+     2
+    ],
+    "line": [
+     17,
+     17,
+     2
+    ],
+    "bump": [
+     9,
+     9,
+     1
+    ],
+    "cut": [
+     19,
+     19,
+     0
+    ],
+    "fill": [
+     12,
+     10,
+     0
+    ],
+    "pattern": [
+     11,
+     11,
+     3
+    ],
+    "offset": [
+     19,
+     19,
+     2
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 2.987892227372519,
+   "est_best": 3.094979647245685,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.3999999999999,
+   "generations": 15,
+   "niches": 11,
+   "calls": {
+    "fresh": 217,
+    "morph": 84,
+    "adjoint": 22,
+    "fold": 40
+   },
+   "explore_mean_late": 6.318553840732038,
+   "control_mean_late": 6.714366696551635,
+   "n_explore": 127,
+   "n_control": 28,
+   "refine_accepted": 19,
+   "refine_tried": 42,
+   "refine_gain": -7.139939535886697,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     3
+    ],
+    "graft": [
+     15,
+     15,
+     2
+    ],
+    "combine": [
+     15,
+     13,
+     1
+    ],
+    "line": [
+     15,
+     15,
+     3
+    ],
+    "bump": [
+     15,
+     15,
+     0
+    ],
+    "cut": [
+     24,
+     23,
+     4
+    ],
+    "fill": [
+     23,
+     22,
+     1
+    ],
+    "pattern": [
+     19,
+     18,
+     0
+    ],
+    "offset": [
+     18,
+     18,
+     3
+    ]
+   },
+   "wall_s": 4.9
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 3.0179386023576797,
+   "est_best": 2.956140491796333,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.99999999999994,
+   "generations": 15,
+   "niches": 12,
+   "calls": {
+    "fresh": 220,
+    "morph": 84,
+    "adjoint": 20,
+    "fold": 34
+   },
+   "explore_mean_late": 6.144886749243272,
+   "control_mean_late": 5.358496089651816,
+   "n_explore": 132,
+   "n_control": 28,
+   "refine_accepted": 23,
+   "refine_tried": 42,
+   "refine_gain": -10.674776939567783,
+   "op_stats": {
+    "splice": [
+     23,
+     23,
+     2
+    ],
+    "graft": [
+     21,
+     21,
+     3
+    ],
+    "combine": [
+     18,
+     17,
+     4
+    ],
+    "line": [
+     14,
+     14,
+     4
+    ],
+    "bump": [
+     20,
+     20,
+     1
+    ],
+    "cut": [
+     16,
+     16,
+     0
+    ],
+    "fill": [
+     14,
+     12,
+     2
+    ],
+    "pattern": [
+     18,
+     18,
+     2
+    ],
+    "offset": [
+     19,
+     19,
+     1
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 3.038583581063882,
+   "est_best": 3.360474016035023,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.2999999999999,
+   "generations": 13,
+   "niches": 11,
+   "calls": {
+    "fresh": 232,
+    "morph": 73,
+    "adjoint": 19,
+    "fold": 25
+   },
+   "explore_mean_late": 6.909890378713554,
+   "control_mean_late": 7.281071732879967,
+   "n_explore": 117,
+   "n_control": 26,
+   "refine_accepted": 23,
+   "refine_tried": 37,
+   "refine_gain": -13.842170311951657,
+   "op_stats": {
+    "splice": [
+     17,
+     16,
+     1
+    ],
+    "graft": [
+     25,
+     25,
+     4
+    ],
+    "combine": [
+     26,
+     24,
+     2
+    ],
+    "line": [
+     21,
+     21,
+     1
+    ],
+    "bump": [
+     7,
+     7,
+     0
+    ],
+    "cut": [
+     12,
+     11,
+     3
+    ],
+    "fill": [
+     15,
+     14,
+     2
+    ],
+    "pattern": [
+     10,
+     10,
+     2
+    ],
+    "offset": [
+     15,
+     15,
+     0
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 3.2224221956247048,
+   "est_best": 1.2996154532859354,
+   "best_kind": "explore",
+   "best_openings": 1,
+   "spent": 300.4999999999999,
+   "generations": 13,
+   "niches": 12,
+   "calls": {
+    "fresh": 230,
+    "morph": 72,
+    "adjoint": 25,
+    "fold": 22
+   },
+   "explore_mean_late": 5.372764397982359,
+   "control_mean_late": 6.0237081805951425,
+   "n_explore": 115,
+   "n_control": 24,
+   "refine_accepted": 18,
+   "refine_tried": 36,
+   "refine_gain": -6.656191466638423,
+   "op_stats": {
+    "splice": [
+     13,
+     13,
+     3
+    ],
+    "graft": [
+     19,
+     18,
+     5
+    ],
+    "combine": [
+     20,
+     17,
+     2
+    ],
+    "line": [
+     17,
+     17,
+     2
+    ],
+    "bump": [
+     13,
+     13,
+     0
+    ],
+    "cut": [
+     21,
+     21,
+     3
+    ],
+    "fill": [
+     11,
+     11,
+     2
+    ],
+    "pattern": [
+     14,
+     14,
+     1
+    ],
+    "offset": [
+     15,
+     15,
+     1
+    ]
+   },
+   "wall_s": 3.9
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 3.216671734763138,
+   "est_best": 2.9724311954880105,
+   "best_kind": "refine",
+   "best_openings": 1,
+   "spent": 300.3999999999999,
+   "generations": 14,
+   "niches": 11,
+   "calls": {
+    "fresh": 227,
+    "morph": 78,
+    "adjoint": 22,
+    "fold": 22
+   },
+   "explore_mean_late": 7.228291169586428,
+   "control_mean_late": 6.668748079731518,
+   "n_explore": 120,
+   "n_control": 26,
+   "refine_accepted": 30,
+   "refine_tried": 39,
+   "refine_gain": -13.95679026763253,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     1
+    ],
+    "graft": [
+     24,
+     24,
+     4
+    ],
+    "combine": [
+     27,
+     27,
+     4
+    ],
+    "line": [
+     13,
+     13,
+     1
+    ],
+    "bump": [
+     15,
+     15,
+     0
+    ],
+    "cut": [
+     13,
+     13,
+     1
+    ],
+    "fill": [
+     16,
+     12,
+     2
+    ],
+    "pattern": [
+     13,
+     13,
+     3
+    ],
+    "offset": [
+     14,
+     13,
+     1
+    ]
+   },
+   "wall_s": 4.9
+  },
+  {
+   "arm": "evo60",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 4.13206797733866,
+   "est_best": 3.353850325042734,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 180.0,
+   "generations": 7,
+   "niches": 10,
+   "calls": {
+    "fresh": 196,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 6.451127588638788,
+   "control_mean_late": 5.875231043915489,
+   "n_explore": 112,
+   "n_control": 27,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     15,
+     14,
+     2
+    ],
+    "graft": [
+     14,
+     14,
+     2
+    ],
+    "combine": [
+     14,
+     14,
+     2
+    ],
+    "line": [
+     18,
+     18,
+     3
+    ],
+    "bump": [
+     17,
+     17,
+     3
+    ],
+    "cut": [
+     17,
+     17,
+     1
+    ],
+    "fill": [
+     15,
+     14,
+     0
+    ],
+    "pattern": [
+     15,
+     15,
+     1
+    ],
+    "offset": [
+     18,
+     16,
+     3
+    ]
+   },
+   "wall_s": 2.7
+  },
+  {
+   "arm": "evo60",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 4.271600954572661,
+   "est_best": 4.435669417241461,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 180.0,
+   "generations": 7,
+   "niches": 11,
+   "calls": {
+    "fresh": 197,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 7.2527480134997955,
+   "control_mean_late": 6.273604052725427,
+   "n_explore": 105,
+   "n_control": 24,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     13,
+     13,
+     5
+    ],
+    "graft": [
+     17,
+     16,
+     4
+    ],
+    "combine": [
+     19,
+     19,
+     0
+    ],
+    "line": [
+     14,
+     14,
+     1
+    ],
+    "bump": [
+     16,
+     16,
+     0
+    ],
+    "cut": [
+     19,
+     19,
+     2
+    ],
+    "fill": [
+     8,
+     7,
+     0
+    ],
+    "pattern": [
+     13,
+     13,
+     1
+    ],
+    "offset": [
+     13,
+     12,
+     2
+    ]
+   },
+   "wall_s": 2.2
+  },
+  {
+   "arm": "evo60",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 5.138864253446285,
+   "est_best": 4.153447123472989,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 180.0,
+   "generations": 8,
+   "niches": 10,
+   "calls": {
+    "fresh": 198,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 6.833002385689252,
+   "control_mean_late": 6.039327352944518,
+   "n_explore": 114,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     19,
+     18,
+     3
+    ],
+    "graft": [
+     14,
+     13,
+     1
+    ],
+    "combine": [
+     17,
+     16,
+     1
+    ],
+    "line": [
+     18,
+     18,
+     0
+    ],
+    "bump": [
+     10,
+     10,
+     0
+    ],
+    "cut": [
+     17,
+     16,
+     3
+    ],
+    "fill": [
+     22,
+     18,
+     1
+    ],
+    "pattern": [
+     22,
+     21,
+     2
+    ],
+    "offset": [
+     12,
+     12,
+     0
+    ]
+   },
+   "wall_s": 2.5
+  },
+  {
+   "arm": "evo60",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 3.580584633743505,
+   "est_best": 3.4419334521736844,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 180.0,
+   "generations": 7,
+   "niches": 9,
+   "calls": {
+    "fresh": 199,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 5.279994572731013,
+   "control_mean_late": 6.049141040396584,
+   "n_explore": 108,
+   "n_control": 24,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     19,
+     19,
+     5
+    ],
+    "graft": [
+     14,
+     14,
+     2
+    ],
+    "combine": [
+     13,
+     10,
+     2
+    ],
+    "line": [
+     14,
+     14,
+     1
+    ],
+    "bump": [
+     14,
+     14,
+     0
+    ],
+    "cut": [
+     19,
+     19,
+     1
+    ],
+    "fill": [
+     15,
+     14,
+     0
+    ],
+    "pattern": [
+     15,
+     15,
+     1
+    ],
+    "offset": [
+     13,
+     13,
+     2
+    ]
+   },
+   "wall_s": 2.3
+  },
+  {
+   "arm": "evo60",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 4.271600954572661,
+   "est_best": 4.343817510566383,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 180.0,
+   "generations": 7,
+   "niches": 12,
+   "calls": {
+    "fresh": 200,
+    "morph": 0,
+    "adjoint": 0,
+    "fold": 0
+   },
+   "explore_mean_late": 7.660695775653072,
+   "control_mean_late": 6.138640948194489,
+   "n_explore": 110,
+   "n_control": 24,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     12,
+     12,
+     1
+    ],
+    "graft": [
+     20,
+     19,
+     3
+    ],
+    "combine": [
+     15,
+     14,
+     3
+    ],
+    "line": [
+     15,
+     15,
+     1
+    ],
+    "bump": [
+     16,
+     16,
+     1
+    ],
+    "cut": [
+     15,
+     15,
+     4
+    ],
+    "fill": [
+     14,
+     12,
+     1
+    ],
+    "pattern": [
+     19,
+     18,
+     3
+    ],
+    "offset": [
+     13,
+     13,
+     2
+    ]
+   },
+   "wall_s": 2.5
+  },
+  {
+   "arm": "polish",
+   "seed": 1,
+   "rho": 0.5,
+   "true_best": 4.230330962360499,
+   "est_best": 4.240053560094549,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 34.2,
+   "generations": 8,
+   "niches": 3,
+   "calls": {
+    "fresh": 16,
+    "morph": 30,
+    "adjoint": 6,
+    "fold": 9
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 3,
+   "refine_tried": 15,
+   "refine_gain": -0.5761377422742084,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.7
+  },
+  {
+   "arm": "polish",
+   "seed": 2,
+   "rho": 0.5,
+   "true_best": 4.577825546636771,
+   "est_best": 3.9590850275432046,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.5,
+   "generations": 140,
+   "niches": 3,
+   "calls": {
+    "fresh": 17,
+    "morph": 297,
+    "adjoint": 5,
+    "fold": 9
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 140,
+   "refine_tried": 149,
+   "refine_gain": -13.533919952973381,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.0
+  },
+  {
+   "arm": "polish",
+   "seed": 3,
+   "rho": 0.5,
+   "true_best": 4.577825546636771,
+   "est_best": 4.122039635793275,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.5,
+   "generations": 140,
+   "niches": 3,
+   "calls": {
+    "fresh": 18,
+    "morph": 297,
+    "adjoint": 5,
+    "fold": 9
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 140,
+   "refine_tried": 149,
+   "refine_gain": -13.389888088035207,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.0
+  },
+  {
+   "arm": "polish",
+   "seed": 4,
+   "rho": 0.5,
+   "true_best": 4.044511845204899,
+   "est_best": 4.056682479495875,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 31.5,
+   "generations": 8,
+   "niches": 3,
+   "calls": {
+    "fresh": 19,
+    "morph": 28,
+    "adjoint": 5,
+    "fold": 9
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 2,
+   "refine_tried": 14,
+   "refine_gain": -0.5505903368696847,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.7
+  },
+  {
+   "arm": "polish",
+   "seed": 5,
+   "rho": 0.5,
+   "true_best": 4.577825546636771,
+   "est_best": 3.6947854521863506,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.5,
+   "generations": 140,
+   "niches": 3,
+   "calls": {
+    "fresh": 20,
+    "morph": 297,
+    "adjoint": 5,
+    "fold": 9
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 140,
+   "refine_tried": 149,
+   "refine_gain": -13.411421015568349,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 5.9
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 1,
+   "rho": 0.5,
+   "true_best": 4.068222689847294,
+   "est_best": 3.2343846578362005,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.39999999999986,
+   "generations": 21,
+   "niches": 10,
+   "calls": {
+    "fresh": 241,
+    "morph": 67,
+    "adjoint": 12,
+    "fold": 3
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 10,
+   "refine_tried": 34,
+   "refine_gain": -1.2803162020201053,
+   "op_stats": {
+    "splice": [
+     24,
+     23,
+     2
+    ],
+    "graft": [
+     17,
+     17,
+     2
+    ],
+    "combine": [
+     18,
+     16,
+     2
+    ],
+    "line": [
+     21,
+     21,
+     3
+    ],
+    "bump": [
+     25,
+     25,
+     3
+    ],
+    "cut": [
+     21,
+     21,
+     1
+    ],
+    "fill": [
+     18,
+     17,
+     0
+    ],
+    "pattern": [
+     20,
+     19,
+     1
+    ],
+    "offset": [
+     23,
+     21,
+     3
+    ]
+   },
+   "wall_s": 4.7
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 2,
+   "rho": 0.5,
+   "true_best": 4.577825546636771,
+   "est_best": 3.9613424037126514,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.39999999999986,
+   "generations": 19,
+   "niches": 12,
+   "calls": {
+    "fresh": 244,
+    "morph": 65,
+    "adjoint": 12,
+    "fold": 12
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 16,
+   "refine_tried": 33,
+   "refine_gain": -2.75089447971552,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     5
+    ],
+    "graft": [
+     19,
+     18,
+     4
+    ],
+    "combine": [
+     28,
+     28,
+     0
+    ],
+    "line": [
+     16,
+     16,
+     2
+    ],
+    "bump": [
+     19,
+     19,
+     0
+    ],
+    "cut": [
+     22,
+     22,
+     2
+    ],
+    "fill": [
+     11,
+     10,
+     0
+    ],
+    "pattern": [
+     16,
+     16,
+     1
+    ],
+    "offset": [
+     16,
+     15,
+     2
+    ]
+   },
+   "wall_s": 4.5
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 3,
+   "rho": 0.5,
+   "true_best": 3.9974104426238237,
+   "est_best": 3.8637958976161397,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.39999999999986,
+   "generations": 22,
+   "niches": 10,
+   "calls": {
+    "fresh": 228,
+    "morph": 82,
+    "adjoint": 12,
+    "fold": 35
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 18,
+   "refine_tried": 41,
+   "refine_gain": -2.1099143878990714,
+   "op_stats": {
+    "splice": [
+     22,
+     21,
+     3
+    ],
+    "graft": [
+     17,
+     16,
+     2
+    ],
+    "combine": [
+     22,
+     21,
+     1
+    ],
+    "line": [
+     19,
+     19,
+     0
+    ],
+    "bump": [
+     11,
+     11,
+     0
+    ],
+    "cut": [
+     18,
+     17,
+     4
+    ],
+    "fill": [
+     24,
+     19,
+     1
+    ],
+    "pattern": [
+     22,
+     21,
+     2
+    ],
+    "offset": [
+     15,
+     15,
+     0
+    ]
+   },
+   "wall_s": 4.9
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 4,
+   "rho": 0.5,
+   "true_best": 3.4879092746602884,
+   "est_best": 3.34451036597549,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.6999999999999,
+   "generations": 19,
+   "niches": 10,
+   "calls": {
+    "fresh": 256,
+    "morph": 56,
+    "adjoint": 11,
+    "fold": 20
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 5,
+   "refine_tried": 28,
+   "refine_gain": -0.8627415145484753,
+   "op_stats": {
+    "splice": [
+     21,
+     21,
+     5
+    ],
+    "graft": [
+     18,
+     17,
+     2
+    ],
+    "combine": [
+     23,
+     19,
+     3
+    ],
+    "line": [
+     23,
+     23,
+     1
+    ],
+    "bump": [
+     20,
+     20,
+     0
+    ],
+    "cut": [
+     22,
+     22,
+     1
+    ],
+    "fill": [
+     21,
+     20,
+     0
+    ],
+    "pattern": [
+     18,
+     18,
+     1
+    ],
+    "offset": [
+     20,
+     20,
+     2
+    ]
+   },
+   "wall_s": 4.6
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 5,
+   "rho": 0.5,
+   "true_best": 4.577825546636771,
+   "est_best": 3.884087383823616,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.19999999999993,
+   "generations": 20,
+   "niches": 12,
+   "calls": {
+    "fresh": 244,
+    "morph": 72,
+    "adjoint": 6,
+    "fold": 24
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 24,
+   "refine_tried": 36,
+   "refine_gain": -4.294795401987964,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     1
+    ],
+    "graft": [
+     23,
+     22,
+     4
+    ],
+    "combine": [
+     19,
+     17,
+     3
+    ],
+    "line": [
+     16,
+     16,
+     1
+    ],
+    "bump": [
+     19,
+     19,
+     1
+    ],
+    "cut": [
+     18,
+     17,
+     4
+    ],
+    "fill": [
+     17,
+     15,
+     2
+    ],
+    "pattern": [
+     22,
+     21,
+     3
+    ],
+    "offset": [
+     17,
+     17,
+     2
+    ]
+   },
+   "wall_s": 4.6
+  },
+  {
+   "arm": "memetic",
+   "seed": 1,
+   "rho": 0.5,
+   "true_best": 4.149981234786938,
+   "est_best": 3.6367807101883596,
+   "best_kind": "explore",
+   "best_openings": 2,
+   "spent": 300.49999999999994,
+   "generations": 14,
+   "niches": 11,
+   "calls": {
+    "fresh": 228,
+    "morph": 78,
+    "adjoint": 15,
+    "fold": 22
+   },
+   "explore_mean_late": 6.200252127904646,
+   "control_mean_late": 6.872363720973979,
+   "n_explore": 121,
+   "n_control": 26,
+   "refine_accepted": 12,
+   "refine_tried": 39,
+   "refine_gain": -4.451159498458831,
+   "op_stats": {
+    "splice": [
+     18,
+     18,
+     2
+    ],
+    "graft": [
+     21,
+     21,
+     4
+    ],
+    "combine": [
+     17,
+     16,
+     2
+    ],
+    "line": [
+     27,
+     27,
+     4
+    ],
+    "bump": [
+     17,
+     17,
+     1
+    ],
+    "cut": [
+     13,
+     13,
+     1
+    ],
+    "fill": [
+     14,
+     11,
+     0
+    ],
+    "pattern": [
+     11,
+     11,
+     2
+    ],
+    "offset": [
+     13,
+     13,
+     2
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "memetic",
+   "seed": 2,
+   "rho": 0.5,
+   "true_best": 4.577825546636771,
+   "est_best": 3.957552802312215,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.79999999999995,
+   "generations": 15,
+   "niches": 9,
+   "calls": {
+    "fresh": 224,
+    "morph": 84,
+    "adjoint": 14,
+    "fold": 24
+   },
+   "explore_mean_late": 6.640532935240569,
+   "control_mean_late": 5.827845155372876,
+   "n_explore": 133,
+   "n_control": 28,
+   "refine_accepted": 17,
+   "refine_tried": 42,
+   "refine_gain": -2.356237000724247,
+   "op_stats": {
+    "splice": [
+     21,
+     21,
+     1
+    ],
+    "graft": [
+     17,
+     17,
+     3
+    ],
+    "combine": [
+     19,
+     19,
+     2
+    ],
+    "line": [
+     18,
+     18,
+     0
+    ],
+    "bump": [
+     19,
+     19,
+     1
+    ],
+    "cut": [
+     13,
+     13,
+     0
+    ],
+    "fill": [
+     23,
+     20,
+     1
+    ],
+    "pattern": [
+     23,
+     23,
+     1
+    ],
+    "offset": [
+     11,
+     11,
+     1
+    ]
+   },
+   "wall_s": 4.7
+  },
+  {
+   "arm": "memetic",
+   "seed": 3,
+   "rho": 0.5,
+   "true_best": 4.577825546636771,
+   "est_best": 4.1457060081733434,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.79999999999995,
+   "generations": 14,
+   "niches": 13,
+   "calls": {
+    "fresh": 229,
+    "morph": 80,
+    "adjoint": 14,
+    "fold": 33
+   },
+   "explore_mean_late": 7.008275108111234,
+   "control_mean_late": 6.433483364622554,
+   "n_explore": 126,
+   "n_control": 28,
+   "refine_accepted": 19,
+   "refine_tried": 40,
+   "refine_gain": -3.181189161107668,
+   "op_stats": {
+    "splice": [
+     14,
+     14,
+     3
+    ],
+    "graft": [
+     20,
+     20,
+     2
+    ],
+    "combine": [
+     19,
+     17,
+     1
+    ],
+    "line": [
+     19,
+     19,
+     1
+    ],
+    "bump": [
+     14,
+     14,
+     0
+    ],
+    "cut": [
+     17,
+     17,
+     3
+    ],
+    "fill": [
+     23,
+     19,
+     0
+    ],
+    "pattern": [
+     13,
+     13,
+     1
+    ],
+    "offset": [
+     21,
+     21,
+     5
+    ]
+   },
+   "wall_s": 4.9
+  },
+  {
+   "arm": "memetic",
+   "seed": 4,
+   "rho": 0.5,
+   "true_best": 4.534591359752194,
+   "est_best": 3.856959923581265,
+   "best_kind": "explore",
+   "best_openings": 1,
+   "spent": 300.39999999999986,
+   "generations": 14,
+   "niches": 16,
+   "calls": {
+    "fresh": 222,
+    "morph": 82,
+    "adjoint": 22,
+    "fold": 26
+   },
+   "explore_mean_late": 6.677737866251071,
+   "control_mean_late": 5.6684555770709135,
+   "n_explore": 126,
+   "n_control": 28,
+   "refine_accepted": 13,
+   "refine_tried": 41,
+   "refine_gain": -5.902778697141372,
+   "op_stats": {
+    "splice": [
+     17,
+     17,
+     3
+    ],
+    "graft": [
+     21,
+     21,
+     4
+    ],
+    "combine": [
+     23,
+     21,
+     1
+    ],
+    "line": [
+     21,
+     21,
+     1
+    ],
+    "bump": [
+     15,
+     15,
+     0
+    ],
+    "cut": [
+     20,
+     19,
+     1
+    ],
+    "fill": [
+     10,
+     9,
+     2
+    ],
+    "pattern": [
+     20,
+     20,
+     2
+    ],
+    "offset": [
+     11,
+     11,
+     3
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "memetic",
+   "seed": 5,
+   "rho": 0.5,
+   "true_best": 4.577825546636771,
+   "est_best": 3.6851687438568765,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.19999999999993,
+   "generations": 13,
+   "niches": 14,
+   "calls": {
+    "fresh": 235,
+    "morph": 74,
+    "adjoint": 16,
+    "fold": 6
+   },
+   "explore_mean_late": 8.850090467979792,
+   "control_mean_late": 5.735373594638276,
+   "n_explore": 117,
+   "n_control": 26,
+   "refine_accepted": 19,
+   "refine_tried": 37,
+   "refine_gain": -5.8049559029553945,
+   "op_stats": {
+    "splice": [
+     10,
+     9,
+     4
+    ],
+    "graft": [
+     23,
+     22,
+     2
+    ],
+    "combine": [
+     21,
+     21,
+     5
+    ],
+    "line": [
+     15,
+     15,
+     1
+    ],
+    "bump": [
+     7,
+     7,
+     0
+    ],
+    "cut": [
+     15,
+     14,
+     2
+    ],
+    "fill": [
+     12,
+     11,
+     2
+    ],
+    "pattern": [
+     15,
+     15,
+     4
+    ],
+    "offset": [
+     29,
+     29,
+     3
+    ]
+   },
+   "wall_s": 3.9
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 1,
+   "rho": 0.5,
+   "true_best": 4.257268195929517,
+   "est_best": 3.269348819976488,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.9999999999999,
+   "generations": 14,
+   "niches": 11,
+   "calls": {
+    "fresh": 225,
+    "morph": 78,
+    "adjoint": 20,
+    "fold": 38
+   },
+   "explore_mean_late": 5.933148711502993,
+   "control_mean_late": 6.358886968731178,
+   "n_explore": 126,
+   "n_control": 27,
+   "refine_accepted": 8,
+   "refine_tried": 39,
+   "refine_gain": -1.3651300713866275,
+   "op_stats": {
+    "splice": [
+     15,
+     15,
+     2
+    ],
+    "graft": [
+     23,
+     23,
+     3
+    ],
+    "combine": [
+     21,
+     19,
+     3
+    ],
+    "line": [
+     22,
+     22,
+     2
+    ],
+    "bump": [
+     13,
+     13,
+     1
+    ],
+    "cut": [
+     13,
+     13,
+     4
+    ],
+    "fill": [
+     15,
+     15,
+     0
+    ],
+    "pattern": [
+     17,
+     17,
+     0
+    ],
+    "offset": [
+     16,
+     16,
+     2
+    ]
+   },
+   "wall_s": 4.2
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 2,
+   "rho": 0.5,
+   "true_best": 4.577825546636771,
+   "est_best": 3.957552802312215,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.19999999999993,
+   "generations": 15,
+   "niches": 13,
+   "calls": {
+    "fresh": 219,
+    "morph": 87,
+    "adjoint": 16,
+    "fold": 30
+   },
+   "explore_mean_late": 7.215898304665972,
+   "control_mean_late": 5.651983643044944,
+   "n_explore": 135,
+   "n_control": 30,
+   "refine_accepted": 19,
+   "refine_tried": 44,
+   "refine_gain": -3.567900088970009,
+   "op_stats": {
+    "splice": [
+     22,
+     22,
+     6
+    ],
+    "graft": [
+     25,
+     25,
+     4
+    ],
+    "combine": [
+     16,
+     16,
+     3
+    ],
+    "line": [
+     8,
+     8,
+     1
+    ],
+    "bump": [
+     17,
+     17,
+     0
+    ],
+    "cut": [
+     24,
+     23,
+     1
+    ],
+    "fill": [
+     20,
+     18,
+     0
+    ],
+    "pattern": [
+     17,
+     17,
+     2
+    ],
+    "offset": [
+     19,
+     19,
+     1
+    ]
+   },
+   "wall_s": 4.4
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 3,
+   "rho": 0.5,
+   "true_best": 4.577825546636771,
+   "est_best": 4.1457060081733434,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.19999999999993,
+   "generations": 15,
+   "niches": 13,
+   "calls": {
+    "fresh": 223,
+    "morph": 84,
+    "adjoint": 16,
+    "fold": 20
+   },
+   "explore_mean_late": 6.753024965902009,
+   "control_mean_late": 7.368216160115294,
+   "n_explore": 128,
+   "n_control": 28,
+   "refine_accepted": 19,
+   "refine_tried": 42,
+   "refine_gain": -2.8407889195963967,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     2
+    ],
+    "graft": [
+     21,
+     21,
+     2
+    ],
+    "combine": [
+     22,
+     21,
+     5
+    ],
+    "line": [
+     24,
+     24,
+     4
+    ],
+    "bump": [
+     18,
+     17,
+     0
+    ],
+    "cut": [
+     19,
+     17,
+     0
+    ],
+    "fill": [
+     18,
+     14,
+     0
+    ],
+    "pattern": [
+     15,
+     15,
+     3
+    ],
+    "offset": [
+     11,
+     11,
+     1
+    ]
+   },
+   "wall_s": 4.4
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 4,
+   "rho": 0.5,
+   "true_best": 3.5442378086249473,
+   "est_best": 3.3396695628268476,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.19999999999993,
+   "generations": 15,
+   "niches": 8,
+   "calls": {
+    "fresh": 232,
+    "morph": 76,
+    "adjoint": 16,
+    "fold": 44
+   },
+   "explore_mean_late": 5.4341082532924885,
+   "control_mean_late": 5.9877804161386,
+   "n_explore": 133,
+   "n_control": 28,
+   "refine_accepted": 5,
+   "refine_tried": 38,
+   "refine_gain": -0.882015563040628,
+   "op_stats": {
+    "splice": [
+     22,
+     22,
+     2
+    ],
+    "graft": [
+     27,
+     27,
+     3
+    ],
+    "combine": [
+     18,
+     17,
+     0
+    ],
+    "line": [
+     16,
+     16,
+     1
+    ],
+    "bump": [
+     14,
+     14,
+     0
+    ],
+    "cut": [
+     17,
+     17,
+     3
+    ],
+    "fill": [
+     11,
+     10,
+     2
+    ],
+    "pattern": [
+     22,
+     22,
+     1
+    ],
+    "offset": [
+     16,
+     16,
+     0
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 5,
+   "rho": 0.5,
+   "true_best": 4.577825546636771,
+   "est_best": 3.6851687438568765,
+   "best_kind": "refine",
+   "best_openings": 0,
+   "spent": 300.19999999999993,
+   "generations": 14,
+   "niches": 14,
+   "calls": {
+    "fresh": 231,
+    "morph": 78,
+    "adjoint": 16,
+    "fold": 18
+   },
+   "explore_mean_late": 6.784467631932865,
+   "control_mean_late": 5.661484908221503,
+   "n_explore": 119,
+   "n_control": 26,
+   "refine_accepted": 20,
+   "refine_tried": 39,
+   "refine_gain": -4.811092184134564,
+   "op_stats": {
+    "splice": [
+     18,
+     17,
+     5
+    ],
+    "graft": [
+     18,
+     18,
+     4
+    ],
+    "combine": [
+     23,
+     22,
+     4
+    ],
+    "line": [
+     25,
+     25,
+     1
+    ],
+    "bump": [
+     14,
+     14,
+     4
+    ],
+    "cut": [
+     10,
+     10,
+     1
+    ],
+    "fill": [
+     17,
+     12,
+     1
+    ],
+    "pattern": [
+     17,
+     17,
+     2
+    ],
+    "offset": [
+     10,
+     10,
+     2
+    ]
+   },
+   "wall_s": 4.1
+  },
+  {
+   "arm": "polish",
+   "seed": 1,
+   "rho": 0.0,
+   "true_best": 4.271600954572661,
+   "est_best": 4.29151544014532,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 26.1,
+   "generations": 7,
+   "niches": 3,
+   "calls": {
+    "fresh": 16,
+    "morph": 24,
+    "adjoint": 3,
+    "fold": 1
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 12,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.6
+  },
+  {
+   "arm": "polish",
+   "seed": 2,
+   "rho": 0.0,
+   "true_best": 5.080419325019532,
+   "est_best": 4.452972645155129,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 26.1,
+   "generations": 7,
+   "niches": 3,
+   "calls": {
+    "fresh": 17,
+    "morph": 24,
+    "adjoint": 3,
+    "fold": 1
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 12,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.6
+  },
+  {
+   "arm": "polish",
+   "seed": 3,
+   "rho": 0.0,
+   "true_best": 4.271600954572661,
+   "est_best": 4.541831800735794,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 26.1,
+   "generations": 7,
+   "niches": 3,
+   "calls": {
+    "fresh": 18,
+    "morph": 24,
+    "adjoint": 3,
+    "fold": 1
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 12,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.6
+  },
+  {
+   "arm": "polish",
+   "seed": 4,
+   "rho": 0.0,
+   "true_best": 4.149322701827595,
+   "est_best": 4.173167928541058,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 26.1,
+   "generations": 7,
+   "niches": 3,
+   "calls": {
+    "fresh": 19,
+    "morph": 24,
+    "adjoint": 3,
+    "fold": 1
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 12,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.6
+  },
+  {
+   "arm": "polish",
+   "seed": 5,
+   "rho": 0.0,
+   "true_best": 5.080419325019532,
+   "est_best": 4.206662124478727,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 26.1,
+   "generations": 7,
+   "niches": 3,
+   "calls": {
+    "fresh": 20,
+    "morph": 24,
+    "adjoint": 3,
+    "fold": 1
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 12,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.6
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 1,
+   "rho": 0.0,
+   "true_best": 4.13206797733866,
+   "est_best": 3.353850325042734,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.2999999999999,
+   "generations": 21,
+   "niches": 10,
+   "calls": {
+    "fresh": 241,
+    "morph": 69,
+    "adjoint": 9,
+    "fold": 5
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 0,
+   "refine_tried": 35,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     24,
+     23,
+     2
+    ],
+    "graft": [
+     17,
+     17,
+     2
+    ],
+    "combine": [
+     18,
+     16,
+     2
+    ],
+    "line": [
+     21,
+     21,
+     3
+    ],
+    "bump": [
+     25,
+     25,
+     3
+    ],
+    "cut": [
+     21,
+     21,
+     1
+    ],
+    "fill": [
+     18,
+     17,
+     0
+    ],
+    "pattern": [
+     20,
+     19,
+     1
+    ],
+    "offset": [
+     23,
+     21,
+     3
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 2,
+   "rho": 0.0,
+   "true_best": 4.271600954572661,
+   "est_best": 4.435669417241461,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.9999999999999,
+   "generations": 20,
+   "niches": 12,
+   "calls": {
+    "fresh": 243,
+    "morph": 68,
+    "adjoint": 10,
+    "fold": 6
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 1,
+   "refine_tried": 34,
+   "refine_gain": -0.0887377222175515,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     5
+    ],
+    "graft": [
+     19,
+     18,
+     4
+    ],
+    "combine": [
+     28,
+     28,
+     0
+    ],
+    "line": [
+     16,
+     16,
+     2
+    ],
+    "bump": [
+     19,
+     19,
+     0
+    ],
+    "cut": [
+     22,
+     22,
+     2
+    ],
+    "fill": [
+     11,
+     10,
+     0
+    ],
+    "pattern": [
+     16,
+     16,
+     1
+    ],
+    "offset": [
+     16,
+     15,
+     2
+    ]
+   },
+   "wall_s": 3.9
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 3,
+   "rho": 0.0,
+   "true_best": 3.9974104426238237,
+   "est_best": 3.8637958976161397,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 296.9999999999999,
+   "generations": 27,
+   "niches": 10,
+   "calls": {
+    "fresh": 228,
+    "morph": 80,
+    "adjoint": 10,
+    "fold": 10
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 0,
+   "refine_tried": 40,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     22,
+     21,
+     3
+    ],
+    "graft": [
+     17,
+     16,
+     2
+    ],
+    "combine": [
+     22,
+     21,
+     1
+    ],
+    "line": [
+     19,
+     19,
+     0
+    ],
+    "bump": [
+     11,
+     11,
+     0
+    ],
+    "cut": [
+     18,
+     17,
+     4
+    ],
+    "fill": [
+     24,
+     19,
+     1
+    ],
+    "pattern": [
+     22,
+     21,
+     2
+    ],
+    "offset": [
+     15,
+     15,
+     0
+    ]
+   },
+   "wall_s": 4.6
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 4,
+   "rho": 0.0,
+   "true_best": 3.580584633743505,
+   "est_best": 3.4419334521736844,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.9999999999999,
+   "generations": 19,
+   "niches": 10,
+   "calls": {
+    "fresh": 256,
+    "morph": 57,
+    "adjoint": 10,
+    "fold": 13
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 2,
+   "refine_tried": 29,
+   "refine_gain": -0.35885331681158483,
+   "op_stats": {
+    "splice": [
+     21,
+     21,
+     5
+    ],
+    "graft": [
+     18,
+     17,
+     2
+    ],
+    "combine": [
+     23,
+     19,
+     3
+    ],
+    "line": [
+     23,
+     23,
+     1
+    ],
+    "bump": [
+     20,
+     20,
+     0
+    ],
+    "cut": [
+     22,
+     22,
+     1
+    ],
+    "fill": [
+     21,
+     20,
+     0
+    ],
+    "pattern": [
+     18,
+     18,
+     1
+    ],
+    "offset": [
+     20,
+     20,
+     2
+    ]
+   },
+   "wall_s": 4.3
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 5,
+   "rho": 0.0,
+   "true_best": 4.271600954572661,
+   "est_best": 4.343817510566383,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.9999999999999,
+   "generations": 20,
+   "niches": 12,
+   "calls": {
+    "fresh": 244,
+    "morph": 70,
+    "adjoint": 10,
+    "fold": 23
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 1,
+   "refine_tried": 35,
+   "refine_gain": -0.051782877453338344,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     1
+    ],
+    "graft": [
+     23,
+     22,
+     4
+    ],
+    "combine": [
+     19,
+     17,
+     3
+    ],
+    "line": [
+     16,
+     16,
+     1
+    ],
+    "bump": [
+     19,
+     19,
+     1
+    ],
+    "cut": [
+     18,
+     17,
+     4
+    ],
+    "fill": [
+     17,
+     15,
+     2
+    ],
+    "pattern": [
+     22,
+     21,
+     3
+    ],
+    "offset": [
+     17,
+     17,
+     2
+    ]
+   },
+   "wall_s": 4.7
+  },
+  {
+   "arm": "memetic",
+   "seed": 1,
+   "rho": 0.0,
+   "true_best": 3.5735811664754897,
+   "est_best": 3.162475882470025,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.09999999999997,
+   "generations": 15,
+   "niches": 10,
+   "calls": {
+    "fresh": 223,
+    "morph": 84,
+    "adjoint": 13,
+    "fold": 16
+   },
+   "explore_mean_late": 6.037176942170046,
+   "control_mean_late": 6.681702585328247,
+   "n_explore": 129,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 42,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     20,
+     20,
+     2
+    ],
+    "graft": [
+     21,
+     21,
+     5
+    ],
+    "combine": [
+     17,
+     16,
+     2
+    ],
+    "line": [
+     27,
+     27,
+     2
+    ],
+    "bump": [
+     18,
+     18,
+     0
+    ],
+    "cut": [
+     15,
+     14,
+     2
+    ],
+    "fill": [
+     17,
+     14,
+     0
+    ],
+    "pattern": [
+     13,
+     13,
+     2
+    ],
+    "offset": [
+     14,
+     14,
+     1
+    ]
+   },
+   "wall_s": 4.8
+  },
+  {
+   "arm": "memetic",
+   "seed": 2,
+   "rho": 0.0,
+   "true_best": 4.271600954572661,
+   "est_best": 4.435669417241461,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.4,
+   "generations": 16,
+   "niches": 9,
+   "calls": {
+    "fresh": 231,
+    "morph": 78,
+    "adjoint": 12,
+    "fold": 19
+   },
+   "explore_mean_late": 6.857071605841472,
+   "control_mean_late": 6.323956306665728,
+   "n_explore": 137,
+   "n_control": 30,
+   "refine_accepted": 0,
+   "refine_tried": 39,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     18,
+     18,
+     1
+    ],
+    "graft": [
+     23,
+     23,
+     4
+    ],
+    "combine": [
+     18,
+     18,
+     2
+    ],
+    "line": [
+     17,
+     17,
+     0
+    ],
+    "bump": [
+     26,
+     26,
+     0
+    ],
+    "cut": [
+     15,
+     15,
+     1
+    ],
+    "fill": [
+     19,
+     17,
+     0
+    ],
+    "pattern": [
+     24,
+     24,
+     2
+    ],
+    "offset": [
+     10,
+     9,
+     0
+    ]
+   },
+   "wall_s": 4.4
+  },
+  {
+   "arm": "memetic",
+   "seed": 3,
+   "rho": 0.0,
+   "true_best": 4.271600954572661,
+   "est_best": 4.355876824043244,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.79999999999995,
+   "generations": 14,
+   "niches": 11,
+   "calls": {
+    "fresh": 231,
+    "morph": 78,
+    "adjoint": 14,
+    "fold": 7
+   },
+   "explore_mean_late": 7.440674441718674,
+   "control_mean_late": 6.7847433213267685,
+   "n_explore": 126,
+   "n_control": 26,
+   "refine_accepted": 0,
+   "refine_tried": 39,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     22,
+     22,
+     5
+    ],
+    "graft": [
+     16,
+     16,
+     1
+    ],
+    "combine": [
+     21,
+     19,
+     1
+    ],
+    "line": [
+     23,
+     23,
+     4
+    ],
+    "bump": [
+     13,
+     13,
+     0
+    ],
+    "cut": [
+     19,
+     19,
+     2
+    ],
+    "fill": [
+     16,
+     12,
+     0
+    ],
+    "pattern": [
+     14,
+     14,
+     1
+    ],
+    "offset": [
+     14,
+     14,
+     2
+    ]
+   },
+   "wall_s": 4.7
+  },
+  {
+   "arm": "memetic",
+   "seed": 4,
+   "rho": 0.0,
+   "true_best": 3.9122191528672636,
+   "est_best": 3.1562472529623293,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.7999999999999,
+   "generations": 14,
+   "niches": 10,
+   "calls": {
+    "fresh": 232,
+    "morph": 78,
+    "adjoint": 14,
+    "fold": 17
+   },
+   "explore_mean_late": 6.709930327843629,
+   "control_mean_late": 6.289447388362649,
+   "n_explore": 119,
+   "n_control": 26,
+   "refine_accepted": 1,
+   "refine_tried": 39,
+   "refine_gain": -0.43296162846239866,
+   "op_stats": {
+    "splice": [
+     17,
+     17,
+     4
+    ],
+    "graft": [
+     21,
+     21,
+     3
+    ],
+    "combine": [
+     21,
+     19,
+     3
+    ],
+    "line": [
+     20,
+     20,
+     4
+    ],
+    "bump": [
+     12,
+     12,
+     1
+    ],
+    "cut": [
+     18,
+     18,
+     0
+    ],
+    "fill": [
+     10,
+     9,
+     0
+    ],
+    "pattern": [
+     20,
+     20,
+     1
+    ],
+    "offset": [
+     9,
+     9,
+     2
+    ]
+   },
+   "wall_s": 4.6
+  },
+  {
+   "arm": "memetic",
+   "seed": 5,
+   "rho": 0.0,
+   "true_best": 4.714582310398656,
+   "est_best": 4.203864788202302,
+   "best_kind": "explore",
+   "best_openings": 1,
+   "spent": 300.49999999999994,
+   "generations": 14,
+   "niches": 13,
+   "calls": {
+    "fresh": 228,
+    "morph": 82,
+    "adjoint": 15,
+    "fold": 18
+   },
+   "explore_mean_late": 8.484574526000278,
+   "control_mean_late": 6.119324060881092,
+   "n_explore": 126,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 41,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     4
+    ],
+    "graft": [
+     22,
+     22,
+     4
+    ],
+    "combine": [
+     23,
+     21,
+     3
+    ],
+    "line": [
+     24,
+     24,
+     2
+    ],
+    "bump": [
+     11,
+     11,
+     0
+    ],
+    "cut": [
+     21,
+     21,
+     1
+    ],
+    "fill": [
+     14,
+     11,
+     0
+    ],
+    "pattern": [
+     10,
+     10,
+     4
+    ],
+    "offset": [
+     18,
+     18,
+     3
+    ]
+   },
+   "wall_s": 4.9
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 1,
+   "rho": 0.0,
+   "true_best": 4.5325679450444145,
+   "est_best": 3.1500120084965837,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.79999999999995,
+   "generations": 14,
+   "niches": 10,
+   "calls": {
+    "fresh": 227,
+    "morph": 80,
+    "adjoint": 14,
+    "fold": 11
+   },
+   "explore_mean_late": 5.602954862218448,
+   "control_mean_late": 5.871624874232158,
+   "n_explore": 126,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 40,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     21,
+     20,
+     4
+    ],
+    "graft": [
+     25,
+     25,
+     3
+    ],
+    "combine": [
+     18,
+     14,
+     1
+    ],
+    "line": [
+     19,
+     19,
+     4
+    ],
+    "bump": [
+     17,
+     17,
+     0
+    ],
+    "cut": [
+     16,
+     16,
+     0
+    ],
+    "fill": [
+     13,
+     12,
+     0
+    ],
+    "pattern": [
+     20,
+     19,
+     3
+    ],
+    "offset": [
+     12,
+     12,
+     1
+    ]
+   },
+   "wall_s": 4.6
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 2,
+   "rho": 0.0,
+   "true_best": 4.271600954572661,
+   "est_best": 4.435669417241461,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.49999999999994,
+   "generations": 14,
+   "niches": 13,
+   "calls": {
+    "fresh": 229,
+    "morph": 78,
+    "adjoint": 15,
+    "fold": 36
+   },
+   "explore_mean_late": 7.284088705830489,
+   "control_mean_late": 6.010068925300511,
+   "n_explore": 121,
+   "n_control": 26,
+   "refine_accepted": 0,
+   "refine_tried": 39,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     4
+    ],
+    "graft": [
+     13,
+     13,
+     2
+    ],
+    "combine": [
+     25,
+     24,
+     3
+    ],
+    "line": [
+     16,
+     16,
+     0
+    ],
+    "bump": [
+     12,
+     12,
+     2
+    ],
+    "cut": [
+     12,
+     12,
+     0
+    ],
+    "fill": [
+     19,
+     16,
+     0
+    ],
+    "pattern": [
+     21,
+     21,
+     3
+    ],
+    "offset": [
+     18,
+     17,
+     0
+    ]
+   },
+   "wall_s": 4.5
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 3,
+   "rho": 0.0,
+   "true_best": 4.3347542427786845,
+   "est_best": 3.3200109413362324,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.49999999999994,
+   "generations": 15,
+   "niches": 13,
+   "calls": {
+    "fresh": 224,
+    "morph": 84,
+    "adjoint": 15,
+    "fold": 24
+   },
+   "explore_mean_late": 7.675416868098214,
+   "control_mean_late": 6.785581940098305,
+   "n_explore": 135,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 42,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     29,
+     29,
+     5
+    ],
+    "graft": [
+     24,
+     24,
+     5
+    ],
+    "combine": [
+     16,
+     15,
+     2
+    ],
+    "line": [
+     24,
+     24,
+     2
+    ],
+    "bump": [
+     7,
+     7,
+     0
+    ],
+    "cut": [
+     17,
+     16,
+     2
+    ],
+    "fill": [
+     15,
+     14,
+     3
+    ],
+    "pattern": [
+     14,
+     13,
+     2
+    ],
+    "offset": [
+     21,
+     21,
+     1
+    ]
+   },
+   "wall_s": 4.7
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 4,
+   "rho": 0.0,
+   "true_best": 4.198563954372442,
+   "est_best": 3.519053528810925,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.49999999999994,
+   "generations": 13,
+   "niches": 10,
+   "calls": {
+    "fresh": 237,
+    "morph": 72,
+    "adjoint": 15,
+    "fold": 21
+   },
+   "explore_mean_late": 5.890106023935154,
+   "control_mean_late": 6.330065146081557,
+   "n_explore": 117,
+   "n_control": 25,
+   "refine_accepted": 0,
+   "refine_tried": 36,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     19,
+     18,
+     3
+    ],
+    "graft": [
+     26,
+     26,
+     4
+    ],
+    "combine": [
+     19,
+     17,
+     3
+    ],
+    "line": [
+     17,
+     17,
+     2
+    ],
+    "bump": [
+     11,
+     11,
+     1
+    ],
+    "cut": [
+     9,
+     9,
+     0
+    ],
+    "fill": [
+     15,
+     13,
+     0
+    ],
+    "pattern": [
+     16,
+     16,
+     1
+    ],
+    "offset": [
+     15,
+     15,
+     1
+    ]
+   },
+   "wall_s": 4.5
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 5,
+   "rho": 0.0,
+   "true_best": 4.649714008152505,
+   "est_best": 3.99645550221143,
+   "best_kind": "explore",
+   "best_openings": 1,
+   "spent": 300.49999999999994,
+   "generations": 14,
+   "niches": 11,
+   "calls": {
+    "fresh": 232,
+    "morph": 78,
+    "adjoint": 15,
+    "fold": 16
+   },
+   "explore_mean_late": 7.403412471681058,
+   "control_mean_late": 5.936236656165825,
+   "n_explore": 124,
+   "n_control": 26,
+   "refine_accepted": 0,
+   "refine_tried": 39,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     19,
+     17,
+     4
+    ],
+    "graft": [
+     20,
+     18,
+     2
+    ],
+    "combine": [
+     25,
+     23,
+     3
+    ],
+    "line": [
+     19,
+     19,
+     4
+    ],
+    "bump": [
+     19,
+     19,
+     1
+    ],
+    "cut": [
+     9,
+     9,
+     0
+    ],
+    "fill": [
+     13,
+     10,
+     2
+    ],
+    "pattern": [
+     14,
+     14,
+     3
+    ],
+    "offset": [
+     21,
+     21,
+     3
+    ]
+   },
+   "wall_s": 4.7
+  },
+  {
+   "arm": "polish",
+   "seed": 1,
+   "rho": -0.3,
+   "true_best": 4.271600954572661,
+   "est_best": 4.29151544014532,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 26.1,
+   "generations": 7,
+   "niches": 3,
+   "calls": {
+    "fresh": 16,
+    "morph": 24,
+    "adjoint": 3,
+    "fold": 0
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 12,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.8
+  },
+  {
+   "arm": "polish",
+   "seed": 2,
+   "rho": -0.3,
+   "true_best": 5.080419325019532,
+   "est_best": 4.452972645155129,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 26.1,
+   "generations": 7,
+   "niches": 3,
+   "calls": {
+    "fresh": 17,
+    "morph": 24,
+    "adjoint": 3,
+    "fold": 0
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 12,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.6
+  },
+  {
+   "arm": "polish",
+   "seed": 3,
+   "rho": -0.3,
+   "true_best": 4.271600954572661,
+   "est_best": 4.541831800735794,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 26.1,
+   "generations": 7,
+   "niches": 3,
+   "calls": {
+    "fresh": 18,
+    "morph": 24,
+    "adjoint": 3,
+    "fold": 0
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 12,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.7
+  },
+  {
+   "arm": "polish",
+   "seed": 4,
+   "rho": -0.3,
+   "true_best": 4.149322701827595,
+   "est_best": 4.173167928541058,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 26.1,
+   "generations": 7,
+   "niches": 3,
+   "calls": {
+    "fresh": 19,
+    "morph": 24,
+    "adjoint": 3,
+    "fold": 0
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 12,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.7
+  },
+  {
+   "arm": "polish",
+   "seed": 5,
+   "rho": -0.3,
+   "true_best": 5.080419325019532,
+   "est_best": 4.206662124478727,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 26.1,
+   "generations": 7,
+   "niches": 3,
+   "calls": {
+    "fresh": 20,
+    "morph": 24,
+    "adjoint": 3,
+    "fold": 0
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 12,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 0.6
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 1,
+   "rho": -0.3,
+   "true_best": 4.13206797733866,
+   "est_best": 3.353850325042734,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.2999999999999,
+   "generations": 21,
+   "niches": 10,
+   "calls": {
+    "fresh": 241,
+    "morph": 69,
+    "adjoint": 9,
+    "fold": 5
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 0,
+   "refine_tried": 35,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     24,
+     23,
+     2
+    ],
+    "graft": [
+     17,
+     17,
+     2
+    ],
+    "combine": [
+     18,
+     16,
+     2
+    ],
+    "line": [
+     21,
+     21,
+     3
+    ],
+    "bump": [
+     25,
+     25,
+     3
+    ],
+    "cut": [
+     21,
+     21,
+     1
+    ],
+    "fill": [
+     18,
+     17,
+     0
+    ],
+    "pattern": [
+     20,
+     19,
+     1
+    ],
+    "offset": [
+     23,
+     21,
+     3
+    ]
+   },
+   "wall_s": 4.5
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 2,
+   "rho": -0.3,
+   "true_best": 4.271600954572661,
+   "est_best": 4.435669417241461,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.2999999999999,
+   "generations": 20,
+   "niches": 12,
+   "calls": {
+    "fresh": 243,
+    "morph": 68,
+    "adjoint": 9,
+    "fold": 10
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 0,
+   "refine_tried": 34,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     5
+    ],
+    "graft": [
+     19,
+     18,
+     4
+    ],
+    "combine": [
+     28,
+     28,
+     0
+    ],
+    "line": [
+     16,
+     16,
+     2
+    ],
+    "bump": [
+     19,
+     19,
+     0
+    ],
+    "cut": [
+     22,
+     22,
+     2
+    ],
+    "fill": [
+     11,
+     10,
+     0
+    ],
+    "pattern": [
+     16,
+     16,
+     1
+    ],
+    "offset": [
+     16,
+     15,
+     2
+    ]
+   },
+   "wall_s": 4.5
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 3,
+   "rho": -0.3,
+   "true_best": 3.9974104426238237,
+   "est_best": 3.8637958976161397,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 296.9999999999999,
+   "generations": 27,
+   "niches": 10,
+   "calls": {
+    "fresh": 228,
+    "morph": 80,
+    "adjoint": 10,
+    "fold": 7
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 0,
+   "refine_tried": 40,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     22,
+     21,
+     3
+    ],
+    "graft": [
+     17,
+     16,
+     2
+    ],
+    "combine": [
+     22,
+     21,
+     1
+    ],
+    "line": [
+     19,
+     19,
+     0
+    ],
+    "bump": [
+     11,
+     11,
+     0
+    ],
+    "cut": [
+     18,
+     17,
+     4
+    ],
+    "fill": [
+     24,
+     19,
+     1
+    ],
+    "pattern": [
+     22,
+     21,
+     2
+    ],
+    "offset": [
+     15,
+     15,
+     0
+    ]
+   },
+   "wall_s": 4.6
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 4,
+   "rho": -0.3,
+   "true_best": 3.580584633743505,
+   "est_best": 3.4419334521736844,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.2999999999999,
+   "generations": 19,
+   "niches": 10,
+   "calls": {
+    "fresh": 256,
+    "morph": 57,
+    "adjoint": 9,
+    "fold": 12
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 0,
+   "refine_tried": 29,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     21,
+     21,
+     5
+    ],
+    "graft": [
+     18,
+     17,
+     2
+    ],
+    "combine": [
+     23,
+     19,
+     3
+    ],
+    "line": [
+     23,
+     23,
+     1
+    ],
+    "bump": [
+     20,
+     20,
+     0
+    ],
+    "cut": [
+     22,
+     22,
+     1
+    ],
+    "fill": [
+     21,
+     20,
+     0
+    ],
+    "pattern": [
+     18,
+     18,
+     1
+    ],
+    "offset": [
+     20,
+     20,
+     2
+    ]
+   },
+   "wall_s": 4.1
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 5,
+   "rho": -0.3,
+   "true_best": 4.271600954572661,
+   "est_best": 4.343817510566383,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.2999999999999,
+   "generations": 20,
+   "niches": 12,
+   "calls": {
+    "fresh": 244,
+    "morph": 70,
+    "adjoint": 9,
+    "fold": 24
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 128,
+   "n_control": 32,
+   "refine_accepted": 0,
+   "refine_tried": 35,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     1
+    ],
+    "graft": [
+     23,
+     22,
+     4
+    ],
+    "combine": [
+     19,
+     17,
+     3
+    ],
+    "line": [
+     16,
+     16,
+     1
+    ],
+    "bump": [
+     19,
+     19,
+     1
+    ],
+    "cut": [
+     18,
+     17,
+     4
+    ],
+    "fill": [
+     17,
+     15,
+     2
+    ],
+    "pattern": [
+     22,
+     21,
+     3
+    ],
+    "offset": [
+     17,
+     17,
+     2
+    ]
+   },
+   "wall_s": 4.4
+  },
+  {
+   "arm": "memetic",
+   "seed": 1,
+   "rho": -0.3,
+   "true_best": 3.703994049597773,
+   "est_best": 2.8570526534430982,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.49999999999994,
+   "generations": 15,
+   "niches": 10,
+   "calls": {
+    "fresh": 222,
+    "morph": 84,
+    "adjoint": 15,
+    "fold": 9
+   },
+   "explore_mean_late": 5.653376666510324,
+   "control_mean_late": 5.826090506628751,
+   "n_explore": 127,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 42,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     20,
+     20,
+     4
+    ],
+    "graft": [
+     21,
+     21,
+     4
+    ],
+    "combine": [
+     15,
+     15,
+     2
+    ],
+    "line": [
+     28,
+     28,
+     4
+    ],
+    "bump": [
+     18,
+     18,
+     2
+    ],
+    "cut": [
+     14,
+     14,
+     2
+    ],
+    "fill": [
+     18,
+     16,
+     0
+    ],
+    "pattern": [
+     15,
+     14,
+     1
+    ],
+    "offset": [
+     10,
+     9,
+     0
+    ]
+   },
+   "wall_s": 4.9
+  },
+  {
+   "arm": "memetic",
+   "seed": 2,
+   "rho": -0.3,
+   "true_best": 4.271600954572661,
+   "est_best": 4.435669417241461,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.4,
+   "generations": 15,
+   "niches": 9,
+   "calls": {
+    "fresh": 231,
+    "morph": 78,
+    "adjoint": 12,
+    "fold": 20
+   },
+   "explore_mean_late": 6.63854065566241,
+   "control_mean_late": 6.44609986752043,
+   "n_explore": 134,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 39,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     18,
+     18,
+     1
+    ],
+    "graft": [
+     22,
+     22,
+     3
+    ],
+    "combine": [
+     18,
+     17,
+     3
+    ],
+    "line": [
+     17,
+     17,
+     0
+    ],
+    "bump": [
+     25,
+     25,
+     0
+    ],
+    "cut": [
+     15,
+     15,
+     1
+    ],
+    "fill": [
+     19,
+     16,
+     0
+    ],
+    "pattern": [
+     24,
+     23,
+     2
+    ],
+    "offset": [
+     10,
+     9,
+     0
+    ]
+   },
+   "wall_s": 5.0
+  },
+  {
+   "arm": "memetic",
+   "seed": 3,
+   "rho": -0.3,
+   "true_best": 4.271600954572661,
+   "est_best": 4.355876824043244,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.79999999999995,
+   "generations": 14,
+   "niches": 11,
+   "calls": {
+    "fresh": 231,
+    "morph": 78,
+    "adjoint": 14,
+    "fold": 7
+   },
+   "explore_mean_late": 7.4297421354261814,
+   "control_mean_late": 6.7847433213267685,
+   "n_explore": 126,
+   "n_control": 26,
+   "refine_accepted": 0,
+   "refine_tried": 39,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     22,
+     22,
+     5
+    ],
+    "graft": [
+     16,
+     16,
+     1
+    ],
+    "combine": [
+     21,
+     19,
+     1
+    ],
+    "line": [
+     23,
+     23,
+     4
+    ],
+    "bump": [
+     13,
+     13,
+     0
+    ],
+    "cut": [
+     19,
+     19,
+     2
+    ],
+    "fill": [
+     16,
+     12,
+     0
+    ],
+    "pattern": [
+     14,
+     14,
+     1
+    ],
+    "offset": [
+     14,
+     14,
+     2
+    ]
+   },
+   "wall_s": 4.5
+  },
+  {
+   "arm": "memetic",
+   "seed": 4,
+   "rho": -0.3,
+   "true_best": 3.9122191528672636,
+   "est_best": 3.1562472529623293,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.7999999999999,
+   "generations": 14,
+   "niches": 10,
+   "calls": {
+    "fresh": 232,
+    "morph": 78,
+    "adjoint": 14,
+    "fold": 17
+   },
+   "explore_mean_late": 6.709930327843629,
+   "control_mean_late": 6.289447388362649,
+   "n_explore": 119,
+   "n_control": 26,
+   "refine_accepted": 0,
+   "refine_tried": 39,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     17,
+     17,
+     4
+    ],
+    "graft": [
+     21,
+     21,
+     3
+    ],
+    "combine": [
+     21,
+     19,
+     3
+    ],
+    "line": [
+     20,
+     20,
+     4
+    ],
+    "bump": [
+     12,
+     12,
+     1
+    ],
+    "cut": [
+     18,
+     18,
+     0
+    ],
+    "fill": [
+     10,
+     9,
+     0
+    ],
+    "pattern": [
+     20,
+     20,
+     1
+    ],
+    "offset": [
+     9,
+     9,
+     2
+    ]
+   },
+   "wall_s": 4.2
+  },
+  {
+   "arm": "memetic",
+   "seed": 5,
+   "rho": -0.3,
+   "true_best": 4.714582310398656,
+   "est_best": 4.203864788202302,
+   "best_kind": "explore",
+   "best_openings": 1,
+   "spent": 300.49999999999994,
+   "generations": 14,
+   "niches": 13,
+   "calls": {
+    "fresh": 228,
+    "morph": 82,
+    "adjoint": 15,
+    "fold": 18
+   },
+   "explore_mean_late": 8.498283280453206,
+   "control_mean_late": 6.204850338316876,
+   "n_explore": 126,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 41,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     4
+    ],
+    "graft": [
+     22,
+     22,
+     4
+    ],
+    "combine": [
+     23,
+     21,
+     3
+    ],
+    "line": [
+     24,
+     24,
+     2
+    ],
+    "bump": [
+     11,
+     11,
+     0
+    ],
+    "cut": [
+     21,
+     21,
+     1
+    ],
+    "fill": [
+     14,
+     11,
+     0
+    ],
+    "pattern": [
+     10,
+     10,
+     4
+    ],
+    "offset": [
+     18,
+     18,
+     3
+    ]
+   },
+   "wall_s": 4.6
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 1,
+   "rho": -0.3,
+   "true_best": 4.271600954572661,
+   "est_best": 4.102239588017265,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.09999999999997,
+   "generations": 14,
+   "niches": 11,
+   "calls": {
+    "fresh": 230,
+    "morph": 77,
+    "adjoint": 13,
+    "fold": 15
+   },
+   "explore_mean_late": 6.959162628375414,
+   "control_mean_late": 5.409085833158022,
+   "n_explore": 126,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 40,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     17,
+     16,
+     2
+    ],
+    "graft": [
+     18,
+     18,
+     2
+    ],
+    "combine": [
+     23,
+     18,
+     1
+    ],
+    "line": [
+     25,
+     25,
+     3
+    ],
+    "bump": [
+     19,
+     19,
+     1
+    ],
+    "cut": [
+     15,
+     15,
+     1
+    ],
+    "fill": [
+     14,
+     11,
+     1
+    ],
+    "pattern": [
+     20,
+     20,
+     2
+    ],
+    "offset": [
+     12,
+     12,
+     1
+    ]
+   },
+   "wall_s": 5.3
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 2,
+   "rho": -0.3,
+   "true_best": 4.271600954572661,
+   "est_best": 4.435669417241461,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.19999999999993,
+   "generations": 14,
+   "niches": 11,
+   "calls": {
+    "fresh": 228,
+    "morph": 78,
+    "adjoint": 16,
+    "fold": 18
+   },
+   "explore_mean_late": 7.054875556198818,
+   "control_mean_late": 4.817503481672268,
+   "n_explore": 121,
+   "n_control": 26,
+   "refine_accepted": 0,
+   "refine_tried": 39,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     2
+    ],
+    "graft": [
+     23,
+     23,
+     4
+    ],
+    "combine": [
+     23,
+     18,
+     4
+    ],
+    "line": [
+     21,
+     21,
+     0
+    ],
+    "bump": [
+     14,
+     14,
+     0
+    ],
+    "cut": [
+     14,
+     14,
+     2
+    ],
+    "fill": [
+     17,
+     13,
+     0
+    ],
+    "pattern": [
+     16,
+     16,
+     1
+    ],
+    "offset": [
+     13,
+     12,
+     1
+    ]
+   },
+   "wall_s": 5.4
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 3,
+   "rho": -0.3,
+   "true_best": 4.271600954572661,
+   "est_best": 4.081534810742329,
+   "best_kind": "seed",
+   "best_openings": 0,
+   "spent": 300.49999999999994,
+   "generations": 14,
+   "niches": 14,
+   "calls": {
+    "fresh": 230,
+    "morph": 78,
+    "adjoint": 15,
+    "fold": 27
+   },
+   "explore_mean_late": 7.3500406826094595,
+   "control_mean_late": 6.593616116040646,
+   "n_explore": 126,
+   "n_control": 26,
+   "refine_accepted": 0,
+   "refine_tried": 39,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     22,
+     22,
+     3
+    ],
+    "graft": [
+     20,
+     19,
+     4
+    ],
+    "combine": [
+     23,
+     22,
+     1
+    ],
+    "line": [
+     24,
+     24,
+     1
+    ],
+    "bump": [
+     10,
+     10,
+     1
+    ],
+    "cut": [
+     9,
+     9,
+     2
+    ],
+    "fill": [
+     17,
+     15,
+     2
+    ],
+    "pattern": [
+     19,
+     19,
+     4
+    ],
+    "offset": [
+     12,
+     12,
+     1
+    ]
+   },
+   "wall_s": 4.7
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 4,
+   "rho": -0.3,
+   "true_best": 4.198563954372442,
+   "est_best": 3.519053528810925,
+   "best_kind": "explore",
+   "best_openings": 0,
+   "spent": 300.49999999999994,
+   "generations": 15,
+   "niches": 12,
+   "calls": {
+    "fresh": 225,
+    "morph": 84,
+    "adjoint": 15,
+    "fold": 38
+   },
+   "explore_mean_late": 5.756038597946392,
+   "control_mean_late": 6.5254347936857835,
+   "n_explore": 135,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 42,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     16,
+     16,
+     3
+    ],
+    "graft": [
+     27,
+     27,
+     4
+    ],
+    "combine": [
+     22,
+     16,
+     1
+    ],
+    "line": [
+     18,
+     18,
+     1
+    ],
+    "bump": [
+     14,
+     14,
+     1
+    ],
+    "cut": [
+     26,
+     24,
+     0
+    ],
+    "fill": [
+     19,
+     16,
+     0
+    ],
+    "pattern": [
+     17,
+     17,
+     2
+    ],
+    "offset": [
+     16,
+     15,
+     4
+    ]
+   },
+   "wall_s": 4.9
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 5,
+   "rho": -0.3,
+   "true_best": 4.649714008152505,
+   "est_best": 3.99645550221143,
+   "best_kind": "explore",
+   "best_openings": 1,
+   "spent": 300.0999999999999,
+   "generations": 14,
+   "niches": 11,
+   "calls": {
+    "fresh": 233,
+    "morph": 78,
+    "adjoint": 13,
+    "fold": 17
+   },
+   "explore_mean_late": 8.964429993822195,
+   "control_mean_late": 6.178622908708788,
+   "n_explore": 125,
+   "n_control": 26,
+   "refine_accepted": 0,
+   "refine_tried": 39,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     20,
+     19,
+     2
+    ],
+    "graft": [
+     15,
+     14,
+     3
+    ],
+    "combine": [
+     24,
+     22,
+     3
+    ],
+    "line": [
+     27,
+     27,
+     3
+    ],
+    "bump": [
+     22,
+     22,
+     2
+    ],
+    "cut": [
+     10,
+     10,
+     0
+    ],
+    "fill": [
+     11,
+     9,
+     1
+    ],
+    "pattern": [
+     12,
+     12,
+     3
+    ],
+    "offset": [
+     16,
+     16,
+     5
+    ]
+   },
+   "wall_s": 5.1
+  }
+ ]
+}

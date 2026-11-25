@@ -3,7 +3,9 @@
 One generation spends its CFD runs on two kinds of children:
 
   explore   crossover / mutation children of archive members (operators.py). Any topology. Each is scored
-            on a FRESH mesh (noise sigma_fresh), and enters the map by the duel rule below.
+            on a FRESH mesh (noise sigma_fresh) and enters the map by the duel rule below; with morph_explore,
+            a child that is a small move of its parent with the same topology is scored on the parent's
+            morphed mesh instead, like a refinement.
   refine    the adjoint's move on an archive member (an elite): the sensitivity is solved once per elite,
             steps of two sizes are built, and each is scored on the elite's own mesh MORPHED onto the child
             (noise sigma_morph, far smaller). The best step is kept only if CFD says it is better by the
@@ -76,6 +78,11 @@ class Config:
     guided: bool = False            # use cached sensitivities to place mutations
     selection: bool = True          # False: every explore child is bred from census seeds (random-parents arm)
     max_depth: float = 2.0          # morph range of one mesh (mm); beyond it the elite is re-run fresh
+    tournament: int = 1             # parents: best of this many drawn from the map (1 = uniform over niches)
+    duel_se: float = 2.0            # a challenger replaces a niche's holder if better by this many SE ...
+    duel_min_runs: int = 1          # ... once both have at least this many fresh-equivalent runs
+    morph_explore: bool = False     # score a small, topology-keeping explore child on its parent's morphed mesh
+    handover_top: int = 5           # before hand-over, the best this many by estimate are run up to max_runs
     build_tries: int = 6
 
 
@@ -117,26 +124,28 @@ class Engine:
         return self.ev.sigma_fresh * np.sqrt(1.0 / max(a.n, 1) + 1.0 / max(b.n, 1))
 
     def _enter(self, child, budget):
-        """Duel for the child's niche. Returns new | replaced | rejected."""
+        """Duel for the child's niche. Returns new | replaced | rejected. Both sides are brought to the same
+        run count m (at least duel_min_runs); the child wins if better by duel_se SE; if not and it still
+        looks better, m grows by one until max_runs."""
+        cfg = self.cfg
         inc = self.archive.get(child.niche)
         if inc is None:
             self.archive[child.niche] = child
             return "new"
+        m = min(cfg.max_runs, max(child.n, inc.n, cfg.duel_min_runs))
         while True:
             if child.est >= inc.est:
                 return "rejected"
-            if child.n == inc.n or (child.n >= self.cfg.max_runs and inc.n >= self.cfg.max_runs):
-                if child.est <= inc.est - 2.0 * self._se(child, inc):
+            low = child if child.n < m else (inc if inc.n < m else None)
+            if low is None:
+                if child.est <= inc.est - cfg.duel_se * self._se(child, inc):
                     self.archive[child.niche] = child
                     return "replaced"
-                if child.n >= self.cfg.max_runs and inc.n >= self.cfg.max_runs:
+                if m >= cfg.max_runs:
                     return "rejected"
-            if self.spent >= budget:
-                return "rejected"
-            tgt = child if (child.n <= inc.n and child.n < self.cfg.max_runs) else inc
-            if tgt.n >= self.cfg.max_runs:
-                tgt = child if tgt is inc else inc
-            if not self._fresh(tgt):
+                m += 1
+                continue
+            if self.spent >= budget or not self._fresh(low):
                 return "rejected"
 
     # ---------------------------------------------------------------- census
@@ -156,14 +165,19 @@ class Engine:
     # ---------------------------------------------------------------- variation
     def _breed(self, pool, kind):
         cfg, rng = self.cfg, self.rng
+        k = cfg.tournament if kind == "explore" and cfg.selection else 1       # control children: uniform, always
+
+        def pick(cands):
+            idx = rng.choice(len(cands), min(k, len(cands)), replace=False)
+            return min((cands[i] for i in idx), key=lambda p: p.est)
         for _ in range(cfg.build_tries):
-            a = pool[rng.integers(len(pool))]
+            a = pick(pool)
             cross = [o for o in cfg.ops if o in OP.CROSSOVER]
             mut = [o for o in cfg.ops if o in OP.MUTATION]
             others = [p for p in pool if p.niche != a.niche] or [p for p in pool if p is not a]
             use_x = bool(cross) and bool(others) and (not mut or rng.random() < cfg.crossover_share)
             name = str(rng.choice(cross if use_x else mut))
-            b = others[rng.integers(len(others))] if use_x else None
+            b = pick(others) if use_x else None
             guide = a.grad if (cfg.guided and a.grad is not None) else None
             f, meta = OP.OPS[name](self.space, rng, a.f, None if b is None else b.f, guide)
             self.op_stats[name][0] += 1
@@ -192,9 +206,11 @@ class Engine:
                 if self.spent >= budget or not src:
                     break
                 child = self._breed(src, kind)
-                if child is None or not self._fresh(child):
+                if child is None:
                     continue
-                entry = self._enter(child, budget) if kind == "explore" else "control"
+                entry = self._score_child(child, kind, budget)
+                if entry is None:
+                    continue
                 if entry in ("new", "replaced"):
                     self.op_stats[child.op][2] += 1
                 rec[kind].append({"id": child.id, "op": child.op, "est": child.est, "niche": child.niche, "entry": entry,
@@ -205,6 +221,33 @@ class Engine:
         rec["best"] = min((e.est for e in self.archive.values()), default=np.inf)
         self.log.append(rec)
         return rec
+
+    def _score_child(self, child, kind, budget):
+        """Score an explore/control child and try it for the map. With morph_explore, a child that is a small
+        move of its first parent with the same topology is scored on that parent's morphed mesh (low noise):
+        its estimate is the parent's plus the measured change, and against its own parent the margin rule of
+        the refinement applies. Otherwise: a fresh mesh and the duel."""
+        cfg = self.cfg
+        a = self.all.get(child.parents[0]) if child.parents else None
+        if cfg.morph_explore and a is not None and a.anchor is not None:
+            m = self.ev.morph(a, child)
+            if m is not None and a.depth + m["move"] <= cfg.max_depth:
+                self.spent += self.ev.cost_morph
+                child.base, child.n_base = a.est + m["delta"], a.n
+                child.depth, child.anchor = a.depth + m["move"], a.anchor
+                child.meta["morph_delta"] = m["delta"]
+                if kind != "explore":
+                    return "control"
+                margin = max(3.0 * self.ev.sigma_morph * np.sqrt(2.0), cfg.floor)
+                if self.archive.get(child.niche) is a:
+                    if m["delta"] <= -margin:
+                        self.archive[child.niche] = child
+                        return "replaced"
+                    return "rejected"
+                return self._enter(child, budget)
+        if not self._fresh(child):
+            return None
+        return self._enter(child, budget) if kind == "explore" else "control"
 
     def _refine(self, budget):
         cfg, out = self.cfg, []
@@ -244,15 +287,16 @@ class Engine:
             if child is None:
                 r.setdefault("illegal", []).append(s)
                 continue
-            d = self.ev.morph(e, child)
-            self.spent += self.ev.cost_morph
-            if d is None:
+            m = self.ev.morph(e, child)
+            if m is None:                                          # the morph check refused it: no solve was spent
                 r.setdefault("folded", []).append(s)
                 self.all.pop(child.id, None)
                 continue
+            self.spent += self.ev.cost_morph
+            d = m["delta"]
             r.setdefault("tried", []).append((s, float(d), float(pred)))
             if best is None or d < best[0]:
-                best = (d, child, s)
+                best = (d, child, m["move"])
         margin = max(3.0 * self.ev.sigma_morph * np.sqrt(2.0), cfg.floor)
         if best is None or best[0] > -margin:
             e.step /= 2
@@ -274,3 +318,14 @@ class Engine:
     # ---------------------------------------------------------------- results
     def best(self):
         return min(self.archive.values(), key=lambda e: e.est) if self.archive else None
+
+    def handover(self, budget=np.inf):
+        """Before a design is handed over: the best few by estimate get fresh re-runs up to max_runs, so the
+        pick is not simply the luckiest single run. Returns the best after that."""
+        while True:
+            top = sorted(self.archive.values(), key=lambda e: e.est)[: self.cfg.handover_top]
+            todo = [e for e in top if len(e.fresh) < self.cfg.max_runs]
+            if not todo or self.spent >= budget:
+                return self.best()
+            if not self._fresh(todo[0]):
+                return self.best()

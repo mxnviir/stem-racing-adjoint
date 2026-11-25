@@ -1,0 +1,76 @@
+{
+ "a_trial_car": {
+  "ingest": {
+   "outside_region_changed_mm3": 0.0,
+   "pod_cm3": 66.8,
+   "mesh_volume_cm3": 157.52241888468143,
+   "band_points": 23878,
+   "solid": "car_body",
+   "solids": [
+    "car_body",
+    "wheel_fl",
+    "wheel_fr",
+    "wheel_lr",
+    "wheel_rl"
+   ]
+  },
+  "ok": true,
+  "rules_changed_mm3": 670.0,
+  "built_volume_cm3": 157.67533926037385,
+  "cad_volume_cm3": 157.52241888468143,
+  "built_to_cad": {
+   "n": 7184,
+   "p50": 0.011484673165765718,
+   "p99": 0.45611368434334576,
+   "max": 0.9272703259663445
+  },
+  "cad_to_built": {
+   "n": 8386,
+   "p50": 0.010400162495389909,
+   "p99": 1.2615672766302013,
+   "max": 1.5058062399611643
+  },
+  "wall_s": 44.5
+ },
+ "a_existing_original_seed": {
+  "built_volume_cm3": 157.52239178685278,
+  "built_to_cad": {
+   "n": 6966,
+   "p50": 0.10818731053082327,
+   "p99": 0.44187400572054314,
+   "max": 0.9963337522908119
+  }
+ },
+ "b_roundtrip_channel": {
+  "ingest": {
+   "outside_region_changed_mm3": 109.0,
+   "pod_cm3": 57.23,
+   "mesh_volume_cm3": 147.39282898876465,
+   "band_points": 28461
+  },
+  "ok": true,
+  "rules_changed_mm3": 100.0,
+  "pod_cm3_in": 57.304,
+  "pod_cm3_back": 57.262,
+  "volume_in_cm3": 147.39282898876465,
+  "volume_back_cm3": 147.06628990830214,
+  "back_to_in": {
+   "n": 7833,
+   "p50": 0.05718133668843011,
+   "p99": 0.3516882714856538,
+   "max": 0.6855301794742006
+  },
+  "in_to_back": {
+   "n": 7652,
+   "p50": 0.04340522811636817,
+   "p99": 0.3902652283246586,
+   "max": 0.7092339609384986
+  }
+ },
+ "marks": {
+  "T0a_volume_within_0p5pct": 1.0,
+  "T0a_surface_p99_le_0p3mm": false,
+  "T0b_roundtrip_p99_le_0p3mm": false,
+  "T0b_roundtrip_volume_within_0p5pct": 1.0
+ }
+}
