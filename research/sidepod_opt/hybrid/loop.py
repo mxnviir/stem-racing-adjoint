@@ -13,7 +13,8 @@ from pathlib import Path
 import numpy as np
 SP = Path(__file__).resolve().parents[1]
 R = SP / 'gate_results_resolved_up'; H = SP / 'hybrid'; ST = H / 'loop_state.json'
-AMP, N_RND, FLOOR = 0.5, 6, 0.15
+import os
+AMP, N_RND, FLOOR = float(os.environ.get("LOOP_AMP", "0.5")), 6, 0.15   # LOOP_AMP: amendment record in HYBRID_TEST.md
 
 
 def run(n):

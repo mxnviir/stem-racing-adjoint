@@ -227,3 +227,14 @@ random seeds 17-22. Mark L as before. A fresh DAFoam gradient at this parent run
 (linearUpwind), 2000 iterations from the base steady state, against `step_zero_P` (same pipeline). SE: from the ten
 200-iteration block means (sd / sqrt 10). **Mark P2:** D(best2_P) < D(zero_P) by >= 3 SE. Reported: the ratio to the
 steady model's -8.21.
+
+## Generation 3 result (2026-11-25 02:26, run 45519631311): Mark L met
+Parent (DAFoam 1.0 | ESI 0.5, chained) 182.521 (-8.209 vs the team pod). Children vs the parent (mN): **evolution-only
+direction from generation 2's measurements, 0.25 mm: -0.273 (accepted; total -8.48)**; the combined direction 0.25 mm
+-0.269; evolution-only 0.5 mm -0.139; random moves +0.05 .. +1.33 (all six worse). **Failed in the morph** (chained total
+~2 mm): fresh DAFoam 0.5, ESI 0.5, combined 0.5. In this generation the gain came from evolution's recombination of
+measured moves, not from an adjoint's own move.
+- DAFoam gradient at this parent (run 45519631165): coarse drag 211.4 mN; its predictions no longer correlate with the
+  base gradient's (r -0.24): the old directions are used up.
+- **Amendment for generation 4 (before its launch):** moves of 0.25 mm (combinations 0.25 and 0.125), because every
+  0.5 mm move along a strong direction folded the chained mesh in generation 3. Everything else as `loop.py`.

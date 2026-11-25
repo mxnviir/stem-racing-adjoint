@@ -1,0 +1,47 @@
+{
+ "g3_combh": {
+  "field": "vec:hybrid/g3/guided.npy",
+  "amp_mm": 0.25,
+  "dF_mN": -0.26898059015601916
+ },
+ "g3_es": {
+  "field": "vec:hybrid/g3/es.npy",
+  "amp_mm": 0.5,
+  "dF_mN": -0.13939873426423333
+ },
+ "g3_esh": {
+  "field": "vec:hybrid/g3/es.npy",
+  "amp_mm": 0.25,
+  "dF_mN": -0.27293991563615805
+ },
+ "g3_rnd17": {
+  "field": "rnd17",
+  "amp_mm": 0.5,
+  "dF_mN": 0.04472545195363864
+ },
+ "g3_rnd18": {
+  "field": "rnd18",
+  "amp_mm": 0.5,
+  "dF_mN": 1.3316053026587724
+ },
+ "g3_rnd19": {
+  "field": "rnd19",
+  "amp_mm": 0.5,
+  "dF_mN": 0.21041542062181406
+ },
+ "g3_rnd20": {
+  "field": "rnd20",
+  "amp_mm": 0.5,
+  "dF_mN": 0.12445595314451907
+ },
+ "g3_rnd21": {
+  "field": "rnd21",
+  "amp_mm": 0.5,
+  "dF_mN": 1.1745108732633582
+ },
+ "g3_rnd22": {
+  "field": "rnd22",
+  "amp_mm": 0.5,
+  "dF_mN": 0.4210725269239788
+ }
+}

@@ -1,7 +1,7 @@
 {
- "parent": "daf@1.0|esi_frozen@0.5",
- "dafoam_latest": "dafnpz:hybrid/dafoam_actions/45501451553/daf-daf10b/dafoam_sens.npz",
- "next_seed": 23,
+ "parent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25",
+ "dafoam_latest": "dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz",
+ "next_seed": 29,
  "generations": {
   "2": {
    "parent": "daf@1.0",
@@ -156,6 +156,109 @@
     "g3_rnd22": [
      "rnd22",
      0.5
+    ]
+   },
+   "result": {
+    "zero": [
+     182.5205482052553,
+     0.0009720012233449506
+    ],
+    "children": {
+     "g3_combh": [
+      -0.26898059015601916,
+      0.0010119514087726443
+     ],
+     "g3_es": [
+      -0.13939873426423333,
+      0.0023392813868040045
+     ],
+     "g3_esh": [
+      -0.27293991563615805,
+      0.0013269626097760358
+     ],
+     "g3_rnd17": [
+      0.04472545195363864,
+      0.009431960657661264
+     ],
+     "g3_rnd18": [
+      1.3316053026587724,
+      0.0009064035813536994
+     ],
+     "g3_rnd19": [
+      0.21041542062181406,
+      0.011504936081922473
+     ],
+     "g3_rnd20": [
+      0.12445595314451907,
+      9.256472034771464e-05
+     ],
+     "g3_rnd21": [
+      1.1745108732633582,
+      0.004458708211339955
+     ],
+     "g3_rnd22": [
+      0.4210725269239788,
+      0.00012517413682277962
+     ]
+    },
+    "failed": [
+     "g3_dafnew",
+     "g3_esi",
+     "g3_comb"
+    ],
+    "accepted": "g3_esh"
+   }
+  },
+  "4": {
+   "parent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25",
+   "children": {
+    "g4_dafnew": [
+     "dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz",
+     0.25
+    ],
+    "g4_esi": [
+     "esi_frozen",
+     0.25
+    ],
+    "g4_comb": [
+     "vec:hybrid/g4/guided.npy",
+     0.25
+    ],
+    "g4_combh": [
+     "vec:hybrid/g4/guided.npy",
+     0.125
+    ],
+    "g4_es": [
+     "vec:hybrid/g4/es.npy",
+     0.25
+    ],
+    "g4_esh": [
+     "vec:hybrid/g4/es.npy",
+     0.125
+    ],
+    "g4_rnd23": [
+     "rnd23",
+     0.25
+    ],
+    "g4_rnd24": [
+     "rnd24",
+     0.25
+    ],
+    "g4_rnd25": [
+     "rnd25",
+     0.25
+    ],
+    "g4_rnd26": [
+     "rnd26",
+     0.25
+    ],
+    "g4_rnd27": [
+     "rnd27",
+     0.25
+    ],
+    "g4_rnd28": [
+     "rnd28",
+     0.25
     ]
    }
   }
