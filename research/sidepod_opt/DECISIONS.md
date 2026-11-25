@@ -150,6 +150,9 @@ decided), *withdrawn*.
     `hybrid/HYBRID_TEST.md`; plan: `hybrid/EVOLUTION_ADJOINT_PLAN.md`. Round 1 (20:32): the coarse DAFoam direction
     is a usable proposer on the good mesh (step -1.07 mN, opposite +0.90, tied with the best of 10 random steps at equal
     peak, ~46 % better per RMS move; fidelity r 0.85, signs 10/11, but its sizes are ~2x too large).
+    The normal adjoint (ESI) is back in too, in the same limited role: as a *proposer* whose every move is measured. It
+    failed as a gradient (sizes, signs) and that verdict stands; as a direction it lowered drag at 0.5 mm (-3.57) and gave
+    generation 2's accepted step (-1.28 on the DAFoam 1 mm design), using the base design's ESI field.
   - Not fixed by any of this: fine-mesh scoring scatter (two flow states, team sd 3 mN) still needs method A or repeats.
   Otherwise the discrete adjoint, but only on a mesh that passes D8 (medium ≈ 128 GB; fine ≈ 500 GB,
   extrapolated), or steps scored by CFD without a gradient.

@@ -43,13 +43,24 @@ All on free GitHub runners (public repository); no paid machine is needed for an
 | phase | what | cost per unit | gate to the next phase |
 |---|---|---|---|
 | A. Local loop | `hybrid/loop.py next <k>` each generation: parent re-run + fresh DAFoam move + ESI move + 6 random moves + 4 combination moves, chained explicit morph, 0.5 mm moves | ~2 h, ~13 runners, one fresh DAFoam gradient (~1.5 h, in parallel with the previous generation) | stop when 2 generations in a row accept nothing, or the chained morph refuses (~1.5-2 mm total) |
-| B. New mesh | rebuild the wall-resolved mesh and its steady state on the accepted design, then continue A | the first build took several chained 6 h jobs (Actions + Kaggle); expect ~1 day | needed after every ~1.5-2 mm of accumulated change |
-| C. Several starts (evolution's global part) | run A from 3-4 different starting pods (team pod, groove, a 50 % blend, no pod) in parallel lanes | lanes share the ~20 runners | the space has a valley (a half-grown pod is worse than none): one start is not enough |
+| B. New mesh (untested) | rebuild the wall-resolved mesh and its steady state on the accepted design, then continue A | the first build took several chained 6 h jobs (Actions + Kaggle); expect ~1 day | needed after every ~1.5-2 mm of accumulated change |
+| C. Several starts (evolution's global part; untested) | run A from 3-4 different starting pods (team pod, groove, a 50 % blend, no pod) in parallel lanes | lanes share the ~20 runners | the space has a valley (a half-grown pod is worse than none): one start is not enough |
 | D. Confirmation | best designs under the production model, fresh meshes, repeats (D8, D10) | production runs ~3 h each | only confirmed gains count |
 | E. Legalisation | milling, 27 mm ceiling, wall thickness, mass back on; re-measure | as A | the final car |
 
 ## 5. Decisions for the owner
-[filled in below]
+1. **DAFoam back in (coarse, free runners) and ESI back in, both as proposers only.** Both failed as gradients and stay
+   failed; as directions whose every move is CFD'd they carried most of the gain. Fine-mesh DAFoam (rented, ~$15-40 per
+   gradient) is not needed by this plan.
+2. **Is the least-squares combination a "predictor"?** It turns measured drag changes into a proposed direction (no
+   model decides anything; the proposal is CFD'd). It is the "combined" arm; if the owner rules it out, the loop runs on
+   the adjoint moves and the random moves alone (at 0.5 mm the combination gave -5.24 vs DAFoam's -4.84).
+3. **Volume-neutral moves** (mean removed before scaling) are a constraint the aero-only stage could drop; dropping it
+   would let the pod shrink or grow freely, which the drag will reward until the mass rules come back.
+4. **What is still unconfirmed:** every number is the steady upwind model (D10). Production checks so far: one pair,
+   noisy (Mark P not met; block means -4.1 +/- 0.2 post hoc) and Mark P2 (the best design) running.
+5. **Mesh rebuilds (phase B) and several starts (phase C) are untested here.** The chained morph ran out at ~1.5 mm
+   (generation 3: the strongest +0.5 mm moves folded), so B is the next engineering task.
 
 ## 6. Evidence, in order
 All on the wall-resolved mesh (2.1 M cells), steady model, morphs of one tested mesh, change of half-car drag vs the
