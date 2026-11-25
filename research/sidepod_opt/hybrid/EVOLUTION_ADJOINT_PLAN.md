@@ -40,11 +40,13 @@ opt-in), workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
    directions were blocked, and at 0.5 mm the combination of evolution's measurements with both adjoints beat either
    alone (-5.24 vs DAFoam -4.84, evolution alone -2.62; reported, not marked). At 0.125 mm the marked test (H2) failed:
    at tiny steps the adjoints added nothing.
-4. **The loop works**: every generation so far kept a step under a rule fixed beforehand: -6.93 (DAFoam 1 mm), -1.28
-   (ESI), -0.27 (recombination), -1.02 (fresh DAFoam): **-9.50 mN, 5.0 % of the half-car drag** (steady model).
+4. **The loop works**: every generation kept a step under a rule fixed beforehand: -6.93 (DAFoam 1 mm), -1.28 (ESI),
+   -0.27 (recombination), -1.02 (fresh DAFoam), -0.25 (recombination): **-9.75 mN, 5.1 % of the half-car drag** (steady
+   model). The steps shrink once the mesh cannot take the adjoints' larger moves.
 5. **It survives the production scheme**: the -8.21 design keeps -6.32 mN (3.5 %) under linearUpwind (Mark P2 met).
 6. **The limit is the mesh**: the explicit morph (new, opt-in) moves the wall layer rigidly and allows ~1 mm per morph,
-   chained to ~1.5-2 mm; beyond that the mesh must be rebuilt (untested here).
+   chained to ~2 mm (5 levels); after that even 0.25 mm adjoint moves fold. Beyond that the mesh must be rebuilt
+   (untested here). DAFoam on a runner failed 2 of 7 times (a lost runner; one unconverged adjoint).
 
 ## 3. Why this design, and not the alternatives
 - **Plain CMA-ES (the evolution branch):** 96 SimScale cars over a 72-number lattice never beat the team pod (best 4 %
@@ -103,4 +105,5 @@ unmoved team pod (190.73 mN). Whole-signal SE ~0.12 mN at small moves, < 0.01 mN
 | **Generation 2** (parent DAFoam 1 mm, chained morph; Mark L) | **met**: ESI 0.5 mm -1.28 on top (accepted); DAFoam moves ~0 (spent); combined -0.19; 5 of 6 random moves worse | total **-8.21 mN (4.3 %)**; the second adjoint found what the first had used up |
 | **Generation 3** (parent + ESI 0.5; Mark L, 0.15 mN floor) | **met**: evolution's recombination of generation 2's measured moves at 0.25 mm -0.27 (accepted); combined 0.25 mm -0.27; all 6 random moves worse; the 3 strongest 0.5 mm moves folded the chained mesh | total **-8.48 mN**; evolution's part shows once the adjoints' own directions are spent; the morph range is the limit now |
 | **Generation 4** (0.25 mm moves) | **met**: fresh DAFoam (recomputed at the moved design) -1.02 (accepted); recombinations -0.16..-0.24; 5 of 6 random worse | total **-9.50 mN (5.0 %)**; refreshing the discrete adjoint each generation pays |
+| **Generation 5** (0.25 mm moves) | **met (just)**: combined 0.125 mm -0.25 (accepted); fresh DAFoam and ESI moves folded at 0.25 mm; DAFoam at the new parent did not converge | total **-9.75 mN (5.1 %)**; the chained morph (~2 mm) is now the limit |
 | **Mark P2** (best design under the production scheme, block-mean SE) | **met**: 175.49 vs 181.81, **-6.32 mN (3.5 %)**, 0.77 of the steady gain | the gain is not a steady-model artefact (same mesh family; fresh meshes still to do) |
