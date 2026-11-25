@@ -1559,6 +1559,21 @@ external topology case was **not found** in their material (that is not proof it
     SE of ~0.12 mN; each solve took 85-110 min on Actions. Morphs are clean at 0.125 mm per step on this mesh;
     chaining steps (morphing an already-morphed mesh) is untested.
 
+- **2026-11-25 00:40, owner's request (2026-11-24 ~18:15): evolution + both adjoints, aerodynamics only, tested plan
+  in 18 h. Work in `hybrid/` (tests and marks `HYBRID_TEST.md`, plan `EVOLUTION_ADJOINT_PLAN.md`, research `RESEARCH.md`).**
+  - Method: guided evolution on the good mesh: each round, CFD of the parent, random smooth moves, one move per adjoint
+    (coarse DAFoam fresh each round on a free runner, ESI), and moves along the combination of every measured move; the
+    best child is kept if it beats the parent by >= 3 SE. Adjoints propose, CFD decides.
+  - Results so far (wall-resolved, steady model; marks fixed before each round):
+    - H1 PASS: the coarse DAFoam direction is a usable proposer on the good mesh (fidelity r 0.85, sizes 2x too big).
+    - H2 FAIL at 0.125 mm (evolution-only best there); at 0.5 mm (reported) combined -5.24 > DAFoam -4.84 > evolution -2.62.
+    - Explicit morph (wall layer moved rigidly): 1 mm per morph, chained morphs 1.5-2 mm; agrees with the old morph.
+    - Mark S met (opposite moves raise drag: shape, not a flow-state switch). Mark P (production scheme) not met: 2000
+      production iterations are too noisy to resolve -4 mN.
+    - Generations: base -> DAFoam 1.0 mm (-6.93) -> + ESI 0.5 mm (-1.28): **-8.21 mN, 4.3 % of the half car**, steady model.
+  - Evolution branch: its CMA-ES (72-number lattice, SimScale, milling) never beat the team pod; its ask/tell interface is
+    ported (`hybrid/evolution_methods.py`), not its lattice.
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
