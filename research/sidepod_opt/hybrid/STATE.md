@@ -39,3 +39,5 @@ Next: generation 2 (round 3) = best <= 0.5 mm design + 0.5 mm children (fresh DA
 | Generation 4 | 45533175628 | fresh DAFoam 0.25 accepted (-1.02), total -9.50 |
 | Generation 5 (0.25 mm) | resolved_bumps 45547505675 (04:32) | running; next LOOP_AMP=0.25 LOOP_ESI=esinpz:... loop.py next 6 |
 | Mark P3 (gen-5 parent under production) | resolved_bumps 45547527633 (04:33) | running; verdict python hybrid/p3_verdict.py |
+| Generation 5 | 45547505675 | combined 0.125 accepted (-0.25), total -9.75; adjoint moves fold |
+| Generation 6 (0.125 mm, last) | resolved_bumps 45559159504 (06:14) | running |
