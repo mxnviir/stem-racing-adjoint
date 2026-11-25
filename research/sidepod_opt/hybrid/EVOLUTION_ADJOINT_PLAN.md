@@ -21,8 +21,9 @@ The best child replaces the parent if it is below the parent's re-run by >= 3 SE
 selection: the improved design is what the next generation starts from). The adjoints never decide. One command builds
 each generation from the last one's results with these rules: `python hybrid/loop.py next <k> <fresh DAFoam npz>`
 (`LOOP_AMP`, `LOOP_ESI=esinpz:<fresh ESI npz>`).
-Implementation: `hybrid/loop.py` (the generation driver), `hybrid/guided_es.py` (the same rules as an ask/tell class, the
-interface of the evolution branch's CMA wrapper, ported in `hybrid/evolution_methods.py`), `esi/make_step.py` (moves),
+Implementation: `hybrid/loop.py` (the generation driver; authoritative), `hybrid/guided_es.py` (an earlier ask/tell
+version of the same idea, tested offline only; it lacks the 0.15 mN floor and the two-size recombination),
+`hybrid/evolution_methods.py` (the evolution branch's CMA ask/tell wrapper, ported), `esi/make_step.py` (moves),
 `hybrid/combine.py`, `hybrid/chain_solve.py` (chained explicit morph), Part 2's `openfoam_case.py` (explicit morph,
 opt-in), workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
 
@@ -122,3 +123,9 @@ unmoved team pod (190.73 mN). Whole-signal SE ~0.12 mN at small moves, < 0.01 mN
    tolerance or more iterations before relying on it.
 4. **Phase C (several starts)** once B works: 2-3 lanes from different pods share the ~20 runners.
 5. **Legalisation** (milling, ceiling, wall thickness, mass) as the last loop stage, each candidate CFD'd.
+
+## 8. The final design (`hybrid/final_design/`)
+Six accepted moves, ~2 mm in all: the pod's front top edge is cut back (up to 2.0 mm in), the middle third's lower
+side fills out slightly (+0.2 mm mean), local +-1 mm features elsewhere; volume +142 mm^3. Drag 190.73 -> 180.79 mN and lift
+77.0 -> 66.5 mN (steady); under the production scheme the generation-3 design reads 181.81 -> 175.49 mN drag, 83.9 -> 82.1
+lift. Not legalised yet (milling, ceiling, mass are off in this stage).
