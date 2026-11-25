@@ -1,22 +1,164 @@
 {
- "note": "hybrid Mark P3: the generation-5 parent under the production scheme, 2000 its",
+ "note": "hybrid loop generation 6: parent daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125 (chained) + one move each",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "step_best4_P",
-   "site": "step",
+   "name": "step_g6_zero",
    "field": "zero",
-   "amp": "0",
+   "amp": "0.0",
+   "site": "step",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
    "explicit": "1",
    "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25",
-   "prod": "1",
-   "iters": "2000"
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_dafnew",
+   "field": "dafnpz:hybrid/dafoam_actions/45533213960/daf-g4parent/dafoam_sens.npz",
+   "amp": "0.125",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_esi",
+   "field": "esinpz:hybrid/esi_after/45535603829/esi_sens.npz",
+   "amp": "0.125",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_comb",
+   "field": "vec:hybrid/g6/guided.npy",
+   "amp": "0.125",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_combh",
+   "field": "vec:hybrid/g6/guided.npy",
+   "amp": "0.0625",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_es",
+   "field": "vec:hybrid/g6/es.npy",
+   "amp": "0.125",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_esh",
+   "field": "vec:hybrid/g6/es.npy",
+   "amp": "0.0625",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_rnd35",
+   "field": "rnd35",
+   "amp": "0.125",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_rnd36",
+   "field": "rnd36",
+   "amp": "0.125",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_rnd37",
+   "field": "rnd37",
+   "amp": "0.125",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_rnd38",
+   "field": "rnd38",
+   "amp": "0.125",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_rnd39",
+   "field": "rnd39",
+   "amp": "0.125",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
+  },
+  {
+   "name": "step_g6_rnd40",
+   "field": "rnd40",
+   "amp": "0.125",
+   "site": "step",
+   "direct": "1",
+   "nsig": "1.5",
+   "mask": "0",
+   "explicit": "1",
+   "zmin": "1.5",
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125"
   }
  ],
- "attempt": 203
+ "attempt": 106
 }

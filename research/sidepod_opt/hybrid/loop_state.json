@@ -1,7 +1,7 @@
 {
- "parent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25",
+ "parent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125",
  "dafoam_latest": "dafnpz:hybrid/dafoam_actions/45533213960/daf-g4parent/dafoam_sens.npz",
- "next_seed": 35,
+ "next_seed": 41,
  "generations": {
   "2": {
    "parent": "daf@1.0",
@@ -368,6 +368,109 @@
     "g5_rnd34": [
      "rnd34",
      0.25
+    ]
+   },
+   "result": {
+    "zero": [
+     181.2316513571674,
+     0.0006811458471457922
+    ],
+    "children": {
+     "g5_comb": [
+      -0.15696732153799076,
+      0.00020975955476357255
+     ],
+     "g5_combh": [
+      -0.24639768123554973,
+      6.220270121028547e-05
+     ],
+     "g5_es": [
+      0.13940031062796265,
+      0.0013701340093739095
+     ],
+     "g5_esh": [
+      -0.015820267356360773,
+      0.0011423862973020723
+     ],
+     "g5_rnd29": [
+      0.10266364527839755,
+      0.001258426729981156
+     ],
+     "g5_rnd30": [
+      0.2580946670074411,
+      0.0004097162946323978
+     ],
+     "g5_rnd31": [
+      -0.004594515868632243,
+      0.0012409669061098378
+     ],
+     "g5_rnd32": [
+      0.4728046273582436,
+      0.00011516454153222565
+     ],
+     "g5_rnd33": [
+      -0.026735151862283146,
+      0.0006469396297715239
+     ]
+    },
+    "failed": [
+     "g5_dafnew",
+     "g5_esi",
+     "g5_rnd34"
+    ],
+    "accepted": "g5_combh"
+   }
+  },
+  "6": {
+   "parent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125",
+   "children": {
+    "g6_dafnew": [
+     "dafnpz:hybrid/dafoam_actions/45533213960/daf-g4parent/dafoam_sens.npz",
+     0.125
+    ],
+    "g6_esi": [
+     "esinpz:hybrid/esi_after/45535603829/esi_sens.npz",
+     0.125
+    ],
+    "g6_comb": [
+     "vec:hybrid/g6/guided.npy",
+     0.125
+    ],
+    "g6_combh": [
+     "vec:hybrid/g6/guided.npy",
+     0.0625
+    ],
+    "g6_es": [
+     "vec:hybrid/g6/es.npy",
+     0.125
+    ],
+    "g6_esh": [
+     "vec:hybrid/g6/es.npy",
+     0.0625
+    ],
+    "g6_rnd35": [
+     "rnd35",
+     0.125
+    ],
+    "g6_rnd36": [
+     "rnd36",
+     0.125
+    ],
+    "g6_rnd37": [
+     "rnd37",
+     0.125
+    ],
+    "g6_rnd38": [
+     "rnd38",
+     0.125
+    ],
+    "g6_rnd39": [
+     "rnd39",
+     0.125
+    ],
+    "g6_rnd40": [
+     "rnd40",
+     0.125
     ]
    }
   }

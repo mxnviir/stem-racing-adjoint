@@ -268,3 +268,15 @@ The discrete adjoint's direction changes with the design (refreshing it paid: ge
 hardly does (it follows the geometry more than the flow, consistent with its failed gradient tests), so refreshing ESI
 (~2 h) is not worth it every generation. The two adjoints point in nearly unrelated directions.
 Fresh ESI at the generation-4 parent: run 45535603829 (`hybrid/esi_after/45535603829`).
+
+## Generation 5 result (2026-11-25 06:13, run 45547505675): Mark L met (just)
+Parent 181.232 (-9.498). Children vs the parent (0.25 mm; combinations 0.25 / 0.125): **combined direction 0.125 mm -0.246
+(accepted; total -9.75 mN, 5.1 %)**; combined 0.25 -0.157; evolution-only -0.016 / +0.139; random -0.03 .. +0.47 (one
+folded). **Fresh DAFoam and fresh ESI moves folded at 0.25 mm** (5 chained levels, ~2 mm in all): the morph range is the
+binding limit now.
+- DAFoam at the generation-5 parent (run 45547505680): the adjoint did not converge (GMRES 2000 iterations, reason -3);
+  second DAFoam failure in 7 runner jobs.
+
+## Generation 6 (written before these solves): 0.125 mm moves (amended: 0.25 mm adjoint moves folded in generation 5)
+Guides: DAFoam at the generation-4 parent (the newest that converged), fresh ESI at the generation-4 parent. Rules as
+`loop.py`; this is the last generation inside the 18 h. It tests whether smaller adjoint moves still pass the morph.
