@@ -83,10 +83,12 @@ All on free GitHub runners (public repository); no paid machine is needed for an
    the adjoint moves and the random moves alone (at 0.5 mm the combination gave -5.24 vs DAFoam's -4.84).
 3. **Volume-neutral moves** (mean removed before scaling) are a constraint the aero-only stage could drop; dropping it
    would let the pod shrink or grow freely, which the drag will reward until the mass rules come back.
-4. **What is confirmed and what is not:** the loop runs on the steady upwind model (D10). Under the production scheme
+4. **Caveat: the morph's own error at ~2 mm of chained moves is not measured** (mark E covered 0.125 mm, one level); the
+   production checks share the same morphed meshes, so only a fresh mesh (phase B) removes this doubt.
+5. **What is confirmed and what is not:** the loop runs on the steady upwind model (D10). Under the production scheme
    the best design keeps 0.77 of its gain (Mark P2 met: -6.32 mN, 3.5 %); Mark P (an earlier pair, whole-signal SE)
    was not met. Still open: fresh meshes and repeats (D8), and the full race-time effect.
-5. **Mesh rebuilds (phase B) and several starts (phase C) are untested here.** The chained morph ran out at ~1.5 mm
+6. **Mesh rebuilds (phase B) and several starts (phase C) are untested here.** The chained morph ran out at ~1.5 mm
    (generation 3: the strongest +0.5 mm moves folded), so B is the next engineering task.
 
 ## 6. Evidence, in order

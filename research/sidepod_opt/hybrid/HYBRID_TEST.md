@@ -303,3 +303,7 @@ Script: `hybrid/increments_verdict.py`.
   DAFoam move it was built from; generation 6's evolution-only step is not (-0.08). Adjoint-led steps 9.48 of 9.94 mN,
   evolution-only 0.46. **Mark S reading, softened:** the opposite 0.5 mm moves stayed oscillating (force_osc 3.0 / 1.2 mN)
   while the downhill moves went steady (0.01-0.03): S shows drag antisymmetry, not an unchanged flow state.
+- **Morph error at the chained scale: not measured.** A planned out-and-back chain (all six steps, then their negatives)
+  does not net to zero (110 vertices near the ground left up to 0.5 mm off: the ground-clearance limit acts one way),
+  so it was not run. Evidence so far: mark E (0.125 mm, one level: the explicit morph reads like the old one), and the
+  generation-2 parent read 183.803 mN both from its own one-level morph and through the chained pipeline.
