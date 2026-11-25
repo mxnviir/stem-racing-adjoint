@@ -280,3 +280,9 @@ binding limit now.
 ## Generation 6 (written before these solves): 0.125 mm moves (amended: 0.25 mm adjoint moves folded in generation 5)
 Guides: DAFoam at the generation-4 parent (the newest that converged), fresh ESI at the generation-4 parent. Rules as
 `loop.py`; this is the last generation inside the 18 h. It tests whether smaller adjoint moves still pass the morph.
+
+## Generation 6 result (2026-11-25 07:51, run 45559159504): Mark L met; the loop stops here
+Parent 180.986 (-9.744). Children vs the parent (0.125 mm): **evolution-only recombination -0.193 (accepted; final
+-9.94 mN vs the team pod, 5.2 % of the half car, steady model)**; combined 0.0625 -0.161; random -0.10 .. +0.22.
+**Folded in the chained morph: DAFoam, ESI, combined 0.125, two random moves.** With 6 chained levels (~2 mm) the
+mesh takes no adjoint move at all; the next step is a new mesh (plan phase B). Final design: `loop_state.json` "final".

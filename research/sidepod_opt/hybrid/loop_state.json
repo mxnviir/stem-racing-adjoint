@@ -1,5 +1,5 @@
 {
- "parent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125",
+ "parent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125|vec:hybrid/g6/es.npy@0.125",
  "dafoam_latest": "dafnpz:hybrid/dafoam_actions/45533213960/daf-g4parent/dafoam_sens.npz",
  "next_seed": 41,
  "generations": {
@@ -472,8 +472,19 @@
      "rnd40",
      0.125
     ]
+   },
+   "result": {
+    "zero": 180.986,
+    "accepted": "g6_es",
+    "best_change_mN": -0.193,
+    "note": "evolution-only 0.125 mm accepted (>= 3 SE and >= 0.15 mN); dafnew, esi, comb, rnd39, rnd40 folded in the chained morph"
    }
   }
  },
- "note": "generation 1 = rounds 1-2 from the base (accepted: daf@1.0, -6.93 mN); generation 2 = round 3"
+ "note": "generation 1 = rounds 1-2 from the base (accepted: daf@1.0, -6.93 mN); generation 2 = round 3",
+ "final": {
+  "parent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25|vec:hybrid/g5/guided.npy@0.125|vec:hybrid/g6/es.npy@0.125",
+  "steady_change_vs_team_pod_mN": -9.938,
+  "stopped": "morph range exhausted (6 chained levels; every adjoint move folds at 0.125 mm)"
+ }
 }
