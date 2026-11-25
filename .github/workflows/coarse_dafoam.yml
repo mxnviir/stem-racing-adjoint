@@ -73,6 +73,7 @@ jobs:
         working-directory: research/sidepod_opt
         run: |
           if [ "${{ matrix.case.field }}" = "base" ]; then echo "DESIGN=gate/original" >> "$GITHUB_ENV"; else
+            STEP_PARENT="${{ matrix.case.parent }}" STEP_NORMAL_SIGMA_MM="${{ matrix.case.nsig || '0' }}" STEP_ZMIN_MM="${{ matrix.case.zmin || '0' }}" \
             GATE_RES=resolved GATE_RESULTS=/tmp/gr python -W ignore esi/make_step.py "${{ matrix.case.name }}" "${{ matrix.case.field }}" "${{ matrix.case.amp }}"
             echo "DESIGN=gate/bump_${{ matrix.case.name }}" >> "$GITHUB_ENV"; fi
       - name: coarse steady state (fresh mesh, upwind)

@@ -1,0 +1,57 @@
+{
+ "g2_daffresh": {
+  "field": "dafnpz:hybrid/dafoam_actions/45477836968/daf-daf05/dafoam_sens.npz",
+  "amp_mm": 0.5,
+  "dF_mN": 0.11301080479660186
+ },
+ "g2_dafbase": {
+  "field": "daf",
+  "amp_mm": 0.5,
+  "dF_mN": -0.02489623132967722
+ },
+ "g2_esi": {
+  "field": "esi_frozen",
+  "amp_mm": 0.5,
+  "dF_mN": -1.2824888762781939
+ },
+ "g2_guided": {
+  "field": "vec:hybrid/r2/guided.npy",
+  "amp_mm": 0.5,
+  "dF_mN": -0.18564708515827988
+ },
+ "g2_es": {
+  "field": "vec:hybrid/r2/es.npy",
+  "amp_mm": 0.5,
+  "dF_mN": 0.42976521451672056
+ },
+ "g2_rnd11": {
+  "field": "rnd11",
+  "amp_mm": 0.5,
+  "dF_mN": 0.3185929323499863
+ },
+ "g2_rnd12": {
+  "field": "rnd12",
+  "amp_mm": 0.5,
+  "dF_mN": 1.06098993685913
+ },
+ "g2_rnd13": {
+  "field": "rnd13",
+  "amp_mm": 0.5,
+  "dF_mN": -0.025787943624123955
+ },
+ "g2_rnd14": {
+  "field": "rnd14",
+  "amp_mm": 0.5,
+  "dF_mN": 0.6036031810145346
+ },
+ "g2_rnd15": {
+  "field": "rnd15",
+  "amp_mm": 0.5,
+  "dF_mN": 1.7334570507266278
+ },
+ "g2_rnd16": {
+  "field": "rnd16",
+  "amp_mm": 0.5,
+  "dF_mN": 0.3745706992832538
+ }
+}

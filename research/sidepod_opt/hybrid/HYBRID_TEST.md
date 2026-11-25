@@ -196,3 +196,20 @@ At 0.125 mm the order was the reverse (ES best, H2 FAIL). At the step size the l
 evolution's measured directions with the adjoints removes twice what evolution alone does and 0.40 mN more than
 DAFoam alone; ESI adds 0.2 mN on top of DAFoam. This is a post-result comparison (round 2b was written after H2's
 verdict) and is reported as such; generation 2 and later test it prospectively.
+
+## Generation 2 result (2026-11-25 00:37, run 45503888773): **Mark L met**
+Parent (DAFoam 1.0 mm) through the chained pipeline: 183.803 (identical to its from-base run). Children, change vs the
+parent (mN): **ESI 0.5 mm -1.28** (accepted; total vs the team pod **-8.21**, 4.3 % of the half car); combined -0.19;
+DAFoam (gradient at the 0.5 mm design) +0.11; DAFoam (base gradient) -0.03; evolution-only +0.43; random moves -0.03 to
++1.73 (5 of 6 worse). 3 SE of every difference < 0.02 mN.
+- DAFoam's direction is spent after 1 mm (its fresh gradient at the 1 mm design is 0.2x the base size along the old
+  directions, r 0.83), and the next gain came from the other adjoint: the two adjoints pick up different features.
+- Round 1c production pair (2000 iterations, linearUpwind): base 181.75 +/- 2.75, DAFoam 0.5 mm 177.65 +/- 3.14:
+  difference -4.10, 3 SE 12.5: **Mark P not met** (the production flow's unsteadiness needs far longer averages; the
+  sign and size agree with the steady model's -4.84, but that is not evidence at this precision).
+- Mark S final (committed forces): DAFoam's opposite +4.05, rnd1's opposite +1.87: met.
+
+## Generation 3 (written before these solves; `hybrid/loop.py next 3`, rules in its docstring)
+Parent `daf@1.0|esi_frozen@0.5` (two chained levels). Children (0.5 mm unless noted): DAFoam (gradient at the 1 mm
+design), ESI (base), combined and evolution-only directions from generation 2's measurements (0.5 and 0.25 mm),
+random seeds 17-22. Mark L as before. A fresh DAFoam gradient at this parent runs alongside, for generation 4.

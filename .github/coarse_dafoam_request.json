@@ -1,6 +1,16 @@
 {
- "note": "hybrid: fresh coarse DAFoam gradient at the generation-2 parent (DAFoam 1.0 mm design), retry",
+ "note": "hybrid: fresh coarse DAFoam gradient at the generation-3 parent (daf 1.0 + esi 0.5), for generation 4",
  "bumpgeom_run": 45188798730,
- "cases": [{"name": "daf10b", "field": "daf", "amp": "1.0", "iters": 5000}],
- "attempt": 3
+ "cases": [
+  {
+   "name": "g3parent",
+   "field": "zero",
+   "amp": "0",
+   "parent": "daf@1.0+esi_frozen@0.5",
+   "nsig": "1.5",
+   "zmin": "1.5",
+   "iters": 5000
+  }
+ ],
+ "attempt": 4
 }
