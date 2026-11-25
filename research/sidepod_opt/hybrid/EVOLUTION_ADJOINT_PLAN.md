@@ -12,16 +12,19 @@ one batch of good-mesh CFD runs in parallel (free runners, ~20 at once, ~1.5-2 h
 | member of the batch | where it comes from | why |
 |---|---|---|
 | parent re-run | the current design | the reference for this round (the pipeline is deterministic: repeat 0.0003 mN) |
-| ~6-10 random smooth moves | evolution's mutation | exploration, and an unbiased measured gradient estimate |
-| one move along each adjoint | DAFoam (coarse, fresh each round), ESI | the cheap guess at "downhill"; measured, not trusted |
-| moves along the combination of everything measured | least squares in the span of measured moves (`combine.py`) | evolution's recombination; uses every measurement |
-| a fan of sizes (0.5 / 1.0 mm) along the best directions | | the step size is chosen by CFD |
+| 6 random smooth moves | evolution's mutation | exploration, and measured directions for the next recombination |
+| one move along each adjoint | DAFoam (coarse, fresh at the parent, ~1.5 h on a free runner) and ESI (fresh at the parent, ~2 h) | the cheap guess at "downhill"; measured, not trusted |
+| moves along the recombination of last round's measured moves | least squares in their span: all of them, and the random ones only (`combine.py`) | evolution's recombination; uses every measurement |
+| two sizes for the recombinations (AMP, AMP/2) | AMP = 0.5 mm, 0.25 mm once the chained mesh gets tight | the step size is chosen by CFD |
 
-The best member replaces the parent if it beats it by >= 3 SE (Lamarckian selection: the improved design is what the
-next generation starts from). The adjoints never decide; each adjoint's move is measured in the same batch it is used.
-Implementation: `hybrid/guided_es.py` (ask/tell, resumable, the interface of the evolution branch's CMA wrapper, ported
-in `hybrid/evolution_methods.py`), `esi/make_step.py` (moves), `hybrid/combine.py`, `hybrid/chain_solve.py` (chained morph),
-workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
+The best child replaces the parent if it is below the parent's re-run by >= 3 SE **and** by >= 0.15 mN (Lamarckian
+selection: the improved design is what the next generation starts from). The adjoints never decide. One command builds
+each generation from the last one's results with these rules: `python hybrid/loop.py next <k> <fresh DAFoam npz>`
+(`LOOP_AMP`, `LOOP_ESI=esinpz:<fresh ESI npz>`).
+Implementation: `hybrid/loop.py` (the generation driver), `hybrid/guided_es.py` (the same rules as an ask/tell class, the
+interface of the evolution branch's CMA wrapper, ported in `hybrid/evolution_methods.py`), `esi/make_step.py` (moves),
+`hybrid/combine.py`, `hybrid/chain_solve.py` (chained explicit morph), Part 2's `openfoam_case.py` (explicit morph,
+opt-in), workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
 
 ## 2. What the tests showed (2026-11-24 18:37 onward)
 [filled in below, section 6]
