@@ -1,0 +1,13 @@
+{
+ "D20_half_N": 0.21011348249974884,
+ "wall_s": 885.5,
+ "converged": true,
+ "residual_p": 5.753222989310054e-06,
+ "force_osc": 2.875518177479498e-05,
+ "force_drift": 8.617936582656471e-08,
+ "run_dir": "",
+ "force_mean_stderr": 4.5488684497426037e-07,
+ "run_dir_kept": "gate/refA_hyb",
+ "folder": "gate/bump_g5parent",
+ "iters": 5000
+}
