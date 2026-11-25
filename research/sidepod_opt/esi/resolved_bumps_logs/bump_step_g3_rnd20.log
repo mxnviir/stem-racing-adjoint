@@ -1,0 +1,12 @@
+step_g3_rnd20_l0 {"field": "zero", "amp_mm": 0.0, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "parent": "daf@1.0", "total_peak_mm": 1.0, "zmin_scaled_vertices": 83, "dV_mm3": -47.154878656769185}
+step_g3_rnd20_l1 {"field": "zero", "amp_mm": 0.0, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "parent": "esi_frozen@0.5", "total_peak_mm": 0.5, "zmin_scaled_vertices": 0, "dV_mm3": 109.2872928126087}
+step_g3_rnd20_l2 {"field": "zero", "amp_mm": 0.0, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "parent": "rnd20@0.5", "total_peak_mm": 0.5, "zmin_scaled_vertices": 0, "dV_mm3": -1.5167293007889393}
+CHAIN levels ['daf@1.0', 'esi_frozen@0.5', 'rnd20@0.5'] total peak mm 1.7850190764569778
+CHAIN level 0 morph: acceptable
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4334_19744974feb2
+CHAIN level 1 morph: acceptable
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4334_5766f02751ca
+[openfoam_case] morph checkMesh: ***Max skewness = 5.781149526995331, 4 highly skew faces detected which may impair the quality of the results; Failed 1 mesh checks.
+[openfoam_case] warm start copied from /home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate/chain_step_g3_rnd20_l1/2000: U, k, nut, omega, p
+[openfoam_case] partition sha 174609ad7d3c7f30
+{"D20_half_N": 0.1826450458606199, "wall_s": 5763.1, "converged": true, "residual_p": 1.966287398367502e-05, "force_osc": 5.074060480050182e-06, "force_drift": 5.985260090564005e-08, "run_dir": "", "force_mean_stderr": 9.256472034771465e-08, "bump": "step_g3_rnd20", "morph_fallback": false, "run_dir_kept": "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4334_22c3c72e31e2"}

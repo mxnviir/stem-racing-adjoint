@@ -1,0 +1,12 @@
+step_g3_esh_l0 {"field": "zero", "amp_mm": 0.0, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "parent": "daf@1.0", "total_peak_mm": 1.0, "zmin_scaled_vertices": 83, "dV_mm3": -47.154878656769185}
+step_g3_esh_l1 {"field": "zero", "amp_mm": 0.0, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "parent": "esi_frozen@0.5", "total_peak_mm": 0.5, "zmin_scaled_vertices": 0, "dV_mm3": 109.2872928126087}
+step_g3_esh_l2 {"field": "zero", "amp_mm": 0.0, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "parent": "vec:hybrid/g3/es.npy@0.25", "total_peak_mm": 0.25, "zmin_scaled_vertices": 0, "dV_mm3": 8.153223626986938}
+CHAIN levels ['daf@1.0', 'esi_frozen@0.5', 'vec:hybrid/g3/es.npy@0.25'] total peak mm 1.6660993209180999
+CHAIN level 0 morph: acceptable
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4455_fa19e92c73c0
+CHAIN level 1 morph: acceptable
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4455_0e2f42d86dda
+[openfoam_case] morph checkMesh: ***Max skewness = 5.7751506660780345, 2 highly skew faces detected which may impair the quality of the results; Failed 1 mesh checks.
+[openfoam_case] warm start copied from /home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate/chain_step_g3_esh_l1/2000: U, k, nut, omega, p
+[openfoam_case] partition sha 0e8b35c055ef20e8
+{"D20_half_N": 0.18224760001834192, "wall_s": 5669.3, "converged": true, "residual_p": 2.347597600521778e-05, "force_osc": 2.7175780963880902e-05, "force_drift": 2.2857785888538637e-07, "run_dir": "", "force_mean_stderr": 1.3269626097760357e-06, "bump": "step_g3_esh", "morph_fallback": false, "run_dir_kept": "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4455_8e51a73b3848"}

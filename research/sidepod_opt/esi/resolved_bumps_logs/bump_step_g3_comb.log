@@ -1,0 +1,39 @@
+step_g3_comb_l0 {"field": "zero", "amp_mm": 0.0, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "parent": "daf@1.0", "total_peak_mm": 1.0, "zmin_scaled_vertices": 83, "dV_mm3": -47.154878656769185}
+step_g3_comb_l1 {"field": "zero", "amp_mm": 0.0, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "parent": "esi_frozen@0.5", "total_peak_mm": 0.5, "zmin_scaled_vertices": 0, "dV_mm3": 109.2872928126087}
+step_g3_comb_l2 {"field": "zero", "amp_mm": 0.0, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "parent": "vec:hybrid/g3/guided.npy@0.5", "total_peak_mm": 0.5, "zmin_scaled_vertices": 0, "dV_mm3": 55.74394614104466}
+CHAIN levels ['daf@1.0', 'esi_frozen@0.5', 'vec:hybrid/g3/guided.npy@0.5'] total peak mm 2.0
+CHAIN level 0 morph: acceptable
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4249_55aebcf6b693
+CHAIN level 1 morph: acceptable
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4249_6323371778e6
+[openfoam_case] morph checkMesh: ***Error in face pyramids: 1 faces are incorrectly oriented.; ***Max skewness = 6.790442286191734, 4 highly skew faces detected which may impair the quality of the results; Failed 2 mesh checks.
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_case_template/runs/run_4249_3586c714e0f6
+Traceback (most recent call last):
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/hybrid/chain_solve.py", line 91, in <module>
+    runpy.run_path(str(SP / 'gate.py'), run_name='__main__')
+  File "<frozen runpy>", line 291, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate.py", line 482, in <module>
+    cmd_bump(sys.argv[2], npar(3))
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate.py", line 277, in cmd_bump
+    half, health, secs = solve(folder, n_sub, ITERS, extra={"morph_from": ref, "warm_from": ref}, keep=True)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/research/sidepod_opt/gate.py", line 69, in solve
+    half, health = run_half_car_cfd(str(body), n_subdomains=n_sub, extra_surfaces=SW.extra_surfaces(folder),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_wrapper.py", line 307, in run_half_car_cfd
+    result = _invoke_openfoam_pipeline(str(path), str(case_dir), run_config=run_config)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/cfd_wrapper.py", line 138, in _invoke_openfoam_pipeline
+    return openfoam_case.invoke(stl_path, case_dir, cfg=run_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/openfoam_case.py", line 2273, in invoke
+    logs = run_stages(run_dir, cfg, resolved_bashrc, resume=bool(resume_dir))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/openfoam_case.py", line 1974, in run_stages
+    checkmesh = _mesh(run, cfg, bashrc, timeout_s)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/stem-racing-paper/stem-racing-paper/part2-simulation/openfoam_case.py", line 1873, in _mesh
+    raise RuntimeError(f"morphed mesh failed checkMesh and P2_MORPH_STRICT=1 forbids a fresh mesh: "
+RuntimeError: morphed mesh failed checkMesh and P2_MORPH_STRICT=1 forbids a fresh mesh: ***Error in face pyramids: 1 faces are incorrectly oriented.; ***Max skewness = 6.790442286191734, 4 highly skew faces detected which may impair the quality of the results; Failed 2 mesh checks.
