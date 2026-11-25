@@ -188,3 +188,11 @@ Round 1c, first result in (job log; the commit waits for the production runs): D
 - Round 1c, second result (job log, D20 of the run record; the committed forces will give the 404-iteration mean):
   rnd1's opposite at 0.5 mm **+1.86 mN** (rnd1 itself -2.70). With DAFoam's opposite +4.05: **Mark S met** (both
   opposites raise drag): the 0.5 mm gains are shape, not a switch of flow state.
+
+## Round 2b result (2026-11-25 00:07, run 45501709693; reported, not marked)
+Every arm at 0.5 mm (explicit morph), change vs zero (mN): **GUIDED (evolution + DAFoam + ESI) -5.24**; GUIDED-DAF -5.03;
+DAFoam alone -4.84; GUIDED-ESI -3.77; ESI alone -3.57; one random move -2.70; **ES (evolution only) -2.62**.
+At 0.125 mm the order was the reverse (ES best, H2 FAIL). At the step size the loop actually uses, the combination of
+evolution's measured directions with the adjoints removes twice what evolution alone does and 0.40 mN more than
+DAFoam alone; ESI adds 0.2 mN on top of DAFoam. This is a post-result comparison (round 2b was written after H2's
+verdict) and is reported as such; generation 2 and later test it prospectively.

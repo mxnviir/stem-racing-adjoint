@@ -64,5 +64,6 @@ unmoved team pod (190.73 mN). Whole-signal SE ~0.12 mN at small moves, < 0.01 mN
 | Morph limits | old morph 0.125 mm; explicit morph (wall layer moved rigidly) **1 mm** per morph; chained morphs 1.5-2 mm (2 of 4) | larger changes without new meshes, up to ~2 mm |
 | Mark E (explicit morph agrees) | met (-1.18 vs -1.04) | the new morph does not change the answer |
 | Larger steps (reported) | 0.5 mm: DAFoam -4.84, ESI -3.57, random -2.70; 1.0 mm: DAFoam **-6.93**, GUIDED -6.65 | step sizes of 0.5-1 mm pay; the adjoints win at this size |
-| Mark S (shape, not flow state), partial | DAFoam's opposite at 0.5 mm: +4.05 | the DAFoam gain is shape |
 | **H2** combined vs evolution-only vs DAFoam (0.125 mm) | **FAIL**: evolution-only -1.84 beat combined -1.40; combined vs DAFoam not separable | at tiny steps the adjoints add nothing to evolution's own estimate |
+| Mark S (shape, not flow state) | met: both opposite 0.5 mm moves raise drag (DAFoam +4.05, random +1.86) | the 0.5 mm gains are shape |
+| All arms at 0.5 mm (reported, post-H2) | combined **-5.24**, evolution+DAFoam -5.03, DAFoam -4.84, evolution+ESI -3.77, ESI -3.57, random -2.70, evolution alone **-2.62** | at the working step size, evolution + adjoints beats either alone |
