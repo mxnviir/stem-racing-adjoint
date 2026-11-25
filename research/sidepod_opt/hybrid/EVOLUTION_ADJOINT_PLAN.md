@@ -42,7 +42,8 @@ opt-in), workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
    at tiny steps the adjoints added nothing.
 4. **The loop works**: every generation kept a step under a rule fixed beforehand: -6.93 (DAFoam 1 mm), -1.28 (ESI),
    -0.27 (recombination), -1.02 (fresh DAFoam), -0.25 and -0.19 (recombination): **-9.94 mN, 5.2 % of the half-car drag**
-   (steady model), six generations, 82 good-mesh solves in the loop itself. Adjoint moves made 9.23 of the 9.94; evolution's
+   (steady model), six generations, 87 completed good-mesh solves since 18:37 (all tests included). Adjoint moves made
+   9.23 of the 9.94; evolution's
    recombination made the last three steps once the mesh could no longer take the adjoints' moves.
 5. **It survives the production scheme**: the -8.21 design keeps -6.32 mN (3.5 %) under linearUpwind (Mark P2 met).
 6. **The limit is the mesh**: the explicit morph (new, opt-in) moves the wall layer rigidly and allows ~1 mm per morph,
