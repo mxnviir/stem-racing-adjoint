@@ -247,3 +247,12 @@ Production scheme (linearUpwind), 2000 iterations, SE from ten 200-iteration blo
 best design (DAFoam 1.0 | ESI 0.5, chained) **175.487 +/- 0.060: -6.32 mN (3 SE 0.40), 3.5 % of the production half-car
 drag**, 0.77 of the steady model's -8.21. The gain survives the production scheme (same mesh family; fresh-mesh and
 repeat confirmation per D8 are still to do). `hybrid/P2_VERDICT.txt`.
+
+## Generation 4 result (2026-11-25 04:31, run 45533175628): Mark L met
+Parent 182.248 (-8.48). Children vs the parent (0.25 mm): **fresh DAFoam (gradient at the generation-3 parent) -1.016
+(accepted; total -9.50 mN, 5.0 %)**; recombinations -0.16 .. -0.24; best random -0.20 (5 of 6 worse); base ESI folded.
+The base DAFoam direction was spent after 1 mm; the gradient recomputed at the moved design found a new one.
+
+## Generation 5 (written before these solves; loop.py rules, 0.25 mm as generation 4)
+Parent: 4 chained levels (`loop_state.json`). Guides: DAFoam at the generation-4 parent (run 45533213960), ESI fresh at
+the generation-3 parent (`esinpz:hybrid/esi_after/45519814660`). Mark L as before.

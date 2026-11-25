@@ -1,0 +1,57 @@
+{
+ "g4_dafnew": {
+  "field": "dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz",
+  "amp_mm": 0.25,
+  "dF_mN": -1.0159641317876549
+ },
+ "g4_comb": {
+  "field": "vec:hybrid/g4/guided.npy",
+  "amp_mm": 0.25,
+  "dF_mN": -0.23867940297790824
+ },
+ "g4_combh": {
+  "field": "vec:hybrid/g4/guided.npy",
+  "amp_mm": 0.125,
+  "dF_mN": -0.16136130718899722
+ },
+ "g4_es": {
+  "field": "vec:hybrid/g4/es.npy",
+  "amp_mm": 0.25,
+  "dF_mN": -0.21985782699817946
+ },
+ "g4_esh": {
+  "field": "vec:hybrid/g4/es.npy",
+  "amp_mm": 0.125,
+  "dF_mN": -0.1552192629482363
+ },
+ "g4_rnd23": {
+  "field": "rnd23",
+  "amp_mm": 0.25,
+  "dF_mN": 0.9014185934857721
+ },
+ "g4_rnd24": {
+  "field": "rnd24",
+  "amp_mm": 0.25,
+  "dF_mN": -0.2005529167804525
+ },
+ "g4_rnd25": {
+  "field": "rnd25",
+  "amp_mm": 0.25,
+  "dF_mN": 0.3709354834003591
+ },
+ "g4_rnd26": {
+  "field": "rnd26",
+  "amp_mm": 0.25,
+  "dF_mN": 0.4560894702393625
+ },
+ "g4_rnd27": {
+  "field": "rnd27",
+  "amp_mm": 0.25,
+  "dF_mN": 0.17944334801404693
+ },
+ "g4_rnd28": {
+  "field": "rnd28",
+  "amp_mm": 0.25,
+  "dF_mN": 0.2696099796650344
+ }
+}

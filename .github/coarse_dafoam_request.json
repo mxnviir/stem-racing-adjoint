@@ -1,16 +1,16 @@
 {
- "note": "hybrid: fresh coarse DAFoam gradient at the generation-4 parent, for generation 5",
+ "note": "hybrid: coarse DAFoam gradient at the generation-5 parent",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "g4parent",
+   "name": "g5parent",
    "field": "zero",
    "amp": "0",
-   "parent": "daf@1.0+esi_frozen@0.5+vec:hybrid/g3/es.npy@0.25",
+   "parent": "daf@1.0+esi_frozen@0.5+vec:hybrid/g3/es.npy@0.25+dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25",
    "nsig": "1.5",
    "zmin": "1.5",
    "iters": 5000
   }
  ],
- "attempt": 5
+ "attempt": 6
 }

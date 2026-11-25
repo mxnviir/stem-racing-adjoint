@@ -1,7 +1,7 @@
 {
- "parent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25",
- "dafoam_latest": "dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz",
- "next_seed": 29,
+ "parent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25",
+ "dafoam_latest": "dafnpz:hybrid/dafoam_actions/45533213960/daf-g4parent/dafoam_sens.npz",
+ "next_seed": 35,
  "generations": {
   "2": {
    "parent": "daf@1.0",
@@ -258,6 +258,115 @@
     ],
     "g4_rnd28": [
      "rnd28",
+     0.25
+    ]
+   },
+   "result": {
+    "zero": [
+     182.24770947072903,
+     0.001284791422594015
+    ],
+    "children": {
+     "g4_dafnew": [
+      -1.0159641317876549,
+      0.0022598807842782666
+     ],
+     "g4_comb": [
+      -0.23867940297790824,
+      0.0009740939746663077
+     ],
+     "g4_combh": [
+      -0.16136130718899722,
+      0.0011410579643345157
+     ],
+     "g4_es": [
+      -0.21985782699817946,
+      0.0009677877417596991
+     ],
+     "g4_esh": [
+      -0.1552192629482363,
+      0.0011130564614118543
+     ],
+     "g4_rnd23": [
+      0.9014185934857721,
+      0.0010456245834861828
+     ],
+     "g4_rnd24": [
+      -0.2005529167804525,
+      0.0011037468598721347
+     ],
+     "g4_rnd25": [
+      0.3709354834003591,
+      0.002055875192427028
+     ],
+     "g4_rnd26": [
+      0.4560894702393625,
+      0.0014906143867116327
+     ],
+     "g4_rnd27": [
+      0.17944334801404693,
+      0.0009926790331003174
+     ],
+     "g4_rnd28": [
+      0.2696099796650344,
+      0.00035733525508387066
+     ]
+    },
+    "failed": [
+     "g4_esi"
+    ],
+    "accepted": "g4_dafnew"
+   }
+  },
+  "5": {
+   "parent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25",
+   "children": {
+    "g5_dafnew": [
+     "dafnpz:hybrid/dafoam_actions/45533213960/daf-g4parent/dafoam_sens.npz",
+     0.25
+    ],
+    "g5_esi": [
+     "esinpz:hybrid/esi_after/45519814660/esi_sens.npz",
+     0.25
+    ],
+    "g5_comb": [
+     "vec:hybrid/g5/guided.npy",
+     0.25
+    ],
+    "g5_combh": [
+     "vec:hybrid/g5/guided.npy",
+     0.125
+    ],
+    "g5_es": [
+     "vec:hybrid/g5/es.npy",
+     0.25
+    ],
+    "g5_esh": [
+     "vec:hybrid/g5/es.npy",
+     0.125
+    ],
+    "g5_rnd29": [
+     "rnd29",
+     0.25
+    ],
+    "g5_rnd30": [
+     "rnd30",
+     0.25
+    ],
+    "g5_rnd31": [
+     "rnd31",
+     0.25
+    ],
+    "g5_rnd32": [
+     "rnd32",
+     0.25
+    ],
+    "g5_rnd33": [
+     "rnd33",
+     0.25
+    ],
+    "g5_rnd34": [
+     "rnd34",
      0.25
     ]
    }
