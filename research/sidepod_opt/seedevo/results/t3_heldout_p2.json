@@ -1,0 +1,6022 @@
+{
+ "head": {
+  "problem": 2,
+  "budget": 300.0,
+  "tournament": 1,
+  "reserve": 12.0,
+  "amend": "B",
+  "sigma_fresh": 0.4355020673728713,
+  "seed_true": {
+   "s00": 4.398184565580068,
+   "s01": 4.505417658847813,
+   "s02": 5.211033058845702,
+   "s03": 5.20512138149575,
+   "s04": 3.844653402721948,
+   "s05": 5.923472802646507,
+   "s06": 7.20133594837648,
+   "s07": 9.810573268425987,
+   "s08": 7.3106018282177265,
+   "s09": 3.8001316310687936,
+   "s10": 5.099344450850509,
+   "s11": 3.678452659691959
+  },
+  "best_seed_true": 3.678452659691959,
+  "target_openings": 0,
+  "seed_openings": {
+   "s00": 0,
+   "s01": 0,
+   "s02": 0,
+   "s03": 0,
+   "s04": 0,
+   "s05": 0,
+   "s06": 0,
+   "s07": 0,
+   "s08": 1,
+   "s09": 0,
+   "s10": 0,
+   "s11": 0
+  }
+ },
+ "rows": [
+  {
+   "arm": "evo",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 1.1868817638745706,
+   "est_best": 0.48320229335079823,
+   "best_kind": "explore",
+   "oracle_true": 1.024755295213836,
+   "explore_true_mean": 2.0070000810032047,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 297.0,
+   "generations": 14,
+   "niches": 5,
+   "calls": {
+    "fresh": 282,
+    "morph": 267,
+    "adjoint": 0,
+    "fold": 206
+   },
+   "explore_mean_late": 1.6183376848099442,
+   "control_mean_late": 5.469481570801886,
+   "n_explore": 215,
+   "n_control": 52,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     35,
+     34,
+     1
+    ],
+    "graft": [
+     39,
+     37,
+     2
+    ],
+    "combine": [
+     41,
+     27,
+     4
+    ],
+    "line": [
+     32,
+     32,
+     1
+    ],
+    "bump": [
+     22,
+     22,
+     2
+    ],
+    "cut": [
+     27,
+     23,
+     1
+    ],
+    "fill": [
+     34,
+     31,
+     1
+    ],
+    "pattern": [
+     38,
+     34,
+     1
+    ],
+    "offset": [
+     28,
+     27,
+     3
+    ]
+   },
+   "wall_s": 5.6
+  },
+  {
+   "arm": "evo",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 1.6871205572652852,
+   "est_best": 1.4227756580022322,
+   "best_kind": "explore",
+   "oracle_true": 1.6100927496499096,
+   "explore_true_mean": 2.2844833544322496,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 297.0,
+   "generations": 14,
+   "niches": 7,
+   "calls": {
+    "fresh": 300,
+    "morph": 263,
+    "adjoint": 0,
+    "fold": 213
+   },
+   "explore_mean_late": 2.199143334547631,
+   "control_mean_late": 5.778591547974378,
+   "n_explore": 211,
+   "n_control": 52,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     38,
+     38,
+     7
+    ],
+    "graft": [
+     33,
+     33,
+     1
+    ],
+    "combine": [
+     33,
+     28,
+     3
+    ],
+    "line": [
+     30,
+     30,
+     4
+    ],
+    "bump": [
+     26,
+     26,
+     1
+    ],
+    "cut": [
+     27,
+     27,
+     0
+    ],
+    "fill": [
+     37,
+     30,
+     1
+    ],
+    "pattern": [
+     28,
+     27,
+     1
+    ],
+    "offset": [
+     24,
+     24,
+     0
+    ]
+   },
+   "wall_s": 4.8
+  },
+  {
+   "arm": "evo",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 1.3906967162905777,
+   "est_best": 1.1834994644791328,
+   "best_kind": "explore",
+   "oracle_true": 1.1954049008115575,
+   "explore_true_mean": 2.0091321113937486,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 298.0,
+   "generations": 13,
+   "niches": 5,
+   "calls": {
+    "fresh": 291,
+    "morph": 258,
+    "adjoint": 0,
+    "fold": 208
+   },
+   "explore_mean_late": 1.669200918457592,
+   "control_mean_late": 5.351824732476606,
+   "n_explore": 208,
+   "n_control": 50,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     47,
+     47,
+     4
+    ],
+    "graft": [
+     27,
+     23,
+     0
+    ],
+    "combine": [
+     38,
+     23,
+     2
+    ],
+    "line": [
+     29,
+     29,
+     3
+    ],
+    "bump": [
+     35,
+     34,
+     5
+    ],
+    "cut": [
+     34,
+     28,
+     3
+    ],
+    "fill": [
+     38,
+     27,
+     0
+    ],
+    "pattern": [
+     26,
+     21,
+     2
+    ],
+    "offset": [
+     26,
+     26,
+     2
+    ]
+   },
+   "wall_s": 5.0
+  },
+  {
+   "arm": "evo",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 1.1877217095866728,
+   "est_best": 0.898904251800567,
+   "best_kind": "explore",
+   "oracle_true": 1.178060715483348,
+   "explore_true_mean": 1.983109782893562,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 297.0,
+   "generations": 14,
+   "niches": 5,
+   "calls": {
+    "fresh": 274,
+    "morph": 261,
+    "adjoint": 0,
+    "fold": 186
+   },
+   "explore_mean_late": 1.652531879350743,
+   "control_mean_late": 5.842972776348179,
+   "n_explore": 209,
+   "n_control": 52,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     35,
+     35,
+     2
+    ],
+    "graft": [
+     45,
+     44,
+     2
+    ],
+    "combine": [
+     31,
+     16,
+     2
+    ],
+    "line": [
+     38,
+     38,
+     5
+    ],
+    "bump": [
+     30,
+     30,
+     1
+    ],
+    "cut": [
+     22,
+     19,
+     1
+    ],
+    "fill": [
+     22,
+     18,
+     0
+    ],
+    "pattern": [
+     31,
+     29,
+     1
+    ],
+    "offset": [
+     32,
+     32,
+     4
+    ]
+   },
+   "wall_s": 4.8
+  },
+  {
+   "arm": "evo",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 1.2801372235613202,
+   "est_best": 0.785570238218408,
+   "best_kind": "explore",
+   "oracle_true": 1.0590429480707824,
+   "explore_true_mean": 2.232290081274861,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 293.0,
+   "generations": 13,
+   "niches": 7,
+   "calls": {
+    "fresh": 288,
+    "morph": 249,
+    "adjoint": 0,
+    "fold": 204
+   },
+   "explore_mean_late": 1.9840508859539787,
+   "control_mean_late": 5.436017577147289,
+   "n_explore": 201,
+   "n_control": 48,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     35,
+     33,
+     9
+    ],
+    "graft": [
+     27,
+     25,
+     5
+    ],
+    "combine": [
+     38,
+     29,
+     5
+    ],
+    "line": [
+     35,
+     35,
+     1
+    ],
+    "bump": [
+     31,
+     31,
+     2
+    ],
+    "cut": [
+     27,
+     24,
+     2
+    ],
+    "fill": [
+     21,
+     19,
+     0
+    ],
+    "pattern": [
+     28,
+     26,
+     3
+    ],
+    "offset": [
+     28,
+     27,
+     1
+    ]
+   },
+   "wall_s": 4.8
+  },
+  {
+   "arm": "randpar",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 1.911537901197811,
+   "est_best": 1.6147590245428127,
+   "best_kind": "explore",
+   "oracle_true": 1.7628772021079255,
+   "explore_true_mean": 5.497500682432194,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 294.0,
+   "generations": 14,
+   "niches": 9,
+   "calls": {
+    "fresh": 273,
+    "morph": 266,
+    "adjoint": 0,
+    "fold": 207
+   },
+   "explore_mean_late": 5.437829704589182,
+   "control_mean_late": null,
+   "n_explore": 266,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     32,
+     32,
+     2
+    ],
+    "graft": [
+     30,
+     30,
+     0
+    ],
+    "combine": [
+     31,
+     28,
+     6
+    ],
+    "line": [
+     35,
+     35,
+     0
+    ],
+    "bump": [
+     34,
+     34,
+     2
+    ],
+    "cut": [
+     31,
+     31,
+     2
+    ],
+    "fill": [
+     24,
+     20,
+     1
+    ],
+    "pattern": [
+     27,
+     26,
+     2
+    ],
+    "offset": [
+     30,
+     30,
+     3
+    ]
+   },
+   "wall_s": 4.9
+  },
+  {
+   "arm": "randpar",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 2.5399212651877323,
+   "est_best": 2.0607021801022625,
+   "best_kind": "explore",
+   "oracle_true": 1.9495014929661307,
+   "explore_true_mean": 5.4669115907589685,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 293.0,
+   "generations": 14,
+   "niches": 8,
+   "calls": {
+    "fresh": 274,
+    "morph": 275,
+    "adjoint": 0,
+    "fold": 219
+   },
+   "explore_mean_late": 5.841306055083346,
+   "control_mean_late": null,
+   "n_explore": 275,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     28,
+     28,
+     1
+    ],
+    "graft": [
+     32,
+     32,
+     2
+    ],
+    "combine": [
+     40,
+     37,
+     0
+    ],
+    "line": [
+     35,
+     35,
+     1
+    ],
+    "bump": [
+     31,
+     31,
+     2
+    ],
+    "cut": [
+     34,
+     33,
+     2
+    ],
+    "fill": [
+     27,
+     23,
+     0
+    ],
+    "pattern": [
+     28,
+     27,
+     1
+    ],
+    "offset": [
+     29,
+     29,
+     5
+    ]
+   },
+   "wall_s": 5.6
+  },
+  {
+   "arm": "randpar",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 2.1980925357174907,
+   "est_best": 1.7260298204136613,
+   "best_kind": "explore",
+   "oracle_true": 2.1980925357174907,
+   "explore_true_mean": 5.4375049920675815,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 298.0,
+   "generations": 14,
+   "niches": 7,
+   "calls": {
+    "fresh": 291,
+    "morph": 272,
+    "adjoint": 0,
+    "fold": 224
+   },
+   "explore_mean_late": 5.595059135302385,
+   "control_mean_late": null,
+   "n_explore": 272,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     31,
+     31,
+     1
+    ],
+    "graft": [
+     31,
+     31,
+     1
+    ],
+    "combine": [
+     44,
+     42,
+     2
+    ],
+    "line": [
+     31,
+     31,
+     0
+    ],
+    "bump": [
+     16,
+     16,
+     2
+    ],
+    "cut": [
+     31,
+     31,
+     1
+    ],
+    "fill": [
+     35,
+     28,
+     2
+    ],
+    "pattern": [
+     30,
+     28,
+     1
+    ],
+    "offset": [
+     34,
+     34,
+     8
+    ]
+   },
+   "wall_s": 5.3
+  },
+  {
+   "arm": "randpar",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 2.2975019235086074,
+   "est_best": 2.195894076293611,
+   "best_kind": "explore",
+   "oracle_true": 2.2975019235086074,
+   "explore_true_mean": 5.341937428348263,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 295.0,
+   "generations": 14,
+   "niches": 8,
+   "calls": {
+    "fresh": 280,
+    "morph": 264,
+    "adjoint": 0,
+    "fold": 214
+   },
+   "explore_mean_late": 5.0900183827143275,
+   "control_mean_late": null,
+   "n_explore": 264,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     28,
+     28,
+     1
+    ],
+    "graft": [
+     31,
+     30,
+     2
+    ],
+    "combine": [
+     35,
+     34,
+     2
+    ],
+    "line": [
+     29,
+     29,
+     3
+    ],
+    "bump": [
+     25,
+     25,
+     2
+    ],
+    "cut": [
+     31,
+     31,
+     1
+    ],
+    "fill": [
+     29,
+     24,
+     0
+    ],
+    "pattern": [
+     32,
+     32,
+     3
+    ],
+    "offset": [
+     31,
+     31,
+     2
+    ]
+   },
+   "wall_s": 5.0
+  },
+  {
+   "arm": "randpar",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 1.6050533758889605,
+   "est_best": 1.7421660523184317,
+   "best_kind": "explore",
+   "oracle_true": 1.6050533758889605,
+   "explore_true_mean": 5.359679544791109,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 294.0,
+   "generations": 14,
+   "niches": 9,
+   "calls": {
+    "fresh": 278,
+    "morph": 270,
+    "adjoint": 0,
+    "fold": 223
+   },
+   "explore_mean_late": 5.352290417729684,
+   "control_mean_late": null,
+   "n_explore": 270,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     31,
+     31,
+     2
+    ],
+    "graft": [
+     36,
+     36,
+     3
+    ],
+    "combine": [
+     33,
+     33,
+     1
+    ],
+    "line": [
+     24,
+     24,
+     2
+    ],
+    "bump": [
+     28,
+     28,
+     2
+    ],
+    "cut": [
+     29,
+     29,
+     2
+    ],
+    "fill": [
+     37,
+     30,
+     2
+    ],
+    "pattern": [
+     35,
+     35,
+     2
+    ],
+    "offset": [
+     24,
+     24,
+     4
+    ]
+   },
+   "wall_s": 5.0
+  },
+  {
+   "arm": "mutonly",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 1.529784758246225,
+   "est_best": 0.9902496982958574,
+   "best_kind": "explore",
+   "oracle_true": 1.196019463913081,
+   "explore_true_mean": 2.394583147800818,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 297.0,
+   "generations": 14,
+   "niches": 8,
+   "calls": {
+    "fresh": 279,
+    "morph": 261,
+    "adjoint": 0,
+    "fold": 211
+   },
+   "explore_mean_late": 2.1263082123748442,
+   "control_mean_late": 5.691200946074695,
+   "n_explore": 209,
+   "n_control": 52,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "bump": [
+     54,
+     51,
+     3
+    ],
+    "cut": [
+     56,
+     53,
+     5
+    ],
+    "fill": [
+     68,
+     57,
+     4
+    ],
+    "pattern": [
+     57,
+     42,
+     1
+    ],
+    "offset": [
+     68,
+     58,
+     10
+    ]
+   },
+   "wall_s": 5.3
+  },
+  {
+   "arm": "mutonly",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 1.685823039371677,
+   "est_best": 1.2158516462159012,
+   "best_kind": "explore",
+   "oracle_true": 1.330639121595961,
+   "explore_true_mean": 2.349694713241372,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 296.0,
+   "generations": 14,
+   "niches": 6,
+   "calls": {
+    "fresh": 279,
+    "morph": 261,
+    "adjoint": 0,
+    "fold": 202
+   },
+   "explore_mean_late": 2.127648028735225,
+   "control_mean_late": 5.57178993821752,
+   "n_explore": 209,
+   "n_control": 52,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "bump": [
+     61,
+     61,
+     4
+    ],
+    "cut": [
+     51,
+     45,
+     6
+    ],
+    "fill": [
+     60,
+     48,
+     1
+    ],
+    "pattern": [
+     53,
+     45,
+     2
+    ],
+    "offset": [
+     62,
+     62,
+     6
+    ]
+   },
+   "wall_s": 5.2
+  },
+  {
+   "arm": "mutonly",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 1.489755350518757,
+   "est_best": 1.0236385175806095,
+   "best_kind": "explore",
+   "oracle_true": 1.1595969052910848,
+   "explore_true_mean": 2.6919149919412884,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 293.0,
+   "generations": 13,
+   "niches": 9,
+   "calls": {
+    "fresh": 285,
+    "morph": 252,
+    "adjoint": 0,
+    "fold": 216
+   },
+   "explore_mean_late": 2.368708861077126,
+   "control_mean_late": 5.154909870987721,
+   "n_explore": 204,
+   "n_control": 48,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "bump": [
+     50,
+     48,
+     6
+    ],
+    "cut": [
+     65,
+     59,
+     7
+    ],
+    "fill": [
+     53,
+     44,
+     0
+    ],
+    "pattern": [
+     53,
+     49,
+     3
+    ],
+    "offset": [
+     55,
+     52,
+     14
+    ]
+   },
+   "wall_s": 4.8
+  },
+  {
+   "arm": "mutonly",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 1.7389979301896774,
+   "est_best": 1.2018846133382755,
+   "best_kind": "explore",
+   "oracle_true": 1.3270027278281131,
+   "explore_true_mean": 2.4493644701150665,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 298.0,
+   "generations": 14,
+   "niches": 5,
+   "calls": {
+    "fresh": 282,
+    "morph": 262,
+    "adjoint": 0,
+    "fold": 206
+   },
+   "explore_mean_late": 1.9971204945460974,
+   "control_mean_late": 5.323230175288848,
+   "n_explore": 210,
+   "n_control": 52,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "bump": [
+     63,
+     58,
+     5
+    ],
+    "cut": [
+     65,
+     48,
+     2
+    ],
+    "fill": [
+     62,
+     47,
+     2
+    ],
+    "pattern": [
+     60,
+     42,
+     5
+    ],
+    "offset": [
+     73,
+     67,
+     4
+    ]
+   },
+   "wall_s": 5.5
+  },
+  {
+   "arm": "mutonly",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 1.4767713431241591,
+   "est_best": 1.0766163016963712,
+   "best_kind": "explore",
+   "oracle_true": 1.2809436382236574,
+   "explore_true_mean": 2.3956629542062013,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 294.0,
+   "generations": 14,
+   "niches": 6,
+   "calls": {
+    "fresh": 277,
+    "morph": 262,
+    "adjoint": 0,
+    "fold": 212
+   },
+   "explore_mean_late": 2.2233625537968535,
+   "control_mean_late": 5.412463847033166,
+   "n_explore": 210,
+   "n_control": 52,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "bump": [
+     55,
+     53,
+     8
+    ],
+    "cut": [
+     55,
+     54,
+     3
+    ],
+    "fill": [
+     64,
+     47,
+     0
+    ],
+    "pattern": [
+     55,
+     52,
+     4
+    ],
+    "offset": [
+     56,
+     56,
+     5
+    ]
+   },
+   "wall_s": 5.3
+  },
+  {
+   "arm": "polish",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 1.8538725515571062,
+   "est_best": 1.9385284983106956,
+   "best_kind": "refine",
+   "oracle_true": 1.641591253506192,
+   "explore_true_mean": null,
+   "best_n": 7,
+   "best_openings": 0,
+   "spent": 297.3,
+   "generations": 47,
+   "niches": 5,
+   "calls": {
+    "fresh": 31,
+    "morph": 282,
+    "adjoint": 9,
+    "fold": 6
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 139,
+   "refine_tried": 141,
+   "refine_gain": -65.87945114025383,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.9
+  },
+  {
+   "arm": "polish",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 1.491355585665628,
+   "est_best": 1.6338953788181652,
+   "best_kind": "refine",
+   "oracle_true": 1.491355585665628,
+   "explore_true_mean": null,
+   "best_n": 8,
+   "best_openings": 0,
+   "spent": 299.20000000000005,
+   "generations": 69,
+   "niches": 5,
+   "calls": {
+    "fresh": 37,
+    "morph": 303,
+    "adjoint": 16,
+    "fold": 33
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 140,
+   "refine_tried": 152,
+   "refine_gain": -165.7197198005987,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.6
+  },
+  {
+   "arm": "polish",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 1.491355585665628,
+   "est_best": 1.4664193889102948,
+   "best_kind": "refine",
+   "oracle_true": 1.491355585665628,
+   "explore_true_mean": null,
+   "best_n": 8,
+   "best_openings": 0,
+   "spent": 299.20000000000005,
+   "generations": 69,
+   "niches": 5,
+   "calls": {
+    "fresh": 36,
+    "morph": 303,
+    "adjoint": 16,
+    "fold": 33
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 140,
+   "refine_tried": 152,
+   "refine_gain": -165.6917235197658,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.9
+  },
+  {
+   "arm": "polish",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 1.491355585665628,
+   "est_best": 1.5001348745540923,
+   "best_kind": "refine",
+   "oracle_true": 1.491355585665628,
+   "explore_true_mean": null,
+   "best_n": 8,
+   "best_openings": 0,
+   "spent": 299.20000000000005,
+   "generations": 69,
+   "niches": 5,
+   "calls": {
+    "fresh": 36,
+    "morph": 303,
+    "adjoint": 16,
+    "fold": 33
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 140,
+   "refine_tried": 152,
+   "refine_gain": -165.68704397351684,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.4
+  },
+  {
+   "arm": "polish",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 1.5304068404968678,
+   "est_best": 1.390195411064271,
+   "best_kind": "refine",
+   "oracle_true": 1.5304068404968678,
+   "explore_true_mean": null,
+   "best_n": 7,
+   "best_openings": 0,
+   "spent": 298.7,
+   "generations": 71,
+   "niches": 5,
+   "calls": {
+    "fresh": 30,
+    "morph": 304,
+    "adjoint": 11,
+    "fold": 27
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 140,
+   "refine_tried": 152,
+   "refine_gain": -171.2973123955252,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 5.9
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 1.0241942652982876,
+   "est_best": 0.7673991158861597,
+   "best_kind": "refine",
+   "oracle_true": 1.0241942652982876,
+   "explore_true_mean": 2.1932785270605293,
+   "best_n": 7,
+   "best_openings": 0,
+   "spent": 295.2999999999999,
+   "generations": 27,
+   "niches": 5,
+   "calls": {
+    "fresh": 218,
+    "morph": 279,
+    "adjoint": 9,
+    "fold": 177
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 160,
+   "n_control": 40,
+   "refine_accepted": 28,
+   "refine_tried": 40,
+   "refine_gain": -20.081171000197386,
+   "op_stats": {
+    "splice": [
+     28,
+     27,
+     1
+    ],
+    "graft": [
+     27,
+     25,
+     1
+    ],
+    "combine": [
+     34,
+     22,
+     3
+    ],
+    "line": [
+     22,
+     22,
+     1
+    ],
+    "bump": [
+     18,
+     18,
+     2
+    ],
+    "cut": [
+     22,
+     20,
+     1
+    ],
+    "fill": [
+     25,
+     24,
+     1
+    ],
+    "pattern": [
+     24,
+     21,
+     1
+    ],
+    "offset": [
+     22,
+     21,
+     3
+    ]
+   },
+   "wall_s": 6.3
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 1.594002490395453,
+   "est_best": 1.3100106376108893,
+   "best_kind": "refine",
+   "oracle_true": 1.594002490395453,
+   "explore_true_mean": 2.350449953733698,
+   "best_n": 7,
+   "best_openings": 0,
+   "spent": 295.5999999999999,
+   "generations": 30,
+   "niches": 6,
+   "calls": {
+    "fresh": 221,
+    "morph": 303,
+    "adjoint": 8,
+    "fold": 193
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 50,
+   "refine_tried": 62,
+   "refine_gain": -36.81800904515735,
+   "op_stats": {
+    "splice": [
+     28,
+     28,
+     4
+    ],
+    "graft": [
+     22,
+     22,
+     1
+    ],
+    "combine": [
+     25,
+     21,
+     2
+    ],
+    "line": [
+     19,
+     19,
+     3
+    ],
+    "bump": [
+     18,
+     18,
+     1
+    ],
+    "cut": [
+     18,
+     18,
+     0
+    ],
+    "fill": [
+     21,
+     18,
+     0
+    ],
+    "pattern": [
+     24,
+     23,
+     1
+    ],
+    "offset": [
+     13,
+     13,
+     0
+    ]
+   },
+   "wall_s": 6.8
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 1.1844389690073684,
+   "est_best": 0.8936948285315548,
+   "best_kind": "refine",
+   "oracle_true": 1.1844389690073684,
+   "explore_true_mean": 2.224936702310171,
+   "best_n": 6,
+   "best_openings": 0,
+   "spent": 299.5999999999999,
+   "generations": 24,
+   "niches": 5,
+   "calls": {
+    "fresh": 219,
+    "morph": 265,
+    "adjoint": 8,
+    "fold": 161
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 35,
+   "refine_tried": 43,
+   "refine_gain": -18.474838374623094,
+   "op_stats": {
+    "splice": [
+     27,
+     27,
+     3
+    ],
+    "graft": [
+     19,
+     17,
+     0
+    ],
+    "combine": [
+     28,
+     18,
+     2
+    ],
+    "line": [
+     17,
+     17,
+     2
+    ],
+    "bump": [
+     24,
+     23,
+     5
+    ],
+    "cut": [
+     27,
+     23,
+     3
+    ],
+    "fill": [
+     32,
+     22,
+     0
+    ],
+    "pattern": [
+     21,
+     17,
+     2
+    ],
+    "offset": [
+     16,
+     16,
+     2
+    ]
+   },
+   "wall_s": 5.7
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 1.1316917523024568,
+   "est_best": 0.8040036290534237,
+   "best_kind": "refine",
+   "oracle_true": 1.1316917523024568,
+   "explore_true_mean": 2.132829629822832,
+   "best_n": 7,
+   "best_openings": 0,
+   "spent": 296.2999999999999,
+   "generations": 26,
+   "niches": 5,
+   "calls": {
+    "fresh": 215,
+    "morph": 282,
+    "adjoint": 9,
+    "fold": 161
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 42,
+   "refine_tried": 51,
+   "refine_gain": -24.193717166659457,
+   "op_stats": {
+    "splice": [
+     29,
+     29,
+     1
+    ],
+    "graft": [
+     25,
+     25,
+     1
+    ],
+    "combine": [
+     22,
+     11,
+     2
+    ],
+    "line": [
+     23,
+     23,
+     5
+    ],
+    "bump": [
+     21,
+     21,
+     1
+    ],
+    "cut": [
+     16,
+     14,
+     1
+    ],
+    "fill": [
+     19,
+     16,
+     0
+    ],
+    "pattern": [
+     24,
+     23,
+     1
+    ],
+    "offset": [
+     18,
+     18,
+     3
+    ]
+   },
+   "wall_s": 6.5
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 1.135269395052496,
+   "est_best": 0.5764440445943253,
+   "best_kind": "refine",
+   "oracle_true": 0.8266072906917213,
+   "explore_true_mean": 2.3417334327448085,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 299.09999999999985,
+   "generations": 28,
+   "niches": 7,
+   "calls": {
+    "fresh": 229,
+    "morph": 275,
+    "adjoint": 13,
+    "fold": 179
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 28,
+   "refine_tried": 48,
+   "refine_gain": -27.08885513785197,
+   "op_stats": {
+    "splice": [
+     25,
+     23,
+     8
+    ],
+    "graft": [
+     20,
+     19,
+     4
+    ],
+    "combine": [
+     29,
+     21,
+     4
+    ],
+    "line": [
+     25,
+     25,
+     1
+    ],
+    "bump": [
+     22,
+     22,
+     2
+    ],
+    "cut": [
+     17,
+     16,
+     2
+    ],
+    "fill": [
+     18,
+     17,
+     0
+    ],
+    "pattern": [
+     21,
+     19,
+     3
+    ],
+    "offset": [
+     19,
+     18,
+     1
+    ]
+   },
+   "wall_s": 6.5
+  },
+  {
+   "arm": "memetic",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 1.0038932074300464,
+   "est_best": 0.4543075245206752,
+   "best_kind": "explore",
+   "oracle_true": 1.0038932074300464,
+   "explore_true_mean": 1.9239459931636969,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 295.1999999999999,
+   "generations": 15,
+   "niches": 6,
+   "calls": {
+    "fresh": 202,
+    "morph": 242,
+    "adjoint": 26,
+    "fold": 128
+   },
+   "explore_mean_late": 1.5544089605901459,
+   "control_mean_late": 5.37599191112525,
+   "n_explore": 130,
+   "n_control": 28,
+   "refine_accepted": 28,
+   "refine_tried": 42,
+   "refine_gain": -11.323070217618252,
+   "op_stats": {
+    "splice": [
+     18,
+     18,
+     3
+    ],
+    "graft": [
+     28,
+     27,
+     4
+    ],
+    "combine": [
+     18,
+     14,
+     2
+    ],
+    "line": [
+     19,
+     19,
+     5
+    ],
+    "bump": [
+     17,
+     17,
+     2
+    ],
+    "cut": [
+     16,
+     15,
+     2
+    ],
+    "fill": [
+     13,
+     10,
+     0
+    ],
+    "pattern": [
+     20,
+     18,
+     0
+    ],
+    "offset": [
+     20,
+     20,
+     2
+    ]
+   },
+   "wall_s": 6.8
+  },
+  {
+   "arm": "memetic",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 0.9601226410558926,
+   "est_best": 0.8323749550245739,
+   "best_kind": "explore",
+   "oracle_true": 0.9178301022292108,
+   "explore_true_mean": 1.9016786874617888,
+   "best_n": 7,
+   "best_openings": 0,
+   "spent": 298.3999999999999,
+   "generations": 16,
+   "niches": 6,
+   "calls": {
+    "fresh": 203,
+    "morph": 263,
+    "adjoint": 22,
+    "fold": 144
+   },
+   "explore_mean_late": 1.750483815760587,
+   "control_mean_late": 4.946717557866337,
+   "n_explore": 143,
+   "n_control": 30,
+   "refine_accepted": 22,
+   "refine_tried": 45,
+   "refine_gain": -17.424694209745482,
+   "op_stats": {
+    "splice": [
+     29,
+     28,
+     8
+    ],
+    "graft": [
+     17,
+     15,
+     1
+    ],
+    "combine": [
+     24,
+     17,
+     1
+    ],
+    "line": [
+     21,
+     21,
+     3
+    ],
+    "bump": [
+     22,
+     22,
+     1
+    ],
+    "cut": [
+     23,
+     23,
+     1
+    ],
+    "fill": [
+     21,
+     16,
+     0
+    ],
+    "pattern": [
+     15,
+     13,
+     1
+    ],
+    "offset": [
+     18,
+     18,
+     1
+    ]
+   },
+   "wall_s": 6.4
+  },
+  {
+   "arm": "memetic",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 1.1829044056388696,
+   "est_best": 0.744847513199194,
+   "best_kind": "explore",
+   "oracle_true": 1.1461043992742377,
+   "explore_true_mean": 2.036641945831451,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 295.3999999999999,
+   "generations": 18,
+   "niches": 6,
+   "calls": {
+    "fresh": 236,
+    "morph": 299,
+    "adjoint": 22,
+    "fold": 219
+   },
+   "explore_mean_late": 1.6582570342916685,
+   "control_mean_late": 4.769046746482712,
+   "n_explore": 162,
+   "n_control": 35,
+   "refine_accepted": 28,
+   "refine_tried": 51,
+   "refine_gain": -24.74694772624944,
+   "op_stats": {
+    "splice": [
+     26,
+     25,
+     2
+    ],
+    "graft": [
+     18,
+     18,
+     1
+    ],
+    "combine": [
+     35,
+     30,
+     3
+    ],
+    "line": [
+     30,
+     30,
+     3
+    ],
+    "bump": [
+     20,
+     19,
+     2
+    ],
+    "cut": [
+     19,
+     19,
+     3
+    ],
+    "fill": [
+     14,
+     13,
+     0
+    ],
+    "pattern": [
+     18,
+     16,
+     1
+    ],
+    "offset": [
+     27,
+     27,
+     3
+    ]
+   },
+   "wall_s": 7.6
+  },
+  {
+   "arm": "memetic",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 1.0695097223624235,
+   "est_best": 0.6595173853196417,
+   "best_kind": "explore",
+   "oracle_true": 0.9215342098383994,
+   "explore_true_mean": 1.707650876799818,
+   "best_n": 3,
+   "best_openings": 1,
+   "spent": 296.7,
+   "generations": 17,
+   "niches": 7,
+   "calls": {
+    "fresh": 228,
+    "morph": 282,
+    "adjoint": 21,
+    "fold": 194
+   },
+   "explore_mean_late": 1.4534398819843302,
+   "control_mean_late": 5.021344908858951,
+   "n_explore": 153,
+   "n_control": 33,
+   "refine_accepted": 25,
+   "refine_tried": 48,
+   "refine_gain": -12.667461230718908,
+   "op_stats": {
+    "splice": [
+     27,
+     27,
+     4
+    ],
+    "graft": [
+     24,
+     24,
+     2
+    ],
+    "combine": [
+     33,
+     30,
+     1
+    ],
+    "line": [
+     23,
+     23,
+     2
+    ],
+    "bump": [
+     19,
+     19,
+     1
+    ],
+    "cut": [
+     17,
+     16,
+     0
+    ],
+    "fill": [
+     15,
+     13,
+     2
+    ],
+    "pattern": [
+     17,
+     17,
+     1
+    ],
+    "offset": [
+     17,
+     17,
+     1
+    ]
+   },
+   "wall_s": 7.0
+  },
+  {
+   "arm": "memetic",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 0.934865897841539,
+   "est_best": 0.4479844149728047,
+   "best_kind": "explore",
+   "oracle_true": 0.9249437965341197,
+   "explore_true_mean": 1.803136774457598,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 296.3999999999999,
+   "generations": 16,
+   "niches": 6,
+   "calls": {
+    "fresh": 221,
+    "morph": 256,
+    "adjoint": 22,
+    "fold": 162
+   },
+   "explore_mean_late": 1.5085670810569327,
+   "control_mean_late": 5.044628603836084,
+   "n_explore": 136,
+   "n_control": 30,
+   "refine_accepted": 28,
+   "refine_tried": 45,
+   "refine_gain": -13.403209289522982,
+   "op_stats": {
+    "splice": [
+     23,
+     22,
+     4
+    ],
+    "graft": [
+     22,
+     21,
+     5
+    ],
+    "combine": [
+     16,
+     16,
+     3
+    ],
+    "line": [
+     24,
+     24,
+     1
+    ],
+    "bump": [
+     12,
+     12,
+     2
+    ],
+    "cut": [
+     20,
+     19,
+     0
+    ],
+    "fill": [
+     16,
+     14,
+     2
+    ],
+    "pattern": [
+     22,
+     21,
+     1
+    ],
+    "offset": [
+     17,
+     17,
+     3
+    ]
+   },
+   "wall_s": 6.8
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 1.5056705215425026,
+   "est_best": 1.2947601908166126,
+   "best_kind": "refine",
+   "oracle_true": 1.2450366124499446,
+   "explore_true_mean": 2.4533885838888674,
+   "best_n": 8,
+   "best_openings": 0,
+   "spent": 297.99999999999994,
+   "generations": 16,
+   "niches": 6,
+   "calls": {
+    "fresh": 211,
+    "morph": 264,
+    "adjoint": 20,
+    "fold": 155
+   },
+   "explore_mean_late": 2.3537458679247476,
+   "control_mean_late": 4.693194947704423,
+   "n_explore": 144,
+   "n_control": 30,
+   "refine_accepted": 30,
+   "refine_tried": 45,
+   "refine_gain": -22.481507695305872,
+   "op_stats": {
+    "splice": [
+     27,
+     27,
+     1
+    ],
+    "graft": [
+     22,
+     22,
+     3
+    ],
+    "combine": [
+     19,
+     13,
+     2
+    ],
+    "line": [
+     20,
+     20,
+     0
+    ],
+    "bump": [
+     26,
+     26,
+     1
+    ],
+    "cut": [
+     13,
+     9,
+     0
+    ],
+    "fill": [
+     17,
+     13,
+     1
+    ],
+    "pattern": [
+     17,
+     14,
+     0
+    ],
+    "offset": [
+     30,
+     30,
+     3
+    ]
+   },
+   "wall_s": 7.7
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 1.5314976695294704,
+   "est_best": 1.3832082219487398,
+   "best_kind": "explore",
+   "oracle_true": 1.5254750682427656,
+   "explore_true_mean": 2.2186820997707177,
+   "best_n": 8,
+   "best_openings": 0,
+   "spent": 297.3999999999999,
+   "generations": 16,
+   "niches": 6,
+   "calls": {
+    "fresh": 212,
+    "morph": 268,
+    "adjoint": 22,
+    "fold": 159
+   },
+   "explore_mean_late": 1.9610091564560805,
+   "control_mean_late": 5.767066782402305,
+   "n_explore": 144,
+   "n_control": 32,
+   "refine_accepted": 27,
+   "refine_tried": 46,
+   "refine_gain": -11.440537755987886,
+   "op_stats": {
+    "splice": [
+     29,
+     29,
+     5
+    ],
+    "graft": [
+     16,
+     15,
+     3
+    ],
+    "combine": [
+     25,
+     21,
+     2
+    ],
+    "line": [
+     20,
+     20,
+     3
+    ],
+    "bump": [
+     18,
+     18,
+     2
+    ],
+    "cut": [
+     16,
+     16,
+     2
+    ],
+    "fill": [
+     25,
+     23,
+     1
+    ],
+    "pattern": [
+     20,
+     17,
+     0
+    ],
+    "offset": [
+     17,
+     17,
+     1
+    ]
+   },
+   "wall_s": 7.3
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 1.2342383682645564,
+   "est_best": 0.7700466670284497,
+   "best_kind": "explore",
+   "oracle_true": 1.1981258133494743,
+   "explore_true_mean": 1.8415305209872448,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 296.29999999999995,
+   "generations": 17,
+   "niches": 5,
+   "calls": {
+    "fresh": 185,
+    "morph": 277,
+    "adjoint": 19,
+    "fold": 146
+   },
+   "explore_mean_late": 1.4099483488185403,
+   "control_mean_late": 5.652615359543675,
+   "n_explore": 149,
+   "n_control": 32,
+   "refine_accepted": 32,
+   "refine_tried": 48,
+   "refine_gain": -22.472389263022787,
+   "op_stats": {
+    "splice": [
+     32,
+     31,
+     3
+    ],
+    "graft": [
+     28,
+     26,
+     4
+    ],
+    "combine": [
+     28,
+     17,
+     2
+    ],
+    "line": [
+     28,
+     28,
+     4
+    ],
+    "bump": [
+     10,
+     10,
+     0
+    ],
+    "cut": [
+     18,
+     12,
+     2
+    ],
+    "fill": [
+     20,
+     19,
+     0
+    ],
+    "pattern": [
+     16,
+     13,
+     1
+    ],
+    "offset": [
+     28,
+     25,
+     5
+    ]
+   },
+   "wall_s": 7.8
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 0.9414267412864212,
+   "est_best": 0.648468858851112,
+   "best_kind": "explore",
+   "oracle_true": 0.9215237275949113,
+   "explore_true_mean": 1.8065977068590477,
+   "best_n": 7,
+   "best_openings": 0,
+   "spent": 297.3999999999999,
+   "generations": 16,
+   "niches": 5,
+   "calls": {
+    "fresh": 196,
+    "morph": 268,
+    "adjoint": 22,
+    "fold": 144
+   },
+   "explore_mean_late": 1.4266859908830418,
+   "control_mean_late": 5.336182511155457,
+   "n_explore": 144,
+   "n_control": 32,
+   "refine_accepted": 32,
+   "refine_tried": 46,
+   "refine_gain": -14.827665999892144,
+   "op_stats": {
+    "splice": [
+     30,
+     29,
+     2
+    ],
+    "graft": [
+     21,
+     21,
+     6
+    ],
+    "combine": [
+     26,
+     19,
+     2
+    ],
+    "line": [
+     24,
+     24,
+     1
+    ],
+    "bump": [
+     20,
+     20,
+     1
+    ],
+    "cut": [
+     14,
+     12,
+     0
+    ],
+    "fill": [
+     14,
+     12,
+     0
+    ],
+    "pattern": [
+     17,
+     16,
+     2
+    ],
+    "offset": [
+     23,
+     23,
+     1
+    ]
+   },
+   "wall_s": 7.4
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 0.8827046494482839,
+   "est_best": 0.5592843689003503,
+   "best_kind": "explore",
+   "oracle_true": 0.8060702809111804,
+   "explore_true_mean": 1.7779590385838155,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 294.3999999999999,
+   "generations": 16,
+   "niches": 7,
+   "calls": {
+    "fresh": 202,
+    "morph": 257,
+    "adjoint": 22,
+    "fold": 153
+   },
+   "explore_mean_late": 1.387665310444107,
+   "control_mean_late": 5.91809124824988,
+   "n_explore": 137,
+   "n_control": 30,
+   "refine_accepted": 28,
+   "refine_tried": 45,
+   "refine_gain": -13.033185447569444,
+   "op_stats": {
+    "splice": [
+     27,
+     26,
+     4
+    ],
+    "graft": [
+     20,
+     19,
+     3
+    ],
+    "combine": [
+     18,
+     14,
+     2
+    ],
+    "line": [
+     23,
+     23,
+     4
+    ],
+    "bump": [
+     19,
+     19,
+     2
+    ],
+    "cut": [
+     22,
+     21,
+     0
+    ],
+    "fill": [
+     24,
+     22,
+     3
+    ],
+    "pattern": [
+     12,
+     11,
+     1
+    ],
+    "offset": [
+     12,
+     12,
+     2
+    ]
+   },
+   "wall_s": 6.9
+  },
+  {
+   "arm": "evo60",
+   "seed": 1,
+   "rho": 0.85,
+   "true_best": 1.4564072284820913,
+   "est_best": 0.6440971891715972,
+   "best_kind": "explore",
+   "oracle_true": 1.024755295213836,
+   "explore_true_mean": 2.276239234081695,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 175.0,
+   "generations": 8,
+   "niches": 5,
+   "calls": {
+    "fresh": 169,
+    "morph": 154,
+    "adjoint": 0,
+    "fold": 119
+   },
+   "explore_mean_late": 1.840982454994196,
+   "control_mean_late": 4.6595757915593135,
+   "n_explore": 126,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     24,
+     23,
+     1
+    ],
+    "graft": [
+     22,
+     21,
+     1
+    ],
+    "combine": [
+     28,
+     17,
+     3
+    ],
+    "line": [
+     16,
+     16,
+     0
+    ],
+    "bump": [
+     14,
+     14,
+     2
+    ],
+    "cut": [
+     19,
+     18,
+     1
+    ],
+    "fill": [
+     15,
+     14,
+     0
+    ],
+    "pattern": [
+     18,
+     16,
+     1
+    ],
+    "offset": [
+     16,
+     15,
+     2
+    ]
+   },
+   "wall_s": 3.4
+  },
+  {
+   "arm": "evo60",
+   "seed": 2,
+   "rho": 0.85,
+   "true_best": 1.8851600097332941,
+   "est_best": 1.381729659897666,
+   "best_kind": "explore",
+   "oracle_true": 1.6100927496499096,
+   "explore_true_mean": 2.3840115466404965,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 178.0,
+   "generations": 8,
+   "niches": 5,
+   "calls": {
+    "fresh": 186,
+    "morph": 148,
+    "adjoint": 0,
+    "fold": 116
+   },
+   "explore_mean_late": 1.9960596585638082,
+   "control_mean_late": 4.748331209279251,
+   "n_explore": 120,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     23,
+     23,
+     3
+    ],
+    "graft": [
+     18,
+     18,
+     0
+    ],
+    "combine": [
+     20,
+     16,
+     2
+    ],
+    "line": [
+     19,
+     19,
+     3
+    ],
+    "bump": [
+     14,
+     14,
+     1
+    ],
+    "cut": [
+     13,
+     13,
+     0
+    ],
+    "fill": [
+     18,
+     16,
+     0
+    ],
+    "pattern": [
+     18,
+     17,
+     1
+    ],
+    "offset": [
+     12,
+     12,
+     0
+    ]
+   },
+   "wall_s": 3.2
+  },
+  {
+   "arm": "evo60",
+   "seed": 3,
+   "rho": 0.85,
+   "true_best": 1.519085712314756,
+   "est_best": 1.2180509640191286,
+   "best_kind": "explore",
+   "oracle_true": 1.3970469766005904,
+   "explore_true_mean": 2.352377320327837,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 179.0,
+   "generations": 8,
+   "niches": 5,
+   "calls": {
+    "fresh": 186,
+    "morph": 145,
+    "adjoint": 0,
+    "fold": 124
+   },
+   "explore_mean_late": 2.1114627852194894,
+   "control_mean_late": 5.524947478781118,
+   "n_explore": 117,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     22,
+     22,
+     2
+    ],
+    "graft": [
+     16,
+     14,
+     0
+    ],
+    "combine": [
+     22,
+     12,
+     2
+    ],
+    "line": [
+     15,
+     15,
+     1
+    ],
+    "bump": [
+     18,
+     17,
+     4
+    ],
+    "cut": [
+     23,
+     19,
+     3
+    ],
+    "fill": [
+     24,
+     16,
+     0
+    ],
+    "pattern": [
+     18,
+     14,
+     2
+    ],
+    "offset": [
+     16,
+     16,
+     2
+    ]
+   },
+   "wall_s": 3.1
+  },
+  {
+   "arm": "evo60",
+   "seed": 4,
+   "rho": 0.85,
+   "true_best": 1.3530146048454794,
+   "est_best": 1.0665527224856544,
+   "best_kind": "explore",
+   "oracle_true": 1.232437376095721,
+   "explore_true_mean": 2.2093364880958175,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 177.0,
+   "generations": 8,
+   "niches": 5,
+   "calls": {
+    "fresh": 179,
+    "morph": 146,
+    "adjoint": 0,
+    "fold": 110
+   },
+   "explore_mean_late": 1.7526623455044552,
+   "control_mean_late": 5.117153294687838,
+   "n_explore": 118,
+   "n_control": 28,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     21,
+     21,
+     1
+    ],
+    "graft": [
+     20,
+     20,
+     1
+    ],
+    "combine": [
+     15,
+     10,
+     2
+    ],
+    "line": [
+     20,
+     20,
+     5
+    ],
+    "bump": [
+     19,
+     19,
+     1
+    ],
+    "cut": [
+     10,
+     9,
+     1
+    ],
+    "fill": [
+     15,
+     13,
+     0
+    ],
+    "pattern": [
+     19,
+     19,
+     1
+    ],
+    "offset": [
+     15,
+     15,
+     3
+    ]
+   },
+   "wall_s": 3.1
+  },
+  {
+   "arm": "evo60",
+   "seed": 5,
+   "rho": 0.85,
+   "true_best": 1.0726303674816604,
+   "est_best": 0.7428837080657056,
+   "best_kind": "explore",
+   "oracle_true": 1.0726303674816604,
+   "explore_true_mean": 2.4888698455585816,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 173.0,
+   "generations": 7,
+   "niches": 7,
+   "calls": {
+    "fresh": 180,
+    "morph": 139,
+    "adjoint": 0,
+    "fold": 115
+   },
+   "explore_mean_late": 1.992279542113041,
+   "control_mean_late": 4.727825237847696,
+   "n_explore": 112,
+   "n_control": 27,
+   "refine_accepted": 0,
+   "refine_tried": 0,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     19,
+     19,
+     7
+    ],
+    "graft": [
+     15,
+     15,
+     4
+    ],
+    "combine": [
+     20,
+     15,
+     4
+    ],
+    "line": [
+     17,
+     17,
+     1
+    ],
+    "bump": [
+     20,
+     20,
+     2
+    ],
+    "cut": [
+     15,
+     14,
+     2
+    ],
+    "fill": [
+     12,
+     12,
+     0
+    ],
+    "pattern": [
+     17,
+     15,
+     2
+    ],
+    "offset": [
+     13,
+     12,
+     1
+    ]
+   },
+   "wall_s": 3.4
+  },
+  {
+   "arm": "polish",
+   "seed": 1,
+   "rho": 0.0,
+   "true_best": 3.844653402721948,
+   "est_best": 3.634373260254524,
+   "best_kind": "seed",
+   "oracle_true": 3.678452659691959,
+   "explore_true_mean": null,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 296.5,
+   "generations": 135,
+   "niches": 5,
+   "calls": {
+    "fresh": 24,
+    "morph": 293,
+    "adjoint": 5,
+    "fold": 8
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 131,
+   "refine_tried": 147,
+   "refine_gain": -67.70503781941854,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 7.7
+  },
+  {
+   "arm": "polish",
+   "seed": 2,
+   "rho": 0.0,
+   "true_best": 3.678452659691959,
+   "est_best": 3.554547022930427,
+   "best_kind": "seed",
+   "oracle_true": 3.678452659691959,
+   "explore_true_mean": null,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 295.5,
+   "generations": 138,
+   "niches": 5,
+   "calls": {
+    "fresh": 26,
+    "morph": 300,
+    "adjoint": 5,
+    "fold": 15
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 134,
+   "refine_tried": 150,
+   "refine_gain": -69.00781039192496,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 5.7
+  },
+  {
+   "arm": "polish",
+   "seed": 3,
+   "rho": 0.0,
+   "true_best": 3.8001316310687936,
+   "est_best": 3.5814045081385615,
+   "best_kind": "seed",
+   "oracle_true": 3.678452659691959,
+   "explore_true_mean": null,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 295.5,
+   "generations": 138,
+   "niches": 5,
+   "calls": {
+    "fresh": 25,
+    "morph": 300,
+    "adjoint": 5,
+    "fold": 15
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 134,
+   "refine_tried": 150,
+   "refine_gain": -69.0418693234135,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.5
+  },
+  {
+   "arm": "polish",
+   "seed": 4,
+   "rho": 0.0,
+   "true_best": 3.678452659691959,
+   "est_best": 3.63922688241262,
+   "best_kind": "seed",
+   "oracle_true": 3.678452659691959,
+   "explore_true_mean": null,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 295.5,
+   "generations": 138,
+   "niches": 5,
+   "calls": {
+    "fresh": 25,
+    "morph": 300,
+    "adjoint": 5,
+    "fold": 15
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 134,
+   "refine_tried": 150,
+   "refine_gain": -69.04839511040495,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.5
+  },
+  {
+   "arm": "polish",
+   "seed": 5,
+   "rho": 0.0,
+   "true_best": 3.678452659691959,
+   "est_best": 3.5582606084571755,
+   "best_kind": "seed",
+   "oracle_true": 3.678452659691959,
+   "explore_true_mean": null,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 296.5,
+   "generations": 137,
+   "niches": 5,
+   "calls": {
+    "fresh": 24,
+    "morph": 297,
+    "adjoint": 5,
+    "fold": 12
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 133,
+   "refine_tried": 149,
+   "refine_gain": -68.50106846083492,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 6.4
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 1,
+   "rho": 0.0,
+   "true_best": 1.1868817638745706,
+   "est_best": 0.5509858683965919,
+   "best_kind": "explore",
+   "oracle_true": 1.024755295213836,
+   "explore_true_mean": 2.1932785270605293,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 267.49999999999994,
+   "generations": 21,
+   "niches": 5,
+   "calls": {
+    "fresh": 215,
+    "morph": 240,
+    "adjoint": 5,
+    "fold": 160
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 160,
+   "n_control": 40,
+   "refine_accepted": 0,
+   "refine_tried": 20,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     28,
+     27,
+     1
+    ],
+    "graft": [
+     27,
+     25,
+     1
+    ],
+    "combine": [
+     34,
+     22,
+     3
+    ],
+    "line": [
+     22,
+     22,
+     1
+    ],
+    "bump": [
+     18,
+     18,
+     2
+    ],
+    "cut": [
+     22,
+     20,
+     1
+    ],
+    "fill": [
+     25,
+     24,
+     1
+    ],
+    "pattern": [
+     24,
+     21,
+     1
+    ],
+    "offset": [
+     22,
+     21,
+     3
+    ]
+   },
+   "wall_s": 5.7
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 2,
+   "rho": 0.0,
+   "true_best": 1.8851600097332941,
+   "est_best": 1.2256619828666677,
+   "best_kind": "explore",
+   "oracle_true": 1.6100927496499096,
+   "explore_true_mean": 2.350449953733698,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 295.19999999999993,
+   "generations": 35,
+   "niches": 6,
+   "calls": {
+    "fresh": 219,
+    "morph": 264,
+    "adjoint": 6,
+    "fold": 151
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 22,
+   "refine_tried": 42,
+   "refine_gain": -11.34258594895494,
+   "op_stats": {
+    "splice": [
+     28,
+     28,
+     4
+    ],
+    "graft": [
+     22,
+     22,
+     1
+    ],
+    "combine": [
+     25,
+     21,
+     2
+    ],
+    "line": [
+     19,
+     19,
+     3
+    ],
+    "bump": [
+     18,
+     18,
+     1
+    ],
+    "cut": [
+     18,
+     18,
+     0
+    ],
+    "fill": [
+     21,
+     18,
+     0
+    ],
+    "pattern": [
+     24,
+     23,
+     1
+    ],
+    "offset": [
+     13,
+     13,
+     0
+    ]
+   },
+   "wall_s": 6.1
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 3,
+   "rho": 0.0,
+   "true_best": 1.2782014437424887,
+   "est_best": 1.0628495720494369,
+   "best_kind": "explore",
+   "oracle_true": 1.2782014437424887,
+   "explore_true_mean": 2.224936702310171,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 298.49999999999994,
+   "generations": 41,
+   "niches": 5,
+   "calls": {
+    "fresh": 217,
+    "morph": 268,
+    "adjoint": 5,
+    "fold": 161
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 28,
+   "refine_tried": 44,
+   "refine_gain": -14.465481867345757,
+   "op_stats": {
+    "splice": [
+     27,
+     27,
+     3
+    ],
+    "graft": [
+     19,
+     17,
+     0
+    ],
+    "combine": [
+     28,
+     18,
+     2
+    ],
+    "line": [
+     17,
+     17,
+     2
+    ],
+    "bump": [
+     24,
+     23,
+     5
+    ],
+    "cut": [
+     27,
+     23,
+     3
+    ],
+    "fill": [
+     32,
+     22,
+     0
+    ],
+    "pattern": [
+     21,
+     17,
+     2
+    ],
+    "offset": [
+     16,
+     16,
+     2
+    ]
+   },
+   "wall_s": 7.1
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 4,
+   "rho": 0.0,
+   "true_best": 1.2806413075214993,
+   "est_best": 1.1962988704083668,
+   "best_kind": "explore",
+   "oracle_true": 1.232437376095721,
+   "explore_true_mean": 2.132829629822832,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 296.49999999999994,
+   "generations": 37,
+   "niches": 5,
+   "calls": {
+    "fresh": 212,
+    "morph": 259,
+    "adjoint": 5,
+    "fold": 132
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 24,
+   "refine_tried": 40,
+   "refine_gain": -12.390459456828516,
+   "op_stats": {
+    "splice": [
+     29,
+     29,
+     1
+    ],
+    "graft": [
+     25,
+     25,
+     1
+    ],
+    "combine": [
+     22,
+     11,
+     2
+    ],
+    "line": [
+     23,
+     23,
+     5
+    ],
+    "bump": [
+     21,
+     21,
+     1
+    ],
+    "cut": [
+     16,
+     14,
+     1
+    ],
+    "fill": [
+     19,
+     16,
+     0
+    ],
+    "pattern": [
+     24,
+     23,
+     1
+    ],
+    "offset": [
+     18,
+     18,
+     3
+    ]
+   },
+   "wall_s": 6.0
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 5,
+   "rho": 0.0,
+   "true_best": 1.0726303674816604,
+   "est_best": 0.8565604644190218,
+   "best_kind": "explore",
+   "oracle_true": 1.0684742573153494,
+   "explore_true_mean": 2.3417334327448085,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 293.8999999999999,
+   "generations": 39,
+   "niches": 7,
+   "calls": {
+    "fresh": 219,
+    "morph": 272,
+    "adjoint": 7,
+    "fold": 167
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 22,
+   "refine_tried": 46,
+   "refine_gain": -11.303742672131973,
+   "op_stats": {
+    "splice": [
+     25,
+     23,
+     8
+    ],
+    "graft": [
+     20,
+     19,
+     4
+    ],
+    "combine": [
+     29,
+     21,
+     4
+    ],
+    "line": [
+     25,
+     25,
+     1
+    ],
+    "bump": [
+     22,
+     22,
+     2
+    ],
+    "cut": [
+     17,
+     16,
+     2
+    ],
+    "fill": [
+     18,
+     17,
+     0
+    ],
+    "pattern": [
+     21,
+     19,
+     3
+    ],
+    "offset": [
+     19,
+     18,
+     1
+    ]
+   },
+   "wall_s": 6.5
+  },
+  {
+   "arm": "memetic",
+   "seed": 1,
+   "rho": 0.0,
+   "true_best": 2.00527347279038,
+   "est_best": 1.7664594467552648,
+   "best_kind": "explore",
+   "oracle_true": 1.7605492881386804,
+   "explore_true_mean": 2.5339871454888883,
+   "best_n": 7,
+   "best_openings": 0,
+   "spent": 297.3999999999999,
+   "generations": 16,
+   "niches": 6,
+   "calls": {
+    "fresh": 183,
+    "morph": 258,
+    "adjoint": 22,
+    "fold": 134
+   },
+   "explore_mean_late": 2.2237890215560583,
+   "control_mean_late": 6.004760138241673,
+   "n_explore": 138,
+   "n_control": 30,
+   "refine_accepted": 5,
+   "refine_tried": 45,
+   "refine_gain": -2.542791405949951,
+   "op_stats": {
+    "splice": [
+     27,
+     23,
+     6
+    ],
+    "graft": [
+     21,
+     15,
+     3
+    ],
+    "combine": [
+     28,
+     19,
+     6
+    ],
+    "line": [
+     22,
+     22,
+     6
+    ],
+    "bump": [
+     18,
+     18,
+     2
+    ],
+    "cut": [
+     15,
+     15,
+     1
+    ],
+    "fill": [
+     17,
+     15,
+     1
+    ],
+    "pattern": [
+     25,
+     24,
+     2
+    ],
+    "offset": [
+     17,
+     17,
+     1
+    ]
+   },
+   "wall_s": 6.5
+  },
+  {
+   "arm": "memetic",
+   "seed": 2,
+   "rho": 0.0,
+   "true_best": 1.386455051958105,
+   "est_best": 0.8225003445112765,
+   "best_kind": "explore",
+   "oracle_true": 1.3079632785790964,
+   "explore_true_mean": 1.9783342711931624,
+   "best_n": 6,
+   "best_openings": 0,
+   "spent": 298.0999999999999,
+   "generations": 17,
+   "niches": 7,
+   "calls": {
+    "fresh": 204,
+    "morph": 282,
+    "adjoint": 23,
+    "fold": 173
+   },
+   "explore_mean_late": 1.7062135317783462,
+   "control_mean_late": 5.320166593556083,
+   "n_explore": 153,
+   "n_control": 34,
+   "refine_accepted": 8,
+   "refine_tried": 49,
+   "refine_gain": -3.2015918254071165,
+   "op_stats": {
+    "splice": [
+     27,
+     27,
+     6
+    ],
+    "graft": [
+     20,
+     18,
+     0
+    ],
+    "combine": [
+     28,
+     21,
+     1
+    ],
+    "line": [
+     28,
+     28,
+     8
+    ],
+    "bump": [
+     25,
+     25,
+     4
+    ],
+    "cut": [
+     21,
+     20,
+     2
+    ],
+    "fill": [
+     16,
+     12,
+     1
+    ],
+    "pattern": [
+     28,
+     24,
+     1
+    ],
+    "offset": [
+     12,
+     12,
+     1
+    ]
+   },
+   "wall_s": 6.8
+  },
+  {
+   "arm": "memetic",
+   "seed": 3,
+   "rho": 0.0,
+   "true_best": 1.3301673791238664,
+   "est_best": 1.1747914745877803,
+   "best_kind": "explore",
+   "oracle_true": 1.2723561641253731,
+   "explore_true_mean": 2.2990849460653204,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 292.2999999999999,
+   "generations": 18,
+   "niches": 7,
+   "calls": {
+    "fresh": 237,
+    "morph": 294,
+    "adjoint": 19,
+    "fold": 228
+   },
+   "explore_mean_late": 2.0754632373125808,
+   "control_mean_late": 5.179172934476545,
+   "n_explore": 159,
+   "n_control": 34,
+   "refine_accepted": 6,
+   "refine_tried": 51,
+   "refine_gain": -3.0811791400784134,
+   "op_stats": {
+    "splice": [
+     23,
+     23,
+     2
+    ],
+    "graft": [
+     24,
+     24,
+     5
+    ],
+    "combine": [
+     26,
+     19,
+     5
+    ],
+    "line": [
+     25,
+     25,
+     2
+    ],
+    "bump": [
+     21,
+     20,
+     1
+    ],
+    "cut": [
+     20,
+     19,
+     2
+    ],
+    "fill": [
+     18,
+     13,
+     1
+    ],
+    "pattern": [
+     23,
+     22,
+     2
+    ],
+    "offset": [
+     28,
+     28,
+     3
+    ]
+   },
+   "wall_s": 7.0
+  },
+  {
+   "arm": "memetic",
+   "seed": 4,
+   "rho": 0.0,
+   "true_best": 1.4689511338001064,
+   "est_best": 0.8624151422868701,
+   "best_kind": "explore",
+   "oracle_true": 1.372877419998258,
+   "explore_true_mean": 2.0062035880942704,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 295.9999999999999,
+   "generations": 19,
+   "niches": 6,
+   "calls": {
+    "fresh": 233,
+    "morph": 320,
+    "adjoint": 20,
+    "fold": 238
+   },
+   "explore_mean_late": 1.7413148623963735,
+   "control_mean_late": 5.326983970480721,
+   "n_explore": 171,
+   "n_control": 38,
+   "refine_accepted": 10,
+   "refine_tried": 56,
+   "refine_gain": -5.120905901884629,
+   "op_stats": {
+    "splice": [
+     40,
+     34,
+     8
+    ],
+    "graft": [
+     31,
+     24,
+     2
+    ],
+    "combine": [
+     33,
+     19,
+     1
+    ],
+    "line": [
+     25,
+     25,
+     4
+    ],
+    "bump": [
+     21,
+     21,
+     3
+    ],
+    "cut": [
+     20,
+     19,
+     0
+    ],
+    "fill": [
+     21,
+     21,
+     1
+    ],
+    "pattern": [
+     24,
+     20,
+     2
+    ],
+    "offset": [
+     26,
+     26,
+     0
+    ]
+   },
+   "wall_s": 8.1
+  },
+  {
+   "arm": "memetic",
+   "seed": 5,
+   "rho": 0.0,
+   "true_best": 1.2374799449464404,
+   "est_best": 1.1408692278104504,
+   "best_kind": "explore",
+   "oracle_true": 1.1639760506953616,
+   "explore_true_mean": 2.0337600664572713,
+   "best_n": 7,
+   "best_openings": 0,
+   "spent": 294.4999999999999,
+   "generations": 17,
+   "niches": 9,
+   "calls": {
+    "fresh": 223,
+    "morph": 281,
+    "adjoint": 25,
+    "fold": 189
+   },
+   "explore_mean_late": 1.8619602786616523,
+   "control_mean_late": 4.629180565886951,
+   "n_explore": 153,
+   "n_control": 32,
+   "refine_accepted": 5,
+   "refine_tried": 48,
+   "refine_gain": -1.8853943369205028,
+   "op_stats": {
+    "splice": [
+     23,
+     23,
+     5
+    ],
+    "graft": [
+     29,
+     28,
+     7
+    ],
+    "combine": [
+     33,
+     27,
+     4
+    ],
+    "line": [
+     27,
+     27,
+     4
+    ],
+    "bump": [
+     14,
+     14,
+     1
+    ],
+    "cut": [
+     14,
+     14,
+     1
+    ],
+    "fill": [
+     19,
+     16,
+     1
+    ],
+    "pattern": [
+     25,
+     25,
+     3
+    ],
+    "offset": [
+     14,
+     11,
+     3
+    ]
+   },
+   "wall_s": 7.2
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 1,
+   "rho": 0.0,
+   "true_best": 1.915215565711414,
+   "est_best": 1.3225856624003076,
+   "best_kind": "explore",
+   "oracle_true": 1.5493908536373349,
+   "explore_true_mean": 2.56394806559231,
+   "best_n": 6,
+   "best_openings": 0,
+   "spent": 298.49999999999994,
+   "generations": 17,
+   "niches": 5,
+   "calls": {
+    "fresh": 183,
+    "morph": 274,
+    "adjoint": 15,
+    "fold": 130
+   },
+   "explore_mean_late": 2.072517905985767,
+   "control_mean_late": 5.914109748619643,
+   "n_explore": 146,
+   "n_control": 32,
+   "refine_accepted": 10,
+   "refine_tried": 48,
+   "refine_gain": -5.196932315568897,
+   "op_stats": {
+    "splice": [
+     24,
+     24,
+     2
+    ],
+    "graft": [
+     21,
+     21,
+     4
+    ],
+    "combine": [
+     21,
+     18,
+     2
+    ],
+    "line": [
+     18,
+     18,
+     3
+    ],
+    "bump": [
+     26,
+     24,
+     3
+    ],
+    "cut": [
+     14,
+     13,
+     0
+    ],
+    "fill": [
+     22,
+     18,
+     0
+    ],
+    "pattern": [
+     17,
+     15,
+     1
+    ],
+    "offset": [
+     27,
+     27,
+     3
+    ]
+   },
+   "wall_s": 6.3
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 2,
+   "rho": 0.0,
+   "true_best": 1.6573668936692836,
+   "est_best": 1.1895445068415242,
+   "best_kind": "explore",
+   "oracle_true": 1.5171961572272328,
+   "explore_true_mean": 2.181131629462356,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 295.4,
+   "generations": 17,
+   "niches": 6,
+   "calls": {
+    "fresh": 214,
+    "morph": 263,
+    "adjoint": 12,
+    "fold": 158
+   },
+   "explore_mean_late": 2.0410745859569164,
+   "control_mean_late": 5.898445917737495,
+   "n_explore": 147,
+   "n_control": 32,
+   "refine_accepted": 10,
+   "refine_tried": 42,
+   "refine_gain": -5.109790040940173,
+   "op_stats": {
+    "splice": [
+     34,
+     33,
+     5
+    ],
+    "graft": [
+     29,
+     25,
+     0
+    ],
+    "combine": [
+     23,
+     17,
+     1
+    ],
+    "line": [
+     27,
+     27,
+     2
+    ],
+    "bump": [
+     16,
+     16,
+     0
+    ],
+    "cut": [
+     25,
+     23,
+     2
+    ],
+    "fill": [
+     10,
+     9,
+     1
+    ],
+    "pattern": [
+     17,
+     16,
+     0
+    ],
+    "offset": [
+     13,
+     13,
+     0
+    ]
+   },
+   "wall_s": 6.7
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 3,
+   "rho": 0.0,
+   "true_best": 1.438945021091222,
+   "est_best": 0.996208801594387,
+   "best_kind": "explore",
+   "oracle_true": 1.4309478347145712,
+   "explore_true_mean": 2.2849504210036997,
+   "best_n": 6,
+   "best_openings": 0,
+   "spent": 300.49999999999994,
+   "generations": 17,
+   "niches": 5,
+   "calls": {
+    "fresh": 199,
+    "morph": 274,
+    "adjoint": 15,
+    "fold": 150
+   },
+   "explore_mean_late": 1.9979975888773607,
+   "control_mean_late": 5.172271300840284,
+   "n_explore": 151,
+   "n_control": 32,
+   "refine_accepted": 11,
+   "refine_tried": 46,
+   "refine_gain": -5.647902869963835,
+   "op_stats": {
+    "splice": [
+     40,
+     40,
+     3
+    ],
+    "graft": [
+     24,
+     21,
+     2
+    ],
+    "combine": [
+     25,
+     18,
+     1
+    ],
+    "line": [
+     28,
+     28,
+     4
+    ],
+    "bump": [
+     13,
+     12,
+     1
+    ],
+    "cut": [
+     21,
+     21,
+     2
+    ],
+    "fill": [
+     21,
+     17,
+     0
+    ],
+    "pattern": [
+     13,
+     11,
+     1
+    ],
+    "offset": [
+     15,
+     15,
+     5
+    ]
+   },
+   "wall_s": 6.9
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 4,
+   "rho": 0.0,
+   "true_best": 1.6639789154061762,
+   "est_best": 0.9757772586768064,
+   "best_kind": "explore",
+   "oracle_true": 1.2926019881386765,
+   "explore_true_mean": 2.0869160514432523,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 294.8,
+   "generations": 19,
+   "niches": 6,
+   "calls": {
+    "fresh": 256,
+    "morph": 299,
+    "adjoint": 14,
+    "fold": 242
+   },
+   "explore_mean_late": 1.915448718940017,
+   "control_mean_late": 5.5352044503268525,
+   "n_explore": 166,
+   "n_control": 36,
+   "refine_accepted": 10,
+   "refine_tried": 49,
+   "refine_gain": -5.105621436204529,
+   "op_stats": {
+    "splice": [
+     23,
+     21,
+     3
+    ],
+    "graft": [
+     30,
+     23,
+     3
+    ],
+    "combine": [
+     31,
+     25,
+     5
+    ],
+    "line": [
+     29,
+     29,
+     3
+    ],
+    "bump": [
+     20,
+     20,
+     1
+    ],
+    "cut": [
+     16,
+     16,
+     0
+    ],
+    "fill": [
+     27,
+     22,
+     1
+    ],
+    "pattern": [
+     30,
+     17,
+     1
+    ],
+    "offset": [
+     29,
+     29,
+     0
+    ]
+   },
+   "wall_s": 7.5
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 5,
+   "rho": 0.0,
+   "true_best": 1.1843929257914279,
+   "est_best": 0.8827708301156435,
+   "best_kind": "explore",
+   "oracle_true": 1.1481611396569815,
+   "explore_true_mean": 2.2445181464254187,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 292.99999999999994,
+   "generations": 17,
+   "niches": 8,
+   "calls": {
+    "fresh": 236,
+    "morph": 277,
+    "adjoint": 20,
+    "fold": 210
+   },
+   "explore_mean_late": 2.059693676843545,
+   "control_mean_late": 5.34650568424043,
+   "n_explore": 149,
+   "n_control": 32,
+   "refine_accepted": 3,
+   "refine_tried": 48,
+   "refine_gain": -1.54259253202298,
+   "op_stats": {
+    "splice": [
+     22,
+     22,
+     4
+    ],
+    "graft": [
+     29,
+     29,
+     8
+    ],
+    "combine": [
+     22,
+     19,
+     6
+    ],
+    "line": [
+     17,
+     17,
+     5
+    ],
+    "bump": [
+     24,
+     23,
+     1
+    ],
+    "cut": [
+     23,
+     21,
+     2
+    ],
+    "fill": [
+     16,
+     14,
+     2
+    ],
+    "pattern": [
+     22,
+     22,
+     3
+    ],
+    "offset": [
+     14,
+     14,
+     0
+    ]
+   },
+   "wall_s": 8.1
+  },
+  {
+   "arm": "polish",
+   "seed": 1,
+   "rho": -0.3,
+   "true_best": 4.398184565580068,
+   "est_best": 3.9782166529879803,
+   "best_kind": "seed",
+   "oracle_true": 3.678452659691959,
+   "explore_true_mean": null,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 43.5,
+   "generations": 11,
+   "niches": 5,
+   "calls": {
+    "fresh": 24,
+    "morph": 40,
+    "adjoint": 5,
+    "fold": 8
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 20,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 1.2
+  },
+  {
+   "arm": "polish",
+   "seed": 2,
+   "rho": -0.3,
+   "true_best": 3.844653402721948,
+   "est_best": 3.505954125011755,
+   "best_kind": "seed",
+   "oracle_true": 3.678452659691959,
+   "explore_true_mean": null,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 34.5,
+   "generations": 11,
+   "niches": 5,
+   "calls": {
+    "fresh": 26,
+    "morph": 40,
+    "adjoint": 5,
+    "fold": 16
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 20,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 1.2
+  },
+  {
+   "arm": "polish",
+   "seed": 3,
+   "rho": -0.3,
+   "true_best": 3.844653402721948,
+   "est_best": 3.641097441823168,
+   "best_kind": "seed",
+   "oracle_true": 3.678452659691959,
+   "explore_true_mean": null,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 34.5,
+   "generations": 11,
+   "niches": 5,
+   "calls": {
+    "fresh": 25,
+    "morph": 40,
+    "adjoint": 5,
+    "fold": 16
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 20,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 1.1
+  },
+  {
+   "arm": "polish",
+   "seed": 4,
+   "rho": -0.3,
+   "true_best": 3.678452659691959,
+   "est_best": 3.4541728610375038,
+   "best_kind": "seed",
+   "oracle_true": 3.678452659691959,
+   "explore_true_mean": null,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 34.5,
+   "generations": 11,
+   "niches": 5,
+   "calls": {
+    "fresh": 25,
+    "morph": 40,
+    "adjoint": 5,
+    "fold": 16
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 20,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 1.4
+  },
+  {
+   "arm": "polish",
+   "seed": 5,
+   "rho": -0.3,
+   "true_best": 3.678452659691959,
+   "est_best": 3.3501728862662925,
+   "best_kind": "seed",
+   "oracle_true": 3.678452659691959,
+   "explore_true_mean": null,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 38.5,
+   "generations": 11,
+   "niches": 5,
+   "calls": {
+    "fresh": 24,
+    "morph": 40,
+    "adjoint": 5,
+    "fold": 13
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 0,
+   "n_control": 0,
+   "refine_accepted": 0,
+   "refine_tried": 20,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     0,
+     0,
+     0
+    ],
+    "graft": [
+     0,
+     0,
+     0
+    ],
+    "combine": [
+     0,
+     0,
+     0
+    ],
+    "line": [
+     0,
+     0,
+     0
+    ],
+    "bump": [
+     0,
+     0,
+     0
+    ],
+    "cut": [
+     0,
+     0,
+     0
+    ],
+    "fill": [
+     0,
+     0,
+     0
+    ],
+    "pattern": [
+     0,
+     0,
+     0
+    ],
+    "offset": [
+     0,
+     0,
+     0
+    ]
+   },
+   "wall_s": 1.4
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 1,
+   "rho": -0.3,
+   "true_best": 1.1868817638745706,
+   "est_best": 0.7281389063307458,
+   "best_kind": "explore",
+   "oracle_true": 1.024755295213836,
+   "explore_true_mean": 2.1932785270605293,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 265.49999999999994,
+   "generations": 21,
+   "niches": 5,
+   "calls": {
+    "fresh": 215,
+    "morph": 240,
+    "adjoint": 5,
+    "fold": 162
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 160,
+   "n_control": 40,
+   "refine_accepted": 0,
+   "refine_tried": 20,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     28,
+     27,
+     1
+    ],
+    "graft": [
+     27,
+     25,
+     1
+    ],
+    "combine": [
+     34,
+     22,
+     3
+    ],
+    "line": [
+     22,
+     22,
+     1
+    ],
+    "bump": [
+     18,
+     18,
+     2
+    ],
+    "cut": [
+     22,
+     20,
+     1
+    ],
+    "fill": [
+     25,
+     24,
+     1
+    ],
+    "pattern": [
+     24,
+     21,
+     1
+    ],
+    "offset": [
+     22,
+     21,
+     3
+    ]
+   },
+   "wall_s": 6.6
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 2,
+   "rho": -0.3,
+   "true_best": 1.8851600097332941,
+   "est_best": 1.313010089485202,
+   "best_kind": "explore",
+   "oracle_true": 1.6100927496499096,
+   "explore_true_mean": 2.350449953733698,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 259.19999999999993,
+   "generations": 20,
+   "niches": 6,
+   "calls": {
+    "fresh": 219,
+    "morph": 228,
+    "adjoint": 6,
+    "fold": 151
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 0,
+   "refine_tried": 24,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     28,
+     28,
+     4
+    ],
+    "graft": [
+     22,
+     22,
+     1
+    ],
+    "combine": [
+     25,
+     21,
+     2
+    ],
+    "line": [
+     19,
+     19,
+     3
+    ],
+    "bump": [
+     18,
+     18,
+     1
+    ],
+    "cut": [
+     18,
+     18,
+     0
+    ],
+    "fill": [
+     21,
+     18,
+     0
+    ],
+    "pattern": [
+     24,
+     23,
+     1
+    ],
+    "offset": [
+     13,
+     13,
+     0
+    ]
+   },
+   "wall_s": 6.1
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 3,
+   "rho": -0.3,
+   "true_best": 1.2782014437424887,
+   "est_best": 0.99590587200124,
+   "best_kind": "explore",
+   "oracle_true": 1.2782014437424887,
+   "explore_true_mean": 2.224936702310171,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 250.49999999999994,
+   "generations": 20,
+   "niches": 5,
+   "calls": {
+    "fresh": 217,
+    "morph": 220,
+    "adjoint": 5,
+    "fold": 161
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 0,
+   "refine_tried": 20,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     27,
+     27,
+     3
+    ],
+    "graft": [
+     19,
+     17,
+     0
+    ],
+    "combine": [
+     28,
+     18,
+     2
+    ],
+    "line": [
+     17,
+     17,
+     2
+    ],
+    "bump": [
+     24,
+     23,
+     5
+    ],
+    "cut": [
+     27,
+     23,
+     3
+    ],
+    "fill": [
+     32,
+     22,
+     0
+    ],
+    "pattern": [
+     21,
+     17,
+     2
+    ],
+    "offset": [
+     16,
+     16,
+     2
+    ]
+   },
+   "wall_s": 6.1
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 4,
+   "rho": -0.3,
+   "true_best": 1.2806413075214993,
+   "est_best": 1.0032884302770004,
+   "best_kind": "explore",
+   "oracle_true": 1.232437376095721,
+   "explore_true_mean": 2.132829629822832,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 257.49999999999994,
+   "generations": 20,
+   "niches": 5,
+   "calls": {
+    "fresh": 212,
+    "morph": 220,
+    "adjoint": 5,
+    "fold": 132
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 0,
+   "refine_tried": 20,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     29,
+     29,
+     1
+    ],
+    "graft": [
+     25,
+     25,
+     1
+    ],
+    "combine": [
+     22,
+     11,
+     2
+    ],
+    "line": [
+     23,
+     23,
+     5
+    ],
+    "bump": [
+     21,
+     21,
+     1
+    ],
+    "cut": [
+     16,
+     14,
+     1
+    ],
+    "fill": [
+     19,
+     16,
+     0
+    ],
+    "pattern": [
+     24,
+     23,
+     1
+    ],
+    "offset": [
+     18,
+     18,
+     3
+    ]
+   },
+   "wall_s": 5.9
+  },
+  {
+   "arm": "evo_polish",
+   "seed": 5,
+   "rho": -0.3,
+   "true_best": 1.0726303674816604,
+   "est_best": 0.9536375087973757,
+   "best_kind": "explore",
+   "oracle_true": 1.0684742573153494,
+   "explore_true_mean": 2.3417334327448085,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 249.89999999999992,
+   "generations": 24,
+   "niches": 7,
+   "calls": {
+    "fresh": 219,
+    "morph": 236,
+    "adjoint": 7,
+    "fold": 175
+   },
+   "explore_mean_late": null,
+   "control_mean_late": null,
+   "n_explore": 144,
+   "n_control": 36,
+   "refine_accepted": 0,
+   "refine_tried": 28,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     25,
+     23,
+     8
+    ],
+    "graft": [
+     20,
+     19,
+     4
+    ],
+    "combine": [
+     29,
+     21,
+     4
+    ],
+    "line": [
+     25,
+     25,
+     1
+    ],
+    "bump": [
+     22,
+     22,
+     2
+    ],
+    "cut": [
+     17,
+     16,
+     2
+    ],
+    "fill": [
+     18,
+     17,
+     0
+    ],
+    "pattern": [
+     21,
+     19,
+     3
+    ],
+    "offset": [
+     19,
+     18,
+     1
+    ]
+   },
+   "wall_s": 6.6
+  },
+  {
+   "arm": "memetic",
+   "seed": 1,
+   "rho": -0.3,
+   "true_best": 2.217480465059987,
+   "est_best": 1.6388916439893606,
+   "best_kind": "explore",
+   "oracle_true": 1.7605492881386804,
+   "explore_true_mean": 2.517267209489594,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 294.79999999999984,
+   "generations": 16,
+   "niches": 6,
+   "calls": {
+    "fresh": 185,
+    "morph": 258,
+    "adjoint": 24,
+    "fold": 139
+   },
+   "explore_mean_late": 2.177018279033634,
+   "control_mean_late": 5.840537640270839,
+   "n_explore": 138,
+   "n_control": 30,
+   "refine_accepted": 0,
+   "refine_tried": 45,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     21,
+     18,
+     6
+    ],
+    "graft": [
+     22,
+     18,
+     5
+    ],
+    "combine": [
+     25,
+     21,
+     5
+    ],
+    "line": [
+     22,
+     22,
+     7
+    ],
+    "bump": [
+     22,
+     22,
+     2
+    ],
+    "cut": [
+     18,
+     18,
+     1
+    ],
+    "fill": [
+     16,
+     15,
+     2
+    ],
+    "pattern": [
+     20,
+     20,
+     1
+    ],
+    "offset": [
+     14,
+     14,
+     2
+    ]
+   },
+   "wall_s": 7.1
+  },
+  {
+   "arm": "memetic",
+   "seed": 2,
+   "rho": -0.3,
+   "true_best": 1.4955605194143748,
+   "est_best": 1.0311434552881467,
+   "best_kind": "explore",
+   "oracle_true": 1.347142122899319,
+   "explore_true_mean": 2.138293291038996,
+   "best_n": 6,
+   "best_openings": 0,
+   "spent": 298.1,
+   "generations": 19,
+   "niches": 5,
+   "calls": {
+    "fresh": 219,
+    "morph": 265,
+    "adjoint": 13,
+    "fold": 148
+   },
+   "explore_mean_late": 1.8697741420805434,
+   "control_mean_late": 6.0813221120661,
+   "n_explore": 167,
+   "n_control": 36,
+   "refine_accepted": 0,
+   "refine_tried": 31,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     26,
+     26,
+     3
+    ],
+    "graft": [
+     20,
+     19,
+     1
+    ],
+    "combine": [
+     25,
+     22,
+     1
+    ],
+    "line": [
+     32,
+     32,
+     4
+    ],
+    "bump": [
+     21,
+     21,
+     2
+    ],
+    "cut": [
+     18,
+     18,
+     1
+    ],
+    "fill": [
+     26,
+     19,
+     0
+    ],
+    "pattern": [
+     28,
+     24,
+     0
+    ],
+    "offset": [
+     22,
+     22,
+     0
+    ]
+   },
+   "wall_s": 7.5
+  },
+  {
+   "arm": "memetic",
+   "seed": 3,
+   "rho": -0.3,
+   "true_best": 1.2211293638415428,
+   "est_best": 1.074173988286813,
+   "best_kind": "explore",
+   "oracle_true": 1.2211293638415428,
+   "explore_true_mean": 2.286756755587297,
+   "best_n": 6,
+   "best_openings": 0,
+   "spent": 295.6999999999999,
+   "generations": 18,
+   "niches": 7,
+   "calls": {
+    "fresh": 238,
+    "morph": 293,
+    "adjoint": 21,
+    "fold": 225
+   },
+   "explore_mean_late": 2.0438650435119587,
+   "control_mean_late": 4.476682948504552,
+   "n_explore": 158,
+   "n_control": 34,
+   "refine_accepted": 0,
+   "refine_tried": 51,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     27,
+     27,
+     3
+    ],
+    "graft": [
+     15,
+     15,
+     3
+    ],
+    "combine": [
+     25,
+     21,
+     5
+    ],
+    "line": [
+     29,
+     29,
+     5
+    ],
+    "bump": [
+     17,
+     17,
+     0
+    ],
+    "cut": [
+     25,
+     24,
+     4
+    ],
+    "fill": [
+     18,
+     12,
+     1
+    ],
+    "pattern": [
+     21,
+     20,
+     2
+    ],
+    "offset": [
+     28,
+     27,
+     2
+    ]
+   },
+   "wall_s": 7.9
+  },
+  {
+   "arm": "memetic",
+   "seed": 4,
+   "rho": -0.3,
+   "true_best": 1.4969087401261527,
+   "est_best": 1.091692545225678,
+   "best_kind": "explore",
+   "oracle_true": 1.394839961471883,
+   "explore_true_mean": 1.9543056765600324,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 296.9,
+   "generations": 20,
+   "niches": 5,
+   "calls": {
+    "fresh": 249,
+    "morph": 292,
+    "adjoint": 17,
+    "fold": 226
+   },
+   "explore_mean_late": 1.7777592513404037,
+   "control_mean_late": 5.85403298276307,
+   "n_explore": 176,
+   "n_control": 38,
+   "refine_accepted": 0,
+   "refine_tried": 39,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     35,
+     35,
+     4
+    ],
+    "graft": [
+     37,
+     36,
+     5
+    ],
+    "combine": [
+     27,
+     14,
+     1
+    ],
+    "line": [
+     29,
+     29,
+     3
+    ],
+    "bump": [
+     19,
+     18,
+     3
+    ],
+    "cut": [
+     22,
+     21,
+     0
+    ],
+    "fill": [
+     22,
+     21,
+     0
+    ],
+    "pattern": [
+     22,
+     16,
+     1
+    ],
+    "offset": [
+     25,
+     24,
+     1
+    ]
+   },
+   "wall_s": 7.5
+  },
+  {
+   "arm": "memetic",
+   "seed": 5,
+   "rho": -0.3,
+   "true_best": 1.5079730601651289,
+   "est_best": 0.9667855456762721,
+   "best_kind": "explore",
+   "oracle_true": 1.3553867353061713,
+   "explore_true_mean": 2.090941442289881,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 294.0999999999999,
+   "generations": 17,
+   "niches": 9,
+   "calls": {
+    "fresh": 227,
+    "morph": 275,
+    "adjoint": 23,
+    "fold": 200
+   },
+   "explore_mean_late": 1.9330026267806981,
+   "control_mean_late": 4.913629755102436,
+   "n_explore": 147,
+   "n_control": 32,
+   "refine_accepted": 0,
+   "refine_tried": 48,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     24,
+     24,
+     4
+    ],
+    "graft": [
+     27,
+     26,
+     5
+    ],
+    "combine": [
+     24,
+     22,
+     4
+    ],
+    "line": [
+     25,
+     25,
+     4
+    ],
+    "bump": [
+     16,
+     16,
+     2
+    ],
+    "cut": [
+     22,
+     22,
+     2
+    ],
+    "fill": [
+     20,
+     16,
+     1
+    ],
+    "pattern": [
+     17,
+     17,
+     3
+    ],
+    "offset": [
+     11,
+     11,
+     4
+    ]
+   },
+   "wall_s": 5.7
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 1,
+   "rho": -0.3,
+   "true_best": 1.385709345497279,
+   "est_best": 0.6603160753718186,
+   "best_kind": "explore",
+   "oracle_true": 1.1838041521079683,
+   "explore_true_mean": 2.281849373010988,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 293.89999999999986,
+   "generations": 18,
+   "niches": 5,
+   "calls": {
+    "fresh": 225,
+    "morph": 284,
+    "adjoint": 17,
+    "fold": 196
+   },
+   "explore_mean_late": 1.838044175450494,
+   "control_mean_late": 5.055937131565187,
+   "n_explore": 158,
+   "n_control": 34,
+   "refine_accepted": 0,
+   "refine_tried": 46,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     24,
+     24,
+     0
+    ],
+    "graft": [
+     19,
+     18,
+     4
+    ],
+    "combine": [
+     27,
+     25,
+     4
+    ],
+    "line": [
+     33,
+     33,
+     4
+    ],
+    "bump": [
+     22,
+     21,
+     4
+    ],
+    "cut": [
+     21,
+     20,
+     1
+    ],
+    "fill": [
+     14,
+     11,
+     0
+    ],
+    "pattern": [
+     17,
+     17,
+     2
+    ],
+    "offset": [
+     23,
+     23,
+     4
+    ]
+   },
+   "wall_s": 5.8
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 2,
+   "rho": -0.3,
+   "true_best": 1.549541096928242,
+   "est_best": 1.4676811635393998,
+   "best_kind": "explore",
+   "oracle_true": 1.350846107132332,
+   "explore_true_mean": 2.4149695488205345,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 297.09999999999997,
+   "generations": 19,
+   "niches": 5,
+   "calls": {
+    "fresh": 239,
+    "morph": 281,
+    "adjoint": 13,
+    "fold": 193
+   },
+   "explore_mean_late": 2.3062181019035846,
+   "control_mean_late": 5.416995186726272,
+   "n_explore": 169,
+   "n_control": 36,
+   "refine_accepted": 0,
+   "refine_tried": 38,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     37,
+     37,
+     5
+    ],
+    "graft": [
+     20,
+     17,
+     2
+    ],
+    "combine": [
+     22,
+     17,
+     0
+    ],
+    "line": [
+     20,
+     20,
+     2
+    ],
+    "bump": [
+     20,
+     19,
+     0
+    ],
+    "cut": [
+     26,
+     26,
+     2
+    ],
+    "fill": [
+     26,
+     22,
+     1
+    ],
+    "pattern": [
+     23,
+     20,
+     0
+    ],
+    "offset": [
+     27,
+     27,
+     0
+    ]
+   },
+   "wall_s": 6.4
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 3,
+   "rho": -0.3,
+   "true_best": 1.5861968612233583,
+   "est_best": 1.245055071383413,
+   "best_kind": "explore",
+   "oracle_true": 1.3037186649420192,
+   "explore_true_mean": 2.359287019962841,
+   "best_n": 5,
+   "best_openings": 0,
+   "spent": 296.29999999999995,
+   "generations": 20,
+   "niches": 7,
+   "calls": {
+    "fresh": 251,
+    "morph": 317,
+    "adjoint": 19,
+    "fold": 259
+   },
+   "explore_mean_late": 2.212474529221257,
+   "control_mean_late": 6.423278720509941,
+   "n_explore": 180,
+   "n_control": 40,
+   "refine_accepted": 0,
+   "refine_tried": 51,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     30,
+     30,
+     2
+    ],
+    "graft": [
+     28,
+     26,
+     4
+    ],
+    "combine": [
+     42,
+     26,
+     1
+    ],
+    "line": [
+     22,
+     22,
+     3
+    ],
+    "bump": [
+     20,
+     20,
+     0
+    ],
+    "cut": [
+     34,
+     31,
+     4
+    ],
+    "fill": [
+     23,
+     19,
+     2
+    ],
+    "pattern": [
+     26,
+     24,
+     2
+    ],
+    "offset": [
+     28,
+     22,
+     2
+    ]
+   },
+   "wall_s": 7.6
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 4,
+   "rho": -0.3,
+   "true_best": 1.381142419645493,
+   "est_best": 1.1353380022391353,
+   "best_kind": "explore",
+   "oracle_true": 1.2770938577521807,
+   "explore_true_mean": 2.1310678045982736,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 292.2,
+   "generations": 20,
+   "niches": 7,
+   "calls": {
+    "fresh": 255,
+    "morph": 310,
+    "adjoint": 16,
+    "fold": 257
+   },
+   "explore_mean_late": 1.9574221734987438,
+   "control_mean_late": 4.635943764328774,
+   "n_explore": 179,
+   "n_control": 38,
+   "refine_accepted": 0,
+   "refine_tried": 47,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     36,
+     34,
+     3
+    ],
+    "graft": [
+     36,
+     30,
+     2
+    ],
+    "combine": [
+     33,
+     30,
+     7
+    ],
+    "line": [
+     29,
+     29,
+     4
+    ],
+    "bump": [
+     22,
+     21,
+     1
+    ],
+    "cut": [
+     21,
+     21,
+     0
+    ],
+    "fill": [
+     17,
+     12,
+     0
+    ],
+    "pattern": [
+     22,
+     21,
+     1
+    ],
+    "offset": [
+     19,
+     19,
+     0
+    ]
+   },
+   "wall_s": 7.1
+  },
+  {
+   "arm": "memetic_g",
+   "seed": 5,
+   "rho": -0.3,
+   "true_best": 1.6674649172042795,
+   "est_best": 1.1805834343355452,
+   "best_kind": "explore",
+   "oracle_true": 1.6142695367809201,
+   "explore_true_mean": 2.430576761886462,
+   "best_n": 3,
+   "best_openings": 0,
+   "spent": 293.69999999999993,
+   "generations": 17,
+   "niches": 8,
+   "calls": {
+    "fresh": 201,
+    "morph": 280,
+    "adjoint": 21,
+    "fold": 179
+   },
+   "explore_mean_late": 2.1624979523250243,
+   "control_mean_late": 5.239035983643702,
+   "n_explore": 152,
+   "n_control": 32,
+   "refine_accepted": 0,
+   "refine_tried": 48,
+   "refine_gain": 0.0,
+   "op_stats": {
+    "splice": [
+     28,
+     26,
+     9
+    ],
+    "graft": [
+     30,
+     29,
+     6
+    ],
+    "combine": [
+     27,
+     17,
+     5
+    ],
+    "line": [
+     26,
+     26,
+     2
+    ],
+    "bump": [
+     12,
+     12,
+     3
+    ],
+    "cut": [
+     26,
+     25,
+     3
+    ],
+    "fill": [
+     19,
+     18,
+     1
+    ],
+    "pattern": [
+     21,
+     20,
+     1
+    ],
+    "offset": [
+     11,
+     11,
+     0
+    ]
+   },
+   "wall_s": 6.8
+  }
+ ]
+}
