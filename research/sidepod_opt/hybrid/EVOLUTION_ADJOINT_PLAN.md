@@ -13,7 +13,7 @@ one batch of good-mesh CFD runs in parallel (free runners, ~20 at once, ~1.5-2 h
 |---|---|---|
 | parent re-run | the current design | the reference for this round (the pipeline is deterministic: repeat 0.0003 mN) |
 | 6 random smooth moves | evolution's mutation | exploration, and measured directions for the next recombination |
-| one move along each adjoint | DAFoam (coarse, fresh at the parent, ~1.5 h on a free runner) and ESI (fresh at the parent, ~2 h) | the cheap guess at "downhill"; measured, not trusted |
+| one move along each adjoint | DAFoam (coarse, fresh at the parent, ~1.5 h on a free runner) and ESI (refreshed now and then, ~2 h; its direction hardly changes) | the cheap guess at "downhill"; measured, not trusted |
 | moves along the recombination of last round's measured moves | least squares in their span: all of them, and the random ones only (`combine.py`) | evolution's recombination; uses every measurement |
 | two sizes for the recombinations (AMP, AMP/2) | AMP = 0.5 mm, 0.25 mm once the chained mesh gets tight | the step size is chosen by CFD |
 
@@ -89,8 +89,8 @@ All on free GitHub runners (public repository); no paid machine is needed for an
 5. **What is confirmed and what is not:** the loop runs on the steady upwind model (D10). Under the production scheme
    the gains hold at 0.77-0.86 (Marks P2, P3 and I34 met: -6.32 and -8.20 mN); Mark P (an earlier pair, whole-signal SE)
    was not met. Generations 5-6 under production: Mark P4 / I56. Still open: fresh meshes and repeats (D8), and the full race-time effect.
-6. **Mesh rebuilds (phase B) and several starts (phase C) are untested here.** The chained morph ran out at ~1.5 mm
-   (generation 3: the strongest +0.5 mm moves folded), so B is the next engineering task.
+6. **Mesh rebuilds (phase B) and several starts (phase C) are untested here.** The chained morph ran out at ~2 mm
+   (strong 0.5 mm moves folded from generation 3, every adjoint move by generation 6), so B is the next engineering task.
 
 ## 6. Evidence, in order
 All on the wall-resolved mesh (2.1 M cells), steady model, morphs of one tested mesh, change of half-car drag vs the
