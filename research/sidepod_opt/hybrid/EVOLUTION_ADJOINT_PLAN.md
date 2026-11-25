@@ -41,8 +41,9 @@ opt-in), workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
    alone (-5.24 vs DAFoam -4.84, evolution alone -2.62; reported, not marked). At 0.125 mm the marked test (H2) failed:
    at tiny steps the adjoints added nothing.
 4. **The loop works**: every generation kept a step under a rule fixed beforehand: -6.93 (DAFoam 1 mm), -1.28 (ESI),
-   -0.27 (recombination), -1.02 (fresh DAFoam), -0.25 (recombination): **-9.75 mN, 5.1 % of the half-car drag** (steady
-   model). The steps shrink once the mesh cannot take the adjoints' larger moves.
+   -0.27 (recombination), -1.02 (fresh DAFoam), -0.25 and -0.19 (recombination): **-9.94 mN, 5.2 % of the half-car drag**
+   (steady model), six generations, 82 good-mesh solves in the loop itself. Adjoint moves made 9.23 of the 9.94; evolution's
+   recombination made the last three steps once the mesh could no longer take the adjoints' moves.
 5. **It survives the production scheme**: the -8.21 design keeps -6.32 mN (3.5 %) under linearUpwind (Mark P2 met).
 6. **The limit is the mesh**: the explicit morph (new, opt-in) moves the wall layer rigidly and allows ~1 mm per morph,
    chained to ~2 mm (5 levels); after that even 0.25 mm adjoint moves fold. Beyond that the mesh must be rebuilt
@@ -106,4 +107,16 @@ unmoved team pod (190.73 mN). Whole-signal SE ~0.12 mN at small moves, < 0.01 mN
 | **Generation 3** (parent + ESI 0.5; Mark L, 0.15 mN floor) | **met**: evolution's recombination of generation 2's measured moves at 0.25 mm -0.27 (accepted); combined 0.25 mm -0.27; all 6 random moves worse; the 3 strongest 0.5 mm moves folded the chained mesh | total **-8.48 mN**; evolution's part shows once the adjoints' own directions are spent; the morph range is the limit now |
 | **Generation 4** (0.25 mm moves) | **met**: fresh DAFoam (recomputed at the moved design) -1.02 (accepted); recombinations -0.16..-0.24; 5 of 6 random worse | total **-9.50 mN (5.0 %)**; refreshing the discrete adjoint each generation pays |
 | **Generation 5** (0.25 mm moves) | **met (just)**: combined 0.125 mm -0.25 (accepted); fresh DAFoam and ESI moves folded at 0.25 mm; DAFoam at the new parent did not converge | total **-9.75 mN (5.1 %)**; the chained morph (~2 mm) is now the limit |
+| **Generation 6** (0.125 mm moves) | **met**: evolution-only recombination -0.19 (accepted); every adjoint move folded, even at 0.125 mm | **final -9.94 mN (5.2 %)**; the mesh is spent: stop for a new mesh |
 | **Mark P2** (best design under the production scheme, block-mean SE) | **met**: 175.49 vs 181.81, **-6.32 mN (3.5 %)**, 0.77 of the steady gain | the gain is not a steady-model artefact (same mesh family; fresh meshes still to do) |
+
+## 7. What to do next, in order
+1. **Production confirmation of the final design** (Mark P4, running at the time of writing) and, per D8, on fresh
+   meshes with repeats.
+2. **Phase B: a new wall-resolved mesh on the final design** (~5 h, free), then continue the loop from it with the same
+   rules (`loop.py`, 0.5 mm moves again). The adjoints' moves were the big steps; they need the mesh room back.
+3. **DAFoam robustness on runners**: 2 of 7 runner jobs failed (a lost runner; an adjoint that stopped at 2000 GMRES
+   iterations). Use the newest converged gradient when one fails (as generation 6 did), and try a looser GMRES
+   tolerance or more iterations before relying on it.
+4. **Phase C (several starts)** once B works: 2-3 lanes from different pods share the ~20 runners.
+5. **Legalisation** (milling, ceiling, wall thickness, mass) as the last loop stage, each candidate CFD'd.
