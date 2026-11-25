@@ -238,3 +238,6 @@ measured moves, not from an adjoint's own move.
   base gradient's (r -0.24): the old directions are used up.
 - **Amendment for generation 4 (before its launch):** moves of 0.25 mm (combinations 0.25 and 0.125), because every
   0.5 mm move along a strong direction folded the chained mesh in generation 3. Everything else as `loop.py`.
+- **Fresh ESI at a moved design works** (run 45519814660): the generation-3 parent re-solved through the chained
+  pipeline (D20 182.52, matching its generation-3 run), then ESI frozen (1000 its) on that converged morphed state:
+  32 117 surface points; the job took ~2 h in all. Usable as a guide via `esinpz:` (generation 5 onward).

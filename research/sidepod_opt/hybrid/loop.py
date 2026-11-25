@@ -57,7 +57,7 @@ def main():
     subprocess.run([sys.executable, '-W', 'ignore', str(H / 'combine.py'), str(gdir / 'measured.json'), str(gdir)], check=True, cwd=SP)
     seed0 = S.get('next_seed', 17)
     kids = {'zero': ('zero', 0.0), 'dafnew': (f'dafnpz:{fresh}' if fresh else S['dafoam_latest'], AMP),
-            'esi': ('esi_frozen', AMP), 'comb': (f'vec:hybrid/g{k}/guided.npy', AMP), 'combh': (f'vec:hybrid/g{k}/guided.npy', AMP / 2),
+            'esi': (os.environ.get('LOOP_ESI', 'esi_frozen'), AMP), 'comb': (f'vec:hybrid/g{k}/guided.npy', AMP), 'combh': (f'vec:hybrid/g{k}/guided.npy', AMP / 2),
             'es': (f'vec:hybrid/g{k}/es.npy', AMP), 'esh': (f'vec:hybrid/g{k}/es.npy', AMP / 2),
             **{f'rnd{s}': (f'rnd{s}', AMP) for s in range(seed0, seed0 + N_RND)}}
     if fresh:

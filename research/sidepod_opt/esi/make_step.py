@@ -66,11 +66,12 @@ def field_on_vertices(field, V, N=None, A=None):
         s = daf_density(V, N, A, HERE / field[7:] if field.startswith("dafnpz:") else None)
         val = -s if field != "daf_opp" else s
     else:
-        S = np.load(SENS / ("esi_sens_sst.npz" if field == "esi_sst" else "esi_sens_frozen.npz"))
+        S = np.load(HERE / field[7:] if field.startswith("esinpz:") else
+                    SENS / ("esi_sens_sst.npz" if field == "esi_sst" else "esi_sens_frozen.npz"))
         X, area = S["Xs"], S["area"]
     if field in ("daf", "daf_opp") or field.startswith("dafnpz:"):
         pass
-    elif field in ("esi_frozen", "esi_sst"):
+    elif field in ("esi_frozen", "esi_sst") or field.startswith("esinpz:"):     # esinpz:<path>: a fresh ESI map
         val = -S["s_out"]                                  # downhill
     elif field == "opp_frozen":
         val = S["s_out"].copy()                            # uphill control
