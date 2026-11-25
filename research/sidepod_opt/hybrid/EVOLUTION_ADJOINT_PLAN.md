@@ -26,8 +26,24 @@ interface of the evolution branch's CMA wrapper, ported in `hybrid/evolution_met
 `hybrid/combine.py`, `hybrid/chain_solve.py` (chained explicit morph), Part 2's `openfoam_case.py` (explicit morph,
 opt-in), workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
 
-## 2. What the tests showed (2026-11-24 18:37 onward)
-[filled in below, section 6]
+## 2. What the tests showed (2026-11-24 18:37 to 2026-11-25; details in section 6)
+1. **The discrete adjoint (DAFoam), run on the cheap coarse mesh, is a good *direction* on the good mesh** (H1 PASS,
+   fidelity r 0.85, 10/11 signs) but **not a step size** (2x too large). It costs ~1.5 h on a free GitHub runner, so it
+   can be recomputed at every new design, and that matters: the base gradient was spent after 1 mm, and the gradient
+   recomputed at the moved design gave generation 4's step (-1.02).
+2. **The normal adjoint (ESI) failed every gradient test, but as a direction it works**: it gave generation 2's step
+   (-1.28 on top of DAFoam's 1 mm). The two adjoints found different improvements. Fresh ESI at a moved design also works
+   (~2 h per design).
+3. **Evolution's part**: random moves alone are weak (most are worse than the parent in every generation), but
+   recombining the measured moves (least squares in their span) gave generation 3's step (-0.27) when the adjoints' own
+   directions were blocked, and at 0.5 mm the combination of evolution's measurements with both adjoints beat either
+   alone (-5.24 vs DAFoam -4.84, evolution alone -2.62; reported, not marked). At 0.125 mm the marked test (H2) failed:
+   at tiny steps the adjoints added nothing.
+4. **The loop works**: every generation so far kept a step under a rule fixed beforehand: -6.93 (DAFoam 1 mm), -1.28
+   (ESI), -0.27 (recombination), -1.02 (fresh DAFoam): **-9.50 mN, 5.0 % of the half-car drag** (steady model).
+5. **It survives the production scheme**: the -8.21 design keeps -6.32 mN (3.5 %) under linearUpwind (Mark P2 met).
+6. **The limit is the mesh**: the explicit morph (new, opt-in) moves the wall layer rigidly and allows ~1 mm per morph,
+   chained to ~1.5-2 mm; beyond that the mesh must be rebuilt (untested here).
 
 ## 3. Why this design, and not the alternatives
 - **Plain CMA-ES (the evolution branch):** 96 SimScale cars over a 72-number lattice never beat the team pod (best 4 %
