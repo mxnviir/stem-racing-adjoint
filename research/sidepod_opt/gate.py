@@ -280,7 +280,7 @@ def cmd_bump(k, n_sub):
     d = rec(half, health, secs, bump=k, morph_fallback=fell_back, run_dir_kept=run)
     (R / f"bump_{k}.json").write_text(json.dumps(d, indent=1, default=float))
     save_forces(run, f"bump_{k}")
-    if run and not fell_back:
+    if run and not fell_back and os.environ.get("GATE_KEEP_RUN") != "1":   # GATE_KEEP_RUN=1: kept (e.g. an adjoint follows)
         shutil.rmtree(run, ignore_errors=True)             # keep the disk; the numbers are saved
     print(json.dumps(d, default=float), flush=True)
 

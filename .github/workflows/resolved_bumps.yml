@@ -98,6 +98,7 @@ jobs:
         working-directory: research/sidepod_opt
         timeout-minutes: 320
         run: |
+          if [ -n "${{ matrix.case.esi_after }}" ]; then export GATE_KEEP_RUN=1; fi
           export GATE_RES=resolved GATE_RESULTS=$PWD/gate_results_resolved_up GATE_ITERS=${{ matrix.case.iters || 1000 }} GATE_TIMEOUT=18000 \
                  CFD_DIV_U="bounded Gauss upwind" GATE_WALL_RESOLVED=1 GATE_MORPH_REF_RM=1 P2_MORPH_STRICT=1 P2_WARM_COPY=1
           if [ "${{ matrix.case.prod }}" = "1" ]; then unset CFD_DIV_U; echo "production scheme (linearUpwind), ${GATE_ITERS} iterations"; fi
@@ -126,6 +127,14 @@ jobs:
               echo "== solver.log tail"; tail -60 "$K"logs/solver.log; } > ../../out/logs/"${{ matrix.case.name }}"_diag.txt 2>&1
             tail -80 ../../out/logs/"${{ matrix.case.name }}"_diag.txt
           fi
+          if [ "$RC" = 0 ] && [ -n "${{ matrix.case.esi_after }}" ]; then   # hybrid: ESI (frozen) on this converged morphed state
+            K=$(python3 -c "import json;print(json.load(open('gate_results_resolved_up/bump_${{ matrix.case.name }}.json'))['run_dir_kept'])")
+            T1=$(date +%s)
+            python -W ignore -u esi/esi_on_state.py "$K" gate/esi_after_${{ matrix.case.name }} frozen 4 ${{ matrix.case.esi_after }} 100 > ../../out/logs/esi_after_${{ matrix.case.name }}.log 2>&1 || echo "esi_after failed"
+            echo "esi_after $(( ($(date +%s) - T1) / 60 )) min"
+            mkdir -p ../../out/esi_after && cp gate/esi_after_${{ matrix.case.name }}/esi_sens.* ../../out/esi_after/ 2>/dev/null || true
+            tail -5 ../../out/logs/esi_after_${{ matrix.case.name }}.log
+          fi
           { echo "## ${{ matrix.case.name }}: rc $RC"; grep -h "morph checkMesh" gate/bump_link.log;
             cat gate_results_resolved_up/bump_"${{ matrix.case.name }}".json 2>/dev/null | head -c 600; } >> "$GITHUB_STEP_SUMMARY"
           exit $RC
@@ -148,6 +157,7 @@ jobs:
           mkdir -p $D/gate_results_resolved_up $D/esi/resolved_bumps_logs
           cp -r /tmp/bumps/gate_results_resolved_up/. $D/gate_results_resolved_up/ 2>/dev/null || true
           cp /tmp/bumps/logs/*.log $D/esi/resolved_bumps_logs/ 2>/dev/null || true
+          if [ -d /tmp/bumps/esi_after ]; then mkdir -p $D/hybrid/esi_after/${{ github.run_id }} && cp /tmp/bumps/esi_after/* $D/hybrid/esi_after/${{ github.run_id }}/; git add $D/hybrid/esi_after; fi
           git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add $D/gate_results_resolved_up $D/esi/resolved_bumps_logs
           git commit -m "resolved_bumps: results of run ${{ github.run_id }}" || exit 0
