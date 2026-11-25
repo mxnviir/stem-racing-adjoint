@@ -1,164 +1,22 @@
 {
- "note": "hybrid loop generation 5: parent daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25 (chained) + one move each",
+ "note": "hybrid Mark P3: the generation-5 parent under the production scheme, 2000 its",
  "steady_release": "resolved-steady-45125305486",
  "bumpgeom_run": 45188798730,
  "cases": [
   {
-   "name": "step_g5_zero",
+   "name": "step_best4_P",
+   "site": "step",
    "field": "zero",
-   "amp": "0.0",
-   "site": "step",
+   "amp": "0",
    "direct": "1",
    "nsig": "1.5",
    "mask": "0",
    "explicit": "1",
    "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_dafnew",
-   "field": "dafnpz:hybrid/dafoam_actions/45533213960/daf-g4parent/dafoam_sens.npz",
-   "amp": "0.25",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_esi",
-   "field": "esinpz:hybrid/esi_after/45519814660/esi_sens.npz",
-   "amp": "0.25",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_comb",
-   "field": "vec:hybrid/g5/guided.npy",
-   "amp": "0.25",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_combh",
-   "field": "vec:hybrid/g5/guided.npy",
-   "amp": "0.125",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_es",
-   "field": "vec:hybrid/g5/es.npy",
-   "amp": "0.25",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_esh",
-   "field": "vec:hybrid/g5/es.npy",
-   "amp": "0.125",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_rnd29",
-   "field": "rnd29",
-   "amp": "0.25",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_rnd30",
-   "field": "rnd30",
-   "amp": "0.25",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_rnd31",
-   "field": "rnd31",
-   "amp": "0.25",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_rnd32",
-   "field": "rnd32",
-   "amp": "0.25",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_rnd33",
-   "field": "rnd33",
-   "amp": "0.25",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
-  },
-  {
-   "name": "step_g5_rnd34",
-   "field": "rnd34",
-   "amp": "0.25",
-   "site": "step",
-   "direct": "1",
-   "nsig": "1.5",
-   "mask": "0",
-   "explicit": "1",
-   "zmin": "1.5",
-   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25"
+   "chainparent": "daf@1.0|esi_frozen@0.5|vec:hybrid/g3/es.npy@0.25|dafnpz:hybrid/dafoam_actions/45519631165/daf-g3parent/dafoam_sens.npz@0.25",
+   "prod": "1",
+   "iters": "2000"
   }
  ],
- "attempt": 105
+ "attempt": 203
 }

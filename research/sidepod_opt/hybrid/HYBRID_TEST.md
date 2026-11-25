@@ -256,3 +256,7 @@ The base DAFoam direction was spent after 1 mm; the gradient recomputed at the m
 ## Generation 5 (written before these solves; loop.py rules, 0.25 mm as generation 4)
 Parent: 4 chained levels (`loop_state.json`). Guides: DAFoam at the generation-4 parent (run 45533213960), ESI fresh at
 the generation-3 parent (`esinpz:hybrid/esi_after/45519814660`). Mark L as before.
+
+## Mark P3 (written before this solve): the generation-5 parent (steady -9.50 mN) under the production scheme
+`step_best4_P`, as Mark P2 (production scheme, 2000 iterations, SE from ten 200-iteration block means, against
+`step_zero_P`). **Mark P3:** D(best4_P) < D(zero_P) by >= 3 SE. Reported: the ratio to -9.50.
