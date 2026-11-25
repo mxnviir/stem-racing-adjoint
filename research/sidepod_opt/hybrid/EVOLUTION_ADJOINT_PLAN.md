@@ -32,8 +32,9 @@ opt-in), workflows `resolved_bumps.yml`, `coarse_dafoam.yml`, `morph_check.yml`.
    can be recomputed at every new design, and that matters: the base gradient was spent after 1 mm, and the gradient
    recomputed at the moved design gave generation 4's step (-1.02).
 2. **The normal adjoint (ESI) failed every gradient test, but as a direction it works**: it gave generation 2's step
-   (-1.28 on top of DAFoam's 1 mm). The two adjoints found different improvements. Fresh ESI at a moved design also works
-   (~2 h per design).
+   (-1.28 on top of DAFoam's 1 mm). The two adjoints point in nearly unrelated directions (cosine 0.0-0.2) and found
+   different improvements. Fresh ESI at a moved design works (~2 h), but ESI's direction hardly changes with the design
+   (cosine 0.8-1.0) while DAFoam's does (0.05 after 1.5 mm): refresh DAFoam every generation, ESI rarely.
 3. **Evolution's part**: random moves alone are weak (most are worse than the parent in every generation), but
    recombining the measured moves (least squares in their span) gave generation 3's step (-0.27) when the adjoints' own
    directions were blocked, and at 0.5 mm the combination of evolution's measurements with both adjoints beat either

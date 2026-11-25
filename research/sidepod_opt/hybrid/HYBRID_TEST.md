@@ -260,3 +260,11 @@ the generation-3 parent (`esinpz:hybrid/esi_after/45519814660`). Mark L as befor
 ## Mark P3 (written before this solve): the generation-5 parent (steady -9.50 mN) under the production scheme
 `step_best4_P`, as Mark P2 (production scheme, 2000 iterations, SE from ten 200-iteration block means, against
 `step_zero_P`). **Mark P3:** D(best4_P) < D(zero_P) by >= 3 SE. Reported: the ratio to -9.50.
+
+## How the adjoint directions move with the design (diagnostic, 2026-11-25 05:20)
+Cosine (area-weighted) between 0.25 mm step fields: DAFoam base vs at the generation-3 parent 0.05, generation-3 vs
+generation-4 parent 0.71; ESI base vs moved 0.79-0.80, generation-3 vs generation-4 parent 1.00; DAFoam vs ESI 0.0-0.2.
+The discrete adjoint's direction changes with the design (refreshing it paid: generation 4); the normal adjoint's
+hardly does (it follows the geometry more than the flow, consistent with its failed gradient tests), so refreshing ESI
+(~2 h) is not worth it every generation. The two adjoints point in nearly unrelated directions.
+Fresh ESI at the generation-4 parent: run 45535603829 (`hybrid/esi_after/45535603829`).
