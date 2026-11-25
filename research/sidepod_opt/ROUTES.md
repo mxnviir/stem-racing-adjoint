@@ -1574,6 +1574,17 @@ external topology case was **not found** in their material (that is not proof it
   - Evolution branch: its CMA-ES (72-number lattice, SimScale, milling) never beat the team pod; its ask/tell interface is
     ported (`hybrid/evolution_methods.py`), not its lattice.
 
+- **2026-11-25 08:00, evolution + adjoint loop: six generations, -9.94 mN (5.2 %) steady; -6.32 mN confirmed under the
+  production scheme for the generation-3 design (Mark P2). The loop stops because the chained morph is spent.**
+  - Accepted steps (each beat its parent by >= 3 SE and >= 0.15 mN): DAFoam 1 mm -6.93; ESI 0.5 mm -1.28; evolution's
+    recombination 0.25 mm -0.27; DAFoam recomputed at the moved design 0.25 mm -1.02; recombination -0.25; -0.19.
+  - Adjoint directions: DAFoam's changes with the design (refresh it every generation, ~1.5 h on a runner; 2 of 7 runner
+    jobs failed), ESI's hardly does (cosine 0.8-1.0); the two are nearly orthogonal and found different gains.
+  - Random moves: most were worse than the parent in every generation; evolution contributes through recombining the
+    measured moves, which gave the last three steps.
+  - Limit: ~2 mm of chained explicit morphs (6 levels); then every adjoint move folds. Next: a new wall-resolved mesh
+    on the final design (~5 h, free) and continue (`hybrid/EVOLUTION_ADJOINT_PLAN.md` section 7).
+
 ## Sources
 
 - Feppon, Allaire, Dapogny, Jolivet: [body-fitted topology optimisation of 2D and 3D heat exchangers](https://www-ljk.imag.fr/membres/Charles.Dapogny/publis/heatexchangers.pdf); [thermal fluid-structure systems, body-fitted meshes](https://researchportal.ip-paris.fr/en/publications/topology-optimization-of-thermal-fluidstructure-systems-using-bod/)
