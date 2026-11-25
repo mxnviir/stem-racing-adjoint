@@ -21,3 +21,8 @@ Next: generation 2 (round 3) = best <= 0.5 mm design + 0.5 mm children (fresh DA
 | DAFoam at daf@1.0 retry | coarse_dafoam (22:31) | running |
 | Round 2b (ES/GUIDED-DAF/GUIDED-ESI at 0.5 mm) | resolved_bumps 45501709693 (22:31) | running |
 | Round 1c | 45486415307 | dafopp_05E done (+4.05, job log); rnd1m_05E and the production pair (2000 its) still running |
+| Round 2b | 45501709693 | done: at 0.5 mm combined -5.24 best, evolution alone -2.62 |
+| Round 1c | 45486415307 | done: Mark S met; Mark P not met (production noise 3 SE 12.5 mN) |
+| Generation 2 relaunch | 45503888773 | Mark L met: ESI 0.5 accepted, total -8.21 mN; parent now daf@1.0|esi_frozen@0.5 |
+| Generation 3 (loop.py next 3) | resolved_bumps 45519631311 (00:38) | running; then `python hybrid/loop.py next 4 <fresh npz>` |
+| DAFoam at gen-3 parent | coarse_dafoam (00:38) | running |
