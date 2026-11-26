@@ -259,6 +259,15 @@ the trust check (T3e' fix). New instances 11, 12, 13 (never run; half the seeds 
 - **TFc:** with an adjoint that misleads on open pods (S3), it is no worse than evolution alone in >= 10 of 15 pairs.
 This is a regression check of the machinery (the operators changed after T3), not a physics result.
 
+### TW Campaign workflow plumbing (written before the run)
+`.github/workflows/seedevo_campaign.yml` + `campaign.py` + `campaign_case.py`, a test campaign `campaign_test` of two
+seeds (team pod, windowed pod), census batch only, production scheme (mode prod), auto off.
+- **W1:** both cases rebuild their design from the stored field on a runner, mesh, solve, and return a production drag;
+  the collect job commits `campaign_test/results/gen_0/`.
+- **W2:** `campaign.py ingest` then `next` on those results writes a legal batch 1 (here, not on a runner).
+- Reported: each drag beside the gate run's frame-0 production drag of the same design (the campaign rebuilds the
+  design from its field: pod volume 65.70 vs 65.76 cm3 for the windowed pod, builder drift, not storage).
+
 ### T3e' re-test of the trust check (owner approved the fix and re-test 2026-11-26; written before the run)
 T3e failed as registered (instances 5-7, kept as failed). Fixes, developed on instance 0 only: (1) a downhill
 probe the morph refuses is retried at half size; if still unmeasurable the design stays **undecided** (re-checked

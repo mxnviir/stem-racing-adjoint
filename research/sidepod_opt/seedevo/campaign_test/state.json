@@ -1,0 +1,65 @@
+{
+ "gen": 0,
+ "next_id": 2,
+ "designs": {
+  "0": {
+   "name": "original",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    67.464,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 126.0
+  },
+  "1": {
+   "name": "window",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    65.706,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 88.0
+  }
+ },
+ "archive": {},
+ "duels": [],
+ "seeds": [
+  "0",
+  "1"
+ ],
+ "score": "steady",
+ "n_explore": 16,
+ "n_control": 4,
+ "rng": 1,
+ "batches": [
+  {
+   "gen": 0,
+   "cases": [
+    {
+     "id": 0,
+     "k": 0
+    },
+    {
+     "id": 1,
+     "k": 0
+    }
+   ]
+  }
+ ]
+}

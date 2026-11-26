@@ -1,0 +1,123 @@
+name: seedevo_campaign
+run-name: "Seed evolution campaign: one batch (${{ github.event.inputs.dir || 'request file' }})"
+
+# research/sidepod_opt/seedevo/campaign.py: one batch of the campaign. Each case rebuilds its design from the field in
+# <dir>/fields/, scores it on a fresh wall-resolved mesh (meshing frame k x 0.37 mm), and the collect job commits
+# <dir>/results/gen_<g>/case_<id>_k<k>.json. With "auto": true in the request, collect also runs ingest + next and
+# dispatches the next batch (workflow_dispatch is the one event a GITHUB_TOKEN may start).
+# Launch: commit .github/seedevo_campaign_request.json {"dir": ..., "mode": "prod"|"steady", "auto": false}.
+on:
+  push:
+    branches: [claude/loving-keller-q72mvv]
+    paths: [".github/seedevo_campaign_request.json"]
+  workflow_dispatch:
+    inputs:
+      dir: { description: "campaign dir (relative to research/sidepod_opt)", required: true }
+      mode: { default: "steady" }
+      auto: { default: "false" }
+
+permissions: { contents: write, actions: write }
+
+env:
+  PY_DEPS: numpy==2.4.6 scipy==1.17.1 pandas trimesh==5.2.0 scikit-image shapely rtree==1.4.1 mapbox-earcut manifold3d==3.5.4 fast_simplification==0.2.0 jax jaxlib matplotlib pymeshlab==2025.7.post1 numba cadquery-ocp
+  OMPI_MCA_rmaps_base_oversubscribe: "1"
+  OMPI_MCA_hwloc_base_use_hwthreads_as_cpus: "1"
+  OMPI_ALLOW_RUN_AS_ROOT: "1"
+  OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: "1"
+
+jobs:
+  init:
+    runs-on: ubuntu-24.04
+    outputs:
+      cases: ${{ steps.r.outputs.cases }}
+      dir: ${{ steps.r.outputs.dir }}
+      mode: ${{ steps.r.outputs.mode }}
+      auto: ${{ steps.r.outputs.auto }}
+      gen: ${{ steps.r.outputs.gen }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: r
+        env: { I_DIR: "${{ github.event.inputs.dir }}", I_MODE: "${{ github.event.inputs.mode }}", I_AUTO: "${{ github.event.inputs.auto }}" }
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os
+          if os.environ.get("I_DIR"):
+              d, mode, auto = os.environ["I_DIR"], os.environ.get("I_MODE") or "steady", os.environ.get("I_AUTO") == "true"
+          else:
+              r = json.load(open(".github/seedevo_campaign_request.json")); d, mode, auto = r["dir"], r.get("mode", "steady"), r.get("auto", False)
+          req = json.load(open(f"research/sidepod_opt/{d}/request.json"))
+          print("cases=" + json.dumps(req["cases"])); print("dir=" + d); print("mode=" + mode)
+          print("auto=" + ("true" if auto else "false")); print("gen=" + str(req["gen"]))
+          PY
+
+  case:
+    name: "d${{ matrix.case.id }} ~${{ matrix.case.k }}"
+    needs: init
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        case: ${{ fromJSON(needs.init.outputs.cases) }}
+    steps:
+      - name: room (free disk, 10 GB swap)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo fallocate -l 10G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: OpenFOAM v2412 + python deps
+        timeout-minutes: 30
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          for i in 1 2 3 4 5; do (curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash) && sudo apt-get install -y -q openfoam2412-default && break; sleep 30; done
+          pip install $PY_DEPS
+      - name: build from the field, fresh wall-resolved mesh, score
+        working-directory: research/sidepod_opt
+        timeout-minutes: 315
+        run: |
+          source /usr/lib/openfoam/openfoam2412/etc/bashrc || true
+          python -W ignore -m seedevo.campaign_case "${{ needs.init.outputs.dir }}" ${{ matrix.case.id }} ${{ matrix.case.k }} /tmp/case "${{ needs.init.outputs.mode }}" | tail -1
+          mkdir -p ../../out && cp /tmp/case/case_*.json ../../out/
+          mkdir -p ../../out/logs_d${{ matrix.case.id }}_k${{ matrix.case.k }} && cp /tmp/case/*.log ../../out/logs_d${{ matrix.case.id }}_k${{ matrix.case.k }}/ 2>/dev/null || true
+          cat ../../out/case_*.json >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "case-${{ matrix.case.id }}-${{ matrix.case.k }}", path: out/, retention-days: 30 }
+
+  collect:
+    needs: [init, case]
+    if: always() && needs.init.result == 'success'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.ref_name }}", fetch-depth: 0 }
+      - uses: actions/download-artifact@v4
+        with: { pattern: "case-*", merge-multiple: true, path: /tmp/r }
+      - uses: actions/setup-python@v5
+        if: needs.init.outputs.auto == 'true'
+        with: { python-version: "3.11" }
+      - name: commit the results (and, in auto mode, write the next batch)
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          D=research/sidepod_opt/${{ needs.init.outputs.dir }}
+          R=$D/results/gen_${{ needs.init.outputs.gen }}
+          mkdir -p $R && cp -r /tmp/r/. $R/ 2>/dev/null || true
+          find $R -name "*.log" -size +1M -exec sh -c 'tail -c 1000000 "$1" > "$1.t" && mv "$1.t" "$1"' _ {} \;
+          if [ "${{ needs.init.outputs.auto }}" = "true" ]; then
+            sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 >/dev/null
+            pip install -q $PY_DEPS
+            (cd research/sidepod_opt && python -W ignore -m seedevo.campaign ingest ${{ needs.init.outputs.dir }} ${{ needs.init.outputs.dir }}/results/gen_${{ needs.init.outputs.gen }} \
+              && python -W ignore -m seedevo.campaign next ${{ needs.init.outputs.dir }}) | grep -v "Qt\|Cannot" | tail -3
+          fi
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add $D
+          git commit -m "seedevo campaign ${{ needs.init.outputs.dir }}: batch ${{ needs.init.outputs.gen }} results (run ${{ github.run_id }})" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done
+          if [ "${{ needs.init.outputs.auto }}" = "true" ] && [ ! -f $D/STOP ]; then
+            gh workflow run seedevo_campaign.yml -R ${{ github.repository }} --ref ${{ github.ref_name }} \
+              -f dir=${{ needs.init.outputs.dir }} -f mode=${{ needs.init.outputs.mode }} -f auto=true
+          fi
