@@ -427,3 +427,12 @@ loop): zero, along DAFoam (`dn`), against it (`up`), random smooth moves seeds 1
 - Kontoleontos, Asouti, Giannakoglou (2012); Bons, He, Mader, Martins (2019): as in `ROUTES.md`
 - Gradients inside a quality-diversity search: Nilsson, Cully: [Policy gradient assisted MAP-Elites (2021)](https://hal.archives-ouvertes.fr/hal-03135723v2/file/PGA_MAP_Elites_GECCO.pdf) (half the offspring from a gradient operator, half from the genetic one; a later ablation found the gradient operator matters most early and that both are needed: [Flageat, Chalumeau, Cully 2022](https://arxiv.org/abs/2210.13156)); Fontaine, Nikolaidis: [Differentiable quality diversity (2021)](https://arxiv.org/pdf/2106.03894)
 - Writing the locally improved design back into the population (Lamarckian) or not (Baldwinian): Whitley, Gordon, Mathias: [Lamarckian evolution, the Baldwin effect and function optimization (1994)](https://www.doi.org/10.1007/3-540-58484-6_245). Lamarckian converges faster and is more easily trapped; the map's many niches are the guard against that here
+
+### Campaign scoring amendment (2026-11-26 21:20, after TW, before any campaign)
+A campaign case runs 1000 production iterations from a cold start, so "the last 1000" holds the start-up transient:
+in the gate's frame-0 runs the first 200-iteration block reads 198.7 / 200.4 mN and the next four 173.9-174.5. From now
+on a campaign production score is the mean of iterations 200-1000 (four 200-blocks; block SE 0.10 / 0.19 mN on those two
+runs, against 5.2 / 5.6 with the transient in). T1 stays scored as registered (five blocks of the last 1000); the
+200-1000 figure is added beside it as reported, not marked. Also: the campaign workflow now takes its run mode from the
+campaign's score key (the TW batch ran in mode prod on a campaign that ranked on steady, so nothing was scored), and
+ingest stops if a converged result lacks the score the campaign ranks on.

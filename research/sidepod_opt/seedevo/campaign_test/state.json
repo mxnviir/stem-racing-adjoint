@@ -1,6 +1,6 @@
 {
- "gen": 0,
- "next_id": 2,
+ "gen": 1,
+ "next_id": 22,
  "designs": {
   "0": {
    "name": "original",
@@ -15,9 +15,20 @@
     3,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 180.72111634111891,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": null
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 126.0
+   "changed_mm3": 126.0,
+   "placed": true
   },
   "1": {
    "name": "window",
@@ -32,18 +43,516 @@
     3,
     1
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 179.17602018585677,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": null
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 88.0
+   "changed_mm3": 88.0,
+   "placed": true
+  },
+  "2": {
+   "name": "g1_explore_2",
+   "kind": "explore",
+   "op": "combine",
+   "parents": [
+    "1",
+    "0"
+   ],
+   "desc": [
+    67.338,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 0.0,
+   "meta": {
+    "mode": "material",
+    "whole": true,
+    "redraws": 6,
+    "near_copy": true
+   }
+  },
+  "3": {
+   "name": "g1_explore_3",
+   "kind": "explore",
+   "op": "splice",
+   "parents": [
+    "1",
+    "0"
+   ],
+   "desc": [
+    67.262,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 276.0,
+   "meta": {
+    "axis": 2,
+    "cut": 17.90689211896797
+   }
+  },
+  "4": {
+   "name": "g1_explore_4",
+   "kind": "explore",
+   "op": "combine",
+   "parents": [
+    "1",
+    "0"
+   ],
+   "desc": [
+    65.694,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 20.0,
+   "meta": {
+    "mode": "cuts",
+    "whole": true,
+    "redraws": 6,
+    "near_copy": true
+   }
+  },
+  "5": {
+   "name": "g1_explore_5",
+   "kind": "explore",
+   "op": "fill",
+   "parents": [
+    "1"
+   ],
+   "desc": [
+    68.904,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 330.0,
+   "meta": {
+    "kind": "rib",
+    "guided": false,
+    "redraws": 0
+   }
+  },
+  "6": {
+   "name": "g1_explore_6",
+   "kind": "explore",
+   "op": "splice",
+   "parents": [
+    "1",
+    "0"
+   ],
+   "desc": [
+    67.336,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 2.0,
+   "meta": {
+    "axis": 0,
+    "cut": 87.87885534263575
+   }
+  },
+  "7": {
+   "name": "g1_explore_7",
+   "kind": "explore",
+   "op": "fill",
+   "parents": [
+    "1"
+   ],
+   "desc": [
+    68.484,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 282.0,
+   "meta": {
+    "kind": "rib",
+    "guided": false,
+    "redraws": 2
+   }
+  },
+  "8": {
+   "name": "g1_explore_8",
+   "kind": "explore",
+   "op": "combine",
+   "parents": [
+    "1",
+    "0"
+   ],
+   "desc": [
+    65.698,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 20.0,
+   "meta": {
+    "mode": "cuts",
+    "r": 25.01015136071202,
+    "redraws": 6,
+    "near_copy": true
+   }
+  },
+  "9": {
+   "name": "g1_explore_9",
+   "kind": "explore",
+   "op": "fill",
+   "parents": [
+    "1"
+   ],
+   "desc": [
+    69.116,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 880.0,
+   "meta": {
+    "kind": "blob",
+    "guided": false,
+    "redraws": 0
+   }
+  },
+  "10": {
+   "name": "g1_explore_10",
+   "kind": "explore",
+   "op": "line",
+   "parents": [
+    "1",
+    "0"
+   ],
+   "desc": [
+    66.556,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 996.0,
+   "meta": {
+    "t": 0.15310954653447012,
+    "amp": 0.8590558621185989
+   }
+  },
+  "11": {
+   "name": "g1_explore_11",
+   "kind": "explore",
+   "op": "line",
+   "parents": [
+    "1",
+    "0"
+   ],
+   "desc": [
+    67.32,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 1088.0,
+   "meta": {
+    "t": 0.2698708656345442,
+    "amp": 0.8723719342966076
+   }
+  },
+  "12": {
+   "name": "g1_explore_12",
+   "kind": "explore",
+   "op": "fill",
+   "parents": [
+    "1"
+   ],
+   "desc": [
+    68.242,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 344.0,
+   "meta": {
+    "kind": "rib",
+    "guided": false,
+    "redraws": 0
+   }
+  },
+  "13": {
+   "name": "g1_explore_13",
+   "kind": "explore",
+   "op": "bump",
+   "parents": [
+    "1"
+   ],
+   "desc": [
+    71.88,
+    1
+   ],
+   "niche": [
+    4,
+    1
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 428.0,
+   "meta": {
+    "a": 5.512985284495379,
+    "r": 16.20680571650167,
+    "guided": false
+   }
+  },
+  "14": {
+   "name": "g1_explore_14",
+   "kind": "explore",
+   "op": "graft",
+   "parents": [
+    "1",
+    "0"
+   ],
+   "desc": [
+    67.256,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 46.0,
+   "meta": {
+    "r": 9.604929215642727
+   }
+  },
+  "15": {
+   "name": "g1_explore_15",
+   "kind": "explore",
+   "op": "fill",
+   "parents": [
+    "1"
+   ],
+   "desc": [
+    67.45,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 322.0,
+   "meta": {
+    "kind": "close",
+    "redraws": 1
+   }
+  },
+  "16": {
+   "name": "g1_explore_16",
+   "kind": "explore",
+   "op": "cut",
+   "parents": [
+    "1"
+   ],
+   "desc": [
+    58.758,
+    2
+   ],
+   "niche": [
+    3,
+    2
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 224.0,
+   "meta": {
+    "kind": "window_y",
+    "rho": 5.813174184468611,
+    "guided": false
+   }
+  },
+  "17": {
+   "name": "g1_explore_17",
+   "kind": "explore",
+   "op": "splice",
+   "parents": [
+    "1",
+    "0"
+   ],
+   "desc": [
+    65.886,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 132.0,
+   "meta": {
+    "axis": 0,
+    "cut": 84.18143882556846
+   }
+  },
+  "18": {
+   "name": "g1_control_18",
+   "kind": "control",
+   "op": "line",
+   "parents": [
+    "0",
+    "1"
+   ],
+   "desc": [
+    67.246,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 124.0,
+   "meta": {
+    "t": 0.11559735364174453,
+    "amp": 0.38269081374364555
+   }
+  },
+  "19": {
+   "name": "g1_control_19",
+   "kind": "control",
+   "op": "line",
+   "parents": [
+    "1",
+    "0"
+   ],
+   "desc": [
+    66.82,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 466.0,
+   "meta": {
+    "t": 0.2497513621711336,
+    "amp": 0.3439645514879224
+   }
+  },
+  "20": {
+   "name": "g1_control_20",
+   "kind": "control",
+   "op": "line",
+   "parents": [
+    "0",
+    "1"
+   ],
+   "desc": [
+    67.366,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 102.0,
+   "meta": {
+    "t": 0.21379613462525676,
+    "amp": 0.42730236167218283
+   }
+  },
+  "21": {
+   "name": "g1_control_21",
+   "kind": "control",
+   "op": "splice",
+   "parents": [
+    "0",
+    "1"
+   ],
+   "desc": [
+    65.7,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 22.0,
+   "meta": {
+    "axis": 0,
+    "cut": 91.46682033988476
+   }
   }
  },
- "archive": {},
+ "archive": {
+  "3,0": "0",
+  "3,1": "1"
+ },
  "duels": [],
  "seeds": [
   "0",
   "1"
  ],
- "score": "steady",
+ "score": "prod",
  "n_explore": 16,
  "n_control": 4,
  "rng": 1,
@@ -60,6 +569,48 @@
      "k": 0
     }
    ]
+  },
+  {
+   "gen": 1,
+   "n": 20,
+   "log": [
+    [
+     "new",
+     "0",
+     null,
+     180.72111634111891,
+     null
+    ],
+    [
+     "new",
+     "1",
+     null,
+     179.17602018585677,
+     null
+    ]
+   ]
   }
+ ],
+ "hashes": [
+  "001819a1db6d398c",
+  "00d7ce1cb63a33a4",
+  "0f16f29218337760",
+  "244348cd37d0e1a9",
+  "58392fd86e72a082",
+  "5b743f5fbc6aada2",
+  "5ff2f45cfb966b1d",
+  "6b69e275e335243b",
+  "7c3cb8d4d82acb3e",
+  "934b6a0015826124",
+  "9876c51a782cb0ab",
+  "98959477e2f24829",
+  "9a624fb34de92a0c",
+  "a7017f78a3ffb1f2",
+  "a9c1cad9cd9586dc",
+  "ace4f1b3335cda07",
+  "d4fd97d61e9ae32f",
+  "d56ca7baa2adaf4b",
+  "df50df542d8012f3",
+  "eca5950a3c0d3325"
  ]
 }

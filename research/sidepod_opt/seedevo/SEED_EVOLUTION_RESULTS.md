@@ -182,3 +182,14 @@ mirror (82.71.205.33), and the repo script sometimes came back as a web page. Th
 .github/scripts/install_openfoam.sh: the seven v2412 (2412.260127-1) packages fetched from named mirrors in turn, each
 kept only if its SHA-256 matches the openfoam.com repo index (checked), cached between jobs; the apt repo is the last
 resort. Re-launched (attempt 3).
+
+**TW campaign workflow plumbing (run 45870892378):**
+- **W1 PASS.** Both cases rebuilt their design from the stored field, meshed fresh (2.12 M cells, y+ max 55.9 / 55.7),
+  converged, returned a production drag; collect committed `campaign_test/results/gen_0/`.
+- **W2 PASS after a fix.** As launched, `next` found nothing to breed from: the test campaign ranked on `steady` and the
+  batch ran in mode `prod`. With the campaign's score set to `prod` (what TW specified), ingest + next wrote a legal
+  batch 1: 20 new children (16 explore, 4 control), 7 operators, all distinct, 1 m 47 s on 2 workers. (This campaign
+  predates seed hashing, so a child equal to a seed would not be caught here; new campaigns hash their seeds.)
+- Reported, same design, frame 0, mean of the full 1000 iterations: team pod 180.72 campaign vs 179.07 gate; windowed
+  pod 179.18 vs 179.24. With the start-up transient left out (iterations 200-1000, gate runs): 174.18 / 173.97 mN, block
+  SE 0.10 / 0.19. See the campaign scoring amendment in the plan.

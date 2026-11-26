@@ -46,6 +46,7 @@ jobs:
           else:
               r = json.load(open(".github/seedevo_campaign_request.json")); d, mode, auto = r["dir"], r.get("mode", "steady"), r.get("auto", False)
           req = json.load(open(f"research/sidepod_opt/{d}/request.json"))
+          mode = json.load(open(f"research/sidepod_opt/{d}/state.json")).get("score", mode)   # the campaign's score key decides
           print("cases=" + json.dumps(req["cases"])); print("dir=" + d); print("mode=" + mode)
           print("auto=" + ("true" if auto else "false")); print("gen=" + str(req["gen"]))
           PY

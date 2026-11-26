@@ -151,6 +151,9 @@ def cmd_ingest(st_dir, space, results):
         d = S.st["designs"].get(str(r["id"]))
         if d is None or any(x["k"] == r["k"] for x in d["runs"]):
             continue
+        if r.get("converged") and r.get(S.st["score"]) is None:
+            raise SystemExit(f"case {r['id']} k{r['k']} (mode {r.get('mode')}) has no '{S.st['score']}' drag, the score this "
+                             f"campaign ranks on: run the batch in mode {S.st['score']}")
         d["runs"].append({k: r.get(k) for k in ("k", "steady", "prod", "converged", "layer_cov_pct", "error", "setup")})
         if r.get("setup") and not S.st.get("setup"):
             S.st["setup"] = r["setup"]                     # the first result fixes the campaign's setup

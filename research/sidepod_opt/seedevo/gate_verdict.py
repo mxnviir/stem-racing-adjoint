@@ -72,7 +72,10 @@ for d in sorted(ROOT.glob("t1/t1-*")):
             j = json.loads(pj.read_text())
             r.update(cells=j.get("n_cells"), yplus=(j.get("y_plus_min"), j.get("y_plus_max")), D20_prod=j["D20_half_N"] * 1e3)
         if (tagdir / "forces_prod.dat").exists():
-            r["prod_mN"], r["prod_se"], r["prod_blocks"] = prod_blocks(force_col(tagdir / "forces_prod.dat"))
+            Dp = force_col(tagdir / "forces_prod.dat")
+            r["prod_mN"], r["prod_se"], r["prod_blocks"] = prod_blocks(Dp)
+            b4 = Dp[-800:].reshape(4, 200).mean(1)             # reported, not marked: start-up transient (first 200) left out
+            r["prod800_mN"], r["prod800_se"] = float(b4.mean()), float(b4.std(ddof=1) / 2)
         if (tagdir / "forces_steady.dat").exists():
             r["steady_mN"], r["steady_se"] = last404(force_col(tagdir / "forces_steady.dat"))
         sb = tagdir / "steady" / "base.json"
@@ -96,7 +99,7 @@ def pooled(key):
     return (np.sqrt(ss / dof) if dof else None), dof, per
 
 
-for key, name in (("prod_mN", "production"), ("steady_mN", "steady")):
+for key, name in (("prod_mN", "production"), ("steady_mN", "steady"), ("prod800_mN", "production_200_to_1000_reported")):
     s, dof, per = pooled(key)
     band = None if s is None else ("single runs score" if s <= 1.0 else "duel (section 5)" if s <= 2.5 else "cannot score")
     out["T1"][name] = {"pooled_sigma_mN": s, "dof": dof, "I2": band, "per_design": per}
