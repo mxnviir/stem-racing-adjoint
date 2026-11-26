@@ -85,3 +85,17 @@ target had one, so "bad on pods with openings" rarely applied.
 What it did show: with a useless or misleading adjoint everywhere (S4, S5), the plain polish is worse than not
 polishing at all (3.56 / 3.50 against 3.40: the polish's 30 % of the budget is wasted), and the check recovers
 part of it (3.44 / 3.46). With a good adjoint, the plain polish is worth 0.66 (3.40 -> 2.74).
+
+## TP Plumbing on real coarse CFD (GitHub Actions run 45792787835, 2.3 h, `results/plumbing_45792787835/`): **PASS**
+P1 every stage ran (fresh mesh, solve, ESI adjoint, sensitivity on the grid, step, build, morph solve, decision),
+no errors. P2 team pod 449.24 mN whole car (reference 449.24) and no pod +22.1 mN half car (mark >= 15). P3
+both refined elites decided from morphed steps. P4 opening-changing crossover (graft) and mutation (pattern)
+children meshed and converged.
+
+Reported, not marked (coarse mesh: no design conclusion, D6), half car, steady model, mN:
+- census: groove 220.96, team 224.62, window 223.09, slots 226.67, no pod 246.69;
+- explore: line (groove x slots) 219.77 (took the groove's niche), graft 222.39, pattern 224.53 / 226.58;
+- refine (ESI adjoint, morph-scored; the morph's own offset measured at -0.006 / -0.002 mN): groove -1.54 at
+  0.5 mm (the 1 mm step folded the mesh), window pod -2.49 at 1 mm and -1.40 at 0.5 mm, both accepted;
+  first-order predictions -1.10, -2.77, -1.39. On this coarse mesh ESI's sizes were close to measured, unlike
+  the wall-resolved bump test; one coarse case, not evidence that the adjoint is accurate on a good mesh.
