@@ -1,0 +1,136 @@
+{
+ "problem": 15,
+ "best_seed": 3.4708693684311687,
+ "rows": [
+  {
+   "test": "TS",
+   "arm": "evo",
+   "seed": 1,
+   "true_best": 2.2526128570802233
+  },
+  {
+   "test": "TS",
+   "arm": "evo_screen",
+   "seed": 1,
+   "true_best": 2.0801571760851174
+  },
+  {
+   "test": "TC2",
+   "arm": "gf",
+   "seed": 1,
+   "true_best": 2.2526128570802233,
+   "refine": "10/58"
+  },
+  {
+   "test": "TC2",
+   "arm": "gf_cma",
+   "seed": 1,
+   "true_best": 2.2526128570802233,
+   "refine": "6/36"
+  },
+  {
+   "test": "TS",
+   "arm": "evo",
+   "seed": 2,
+   "true_best": 2.4224046082853947
+  },
+  {
+   "test": "TS",
+   "arm": "evo_screen",
+   "seed": 2,
+   "true_best": 2.255377287407613
+  },
+  {
+   "test": "TC2",
+   "arm": "gf",
+   "seed": 2,
+   "true_best": 2.42871582250542,
+   "refine": "15/59"
+  },
+  {
+   "test": "TC2",
+   "arm": "gf_cma",
+   "seed": 2,
+   "true_best": 2.42871582250542,
+   "refine": "9/49"
+  },
+  {
+   "test": "TS",
+   "arm": "evo",
+   "seed": 3,
+   "true_best": 2.7803330610583323
+  },
+  {
+   "test": "TS",
+   "arm": "evo_screen",
+   "seed": 3,
+   "true_best": 2.247738672523929
+  },
+  {
+   "test": "TC2",
+   "arm": "gf",
+   "seed": 3,
+   "true_best": 2.6969541745638885,
+   "refine": "10/46"
+  },
+  {
+   "test": "TC2",
+   "arm": "gf_cma",
+   "seed": 3,
+   "true_best": 2.6969541745638885,
+   "refine": "6/32"
+  },
+  {
+   "test": "TS",
+   "arm": "evo",
+   "seed": 4,
+   "true_best": 2.339642129012638
+  },
+  {
+   "test": "TS",
+   "arm": "evo_screen",
+   "seed": 4,
+   "true_best": 2.0484000668990276
+  },
+  {
+   "test": "TC2",
+   "arm": "gf",
+   "seed": 4,
+   "true_best": 2.502397480296751,
+   "refine": "16/54"
+  },
+  {
+   "test": "TC2",
+   "arm": "gf_cma",
+   "seed": 4,
+   "true_best": 2.502397480296751,
+   "refine": "9/29"
+  },
+  {
+   "test": "TS",
+   "arm": "evo",
+   "seed": 5,
+   "true_best": 2.2825566723598008
+  },
+  {
+   "test": "TS",
+   "arm": "evo_screen",
+   "seed": 5,
+   "true_best": 2.2883168460585033
+  },
+  {
+   "test": "TC2",
+   "arm": "gf",
+   "seed": 5,
+   "true_best": 2.2825566723598008,
+   "refine": "10/51"
+  },
+  {
+   "test": "TC2",
+   "arm": "gf_cma",
+   "seed": 5,
+   "true_best": 2.2825566723598008,
+   "refine": "9/32"
+  }
+ ]
+}

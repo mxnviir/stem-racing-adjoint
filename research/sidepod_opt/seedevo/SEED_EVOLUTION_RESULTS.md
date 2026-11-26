@@ -150,3 +150,11 @@ evolution 1.46 / 3.03 / 2.41 with, 1.60 / 3.16 / 2.29 without; evolve-then-polis
 batches, budget 300; instances 2-4, seeds 1-3): driver vs engine 1.60/1.82, 1.61/1.27, 2.04/1.45 (instance 2);
 3.31/3.15, 3.33/3.34, 3.24/3.34 (3); 2.55/2.31, 2.40/2.62, 2.24/2.69 (4). Means 1.75/1.51, 3.29/3.28, 2.40/2.54: the
 batch driver reaches the engine's level; 13-14 batches per 300 runs; no design lost; 0-3 duels open at the end.
+
+## TS and TC2 The evolution branch's mechanisms, ported (bench, instances 14-16, `results/port_p{14,15,16}.json`)
+- **TS PASS:** model-screened batches (GP + expected improvement + kriging believer, from the branch's layout search)
+  beat plain evolution in **11 of 15** pairs (mark >= 11); means 4.209 vs 4.872, 2.184 vs 2.416, 5.902 vs 6.786 (best
+  seeds of the instances are higher). Screening goes into the campaign configuration (the model only picks which
+  children get CFD; every pick is CFD'd).
+- **TC2 FAIL:** CMA-ES over a 6x2x3 lattice as the gradient-free polish beat random smooth moves in 7 of 15 (means
+  4.824 vs 4.875, 2.433 vs 2.433, 6.820 vs 6.845): no gain at this budget. Kept in the code, off.

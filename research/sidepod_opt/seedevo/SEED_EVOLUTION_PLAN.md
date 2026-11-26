@@ -268,6 +268,14 @@ seeds (team pod, windowed pod), census batch only, production scheme (mode prod)
 - Reported: each drag beside the gate run's frame-0 production drag of the same design (the campaign rebuilds the
   design from its field: pod volume 65.70 vs 65.76 cm3 for the windowed pod, builder drift, not storage).
 
+### TR amendment (2026-11-26 18:30, after DAFoam failed on `slots`, before any probe result)
+The slotted pod's coarse DAFoam adjoint stopped at its 2000-iteration GMRES cap (residual 2.8e-2 -> 3.6e-5, still
+falling; tolerance 1e-6; DAFoam writes no gradient unless it converges), as one hybrid-loop job did before. Rule: a
+design whose DAFoam adjoint fails gets **one retry with 5000 GMRES iterations** (`seedevo_gate_retry.yml`), and its
+dn/up probes run against the retry's gradient on the same frame-0 steady state. If the retry also fails, that design's
+check is undetermined (counted as not trusted, as registered). Marks unchanged. The failure itself is reported:
+the adjoint was harder to converge on the slotted pod than on the team pod.
+
 ### TS and TC2: the evolution branch's mechanisms, ported (owner 2026-11-26: "look at how its evolution mechanism
 worked and implement that stuff here"; written before the run)
 From branch `evolution` (search/layout/simscale_layout.py, search/sidepod and search/shape): (1) **model-screened

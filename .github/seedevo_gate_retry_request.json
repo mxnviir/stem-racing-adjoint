@@ -1,0 +1,6 @@
+{
+ "stage": "dafoam",
+ "designs": ["slots"],
+ "gmres_iters": 5000,
+ "attempt": 1
+}
