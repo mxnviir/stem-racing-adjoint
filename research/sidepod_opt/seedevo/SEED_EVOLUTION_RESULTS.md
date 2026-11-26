@@ -117,3 +117,15 @@ beats the unchecked polish on average in every scenario, and in 13 of 15 pairs w
 miss: misleading only on open pods (S3), where it is ahead on average but not in 10 of 15 pairs.
 About 40 % of checks were undecided (the bench's morph refused even the half-size probe), so in practice a large
 share of designs gets the gradient-free polish whatever the adjoint's quality.
+
+## T0b' and T0b'' Operator re-tests (real car, same 10 test seeds, new draws): **all nine operators now pass**
+| operator | attempt | legal | in band | near-copies | mill refill | verdict |
+|---|---|---|---|---|---|---|
+| bump | T0b' (wider random ranges) | 100 % | 93 % | 8 % | 0.6 % | PASS |
+| cut | T0b' (wider random ranges) | 95 % | 84 % | 16 % | 1.1 % | PASS |
+| combine | T0b' | 100 % | 53 % | 48 % | 0.2 % | FAIL |
+| fill | T0b' | 100 % | 53 % | 48 % | 0.5 % | FAIL |
+| combine | T0b'' (+ near-copy redraw) | 100 % | 83 % | 18 % | 0.3 % | PASS |
+| fill | T0b'' (+ near-copy redraw) | 100 % | 95 % | 5 % | 0.8 % | PASS |
+With splice, graft, line, pattern and offset (passed T0b), every operator passes. `results/t0b2_operators.json`,
+`results/t0b3_operators.json`. `cut` made new through-openings in 13 of 38 legal children.
