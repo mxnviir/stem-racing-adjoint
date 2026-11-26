@@ -62,3 +62,26 @@ Within T3b, `memetic` beats `evo` on all three instances (5/5, 5/5, 4/5); it fai
 - Not marked: the adjoint at the end improved on evolution alone on every instance (1.35 -> 1.21,
   3.46 -> 2.55, 2.38 -> 2.07), and with a useless adjoint it cost almost nothing (1.34, 3.47, 2.42 against
   evo's 1.35, 3.46, 2.38).
+
+## T3e Trust check (held-out instances 5-7, `results/t3e_heldout.json`): **FAIL as registered**
+| scenario (adjoint quality) | plain polish | with trust check | trusted | check no worse than plain |
+|---|---|---|---|---|
+| S1 good everywhere | 2.744 | 2.803 | 32 % | 8/15 |
+| S2 good closed, useless open | 2.786 | 2.900 | 26 % | 6/15 |
+| S3 good closed, misleading open | 2.772 | 2.970 | 22 % | 6/15 |
+| S4 useless everywhere | 3.555 | **3.441** | 8 % | 12/15 |
+| S5 misleading everywhere | 3.502 | **3.464** | 1 % | 11/15 |
+Evolution alone 3.403; gradient-free polish only 3.381.
+
+TC1 (cheap when good) PASS; TC2 (S3 fails 6/15) FAIL; TC3 (S2 fails 6/15) FAIL; TC4 (never worse than no
+polish) PASS; TC5 (trusted only 32 % in S1, needs 50 %) FAIL.
+
+Diagnosis (instance 5, S1, seeds 1-3, after the verdict): of 27 checks, 8 trusted and **all 19 distrusts were a
+downhill probe the morph refused** (a fold or a topology change), never a measured wrong direction: the same
+"missing measurement counted as distrust" bug that was fixed for the uphill probe, still present for the
+downhill one. And the instances did not exercise S2/S3: 0, 0 and 1 of 12 seeds had a through-opening and no
+target had one, so "bad on pods with openings" rarely applied.
+
+What it did show: with a useless or misleading adjoint everywhere (S4, S5), the plain polish is worse than not
+polishing at all (3.56 / 3.50 against 3.40: the polish's 30 % of the budget is wasted), and the check recovers
+part of it (3.44 / 3.46). With a good adjoint, the plain polish is worth 0.66 (3.40 -> 2.74).
