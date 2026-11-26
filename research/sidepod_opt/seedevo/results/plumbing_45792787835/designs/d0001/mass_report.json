@@ -1,0 +1,12 @@
+{
+ "car_weight_kg": 0.06915,
+ "com_mm": [
+  164.71876470028698,
+  0.0,
+  22.579137913557062
+ ],
+ "foam_g": 23.960594740099978,
+ "lead_g": 1.5155595381030942,
+ "car_without_cartridge_g": 48.0,
+ "note": "sidepod_opt: foam from the exact body mesh; other parts ASSUMED (see CarSpec)"
+}

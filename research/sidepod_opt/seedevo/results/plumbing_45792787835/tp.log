@@ -1,0 +1,42 @@
+[openfoam_case] partition sha 72e6ddcc7b384aaf
+CALL {"call": "fresh", "id": 0, "k": 0, "kind": "seed", "op": "", "parents": [], "desc": [67.47, 0], "D_mN": 224.6190763062849, "L_mN": 137.15382623228584, "converged": true, "osc": 0.00010215284358050971, "stderr": 1.7184789629511937e-06, "wall_s": 654.4}
+[openfoam_case] partition sha f70adae86ecca363
+CALL {"call": "fresh", "id": 1, "k": 0, "kind": "seed", "op": "", "parents": [], "desc": [57.304, 0], "D_mN": 220.95643971829185, "L_mN": 126.84826754013342, "converged": true, "osc": 0.0001451582259504934, "stderr": 2.0818132337475525e-06, "wall_s": 666.6}
+[openfoam_case] partition sha 945e95402846a3d9
+CALL {"call": "fresh", "id": 2, "k": 0, "kind": "seed", "op": "", "parents": [], "desc": [5.01, 0], "D_mN": 246.69079422531127, "L_mN": 127.91729937471094, "converged": true, "osc": 0.00015669595494067275, "stderr": 2.3151443843020584e-06, "wall_s": 647.2}
+[openfoam_case] partition sha 1af2d0d603b1aced
+CALL {"call": "fresh", "id": 3, "k": 0, "kind": "seed", "op": "", "parents": [], "desc": [51.726, 1], "D_mN": 226.67421324880004, "L_mN": 107.85093082175217, "converged": true, "osc": 0.00011342879438692843, "stderr": 2.0836166948260588e-06, "wall_s": 675.3}
+[openfoam_case] partition sha 714ecb4c64afb092
+CALL {"call": "fresh", "id": 4, "k": 0, "kind": "seed", "op": "", "parents": [], "desc": [65.764, 1], "D_mN": 223.08507846168752, "L_mN": 137.82460024813386, "converged": true, "osc": 0.00045306349122377446, "stderr": 5.1795906316192725e-06, "wall_s": 643.9}
+CENSUS {"original": {"id": 0, "D_mN": 224.6190763062849, "desc": [67.47, 0], "niche": [3, 0]}, "channel": {"id": 1, "D_mN": 220.95643971829185, "desc": [57.304, 0], "niche": [3, 0]}, "lean": {"id": 2, "D_mN": 246.69079422531127, "desc": [5.01, 0], "niche": [0, 0]}, "slots": {"id": 3, "D_mN": 226.67421324880004, "desc": [51.726, 1], "niche": [2, 1]}, "window": {"id": 4, "D_mN": 223.08507846168752, "desc": [65.764, 1], "niche": [3, 1]}}
+[openfoam_case] partition sha 2a0217ab63249ff2
+CALL {"call": "fresh", "id": 44, "k": 0, "kind": "explore", "op": "graft", "parents": [4, 3], "desc": [64.07, 0], "D_mN": 222.38753664124573, "L_mN": 127.71331773120603, "converged": true, "osc": 0.00014702129185145612, "stderr": 1.4095842537829373e-06, "wall_s": 647.8}
+[openfoam_case] partition sha 27758c615dc22117
+CALL {"call": "fresh", "id": 45, "k": 0, "kind": "explore", "op": "line", "parents": [1, 3], "desc": [59.57, 0], "D_mN": 219.77137180652272, "L_mN": 122.64074914596375, "converged": true, "osc": 4.653950851483776e-05, "stderr": 8.759429794273072e-07, "wall_s": 640.4}
+[openfoam_case] partition sha 13ed82230825dcee
+CALL {"call": "fresh", "id": 46, "k": 0, "kind": "explore", "op": "pattern", "parents": [0], "desc": [57.542, 1], "D_mN": 224.53103549878833, "L_mN": 130.13763361008714, "converged": true, "osc": 6.226107657746374e-05, "stderr": 1.3543532736402476e-06, "wall_s": 669.2}
+[openfoam_case] partition sha 5846f761f59a7161
+CALL {"call": "fresh", "id": 47, "k": 0, "kind": "explore", "op": "pattern", "parents": [1], "desc": [48.12, 1], "D_mN": 226.57687390245664, "L_mN": 121.1978287986317, "converged": true, "osc": 0.00024314970803685748, "stderr": 2.460878641369546e-06, "wall_s": 655.9}
+EXPLORE [{"id": 44, "kind": "crossover", "op": "graft", "parents": [4, 3], "new_openings": true, "desc": [64.07, 0], "D_mN": 222.38753664124573, "entry": "rejected"}, {"id": 45, "kind": "crossover", "op": "line", "parents": [1, 3], "new_openings": false, "desc": [59.57, 0], "D_mN": 219.77137180652272, "entry": "replaced"}, {"id": 46, "kind": "mutation", "op": "pattern", "parents": [0], "new_openings": true, "desc": [57.542, 1], "D_mN": 224.53103549878833, "entry": "rejected"}, {"id": 47, "kind": "mutation", "op": "pattern", "parents": [1], "new_openings": true, "desc": [48.12, 1], "D_mN": 226.57687390245664, "entry": "rejected"}]
+CALL {"call": "adjoint", "id": 1, "wall_s": 57.5, "points": 3312, "points_in_region": 2165, "dD_dn_region_sum_mN_per_mm": -0.6164160988954839, "dD_dn_region_absmax_mN_per_mm": 0.08733813527033835}
+[openfoam_case] morph checkMesh: Mesh OK
+[openfoam_case] partition sha 2d92442c7ca805ba
+CALL {"call": "zero_morph", "id": 1, "D_mN": 220.95067068644954, "fresh_D_mN": 220.95643971829185, "offset_mN": -0.005769031842305594, "converged": true, "wall_s": 315.5}
+[openfoam_case] morph checkMesh: ***Error in face pyramids: 2 faces are incorrectly oriented.; Failed 1 mesh checks.
+[openfoam_case] stage failed — run dir KEPT for diagnosis: /home/runner/work/stem-racing-adjoint/stem-racing-adjoint/part2-simulation/cfd_case_template/runs/run_4659_686da657a465
+CALL {"call": "morph", "parent": 1, "child": 48, "move_mm": 4.8755612998960745, "error": "RuntimeError('morphed mesh failed checkMesh and P2_MORPH_STRICT=1 forbids a fresh mesh: ***Error in face pyramids: 2 faces are incorrectly oriented.; Failed 1 mesh checks.')"}
+[openfoam_case] morph checkMesh: Mesh OK
+[openfoam_case] partition sha 04286f5930fb90b0
+CALL {"call": "morph", "parent": 1, "child": 49, "move_mm": 1.6494138120702917, "D_mN": 219.41231104707128, "delta_mN": -1.5383596393782568, "ok": true, "pred_mN": -1.0959500154186461, "wall_s": 320.2}
+CALL {"call": "adjoint", "id": 4, "wall_s": 58.7, "points": 3202, "points_in_region": 2063, "dD_dn_region_sum_mN_per_mm": -0.9782185107240619, "dD_dn_region_absmax_mN_per_mm": 0.08256223260230067}
+[openfoam_case] morph checkMesh: Mesh OK
+[openfoam_case] partition sha 08b4da264f11b6ca
+CALL {"call": "zero_morph", "id": 4, "D_mN": 223.0835127640618, "fresh_D_mN": 223.08507846168752, "offset_mN": -0.0015656976257218957, "converged": true, "wall_s": 313.4}
+[openfoam_case] morph checkMesh: Mesh OK
+[openfoam_case] partition sha ce356628169bc316
+CALL {"call": "morph", "parent": 4, "child": 50, "move_mm": 1.4071666165003691, "D_mN": 220.59335247543845, "delta_mN": -2.4901602886233434, "ok": true, "pred_mN": -2.7716988715855364, "wall_s": 306.9}
+[openfoam_case] morph checkMesh: Mesh OK
+[openfoam_case] partition sha 170d733e80aab67a
+CALL {"call": "morph", "parent": 4, "child": 51, "move_mm": 0.8915036955516937, "D_mN": 221.68206404860277, "delta_mN": -1.4014487154590256, "ok": true, "pred_mN": -1.3858494357927682, "wall_s": 315.0}
+REFINE [{"id": 1, "niche": [3, 0], "step": 1.0, "folded": [1.0], "tried": [[0.5, -1.5383596393782568, -1.0959500154186461]], "result": "accepted", "child": 49, "delta": -1.5383596393782568, "step_used": 1.6494138120702917, "new_est": 219.4180800789136}, {"id": 4, "niche": [3, 1], "step": 1.0, "tried": [[1.0, -2.4901602886233434, -2.7716988715855364], [0.5, -1.4014487154590256, -1.3858494357927682]], "result": "accepted", "child": 50, "delta": -2.4901602886233434, "step_used": 1.4071666165003691, "new_est": 220.59491817306417}]
+MARKS {"P1_every_stage_ran": true, "P2a_team_within_1pct_of_449.24_whole": true, "P2b_nopod_worse_by_15_half": true, "P3_each_refined_elite_decided_from_a_morphed_step": true, "P4_opening_changing_crossover_and_mutation_ran": true} {"team_whole_mN": 449.2381526125698, "nopod_minus_team_half_mN": 22.071717919026355}
