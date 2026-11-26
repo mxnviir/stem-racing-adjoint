@@ -235,6 +235,26 @@ def grad_step(space, f, g, step_mm, sigma_mm=4.5):
     return f - d, float((g * (-d)).sum())                                   # the field, and first-order prediction
 
 
-CROSSOVER = {"splice": splice, "graft": graft, "combine": combine, "line": line}
-MUTATION = {"bump": bump, "cut": cut, "fill": fill, "pattern": pattern, "offset": offset}
+def nondegenerate(op, tries=6, max_iou=0.98):
+    """Redraw an operator whose requested shape overlaps a parent by more than max_iou (before the builder, so no
+    cost): a near-copy would spend a CFD run on nothing (test T0b''). The last draw is returned if all are copies."""
+    def wrapped(space, rng, fA, fB=None, guide=None):
+        pa = (fA > 0) & space.region
+        pb = None if fB is None else (fB > 0) & space.region
+        for _ in range(tries):
+            f, meta = op(space, rng, fA, fB, guide)
+            if "skip" in meta:
+                return f, meta
+            q = (f > 0) & space.region
+            iou = max(float((q & pa).sum() / max((q | pa).sum(), 1)),
+                      0.0 if pb is None else float((q & pb).sum() / max((q | pb).sum(), 1)))
+            if iou <= max_iou:
+                return f, dict(meta, redraws=_)
+        return f, dict(meta, redraws=tries, near_copy=True)
+    wrapped.__name__ = op.__name__
+    return wrapped
+
+
+CROSSOVER = {"splice": splice, "graft": graft, "combine": nondegenerate(combine), "line": line}
+MUTATION = {"bump": bump, "cut": cut, "fill": nondegenerate(fill), "pattern": pattern, "offset": offset}
 OPS = {**CROSSOVER, **MUTATION}

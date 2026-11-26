@@ -243,6 +243,13 @@ combine, bump, cut and fill failed T0b on the near-copy rate. Their random range
 (3-4.5) and 10-20 mm long (8-15), closing window 15-30 mm (10-20)). Re-test on the same 10 real-car test seeds, 40 new
 draws each (random seeds 200+), marks unchanged (legal >= 50 %, in band >= 70 %, mill refill median <= 10 %).
 
+### T0b'' (written before the run)
+T0b' result (`results/t0b2_operators.json`): bump PASS (in band 93 %), cut PASS (84 %), combine FAIL (53 %), fill FAIL
+(53 %). Cause (diagnosed on draws outside the test): fill's "close" variant has nothing to close on pods without
+cuts, and combine returns a parent when one pod's shape sits inside the other's. Fix for these two only: redraw (up
+to 6 times) when the requested shape overlaps a parent at IoU > 0.98 before the builder. Re-test: same seeds,
+40 new draws (random seeds 300+), marks unchanged. Operators that fail stay out of the campaign.
+
 ### T3e' re-test of the trust check (owner approved the fix and re-test 2026-11-26; written before the run)
 T3e failed as registered (instances 5-7, kept as failed). Fixes, developed on instance 0 only: (1) a downhill
 probe the morph refuses is retried at half size; if still unmeasurable the design stays **undecided** (re-checked
