@@ -1,0 +1,4 @@
+[openfoam_case] morph checkMesh: Mesh OK
+[openfoam_case] warm start copied from /home/runner/work/stem-racing-adjoint/stem-racing-adjoint/research/sidepod_opt/gate/state_steady/1200: U, k, nut, omega, p
+[openfoam_case] partition sha 483c857e7a277976
+{"D20_half_N": 0.1904662058543789, "wall_s": 5946.1, "converged": true, "residual_p": 1.7096766124637753e-05, "force_osc": 5.249947324425566e-05, "force_drift": 1.230746347456363e-06, "run_dir": "", "force_mean_stderr": 1.3254905668085064e-06, "bump": "original_up", "morph_fallback": false, "run_dir_kept": "/home/runner/work/stem-racing-adjoint/stem-racing-adjoint/part2-simulation/cfd_case_template/runs/run_4032_8f3d365b387a"}
