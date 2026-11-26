@@ -228,3 +228,27 @@ the converged coarse DAFoam gradient, explicit morph of the frame-0 steady state
 along (dn) 184.43 mN, against (up) 190.47 mN; the unmoved frame-0 steady drag 187.07. DAFoam first-order prediction
 (tr_predict): dn -7.50, up +7.50 mN. Measured from 187.07: dn -2.64, up +3.40; dn - up = -6.03 against -15.00 predicted
 (ratio 0.40). Right sign both ways, about 40 % of the predicted size.
+
+## TR Trust check on the real car (probes: runs 45899521794 and 45902612380 on the gate's frame-0 steady states; `verdict_t1_tr.json`)
+0.5 mm moves, explicit morph, steady model 1000 its, last 404 (same-mesh SE 0.0001-0.06 mN, so the 0.15 mN floor sets the
+margin). Drag change from each seed's own zero-move probe, mN:
+
+| seed | zero (mN) | along DAFoam (dn) | against (up) | random 101 | random 102 | DAFoam |
+|---|---|---|---|---|---|---|
+| team pod | 187.07 | **-2.64** | +3.39 | +0.03 | -0.30 | converged (retry) |
+| channel | 187.13 | - | - | -1.20 | -1.72 | stalled at 8.4e-4 |
+| slotted | 199.00 | - | - | -0.46 | -0.83 | runner lost twice |
+| windowed | 185.07 | - | - | -0.11 | -0.29 | runner lost twice |
+
+- **TR1 PASS.** Team pod trusted: dn - zero = -2.64, dn - up = -6.03 (margin 0.15).
+- **TR2 FAIL**, but not on evidence against the gradient: none of the three new seeds got a DAFoam gradient to test
+  (one stalled, two lost their runners twice). Coarse DAFoam on these seeds: 1 converged of 6 attempts.
+- **TR3 PASS** (1 of 1): dn below both random moves (-2.64 against +0.03 / -0.30).
+- Reported: DAFoam predicted dn -7.50 / up +7.50 mN; measured -2.64 / +3.39 (ratio 0.35 / 0.45). Right sign, about 40 %
+  of the size: the gradient points the right way and overstates the gain, as in the hybrid loop.
+- Reported: both random moves lowered drag on all three new seeds (0.1-1.7 mN), and the channel seed's by more than its
+  zero-to-dn would need to beat. On the same mesh the explicit morph itself may carry a small downward bias; to be
+  checked before any campaign result leans on a sub-2 mN morph gain (campaign scores use fresh meshes, so it does
+  not touch them).
+- **What it decides (as registered):** TR2 fails -> the end polish on shapes unlike the team pod is gradient-free, and
+  the adjoint is used only where its own per-design check passes.
