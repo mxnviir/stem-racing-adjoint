@@ -118,6 +118,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with: { name: "state-${{ matrix.case.design }}", path: /tmp/st, run-id: "${{ needs.init.outputs.state_run }}", github-token: "${{ github.token }}" }
       - uses: actions/download-artifact@v4
+        if: contains(matrix.case.field, '@DAF')
         with: { name: "daf-${{ matrix.case.design }}", path: /tmp/daf, run-id: "${{ needs.init.outputs.daf_run }}", github-token: "${{ github.token }}" }
       - name: the move, then the morphed steady solve
         working-directory: research/sidepod_opt
@@ -127,7 +128,8 @@ jobs:
           mkdir -p gate ../../out/probe/$NAME gr
           tar xzf seedevo/designs/$D.tgz -C seedevo/designs
           tar xzf /tmp/st/state.tgz -C gate
-          mkdir -p seedevo/probe_daf && cp /tmp/daf/daf-$D/dafoam_sens.npz seedevo/probe_daf/$D.npz
+          mkdir -p seedevo/probe_daf
+          case "$FIELD" in *@DAF*) cp /tmp/daf/daf-$D/dafoam_sens.npz seedevo/probe_daf/$D.npz ;; esac   # only moves that use the adjoint need it
           FIELD=${FIELD//@DAF/seedevo\/probe_daf\/$D.npz}
           python3 -c "import json,pathlib; pathlib.Path('gr/base.json').write_text(json.dumps({'run_dir_kept': str(pathlib.Path('gate/state_steady').resolve())}))"
           GATE_RES=resolved GATE_RESULTS=$PWD/gr STEP_NORMAL_SIGMA_MM=1.5 STEP_ZMIN_MM=1.5 \

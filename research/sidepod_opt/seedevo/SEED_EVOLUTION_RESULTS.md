@@ -203,3 +203,9 @@ the first cap); the channel run is the only one that reached its end. Likeliest 
 2.6e-7 at 1000; 64 min of solver); its along/against probes launched on the gate's frame-0 steady state. Window: runner
 lost again (21:35 UTC, about 108 min into the step). Coarse DAFoam on the four seeds today: 1 converged of 6 attempts
 (channel stalled; four lost runners).
+
+**Gate run 45864447055:** all 13 state jobs (production 1000 + steady 1200, fresh wall-resolved mesh) succeeded. All 20
+probes failed or could not succeed: each probe job copied its design's DAFoam file even for moves that do not use it
+(zero, two random), so a design without an adjoint lost every probe. Run cancelled to free runners. The zero and random
+probes of all four seeds re-run through the retry workflow (DAFoam file only for moves that use it); the original seed's
+along/against probes are running in 45899521794.

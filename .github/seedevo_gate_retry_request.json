@@ -1,1 +1,1 @@
-{"stage": "probe", "designs": ["original"], "state_run": 45864447055, "daf_run": 45885388243, "moves": {"dn": "dafnpz:@DAF", "up": "dafopp:@DAF"}}
+{"stage": "probe", "designs": ["original", "channel", "slots", "window"], "state_run": 45864447055, "daf_run": 45885388243, "moves": {"zero": "zero", "r101": "rnd101", "r102": "rnd102"}}
