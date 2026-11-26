@@ -50,6 +50,8 @@ class Ind:
     step: float | None = None       # this elite's current refinement step (mm)
     depth: float = 0.0              # morphed distance since its last fresh mesh (mm)
     anchor: int | None = None       # the individual whose mesh this one's morph lineage hangs from
+    trust: bool | None = None       # trust check: None = not checked, True = adjoint mode, False = gradient-free
+    rejects: int = 0                # consecutive rejected adjoint steps (stop rule)
     meta: dict = field(default_factory=dict)
 
     @property
@@ -83,6 +85,10 @@ class Config:
     duel_min_runs: int = 1          # ... once both have at least this many fresh-equivalent runs
     morph_explore: bool = False     # score a small, topology-keeping explore child on its parent's morphed mesh
     handover_top: int = 5           # before hand-over, the best this many by estimate are run up to max_runs
+    trust_check: bool = False       # check the adjoint on each design before using it (probe along it and against it)
+    adjoint: bool = True            # False: every refinement is gradient-free (no adjoint at all)
+    stop_after: int = 2             # adjoint mode: this many rejected steps in a row -> gradient-free
+    gf_proposals: int = 2           # gradient-free refinement: random smooth moves tried per refinement
     build_tries: int = 6
 
 
@@ -262,58 +268,106 @@ class Engine:
             out.append(self.refine_one(e, budget))
         return out
 
-    def refine_one(self, e, budget=np.inf):
-        """The adjoint's move on one elite: solve (if not cached), two step sizes, morph-scored, keep or halve."""
-        cfg = self.cfg
-        if e.step is None:
-            e.step = cfg.step0
-        r = {"id": e.id, "niche": e.niche, "step": e.step}
-        if e.depth + e.step > cfg.max_depth or e.anchor is None:   # the mesh is spent: a fresh mesh of this design
-            if not self._fresh(e):
-                return dict(r, result="rebase failed")
-            r["rebased"] = True
-        if e.grad is None:
-            e.grad = self.ev.adjoint(e)
-            self.spent += self.ev.cost_adjoint
-            if e.grad is None:
-                e.step = 0.0
-                return dict(r, result="no gradient")
-        best = None
-        for s in (e.step, e.step / 2):
-            if self.spent >= budget:
-                break
-            f_try, pred = self.ev.grad_step(self.space, e, s)
-            child, built = self._make(f_try, "refine", "adjoint", (e.id,), {"step": s, "pred": pred})
-            if child is None:
-                r.setdefault("illegal", []).append(s)
-                continue
-            m = self.ev.morph(e, child)
-            if m is None:                                          # the morph check refused it: no solve was spent
-                r.setdefault("folded", []).append(s)
-                self.all.pop(child.id, None)
-                continue
-            self.spent += self.ev.cost_morph
-            d = m["delta"]
-            r.setdefault("tried", []).append((s, float(d), float(pred)))
-            if best is None or d < best[0]:
-                best = (d, child, m["move"])
-        margin = max(3.0 * self.ev.sigma_morph * np.sqrt(2.0), cfg.floor)
+    def _try_move(self, e, f_try, r, tag, meta):
+        """Build one refinement candidate and score it on e's morphed mesh -> (delta, child, move) or None."""
+        child, built = self._make(f_try, "refine", tag, (e.id,), meta)
+        if child is None:
+            r.setdefault("illegal", []).append(tag); return None
+        m = self.ev.morph(e, child)
+        if m is None:                                          # the morph check refused it: no solve was spent
+            r.setdefault("folded", []).append(tag); self.all.pop(child.id, None); return None
+        self.spent += self.ev.cost_morph
+        r.setdefault("tried", []).append((tag, float(meta.get("step", 0.0)), float(m["delta"]), float(meta.get("pred", 0.0))))
+        return m["delta"], child, m["move"]
+
+    def _accept(self, e, best, r, margin):
         if best is None or best[0] > -margin:
-            e.step /= 2
-            return dict(r, result="rejected")
-        d, child, s = best
+            return None
+        d, child, move = best
         child.base, child.n_base = e.est + d, e.n
-        child.step, child.depth, child.anchor = e.step, e.depth + s, e.anchor
+        child.step, child.depth, child.anchor = e.step, e.depth + move, e.anchor
+        child.trust, child.rejects = e.trust, 0                # a refinement is close to its parent: the verdict carries over
         if child.niche == e.niche or child.niche not in self.archive:
-            if child.niche == e.niche:
-                self.archive[e.niche] = child
-            else:
-                self.archive[child.niche] = child
+            self.archive[child.niche] = child
         else:
             inc = self.archive[child.niche]
             if child.est <= inc.est - 2.0 * self._se(child, inc):
                 self.archive[child.niche] = child
-        return dict(r, result="accepted", child=child.id, delta=float(d), step_used=float(s), new_est=child.est)
+        return dict(r, result="accepted", child=child.id, delta=float(d), new_est=child.est)
+
+    def refine_one(self, e, budget=np.inf):
+        """One refinement of an elite, scored on its own morphed mesh; CFD decides.
+        Adjoint mode: steps of e.step and e.step/2 along the adjoint. Trust check (cfg.trust_check), once per
+        design before its first adjoint step: a probe of e.step/2 along the adjoint and one against it; the
+        adjoint is trusted on this design only if the downhill probe lowers the objective by the margin and beats
+        the uphill one by the margin (the downhill probe counts as this refinement's candidate). Untrusted designs,
+        and designs whose adjoint steps were rejected cfg.stop_after times in a row, are refined gradient-free:
+        cfg.gf_proposals random smooth moves of size e.step."""
+        cfg = self.cfg
+        if e.step is None:
+            e.step = cfg.step0
+        r = {"id": e.id, "niche": e.niche, "step": e.step}
+        margin = max(3.0 * self.ev.sigma_morph * np.sqrt(2.0), cfg.floor)
+        if e.depth + e.step > cfg.max_depth or e.anchor is None:   # the mesh is spent: a fresh mesh of this design
+            if not self._fresh(e):
+                return dict(r, result="rebase failed")
+            r["rebased"] = True
+        if not cfg.adjoint:
+            e.trust = False
+        if e.trust is not False and e.grad is None:
+            e.grad = self.ev.adjoint(e)
+            self.spent += self.ev.cost_adjoint
+            if e.grad is None:
+                e.trust = False; r["no_gradient"] = True
+        best = None
+        if e.trust is None and cfg.trust_check:
+            s = e.step / 2
+            f_dn, p_dn = self.ev.grad_step(self.space, e, s)
+            f_up, p_up = self.ev.grad_step(self.space, e, s, sign=-1.0)
+            dn = self._try_move(e, f_dn, r, "adjoint", {"step": s, "pred": p_dn, "probe": "down"})
+            up = self._try_move(e, f_up, r, "adjoint_up", {"step": s, "pred": p_up, "probe": "up"})
+            if up is None and dn is not None:                  # the uphill probe could not be measured: try it smaller
+                f_up, p_up = self.ev.grad_step(self.space, e, s / 2, sign=-1.0)
+                up = self._try_move(e, f_up, r, "adjoint_up", {"step": s / 2, "pred": p_up, "probe": "up"})
+            if up is not None:
+                e.trust = bool(dn is not None and dn[0] <= -margin and dn[0] <= up[0] - margin)
+            else:                                              # no uphill measurement: a missing value is not evidence
+                e.trust = bool(dn is not None and dn[0] <= -margin)
+            r["trust_check"] = {"down": None if dn is None else dn[0], "up": None if up is None else up[0], "trusted": e.trust,
+                                "one_sided": up is None}
+            if up is not None:
+                self.all.pop(up[1].id, None)                   # the uphill probe is a measurement, never a design
+            best = dn if e.trust else None
+            if not e.trust and dn is not None and dn[0] <= -margin:
+                best = dn                                      # a lucky probe is still a measured improvement
+        elif e.trust is not False:
+            r["mode"] = "adjoint"
+            for s in (e.step, e.step / 2):
+                if self.spent >= budget:
+                    break
+                f_try, pred = self.ev.grad_step(self.space, e, s)
+                c = self._try_move(e, f_try, r, "adjoint", {"step": s, "pred": pred})
+                if c is not None and (best is None or c[0] < best[0]):
+                    best = c
+        else:
+            r["mode"] = "gradient-free"
+            for _ in range(cfg.gf_proposals):
+                if self.spent >= budget:
+                    break
+                g = OP._smooth_random(self.space, self.rng, e.f)
+                f_try, _p = OP.grad_step(self.space, e.f, g, e.step)
+                c = self._try_move(e, f_try, r, "random", {"step": e.step})
+                if c is not None and (best is None or c[0] < best[0]):
+                    best = c
+        out = self._accept(e, best, r, margin)
+        if out is not None:
+            return out
+        e.step /= 2
+        if r.get("mode") == "adjoint":
+            e.rejects += 1
+            if cfg.trust_check and e.rejects >= cfg.stop_after:
+                e.trust = False; r["stopped"] = True
+        return dict(r, result="rejected")
 
     # ---------------------------------------------------------------- results
     def best(self):

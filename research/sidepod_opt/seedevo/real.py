@@ -152,7 +152,7 @@ class RealEvaluator:
             shutil.rmtree(d, ignore_errors=True)
         return g
 
-    def grad_step(self, space, e, step_mm):
+    def grad_step(self, space, e, step_mm, sign=1.0):
         from . import operators as OP
-        f, pred = OP.grad_step(space, e.f, e.grad, step_mm)
+        f, pred = OP.grad_step(space, e.f, sign * e.grad, step_mm)
         return f, pred * 1e3 / 2.0                              # whole-car N -> half-car mN (first-order prediction)

@@ -210,6 +210,32 @@ seeds; **it passes overall if it passes on >= 2 of the 3 instances.** Instance 1
   legality (88-100 %) or mill refill (<= 2.5 %, the lattice CMA ~25 %). They are kept out of any CFD
   run until fixed and re-tested.
 
+### T3e The trust check (owner approved 2026-11-26; written before any held-out run)
+Why: on the real car the adjoint's quality will differ by design (it was validated only on the team pod; a
+coarse mesh cannot resolve 3 mm ribs and slots). Placing the adjoint at the end limits what a bad adjoint
+costs, not how wrong it is.
+Method (`engine.py`, `refine_one`, `Config(trust_check=True)`): before a design's first adjoint step, a probe of
+half a step along the adjoint and one against it, both on the design's own morphed mesh. Trusted only if the
+downhill probe lowers the objective by the margin and beats the uphill probe by the margin (uphill retried at
+half size if the morph refuses it; if it still cannot be measured, downhill alone decides, recorded as
+one-sided). Untrusted designs, and designs with 2 rejected adjoint steps in a row, are refined gradient-free
+(2 random smooth moves per refinement, same morph scoring). The downhill probe counts as a refinement
+candidate. Development on instance 0 only (found and fixed: a refused uphill probe was counted as distrust).
+Bench (`run_t3e.py`): the adjoint's correlation with the truth set per design: S1 0.85 everywhere; S2 0.85 on
+closed pods, 0 on pods with a through-opening; S3 0.85 closed, -0.5 open; S4 0 everywhere; S5 -0.3
+everywhere. Arms: `evo` (no polish), `plain` (evolve 70 %, then the adjoint polish without check), `tc` (with
+the check), `gf` (gradient-free polish, no adjoint). Instances 5, 6, 7 (never run), seeds 1-5: 15 pairs per
+comparison; ties count as "no worse".
+- **TC1 cheap when the adjoint is good (S1):** mean(tc) - mean(plain) <= 0.25 x (mean(evo) - mean(plain)): the
+  check keeps >= 75 % of the polish's gain.
+- **TC2 protects against a misleading adjoint (S3, S5):** tc <= plain in >= 10 of 15, in each scenario.
+- **TC3 protects against a useless adjoint (S2, S4):** tc <= plain in >= 8 of 15, in each scenario.
+- **TC4 never worse than not polishing:** tc <= evo in >= 10 of 15, in every scenario.
+- **TC5 the check discriminates:** trusted share of all checks >= 50 % in S1, <= 20 % in S4 and in S5.
+- **PASS = TC1-TC5.** Reported: `gf` against `tc`; trusted share in S2 and S3.
+- If it passes: the end polish of the finalists uses the trust check, and the real-CFD check on 3-4 real
+  designs (team pod, groove, a slotted and a windowed pod) is next, on Actions, with marks written first.
+
 ### Coarse CFD on this machine: plumbing only (DECISIONS D6: no design conclusion from the coarse mesh)
 - **TP The whole chain runs on real CFD with a real adjoint** (`real.py`, `run_plumbing.py`). The trial
   car, coarse mesh (~105 k cells), steady model, 4 cores. Census of 5 seeds on fresh meshes (team pod,

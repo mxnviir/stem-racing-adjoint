@@ -79,6 +79,7 @@ class ToyEvaluator:
 
     def __init__(self, sp: ToySpace, target_f, rho=0.85, sigma_fresh=1.0, seed=0, morph_max_mm=2.5):
         self.sp, self.rho = sp, rho
+        self.rho_seen = []
         self.occT = occ(target_f, sp.h)
         self.w = (1.0 + 2.0 * np.exp(-((sp.X - 50.0) / 15.0) ** 2)) * sp.region
         self.sigma_fresh, self.sigma_morph = sigma_fresh, sigma_fresh / 50.0
@@ -117,7 +118,9 @@ class ToyEvaluator:
         ng, nb = np.linalg.norm(g), np.linalg.norm(b)
         if ng == 0:
             return g
-        return 2.0 * (self.rho * g + np.sqrt(max(0.0, 1.0 - self.rho ** 2)) * b * (ng / (nb + 1e-30)))
+        rho = self.rho(ind) if callable(self.rho) else self.rho            # per design (test T3e) or fixed
+        self.rho_seen.append((int(ind.desc[1]), float(rho)))
+        return 2.0 * (rho * g + np.sqrt(max(0.0, 1.0 - rho ** 2)) * b * (ng / (nb + 1e-30)))
 
-    def grad_step(self, space, e, step_mm):
-        return OP.grad_step(space, e.f, e.grad, step_mm)
+    def grad_step(self, space, e, step_mm, sign=1.0):
+        return OP.grad_step(space, e.f, sign * e.grad, step_mm)
