@@ -99,3 +99,21 @@ Reported, not marked (coarse mesh: no design conclusion, D6), half car, steady m
   0.5 mm (the 1 mm step folded the mesh), window pod -2.49 at 1 mm and -1.40 at 0.5 mm, both accepted;
   first-order predictions -1.10, -2.77, -1.39. On this coarse mesh ESI's sizes were close to measured, unlike
   the wall-resolved bump test; one coarse case, not evidence that the adjoint is accurate on a good mesh.
+
+## T3e' Trust check after the fix (held-out instances 8-10, half the seeds windowed, windowed targets; `results/t3e2_heldout.json`): **FAIL as registered, by one pair**
+| scenario | plain polish | with trust check | trusted (decided checks) | undecided | check no worse than plain |
+|---|---|---|---|---|---|
+| S1 good everywhere | 2.965 | 2.980 | 99 % | 63/152 | 9/15 |
+| S2 good closed, useless open | 3.165 | **3.107** | 53 % | 70/167 | 10/15 |
+| S3 good closed, misleading open | 3.205 | **3.178** | 46 % | 75/169 | **9/15** |
+| S4 useless everywhere | 3.585 | **3.486** | 19 % | 69/176 | 13/15 |
+| S5 misleading everywhere | 3.604 | **3.484** | 1 % | 69/179 | 13/15 |
+Evolution alone 3.540; gradient-free polish only 3.463.
+
+TC1 (cheap when good) PASS; **TC2 FAIL** (S5 13/15 passes, S3 9/15 against the mark of 10); TC3 PASS (S2 10/15,
+S4 13/15); TC4 PASS; TC5 PASS (99 % / 19 % / 1 %). The fix worked where it was aimed: a good adjoint is now trusted
+on 99 % of decided checks (was 32 %), a useless one on 19 %, a misleading one on 1 %. With a bad adjoint the check
+beats the unchecked polish on average in every scenario, and in 13 of 15 pairs when it is bad everywhere. The one
+miss: misleading only on open pods (S3), where it is ahead on average but not in 10 of 15 pairs.
+About 40 % of checks were undecided (the bench's morph refused even the half-size probe), so in practice a large
+share of designs gets the gradient-free polish whatever the adjoint's quality.
