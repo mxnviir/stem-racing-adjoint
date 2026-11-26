@@ -1,0 +1,13 @@
+{
+ "D20_half_N": 0.22461985870260143,
+ "wall_s": 1230.4,
+ "converged": true,
+ "residual_p": 1.2940864264013503e-05,
+ "force_osc": 9.854485915237511e-05,
+ "force_drift": 3.4609078523615187e-07,
+ "run_dir": "",
+ "force_mean_stderr": 1.2353178548205175e-06,
+ "run_dir_kept": "gate/refA_hyb",
+ "folder": "seedevo/designs/original/car",
+ "iters": 5000
+}
