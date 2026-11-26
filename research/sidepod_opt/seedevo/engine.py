@@ -89,6 +89,12 @@ class Config:
     adjoint: bool = True            # False: every refinement is gradient-free (no adjoint at all)
     stop_after: int = 2             # adjoint mode: this many rejected steps in a row -> gradient-free
     gf_proposals: int = 2           # gradient-free refinement: random smooth moves tried per refinement
+    gf_method: str = "random"       # gradient-free refinement: "random" smooth moves, or "cma" (CMA-ES over a lattice)
+    cma_shape: tuple = (6, 2, 3)    # the lattice for "cma" (the evolution branch's sidepod/shape searches)
+    cma_pop: int = 4                # CMA-ES moves per refinement (one generation)
+    screen: bool = False            # model-screened batches (screen.py, from the evolution branch's layout search)
+    screen_pool: int = 4            # candidates bred per explore slot, of which the model picks
+    screen_min: int = 12            # scored designs needed before the model is used (random breeding until then)
     build_tries: int = 6
 
 
@@ -200,6 +206,62 @@ class Engine:
             return child
         return None
 
+    def _propose(self, pool, rng):
+        """One unbuilt candidate (field, op, parents, meta) bred as _breed does, or None."""
+        cfg = self.cfg
+        k = cfg.tournament if cfg.selection else 1
+
+        def pick(cands):
+            idx = rng.choice(len(cands), min(k, len(cands)), replace=False)
+            return min((cands[i] for i in idx), key=lambda p: p.est)
+        a = pick(pool)
+        cross = [o for o in cfg.ops if o in OP.CROSSOVER]; mut = [o for o in cfg.ops if o in OP.MUTATION]
+        others = [p for p in pool if p.niche != a.niche] or [p for p in pool if p is not a]
+        use_x = bool(cross) and bool(others) and (not mut or rng.random() < cfg.crossover_share)
+        name = str(rng.choice(cross if use_x else mut))
+        b = pick(others) if use_x else None
+        f, meta = OP.OPS[name](self.space, rng, a.f, None if b is None else b.f, a.grad if cfg.guided else None)
+        if "skip" in meta:
+            return None
+        return f, name, (a.id,) + ((b.id,) if b is not None else ()), meta
+
+    def _screened(self, pool, n, budget):
+        """n explore children chosen by the model from a pool of cfg.screen_pool x n unbuilt candidates."""
+        from .screen import Screen, block_occupancy
+        scored = [i for i in self.all.values() if i.n > 0 and np.isfinite(i.est)]
+        cands = [c for c in (self._propose(pool, self.rng) for _ in range(self.cfg.screen_pool * n)) if c is not None]
+        if not cands:
+            return []
+        if not hasattr(self, "_occ"):
+            self._occ = {}
+        for i in scored:
+            if i.id not in self._occ:
+                self._occ[i.id] = block_occupancy(self.space, i.f)
+        Bs = np.array([self._occ[i.id] for i in scored]); Bc = np.array([block_occupancy(self.space, c[0]) for c in cands])
+        vol = lambda f: float(((f > 0) & self.space.region).sum()) * self.space.h ** 3 / 1e3
+        sc = Screen(seed=int(self.rng.integers(1 << 30)))
+        sc.fit_basis(np.vstack([Bs, Bc]))
+        Xs = sc.feats(Bs, np.array([[vol(i.f)] for i in scored]))
+        Xc = sc.feats(Bc, np.array([[vol(c[0])] for c in cands]))
+        ys = np.array([i.est for i in scored])
+        order = sc.pick(Xs, ys, Xc, min(len(cands), 2 * n))
+        out = []
+        for k in order:
+            if len(out) >= n:
+                break
+            f, name, parents, meta = cands[k]
+            self.op_stats[name][0] += 1
+            child, built = self._make(f, "explore", name, parents, dict(meta, screened=True))
+            if child is None or any(np.array_equal(child.B, self.all[p].B) for p in parents):
+                if child is not None:
+                    self.all.pop(child.id, None)
+                continue
+            self.op_stats[name][1] += 1
+            child.step = self.cfg.step0
+            out.append(child)
+        self.screen_log = getattr(self, "screen_log", []) + [sc.last]
+        return out
+
     # ---------------------------------------------------------------- one generation
     def generation(self, budget):
         cfg = self.cfg
@@ -207,11 +269,20 @@ class Engine:
         rec = {"gen": self.gen, "explore": [], "control": [], "refine": []}
         elites = list(self.archive.values())
         pool = elites if cfg.selection else self.seeds
+        nscored = sum(1 for i in self.all.values() if i.n > 0)
+        screened = []
+        if cfg.screen and nscored >= cfg.screen_min and pool:
+            screened = self._screened(pool, cfg.n_explore, budget)
         for kind, n, src in (("explore", cfg.n_explore, pool), ("control", cfg.n_control, self.seeds)):
             for _ in range(n):
                 if self.spent >= budget or not src:
                     break
-                child = self._breed(src, kind)
+                if kind == "explore" and cfg.screen and nscored >= cfg.screen_min:
+                    if not screened:
+                        break
+                    child = screened.pop(0)
+                else:
+                    child = self._breed(src, kind)
                 if child is None:
                     continue
                 entry = self._score_child(child, kind, budget)
@@ -295,6 +366,35 @@ class Engine:
                 self.archive[child.niche] = child
         return dict(r, result="accepted", child=child.id, delta=float(d), new_est=child.est)
 
+    def _cma_refine(self, e, r, budget):
+        """One CMA-ES generation of lattice moves around e, each scored on e's morphed mesh; the ES is told every
+        measured change (a refused move gets the generation's worst + 1). The ES lives on the design and is carried
+        to an accepted child with its mean reset to zero (moves are relative to the current design)."""
+        import cma
+        cfg = self.cfg
+        if getattr(e, "cma", None) is None:
+            d = int(np.prod(cfg.cma_shape))
+            e.cma = cma.CMAEvolutionStrategy(np.zeros(d), 0.5, {"popsize": cfg.cma_pop, "verbose": -9,
+                                                                "seed": int(self.rng.integers(1, 1 << 30)), "bounds": [-2, 2]})
+        es = e.cma
+        xs = es.ask()
+        vals, best = [], None
+        for x in xs:
+            if self.spent >= budget:
+                vals.append(None); continue
+            move = OP.lattice_move(self.space, x, cfg.cma_shape) * e.step
+            c = self._try_move(e, e.f + move, r, "cma", {"step": e.step})
+            vals.append(None if c is None else c[0])
+            if c is not None and (best is None or c[0] < best[0]):
+                best = c
+        ok = [v for v in vals if v is not None]
+        worst = max(ok) + 1.0 if ok else 1.0
+        es.tell(xs, [v if v is not None else worst for v in vals])
+        if best is not None:
+            best[1].cma = es
+            best[1].cma.mean = np.zeros_like(es.mean)
+        return best
+
     def refine_one(self, e, budget=np.inf):
         """One refinement of an elite, scored on its own morphed mesh; CFD decides.
         Adjoint mode: steps of e.step and e.step/2 along the adjoint. Trust check (cfg.trust_check), once per
@@ -361,6 +461,9 @@ class Engine:
                 c = self._try_move(e, f_try, r, "adjoint", {"step": s, "pred": pred})
                 if c is not None and (best is None or c[0] < best[0]):
                     best = c
+        elif cfg.gf_method == "cma":
+            r["mode"] = "gradient-free (CMA-ES)"
+            best = self._cma_refine(e, r, budget)
         else:
             r["mode"] = "gradient-free"
             for _ in range(cfg.gf_proposals):

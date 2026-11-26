@@ -268,6 +268,23 @@ seeds (team pod, windowed pod), census batch only, production scheme (mode prod)
 - Reported: each drag beside the gate run's frame-0 production drag of the same design (the campaign rebuilds the
   design from its field: pod volume 65.70 vs 65.76 cm3 for the windowed pod, builder drift, not storage).
 
+### TS and TC2: the evolution branch's mechanisms, ported (owner 2026-11-26: "look at how its evolution mechanism
+worked and implement that stuff here"; written before the run)
+From branch `evolution` (search/layout/simscale_layout.py, search/sidepod and search/shape): (1) **model-screened
+batches** (`screen.py`, `Config(screen=True)`): a Gaussian process on every scored design (features: block occupancy on
+8 principal components + pod volume), a pool of 4 unbuilt candidates per explore slot, picked by expected improvement
+with the kriging believer; the model only chooses which candidates get CFD (D4); (2) **CMA-ES over a coarse lattice**
+(`Config(gf_method="cma")`, lattice 6x2x3, 4 moves per refinement) as the gradient-free polish, scored on the
+design's morphed mesh like every refinement; (3) the reference/setup bookkeeping and parallel builds (campaign driver,
+engineering, no mark). Development on instance 0 only.
+New instances 14, 15, 16 (half the seeds windowed, windowed targets), seeds 1-5, budget 300, 12 reserved. Mark form
+changed for these two tests only, before the run: a paired count over all 15 runs (the per-instance form failed with
+large mean margins in TFa), **>= 11 of 15 = one-sided sign test p 0.06**.
+- **TS:** evolution with model screening beats evolution (amendment B) in >= 11 of 15 pairs.
+- **TC2:** evolve, then the CMA-ES polish beats evolve, then the random gradient-free polish (both without adjoint) in
+  >= 11 of 15 pairs.
+A mechanism that fails is kept in the code, off.
+
 ### T3e' re-test of the trust check (owner approved the fix and re-test 2026-11-26; written before the run)
 T3e failed as registered (instances 5-7, kept as failed). Fixes, developed on instance 0 only: (1) a downhill
 probe the morph refuses is retried at half size; if still unmeasurable the design stays **undecided** (re-checked

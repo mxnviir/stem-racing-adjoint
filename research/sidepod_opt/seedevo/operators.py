@@ -222,6 +222,23 @@ def offset(space, rng, fA, fB=None, guide=None):
 
 
 # ------------------------------------------------------------------ the adjoint's own move
+def lattice_move(space, g, shape):
+    """The evolution branch's Lattice (search/sidepod/design.py): a coarse grid of control values over the region's
+    box (the +y half, mirrored, on the car), cubic-interpolated: a smooth displacement field (field units, mm) for
+    unit values g, zero outside the region."""
+    from scipy import ndimage as nd
+    reg = space.region & (space.Y >= 0) if getattr(space, "mirror", False) else space.region
+    w = np.argwhere(reg); lo, hi = w.min(0), w.max(0) + 1
+    n = hi - lo
+    up = nd.zoom(np.asarray(g, float).reshape(shape), n / np.array(shape), order=3, mode="nearest")[: n[0], : n[1], : n[2]]
+    out = np.zeros(space.region.shape)
+    out[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]] = up
+    if getattr(space, "mirror", False):
+        j0 = int(np.searchsorted(space.axes[1], 0.0))
+        out[:, :j0] = out[:, j0:][:, ::-1][:, :j0]
+    return out * space.region
+
+
 def grad_step(space, f, g, step_mm, sigma_mm=4.5):
     """G: one step against a sensitivity g (objective per mm of outward move, per cell): the hybrid loop's
     rule (smooth, divide by the 95th percentile on the surface band, clip, times the step size).
