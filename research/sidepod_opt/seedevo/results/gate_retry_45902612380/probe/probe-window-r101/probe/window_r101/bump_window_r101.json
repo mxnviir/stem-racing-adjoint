@@ -1,0 +1,13 @@
+{
+ "D20_half_N": 0.18496225625604956,
+ "wall_s": 4867.1,
+ "converged": true,
+ "residual_p": 1.133646677461327e-05,
+ "force_osc": 2.6063728902966306e-05,
+ "force_drift": 5.0922792161719845e-06,
+ "run_dir": "",
+ "force_mean_stderr": 5.445060980127098e-07,
+ "bump": "window_r101",
+ "morph_fallback": false,
+ "run_dir_kept": "/home/runner/work/stem-racing-adjoint/stem-racing-adjoint/part2-simulation/cfd_case_template/runs/run_3859_ae7839a74b70"
+}

@@ -1,0 +1,1 @@
+slots_r102 {"field": "rnd102", "amp_mm": 0.5, "sigma_mm": 4.5, "taper_mm": 5.0, "region": {"x": [0.07, 0.2], "y_min": 0.012}, "edge_mask_mm": 0.0, "normal_sigma_mm": 1.5, "moved_gt_0p1mm_frac": 0.6384069400630915, "max_out_mm": 0.5, "max_in_mm": 0.5, "zmin_scaled_vertices": 0, "dV_mm3": -34.92648952114986}
