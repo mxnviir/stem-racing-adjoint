@@ -129,3 +129,14 @@ share of designs gets the gradient-free polish whatever the adjoint's quality.
 | fill | T0b'' (+ near-copy redraw) | 100 % | 95 % | 5 % | 0.8 % | PASS |
 With splice, graft, line, pattern and offset (passed T0b), every operator passes. `results/t0b2_operators.json`,
 `results/t0b3_operators.json`. `cut` made new through-openings in 13 of 38 legal children.
+
+## TF The chosen configuration with the final operators (bench, instances 11-13, `results/tf_final.json`)
+Means of the handed design (lower = better): evolution 3.318, random parents 3.794, mutation only 3.758, evolution +
+end polish with trust check 3.005 (adjoint good) / 3.055 (adjoint misleading on open pods).
+- **TFa FAIL as registered:** evolution beat random parents in 2, 5, 4 of 5 seeds and mutation-only in 4, 3, 5 of 5
+  (instances 11, 12, 13): both >= 4 on only instance 13. On the means it is clearly ahead (0.44-0.48 better).
+- **TFb PASS:** the end polish with the trust check beats evolution alone in 5, 3, 4 of 5 seeds.
+- **TFc PASS:** with an adjoint misleading on open pods, no worse than evolution alone in 12 of 15 pairs.
+Across the two held-out rounds of "evolution beats random parents and mutation-only" (T3a on 2-4 with amendment B:
+PASS; TFa on 11-13 with the final operators: FAIL), the per-seed mark holds on 3 of 6 instances; on the mean it holds on
+all 6 (T3a means 1.35/3.46/2.38 against 2.11/3.64/3.16 and 1.58/3.49/2.80).
