@@ -66,7 +66,7 @@ jobs:
         run: |
           (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
           for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
-          for i in 1 2 3 4 5; do (curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash) && sudo apt-get install -y -q openfoam2412-default && break; sleep 30; done
+          for i in 1 2 3 4 5 6 7 8; do (curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash) && sudo apt-get install -y -q openfoam2412-default && break; sudo apt-get clean; sleep 60; done; test -f /usr/lib/openfoam/openfoam2412/etc/bashrc || { echo "OpenFOAM install failed"; exit 1; }
           pip install $PY_DEPS
       - name: fresh wall-resolved mesh + production 1000 its, then steady model 1200 its
         working-directory: research/sidepod_opt
@@ -132,7 +132,7 @@ jobs:
         run: |
           (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
           for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
-          for i in 1 2 3 4 5; do (curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash) && sudo apt-get install -y -q openfoam2412-default && break; sleep 30; done
+          for i in 1 2 3 4 5 6 7 8; do (curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash) && sudo apt-get install -y -q openfoam2412-default && break; sudo apt-get clean; sleep 60; done; test -f /usr/lib/openfoam/openfoam2412/etc/bashrc || { echo "OpenFOAM install failed"; exit 1; }
           pip install $PY_DEPS
           for i in 1 2 3; do docker pull dafoam/opt-packages:v5.1.1 && break; sleep 30; done
       - name: coarse steady state + DAFoam adjoint
@@ -177,7 +177,7 @@ jobs:
         run: |
           (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
           for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
-          for i in 1 2 3 4 5; do (curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash) && sudo apt-get install -y -q openfoam2412-default && break; sleep 30; done
+          for i in 1 2 3 4 5 6 7 8; do (curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash) && sudo apt-get install -y -q openfoam2412-default && break; sudo apt-get clean; sleep 60; done; test -f /usr/lib/openfoam/openfoam2412/etc/bashrc || { echo "OpenFOAM install failed"; exit 1; }
           pip install $PY_DEPS
       - uses: actions/download-artifact@v4
         with: { name: "state-${{ matrix.case.design }}", path: /tmp/st }

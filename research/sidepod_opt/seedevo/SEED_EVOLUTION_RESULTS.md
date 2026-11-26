@@ -174,3 +174,6 @@ gradient-free). A different preconditioner would be a new decision, not taken.
 UTC, after about 100 minutes in the adjoint step; no log, no artifact). Not a solver verdict. Re-run under the TR retry
 rule (5000 GMRES iterations). For reference, the hybrid campaign's earlier DAFoam runs with these settings converged in
 4 of 6 (hybrid/dafoam_actions/).
+The first re-run (45881629527) never reached the solver: the OpenFOAM package mirror served truncated files ("File has
+unexpected size ... Mirror sync in progress?") on all five install attempts, and the workflow went on without OpenFOAM.
+All seedevo workflows now retry the install eight times and stop if OpenFOAM is missing. Re-launched.
