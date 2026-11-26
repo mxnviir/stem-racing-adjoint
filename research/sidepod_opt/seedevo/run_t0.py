@@ -142,14 +142,14 @@ def _ops_worker(args):
     return rows
 
 
-def cmd_ops(d, out, draws=40, procs=4):
+def cmd_ops(d, out, draws=40, procs=4, ops=None, seed_base=100):
     from multiprocessing import Pool
     from seedevo import operators as OP
-    jobs = [(d, op, draws, 100 + i) for i, op in enumerate(OP.OPS)]
+    jobs = [(d, op, draws, seed_base + i) for i, op in enumerate(OP.OPS) if ops is None or op in ops]
     with Pool(procs) as p:
         rows = [r for rs in p.map(_ops_worker, jobs, chunksize=1) for r in rs]
     summ = {}
-    for op in OP.OPS:
+    for op in [j[1] for j in jobs]:
         R = [r for r in rows if r["op"] == op and "skip" not in r]
         L = [r for r in R if r["ok"]]
         inband = [r for r in L if 0.50 <= r["iou_nearest"] <= 0.98]
@@ -176,4 +176,8 @@ if __name__ == "__main__":
             kw["draws"] = int(sys.argv[sys.argv.index("--draws") + 1])
         if "--procs" in sys.argv:
             kw["procs"] = int(sys.argv[sys.argv.index("--procs") + 1])
+        if "--ops" in sys.argv:
+            kw["ops"] = sys.argv[sys.argv.index("--ops") + 1].split(",")
+        if "--seed-base" in sys.argv:
+            kw["seed_base"] = int(sys.argv[sys.argv.index("--seed-base") + 1])
         cmd_ops(sys.argv[2], sys.argv[3], **kw)

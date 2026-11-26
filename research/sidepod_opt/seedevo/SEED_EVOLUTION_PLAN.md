@@ -236,6 +236,13 @@ comparison; ties count as "no worse".
 - If it passes: the end polish of the finalists uses the trust check, and the real-CFD check on 3-4 real
   designs (team pod, groove, a slotted and a windowed pod) is next, on Actions, with marks written first.
 
+### T0b' re-test of the four timid operators (owner 2026-11-26: random parameters acceptable; written before the run)
+combine, bump, cut and fill failed T0b on the near-copy rate. Their random ranges are widened (combine: whole-pod
+50 % (was 30 %), window radius 15-35 mm (10-25); bump: 2-6 mm high (1-4), 8-20 mm wide (5-15); cut: radius 3.7-7 mm
+(3.3-5), stretch 1.5-4 (1-3), groove half-length 10-35 mm (7.5-25); fill: blobs 4-9 mm (3-6), ribs 3-6 mm thick
+(3-4.5) and 10-20 mm long (8-15), closing window 15-30 mm (10-20)). Re-test on the same 10 real-car test seeds, 40 new
+draws each (random seeds 200+), marks unchanged (legal >= 50 %, in band >= 70 %, mill refill median <= 10 %).
+
 ### T3e' re-test of the trust check (owner approved the fix and re-test 2026-11-26; written before the run)
 T3e failed as registered (instances 5-7, kept as failed). Fixes, developed on instance 0 only: (1) a downhill
 probe the morph refuses is retried at half size; if still unmeasurable the design stays **undecided** (re-checked

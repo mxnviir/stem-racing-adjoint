@@ -98,12 +98,12 @@ def combine(space, rng, fA, fB, guide=None):
     """X3: inside a window (or everywhere), both designs' cuts (minimum) or both designs' material (maximum)."""
     cuts = rng.random() < 0.6
     both = np.minimum(fA, fB) if cuts else np.maximum(fA, fB)
-    if rng.random() < 0.3:
+    if rng.random() < 0.5:
         return _in_region(space, both, fA), {"mode": "cuts" if cuts else "material", "whole": True}
     c = _pick(space, rng, _surface(space, fA) | _surface(space, fB), np.clip(np.abs(fA - fB), 0.0, 5.0))
     if c is None:
         return fA.copy(), {"skip": "no surface"}
-    r = rng.uniform(10.0, 25.0)
+    r = rng.uniform(15.0, 35.0)
     W = _win(space, c, r)
     return _in_region(space, fA + W * (both - fA), fA), {"mode": "cuts" if cuts else "material", "r": float(r)}
 
@@ -129,7 +129,7 @@ def bump(space, rng, fA, fB=None, guide=None):
     c = _pick(space, rng, _surface(space, fA), None if g is None else np.abs(g))
     if c is None:
         return fA.copy(), {"skip": "no surface"}
-    a, r = rng.uniform(1.0, 4.0), rng.uniform(5.0, 15.0)
+    a, r = rng.uniform(2.0, 6.0), rng.uniform(8.0, 20.0)
     sign = rng.choice([-1.0, 1.0])
     if g is not None:
         gi = g[tuple(np.argmin(np.abs(ax - v)) for ax, v in zip(space.axes, (c[0], c[1], c[2])))]
@@ -143,13 +143,13 @@ def cut(space, rng, fA, fB=None, guide=None):
     least the mill's radius. With a guide: where the surface wants to move in."""
     g = _smooth_guide(space, guide)
     kind = str(rng.choice(["window_z", "window_y", "groove_x"], p=[0.35, 0.25, 0.4]))
-    rho = rng.uniform(BALL_R + 0.1, 5.0)
-    stretch = rng.uniform(1.0, 3.0)
+    rho = rng.uniform(BALL_R + 0.5, 7.0)
+    stretch = rng.uniform(1.5, 4.0)
     if kind == "groove_x":
         c = _pick(space, rng, _surface(space, fA), None if g is None else np.clip(g, 0, None))
         if c is None:
             return fA.copy(), {"skip": "no surface"}
-        half = rng.uniform(7.5, 25.0)
+        half = rng.uniform(10.0, 35.0)
         dx = np.clip(np.abs(space.X - c[0]) - half, 0.0, None)
         d = np.sqrt(dx ** 2 + (space.Yabs - c[1]) ** 2 + (space.Z - c[2]) ** 2)
     else:
@@ -172,9 +172,9 @@ def fill(space, rng, fA, fB=None, guide=None):
     if c is None:
         return fA.copy(), {"skip": "no air near the pod"}
     if kind == "blob":
-        add = rng.uniform(3.0, 6.0) - _dist(space, c)
+        add = rng.uniform(4.0, 9.0) - _dist(space, c)
     elif kind == "rib":
-        t, R = rng.uniform(WALL, 4.5), rng.uniform(8.0, 15.0)
+        t, R = rng.uniform(WALL, 6.0), rng.uniform(10.0, 20.0)
         C = space.X if rng.random() < 0.7 else space.Z
         add = np.minimum(t / 2 - np.abs(C - (c[0] if C is space.X else c[2])), R - _dist(space, c))
     else:
@@ -184,7 +184,7 @@ def fill(space, rng, fA, fB=None, guide=None):
         B = fA > 0
         closed = ndimage.binary_closing(B, ball)
         fc = np.where(closed & ~B, 0.5 * space.h, fA)
-        W = _win(space, c, rng.uniform(10.0, 20.0))
+        W = _win(space, c, rng.uniform(15.0, 30.0))
         return _in_region(space, fA + W * (fc - fA), fA), {"kind": kind}
     return _in_region(space, np.maximum(fA, add), fA), {"kind": kind, "guided": g is not None}
 
