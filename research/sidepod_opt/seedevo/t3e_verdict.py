@@ -15,7 +15,12 @@ for sc in ("S1", "S2", "S3", "S4", "S5"):
     tr = sum(r["trusted"] for r in t.values()); n = sum(r["trust_checks"] for r in t.values())
     print(f"  {sc}: plain {m(p):.3f}  tc {m(t):.3f}   trusted {tr}/{n} ({tr / max(n, 1):.0%})  tc<=plain {le(t, p)[0]}/15  tc<=evo {le(t, ev)[0]}/15  tc<=gf {le(t, gf)[0]}/15")
 P = {sc: g("plain", sc) for sc in ("S1", "S2", "S3", "S4", "S5")}; T = {sc: g("tc", sc) for sc in P}
-share = lambda sc: sum(r["trusted"] for r in T[sc].values()) / max(sum(r["trust_checks"] for r in T[sc].values()), 1)
+DECIDED = len(sys.argv) > 2 and sys.argv[2] == "decided"           # T3e' (amended TC5): decided checks only
+share = lambda sc: sum(r["trusted"] for r in T[sc].values()) / max(sum(r["trust_checks"] - (r.get("undecided", 0) if DECIDED else 0)
+                                                                    for r in T[sc].values()), 1)
+for sc in ("S1", "S2", "S3", "S4", "S5"):
+    und = sum(r.get("undecided", 0) for r in T[sc].values()); n = sum(r["trust_checks"] for r in T[sc].values())
+    print(f"  {sc}: trusted share {'(decided checks)' if DECIDED else '(all checks)'} {share(sc):.0%}; undecided {und}/{n}")
 tc1 = m(T["S1"]) - m(P["S1"]) <= 0.25 * (m(ev) - m(P["S1"]))
 tc2 = all(le(T[s], P[s])[0] >= 10 for s in ("S3", "S5"))
 tc3 = all(le(T[s], P[s])[0] >= 8 for s in ("S2", "S4"))

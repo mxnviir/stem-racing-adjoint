@@ -34,12 +34,32 @@ def _box(sp, x0, x1, yw, z0, z1, taper):
     return -d
 
 
-def make_seeds(sp, n=12, seed=1):
+def _open_window(sp, rng, f, tries=30):
+    """A through-window from above or the side, retried until the built design has one more opening."""
+    n0 = sp.describe(sp.build(f)["B"])[1]
+    for _ in range(tries):
+        g, m = OP.cut(sp, rng, f, None, None)
+        if m.get("kind", "").startswith("window"):
+            b = sp.build(g)
+            if b["ok"] and sp.describe(b["B"])[1] > n0:
+                return b["f"]
+    return None
+
+
+def make_seeds(sp, n=12, seed=1, open_share=0.0):
     """n legal, visibly different pods: boxes of different length, width, height and taper, most with one
-    or two cuts or slot arrays."""
+    or two cuts or slot arrays. open_share (test T3e'): that share of the seeds gets a through-window."""
     rng = np.random.default_rng(1000 + seed)
     out = {}
+    n_open = int(round(open_share * n))
     while len(out) < n:
+        if len(out) < n_open:
+            f = _box(sp, rng.uniform(4, 16), rng.uniform(40, 60), rng.uniform(7, 15), rng.uniform(3, 9), rng.uniform(16, 23),
+                     rng.uniform(0.0, 0.6))
+            f = _open_window(sp, rng, sp.build(f)["f"])
+            if f is not None and sp.build(f)["pod_mm3"] > 1500:
+                out[f"s{len(out):02d}"] = f
+            continue
         x0 = rng.uniform(4, 16); x1 = rng.uniform(40, 60)
         z0 = rng.uniform(3, 9); z1 = rng.uniform(16, 23)
         f = _box(sp, x0, x1, rng.uniform(7, 15), z0, z1, rng.uniform(0.0, 0.6))
@@ -55,8 +75,17 @@ def make_seeds(sp, n=12, seed=1):
     return out
 
 
-def make_target(sp, seeds, seed=1):
+def make_target(sp, seeds, seed=1, force_open=False):
     rng = np.random.default_rng(7000 + seed)
+    if force_open:                                                            # T3e': the target has a through-opening
+        for k in range(50):
+            f = make_target(sp, seeds, seed * 1000 + k + 1)
+            if sp.describe(sp.build(f)["B"])[1] > 0:
+                return f
+            g = _open_window(sp, np.random.default_rng(7700 + seed * 100 + k), f)
+            if g is not None:
+                return g
+        raise RuntimeError("no open target")
     names = list(seeds)
     a, b, c = (seeds[names[i]] for i in rng.choice(len(names), 3, replace=False))
     w = OP.smoothstep((sp.X - rng.uniform(26, 38)) / 8.0 + 0.5)

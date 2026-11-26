@@ -236,6 +236,17 @@ comparison; ties count as "no worse".
 - If it passes: the end polish of the finalists uses the trust check, and the real-CFD check on 3-4 real
   designs (team pod, groove, a slotted and a windowed pod) is next, on Actions, with marks written first.
 
+### T3e' re-test of the trust check (owner approved the fix and re-test 2026-11-26; written before the run)
+T3e failed as registered (instances 5-7, kept as failed). Fixes, developed on instance 0 only: (1) a downhill
+probe the morph refuses is retried at half size; if still unmeasurable the design stays **undecided** (re-checked
+next generation; after 2 undecided checks it goes gradient-free) and is never counted as distrust; (2) instances
+are built with half the seeds windowed (`make_seeds(open_share=0.5)`) and a target with a through-opening, so
+"bad adjoint on pods with openings" (S2, S3) is actually exercised.
+Held-out instances 8, 9, 10 (never run), seeds 1-5; arms, scenarios and marks TC1-TC4 exactly as T3e.
+**TC5 amended:** the trusted share is taken over **decided** checks (an undecided check is a refused measurement,
+not a verdict); the undecided share is reported beside it. Same thresholds (>= 50 % in S1, <= 20 % in S4 and S5).
+PASS = TC1-TC5. Verdict: `seedevo/t3e_verdict.py`.
+
 ### Real-CFD gates T1 and TR (owner, 2026-11-26: "run all the tests we need, 12 hours"; written before the run)
 One workflow, `.github/workflows/seedevo_gate.yml`, on this repository's runners. Designs (committed as
 `designs/*.tgz`, built by the real builder, the same four as the plumbing run): team pod (`original`), groove

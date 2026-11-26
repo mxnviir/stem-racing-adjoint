@@ -53,6 +53,7 @@ def run(arm, sp, seeds, target, sigma, scen, seed, budget=300.0, reserve=12.0):
     return {"arm": arm, "scen": scen, "seed": seed, "true_best": ev.true(best.f), "best_open": int(best.desc[1]),
             "refine_n": len(ref), "refine_acc": sum(1 for x in ref if x.get("result") == "accepted"),
             "trust_checks": len(tcs), "trusted": sum(1 for t in tcs if t["trusted"]),
+            "undecided": sum(1 for t in tcs if t["trusted"] is None),
             "stopped": sum(1 for x in ref if x.get("stopped")),
             "rho_seen_open_share": float(np.mean([o > 0 for o, _ in ev.rho_seen])) if ev.rho_seen else None}
 
@@ -62,13 +63,15 @@ def main():
     ap.add_argument("out"); ap.add_argument("--problems", type=int, nargs="+", default=[5, 6, 7])
     ap.add_argument("--seeds", type=int, nargs="+", default=[1, 2, 3, 4, 5])
     ap.add_argument("--scens", nargs="+", default=list(SCEN)); ap.add_argument("--arms", nargs="+", default=list(ARM_CFG))
+    ap.add_argument("--open-share", type=float, default=0.0)
     a = ap.parse_args()
     sp = ToySpace(); rows, heads = [], {}
     for pr in a.problems:
-        seeds = make_seeds(sp, 12, pr); target = make_target(sp, seeds, pr)
+        seeds = make_seeds(sp, 12, pr, open_share=a.open_share); target = make_target(sp, seeds, pr, force_open=a.open_share > 0)
         J = [ToyEvaluator(sp, target).true(f) for f in seeds.values()]
         sigma = 0.25 * float(np.std(J))
-        heads[pr] = {"sigma": sigma, "best_seed": min(J), "target_open": int(sp.describe(sp.build(target)["B"])[1])}
+        heads[pr] = {"sigma": sigma, "best_seed": min(J), "target_open": int(sp.describe(sp.build(target)["B"])[1]),
+                     "seeds_open": int(sum(sp.describe(sp.build(f)["B"])[1] > 0 for f in seeds.values()))}
         print("problem", pr, json.dumps(heads[pr]), flush=True)
         for sc in a.scens:
             for arm in a.arms:

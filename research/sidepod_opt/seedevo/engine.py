@@ -325,20 +325,32 @@ class Engine:
             f_dn, p_dn = self.ev.grad_step(self.space, e, s)
             f_up, p_up = self.ev.grad_step(self.space, e, s, sign=-1.0)
             dn = self._try_move(e, f_dn, r, "adjoint", {"step": s, "pred": p_dn, "probe": "down"})
+            if dn is None:                                     # the downhill probe could not be measured: try it smaller
+                s = s / 2
+                f_dn, p_dn = self.ev.grad_step(self.space, e, s)
+                f_up, p_up = self.ev.grad_step(self.space, e, s, sign=-1.0)
+                dn = self._try_move(e, f_dn, r, "adjoint", {"step": s, "pred": p_dn, "probe": "down"})
+            if dn is None:                                     # still unmeasurable: undecided, never evidence against
+                e.undecided = getattr(e, "undecided", 0) + 1
+                if e.undecided >= 2:
+                    e.trust = False                            # the mesh will not take adjoint moves here: go gradient-free
+                e.step /= 2
+                return dict(r, result="rejected", trust_check={"down": None, "up": None, "trusted": None,
+                                                                "undecided": e.undecided})
             up = self._try_move(e, f_up, r, "adjoint_up", {"step": s, "pred": p_up, "probe": "up"})
             if up is None and dn is not None:                  # the uphill probe could not be measured: try it smaller
                 f_up, p_up = self.ev.grad_step(self.space, e, s / 2, sign=-1.0)
                 up = self._try_move(e, f_up, r, "adjoint_up", {"step": s / 2, "pred": p_up, "probe": "up"})
             if up is not None:
-                e.trust = bool(dn is not None and dn[0] <= -margin and dn[0] <= up[0] - margin)
+                e.trust = bool(dn[0] <= -margin and dn[0] <= up[0] - margin)
             else:                                              # no uphill measurement: a missing value is not evidence
-                e.trust = bool(dn is not None and dn[0] <= -margin)
+                e.trust = bool(dn[0] <= -margin)
             r["trust_check"] = {"down": None if dn is None else dn[0], "up": None if up is None else up[0], "trusted": e.trust,
                                 "one_sided": up is None}
             if up is not None:
                 self.all.pop(up[1].id, None)                   # the uphill probe is a measurement, never a design
             best = dn if e.trust else None
-            if not e.trust and dn is not None and dn[0] <= -margin:
+            if not e.trust and dn[0] <= -margin:
                 best = dn                                      # a lucky probe is still a measured improvement
         elif e.trust is not False:
             r["mode"] = "adjoint"
