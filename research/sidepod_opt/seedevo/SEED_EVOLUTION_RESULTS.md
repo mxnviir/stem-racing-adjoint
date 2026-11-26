@@ -193,3 +193,8 @@ resort. Re-launched (attempt 3).
 - Reported, same design, frame 0, mean of the full 1000 iterations: team pod 180.72 campaign vs 179.07 gate; windowed
   pod 179.18 vs 179.24. With the start-up transient left out (iterations 200-1000, gate runs): 174.18 / 173.97 mN, block
   SE 0.10 / 0.19. See the campaign scoring amendment in the plan.
+
+**TR retry, slotted seed (run 45875486505):** runner lost at 20:50 UTC after 2 h 22 min in the adjoint step (no log, no
+artifact). That is the fourth lost runner during a coarse DAFoam adjoint today (original, window, slots twice counting
+the first cap); the channel run is the only one that reached its end. Likeliest cause: memory (about 980 k adjoint states,
+4 ranks, swap) on a standard runner, not shown without a log.
