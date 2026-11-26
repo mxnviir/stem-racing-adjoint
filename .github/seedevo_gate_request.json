@@ -1,0 +1,7 @@
+{
+ "note": "seed evolution: real-CFD gates T1 (scoring noise) and TR (trust check) on the wall-resolved mesh",
+ "frames": {"original": 4, "channel": 3, "slots": 3, "window": 3},
+ "probe_designs": ["original", "channel", "slots", "window"],
+ "moves": {"zero": "zero", "dn": "dafnpz:@DAF", "up": "dafopp:@DAF", "r101": "rnd101", "r102": "rnd102"},
+ "attempt": 1
+}

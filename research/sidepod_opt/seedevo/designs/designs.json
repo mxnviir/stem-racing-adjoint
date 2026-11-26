@@ -1,0 +1,22 @@
+{
+ "original": {
+  "pod_cm3": 67.47,
+  "openings": 0,
+  "car_g": 48.14591298177645
+ },
+ "channel": {
+  "pod_cm3": 57.304,
+  "openings": 0,
+  "car_g": 48.0
+ },
+ "slots": {
+  "pod_cm3": 51.726,
+  "openings": 1,
+  "car_g": 48.0
+ },
+ "window": {
+  "pod_cm3": 65.764,
+  "openings": 1,
+  "car_g": 48.0
+ }
+}

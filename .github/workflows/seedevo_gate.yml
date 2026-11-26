@@ -1,0 +1,236 @@
+name: seedevo_gate
+run-name: "Seed evolution: real-CFD gates T1 (scoring noise) and TR (trust check), wall-resolved mesh"
+
+# research/sidepod_opt/seedevo/SEED_EVOLUTION_PLAN.md, tests T1 and TR. Three stages, all on free runners:
+#   state  (design x frame): fresh wall-resolved mesh (frame shifted by k x 0.37 mm), production scheme 1000 its,
+#          then the steady model (upwind U) 1200 more: production and steady drag per mesh -> T1 noise, mark L.
+#          Frame 0 of each design keeps its steady state (artifact) for the probes.
+#   dafoam (design): coarse fresh mesh + steady state + DAFoam adjoint (as coarse_dafoam.yml) -> a coarse gradient.
+#   probe  (design x move): the design's own wall-resolved steady mesh morphed onto one move of peak 0.5 mm
+#          (zero, along DAFoam, against DAFoam, two random smooth moves), explicit morph, 1000 steady its.
+# Launch: commit .github/seedevo_gate_request.json on this branch.
+on:
+  push:
+    branches: [claude/loving-keller-q72mvv]
+    paths: [".github/seedevo_gate_request.json"]
+  workflow_dispatch:
+
+permissions: { contents: write, actions: read }
+
+env:
+  PY_DEPS: numpy==2.4.6 scipy==1.17.1 pandas trimesh==5.2.0 scikit-image shapely rtree==1.4.1 mapbox-earcut manifold3d==3.5.4 fast_simplification==0.2.0 jax jaxlib matplotlib pymeshlab==2025.7.post1 numba cadquery-ocp
+  OMPI_MCA_rmaps_base_oversubscribe: "1"
+  OMPI_MCA_hwloc_base_use_hwthreads_as_cpus: "1"
+  OMPI_ALLOW_RUN_AS_ROOT: "1"
+  OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: "1"
+
+jobs:
+  init:
+    runs-on: ubuntu-24.04
+    outputs:
+      states: ${{ steps.r.outputs.states }}
+      designs: ${{ steps.r.outputs.designs }}
+      probes: ${{ steps.r.outputs.probes }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: r
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          r = json.load(open('.github/seedevo_gate_request.json'))
+          print('states=' + json.dumps([{"design": d, "k": k} for d, n in r["frames"].items() for k in range(n)]))
+          print('designs=' + json.dumps(r["probe_designs"]))
+          print('probes=' + json.dumps([{"design": d, "move": m, "field": f} for d in r["probe_designs"] for m, f in r["moves"].items()]))
+          PY
+
+  state:
+    name: "state ${{ matrix.case.design }} ~${{ matrix.case.k }}"
+    needs: init
+    runs-on: ubuntu-24.04
+    timeout-minutes: 355
+    strategy:
+      fail-fast: false
+      max-parallel: 16
+      matrix:
+        case: ${{ fromJSON(needs.init.outputs.states) }}
+    steps:
+      - name: room (free disk, 10 GB swap)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo fallocate -l 10G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: OpenFOAM v2412 + python deps
+        timeout-minutes: 30
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          for i in 1 2 3 4 5; do (curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash) && sudo apt-get install -y -q openfoam2412-default && break; sleep 30; done
+          pip install $PY_DEPS
+      - name: fresh wall-resolved mesh + production 1000 its, then steady model 1200 its
+        working-directory: research/sidepod_opt
+        timeout-minutes: 315
+        run: |
+          D=${{ matrix.case.design }}; K=${{ matrix.case.k }}; TAG=${D}_k${K}
+          mkdir -p ../../out/$TAG gate
+          tar xzf seedevo/designs/$D.tgz -C seedevo/designs
+          export GATE_DOMAIN_DX_MM=$(python3 -c "print($K*0.37)")
+          T0=$(date +%s)
+          set +e
+          PRODCHECK_WALL_RESOLVED=1 PRODCHECK_RES=resolved PRODCHECK_RESULTS=$PWD/../../out/$TAG PRODCHECK_KEEP=$PWD/gate/state_prod \
+            PRODCHECK_ITERS=1000 PRODCHECK_TIMEOUT=16000 python -W ignore -u prodcheck.py seedevo/designs/$D/car prod_$TAG 4 cold > ../../out/$TAG/prodcheck.log 2>&1
+          RC=$?
+          echo "production rc $RC after $(( ($(date +%s) - T0) / 60 )) min"; tail -3 ../../out/$TAG/prodcheck.log | cut -c1-500
+          [ $RC = 0 ] || exit $RC
+          cp gate/state_prod/logs/snappyHexMesh.log ../../out/$TAG/ 2>/dev/null
+          f=$(ls gate/state_prod/postProcessing/forces/*/force.dat 2>/dev/null | tail -1); [ -n "$f" ] && cp "$f" ../../out/$TAG/forces_prod.dat
+          for t in $(ls gate/state_prod | grep -E '^[0-9]+$' | sort -n -r); do
+            if [ -f gate/state_prod/$t/polyMesh/points ]; then cp gate/state_prod/$t/polyMesh/points gate/state_prod/constant/polyMesh/points; echo "points <- $t"; break; fi
+          done
+          python -W ignore -u fine_campaign/steady_base.py gate/state_prod gate/state_steady ../../out/$TAG/steady 4 1200 > ../../out/$TAG/steady.log 2>&1
+          RC=$?
+          echo "steady rc $RC after $(( ($(date +%s) - T0) / 60 )) min"; tail -2 ../../out/$TAG/steady.log | cut -c1-500
+          f=$(ls gate/state_steady/postProcessing/forces/*/force.dat 2>/dev/null | tail -1); [ -n "$f" ] && cp "$f" ../../out/$TAG/forces_steady.dat
+          [ $RC = 0 ] || exit $RC
+          if [ "$K" = "0" ]; then
+            for t in $(ls gate/state_steady | grep -E '^[0-9]+$' | sort -n -r); do
+              if [ -f gate/state_steady/$t/polyMesh/points ]; then cp gate/state_steady/$t/polyMesh/points gate/state_steady/constant/polyMesh/points; break; fi
+            done
+            L=$(ls gate/state_steady | grep -E '^[0-9]+$' | sort -n | tail -1)
+            tar czf ../../state.tgz -C gate state_steady/constant state_steady/system state_steady/$L state_steady/case_meta.json 2>/dev/null \
+              || tar czf ../../state.tgz -C gate state_steady/constant state_steady/system state_steady/$L
+            ls -la ../../state.tgz
+          fi
+          { echo "## $TAG"; tail -1 ../../out/$TAG/prodcheck.log | cut -c1-300; grep -E "STEADY_" ../../out/$TAG/steady.log; } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "t1-${{ matrix.case.design }}-k${{ matrix.case.k }}", path: out/, retention-days: 30 }
+      - uses: actions/upload-artifact@v4
+        if: matrix.case.k == 0
+        with: { name: "state-${{ matrix.case.design }}", path: state.tgz, retention-days: 7, compression-level: 0 }
+
+  dafoam:
+    name: "dafoam ${{ matrix.design }}"
+    needs: init
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        design: ${{ fromJSON(needs.init.outputs.designs) }}
+    steps:
+      - name: room (free disk, 16 GB swap)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo fallocate -l 16G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: OpenFOAM v2412 + python deps + DAFoam image
+        timeout-minutes: 40
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          for i in 1 2 3 4 5; do (curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash) && sudo apt-get install -y -q openfoam2412-default && break; sleep 30; done
+          pip install $PY_DEPS
+          for i in 1 2 3; do docker pull dafoam/opt-packages:v5.1.1 && break; sleep 30; done
+      - name: coarse steady state + DAFoam adjoint
+        working-directory: research/sidepod_opt
+        timeout-minutes: 240
+        run: |
+          D=${{ matrix.design }}; mkdir -p ../../out/daf-$D
+          tar xzf seedevo/designs/$D.tgz -C seedevo/designs
+          GATE_RES=coarse GATE_RESULTS=/tmp/gr CFD_DIV_U="bounded Gauss upwind" \
+            python -W ignore -u hybrid/coarse_state.py seedevo/designs/$D/car gate/refA_hyb 5000 ../../out/daf-$D/state.json 2>&1 | tail -3
+          python dafoam/make_case.py --src gate/refA_hyb --out gate/dafoam_case --iters 300 | tail -1
+          env DAF_ADJ=Krylov DAF_PC_FILL=0 DAF_PC_LEVEL=1 DAF_GMRES_ITERS=2000 DAF_GMRES_RESTART=200 \
+            dafoam/run_docker.sh gate/dafoam_case 4 > ../../out/daf-$D/dafoam.out 2>&1 || true
+          grep -E "DAFOAM|Killed" ../../out/daf-$D/dafoam.out || tail -30 ../../out/daf-$D/dafoam.out
+          cp gate/dafoam_case/dafoam_sens.npz gate/dafoam_case/dafoam_sens.json ../../out/daf-$D/ 2>/dev/null || true
+          test -f ../../out/daf-$D/dafoam_sens.npz
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "daf-${{ matrix.design }}", path: out/, retention-days: 30 }
+
+  probe:
+    name: "probe ${{ matrix.case.design }} ${{ matrix.case.move }}"
+    needs: [init, state, dafoam]
+    if: always() && needs.init.result == 'success'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      max-parallel: 20
+      matrix:
+        case: ${{ fromJSON(needs.init.outputs.probes) }}
+    steps:
+      - name: room (free disk, 10 GB swap)
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          sudo fallocate -l 10G /swapfile2 && sudo chmod 600 /swapfile2 && sudo mkswap /swapfile2 && sudo swapon /swapfile2
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: OpenFOAM v2412 + python deps
+        timeout-minutes: 30
+        run: |
+          (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q && break; sleep 20; done) || true
+          for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 && break; sleep 60; done
+          for i in 1 2 3 4 5; do (curl -s https://dl.openfoam.com/add-debian-repo.sh | sudo bash) && sudo apt-get install -y -q openfoam2412-default && break; sleep 30; done
+          pip install $PY_DEPS
+      - uses: actions/download-artifact@v4
+        with: { name: "state-${{ matrix.case.design }}", path: /tmp/st }
+      - uses: actions/download-artifact@v4
+        with: { name: "daf-${{ matrix.case.design }}", path: /tmp/daf }
+      - name: the move, then the morphed steady solve
+        working-directory: research/sidepod_opt
+        timeout-minutes: 250
+        run: |
+          D=${{ matrix.case.design }}; NAME=${D}_${{ matrix.case.move }}; FIELD="${{ matrix.case.field }}"
+          mkdir -p gate ../../out/probe/$NAME gr
+          tar xzf seedevo/designs/$D.tgz -C seedevo/designs
+          tar xzf /tmp/st/state.tgz -C gate
+          mkdir -p seedevo/probe_daf && cp /tmp/daf/daf-$D/dafoam_sens.npz seedevo/probe_daf/$D.npz
+          FIELD=${FIELD//@DAF/seedevo\/probe_daf\/$D.npz}
+          python3 -c "import json,pathlib; pathlib.Path('gr/base.json').write_text(json.dumps({'run_dir_kept': str(pathlib.Path('gate/state_steady').resolve())}))"
+          GATE_RES=resolved GATE_RESULTS=$PWD/gr STEP_NORMAL_SIGMA_MM=1.5 STEP_ZMIN_MM=1.5 \
+            python -W ignore -m seedevo.probe_step seedevo/designs/$D/car "$NAME" "$FIELD" 0.5 | tail -1 | tee ../../out/probe/$NAME/step_info.txt
+          export GATE_RES=resolved GATE_RESULTS=$PWD/gr GATE_ITERS=1000 GATE_TIMEOUT=14000 CFD_DIV_U="bounded Gauss upwind" \
+                 GATE_WALL_RESOLVED=1 P2_MORPH_STRICT=1 P2_WARM_COPY=1 P2_MORPH_FIELD=$PWD/gate/bump_$NAME/morph_field.npz \
+                 P2_MORPH_EXPLICIT=1 P2_MORPH_D0_MM=0.5 P2_MORPH_DELTA_MM=5 P2_MORPH_STRICT_RULE=acceptable
+          set +e
+          python -W ignore -u gate.py bump "$NAME" 4 > ../../out/probe/$NAME/bump.log 2>&1
+          RC=$?
+          set -e
+          grep -h "morph checkMesh" ../../out/probe/$NAME/bump.log || true; tail -2 ../../out/probe/$NAME/bump.log | cut -c1-400
+          cp gr/bump_$NAME.json ../../out/probe/$NAME/ 2>/dev/null || true
+          cp -r gr/forces/bump_$NAME ../../out/probe/$NAME/forces 2>/dev/null || true
+          { echo "## $NAME rc $RC"; cat gr/bump_$NAME.json 2>/dev/null | head -c 400; } >> "$GITHUB_STEP_SUMMARY"
+          exit $RC
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: "probe-${{ matrix.case.design }}-${{ matrix.case.move }}", path: out/, retention-days: 30 }
+
+  collect:
+    needs: [state, dafoam, probe]
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: "${{ github.ref_name }}", fetch-depth: 0 }
+      - uses: actions/download-artifact@v4
+        with: { pattern: "t1-*", path: /tmp/r/t1 }
+      - uses: actions/download-artifact@v4
+        with: { pattern: "daf-*", path: /tmp/r/daf }
+      - uses: actions/download-artifact@v4
+        with: { pattern: "probe-*", path: /tmp/r/probe }
+      - name: commit the results
+        run: |
+          D=research/sidepod_opt/seedevo/results/gate_${{ github.run_id }}
+          mkdir -p $D && cp -r /tmp/r/. $D/
+          find $D -name "*.log" -size +2M -exec sh -c 'tail -c 2000000 "$1" > "$1.tail" && mv "$1.tail" "$1"' _ {} \;
+          git config user.name "github-actions[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add $D
+          git commit -m "seedevo gate: results of run ${{ github.run_id }}" || exit 0
+          for i in 1 2 3 4 5; do git pull --rebase origin ${{ github.ref_name }} && git push origin HEAD:${{ github.ref_name }} && break; sleep $((i*10)); done

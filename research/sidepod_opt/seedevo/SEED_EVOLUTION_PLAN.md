@@ -236,6 +236,33 @@ comparison; ties count as "no worse".
 - If it passes: the end polish of the finalists uses the trust check, and the real-CFD check on 3-4 real
   designs (team pod, groove, a slotted and a windowed pod) is next, on Actions, with marks written first.
 
+### Real-CFD gates T1 and TR (owner, 2026-11-26: "run all the tests we need, 12 hours"; written before the run)
+One workflow, `.github/workflows/seedevo_gate.yml`, on this repository's runners. Designs (committed as
+`designs/*.tgz`, built by the real builder, the same four as the plumbing run): team pod (`original`), groove
+(`channel`), a slotted pod (`slots`, 1 through-opening) and a windowed pod (`window`, 1 through-opening).
+**T1 amendment (before the run):** the design set is team pod x 4 meshing frames (0, 0.37, 0.74, 1.11 mm),
+groove, slots and window x 3 each; the hybrid final design and no pod are dropped (the final design was built on a
+different base surface; no pod's +15 mN check has held on every mesh). Each run: fresh wall-resolved mesh,
+production scheme 1000 iterations (drag = 200-iteration block means of the last 1000, as Marks P2-P4), then the
+steady model 1200 more (drag = mean of the last 404, as the hybrid loop). Marks I1 (layers on >= 50 % of wall
+faces, every design) and I2 (pooled mesh-to-mesh sigma, per model: <= 1.0 mN single runs score; 1.0-2.5 the duel
+of section 5; > 2.5 that model cannot score) as written above; reported: each design vs the team pod.
+**TR, the trust check on real CFD:** for each of the four designs, a coarse DAFoam gradient of that design (fresh
+coarse mesh, steady model, as `coarse_dafoam.yml`), then five moves of peak 0.5 mm on the design's own frame-0
+steady mesh (explicit morph, smoothed normals, 1.5 mm ground clearance, 1000 steady iterations, as the hybrid
+loop): zero, along DAFoam (`dn`), against it (`up`), random smooth moves seeds 101 and 102. Drag: mean of the last
+404 iterations; SE from four 101-iteration blocks; margin m = max(3 x hypot(SE_a, SE_b), 0.15 mN).
+- trusted(design) = D(dn) <= D(zero) - m AND D(dn) <= D(up) - m. A move the morph refuses makes the check
+  "undetermined" for that design, counted as not trusted (conservative).
+- **TR1:** trusted on the team pod (H1's result reproduced through the new pipeline). If TR1 fails, the
+  pipeline is suspect and TR2 is not interpreted.
+- **TR2 (the question):** trusted on >= 2 of the 3 new designs (groove, slots, window).
+- **TR3:** on the trusted designs, D(dn) below both random moves on at least half of them.
+- Reported: every drag change, DAFoam's first-order prediction against the measured change.
+- **What it decides:** TR1 and TR2 pass -> coarse DAFoam is the end polish's proposer behind the trust check.
+  TR2 fails -> the end polish on shapes unlike the team pod is gradient-free, and the adjoint is used only where
+  its own check passes.
+
 ### Coarse CFD on this machine: plumbing only (DECISIONS D6: no design conclusion from the coarse mesh)
 - **TP The whole chain runs on real CFD with a real adjoint** (`real.py`, `run_plumbing.py`). The trial
   car, coarse mesh (~105 k cells), steady model, 4 cores. Census of 5 seeds on fresh meshes (team pod,
