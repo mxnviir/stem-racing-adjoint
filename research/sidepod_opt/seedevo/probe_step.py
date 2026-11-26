@@ -19,10 +19,13 @@ def main(design, name, field, amp):
     import gate
     gate.ORIG = Path(design).resolve()                     # make_step builds the move on THIS design's surface
     import make_step as MS
+    down = MS.field_on_vertices
     if field.startswith("dafopp:"):
-        down = MS.field_on_vertices
         MS.field_on_vertices = lambda fld, V, N=None, A=None: -down("dafnpz:" + fld[len("dafopp:"):], V, N, A)
-    MS.main(name, field, amp)
+    try:
+        MS.main(name, field, amp)
+    finally:
+        MS.field_on_vertices = down                        # several moves in one process (tr_predict) stay independent
 
 
 if __name__ == "__main__":
