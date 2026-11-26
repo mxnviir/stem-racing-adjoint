@@ -163,3 +163,9 @@ batch driver reaches the engine's level; 13-14 batches per 300 runs; no design l
 2.06 / 1.05 / 1.85, 3.15 / 2.55 / 3.16, 1.49 / 2.14 / 2.02; means **1.65 / 2.95 / 1.88** against the unscreened driver's
 1.76 / 3.29 / 2.40 and the engine's 1.51 / 3.28 / 2.54. The price: fewer niches held at the end (4-6 against 7-11):
 the model concentrates the search on what it predicts well.
+
+**TR, coarse DAFoam on the channel seed (gate run 45864447055):** failed. GMRES (restart 200, ILU fill 0 / level 1)
+stalled: residual 4.2e-3 at 200, 8.9e-4 at 1000, 8.45e-4 at 2000 (tolerance 1e-6); flat for the last 1000. The
+slotted seed's run was still falling when it hit the cap (2.8e-2 to 3.6e-5); this one is not, so the TR retry with more
+iterations would not rescue it. Under the plan the channel seed's adjoint counts as refused (the design is refined
+gradient-free). A different preconditioner would be a new decision, not taken.
