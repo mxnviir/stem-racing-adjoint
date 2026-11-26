@@ -158,3 +158,8 @@ batch driver reaches the engine's level; 13-14 batches per 300 runs; no design l
   children get CFD; every pick is CFD'd).
 - **TC2 FAIL:** CMA-ES over a 6x2x3 lattice as the gradient-free polish beat random smooth moves in 7 of 15 (means
   4.824 vs 4.875, 2.433 vs 2.433, 6.820 vs 6.845): no gain at this budget. Kept in the code, off.
+
+**Campaign driver with model screening (dry run, reported):** instances 2-4, seeds 1-3, budget 300: screened driver
+2.06 / 1.05 / 1.85, 3.15 / 2.55 / 3.16, 1.49 / 2.14 / 2.02; means **1.65 / 2.95 / 1.88** against the unscreened driver's
+1.76 / 3.29 / 2.40 and the engine's 1.51 / 3.28 / 2.54. The price: fewer niches held at the end (4-6 against 7-11):
+the model concentrates the search on what it predicts well.
