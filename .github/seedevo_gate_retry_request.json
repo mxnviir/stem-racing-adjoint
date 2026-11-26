@@ -1,1 +1,1 @@
-{"stage": "dafoam", "designs": ["original", "window"], "gmres_iters": 5000, "attempt": 3}
+{"stage": "probe", "designs": ["original"], "state_run": 45864447055, "daf_run": 45885388243, "moves": {"dn": "dafnpz:@DAF", "up": "dafopp:@DAF"}}

@@ -198,3 +198,8 @@ resort. Re-launched (attempt 3).
 artifact). That is the fourth lost runner during a coarse DAFoam adjoint today (original, window, slots twice counting
 the first cap); the channel run is the only one that reached its end. Likeliest cause: memory (about 980 k adjoint states,
 4 ranks, swap) on a standard runner, not shown without a log.
+
+**TR retry, original and window seeds (run 45885388243):** original **converged** (1364 GMRES iterations, residual
+2.6e-7 at 1000; 64 min of solver); its along/against probes launched on the gate's frame-0 steady state. Window: runner
+lost again (21:35 UTC, about 108 min into the step). Coarse DAFoam on the four seeds today: 1 converged of 6 attempts
+(channel stalled; four lost runners).
