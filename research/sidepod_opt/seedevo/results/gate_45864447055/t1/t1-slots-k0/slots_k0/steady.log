@@ -1,0 +1,2 @@
+{"D20_half_N": 0.19904274197763136, "converged": false, "steady_pass": false, "block_span_last1000_mN": 0.16273923112066768, "block_means_mN": [198.973, 199.028, 199.082, 198.951, 199.022, 199.05, 199.073, 198.978, 198.985, 199.114], "run_dir_kept": "/home/runner/work/stem-racing-adjoint/stem-racing-adjoint/research/sidepod_opt/gate/state_steady", "from_state": "gate/state_prod", "from_time": 1000, "extra_iterations": 1200, "scheme_div_phi_U": "bounded Gauss upwind", "n_proc": 4}
+STEADY_FAIL

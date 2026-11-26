@@ -1,0 +1,21 @@
+{
+ "D20_half_N": 0.17449717886176713,
+ "wall_s": 7203.3,
+ "converged": true,
+ "residual_p": 0.0026516871921133988,
+ "force_osc": 0.09300359258423084,
+ "force_drift": 0.009467694004416292,
+ "run_dir": "",
+ "force_mean_stderr": 0.004638122842811037,
+ "morph_fallback": false,
+ "folder": "seedevo/designs/original/car",
+ "scheme": "production linearUpwind",
+ "mesh": "fresh",
+ "resolution": "resolved",
+ "iterations": 1000,
+ "n_proc": 4,
+ "y_plus_min": 0.05237037875903622,
+ "y_plus_max": 53.67099802382706,
+ "n_cells": 2125637,
+ "run_dir_kept": "/home/runner/work/stem-racing-adjoint/stem-racing-adjoint/research/sidepod_opt/gate/state_prod"
+}
