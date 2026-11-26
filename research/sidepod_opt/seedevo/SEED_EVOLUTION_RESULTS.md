@@ -209,3 +209,16 @@ probes failed or could not succeed: each probe job copied its design's DAFoam fi
 (zero, two random), so a design without an adjoint lost every probe. Run cancelled to free runners. The zero and random
 probes of all four seeds re-run through the retry workflow (DAFoam file only for moves that use it); the original seed's
 along/against probes are running in 45899521794.
+
+## T1 Instrument (gate run 45864447055; verdict from the 13 t1 artifacts, `t1_verdict.json`)
+Fresh wall-resolved mesh per design and meshing frame (2.12 M cells), production 1000 iterations, then steady model 1200.
+- **I1 PASS.** Wall layers on 59.6-62.0 % of wall faces, every design and frame (mark: >= 50 %).
+- **I2, production: pooled mesh-to-mesh sigma 0.57 mN (9 dof) -> "single runs score".** Per design (mean, sd, n):
+  team pod 179.54 / 0.37 / 4; channel 183.45 / 0.16 / 3; slotted 189.30 / 1.04 / 3; windowed 178.83 / 0.40 / 3.
+- **I2, steady model: pooled sigma 1.42 mN (9 dof) -> "duel".** team 186.01 / 1.23; channel 186.43 / 1.52; slotted
+  199.20 / 1.02; windowed 184.11 / 1.86.
+- Reported, not marked: production on iterations 200-1000 (start-up left out), pooled sigma 0.63 mN; team 174.75,
+  channel 178.67, slotted 184.25, windowed 173.50. Both models rank the four seeds alike (windowed < team < channel <
+  slotted); the windowed pod is 0.7 mN under the team pod on production (about 1.2 sigma; not a claim).
+- Consequence under the plan (the I2 rule): the campaign scores with **production**, single runs, and the steady
+  continuation is not needed for scoring (it costs 1200 more iterations and is the noisier of the two).
