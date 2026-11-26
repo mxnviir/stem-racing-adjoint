@@ -169,3 +169,8 @@ stalled: residual 4.2e-3 at 200, 8.9e-4 at 1000, 8.45e-4 at 2000 (tolerance 1e-6
 slotted seed's run was still falling when it hit the cap (2.8e-2 to 3.6e-5); this one is not, so the TR retry with more
 iterations would not rescue it. Under the plan the channel seed's adjoint counts as refused (the design is refined
 gradient-free). A different preconditioner would be a new decision, not taken.
+
+**TR, coarse DAFoam on the original and window seeds (gate run 45864447055):** both runners were lost (18:58 and 18:59
+UTC, after about 100 minutes in the adjoint step; no log, no artifact). Not a solver verdict. Re-run under the TR retry
+rule (5000 GMRES iterations). For reference, the hybrid campaign's earlier DAFoam runs with these settings converged in
+4 of 6 (hybrid/dafoam_actions/).
