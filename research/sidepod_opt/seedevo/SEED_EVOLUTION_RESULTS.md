@@ -222,3 +222,9 @@ Fresh wall-resolved mesh per design and meshing frame (2.12 M cells), production
   slotted); the windowed pod is 0.7 mN under the team pod on production (about 1.2 sigma; not a claim).
 - Consequence under the plan (the I2 rule): the campaign scores with **production**, single runs, and the steady
   continuation is not needed for scoring (it costs 1200 more iterations and is the noisier of the two).
+
+**TR, original seed, along/against probes (run 45899521794), provisional until the zero probe is in:** 0.5 mm moves on
+the converged coarse DAFoam gradient, explicit morph of the frame-0 steady state, steady model 1000 its, last 404:
+along (dn) 184.43 mN, against (up) 190.47 mN; the unmoved frame-0 steady drag 187.07. DAFoam first-order prediction
+(tr_predict): dn -7.50, up +7.50 mN. Measured from 187.07: dn -2.64, up +3.40; dn - up = -6.03 against -15.00 predicted
+(ratio 0.40). Right sign both ways, about 40 % of the predicted size.

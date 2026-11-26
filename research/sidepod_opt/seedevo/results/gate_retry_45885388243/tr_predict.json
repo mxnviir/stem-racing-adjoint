@@ -1,0 +1,17 @@
+{
+ "original": {
+  "dn": -7.500927340694914,
+  "up": 7.500927340694914,
+  "r101": -0.16169461114601769,
+  "r102": -0.14020128952614763
+ },
+ "channel": {
+  "error": "no DAFoam gradient"
+ },
+ "slots": {
+  "error": "no DAFoam gradient"
+ },
+ "window": {
+  "error": "no DAFoam gradient"
+ }
+}
