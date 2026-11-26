@@ -52,6 +52,8 @@ class Store:
         self.d, self.sp = Path(d), space
         (self.d / "fields").mkdir(parents=True, exist_ok=True)
         self.st = json.loads((self.d / "state.json").read_text()) if (self.d / "state.json").exists() else None
+        if self.st:
+            compute_offsets(self.st, self.st.get("score", "steady"))
         if not hasattr(space, "region_lo"):
             w = np.argwhere(space.region)
             space.region_lo, space.region_hi = w.min(0), w.max(0) + 1
@@ -70,15 +72,52 @@ class Store:
         (self.d / "state.json").write_text(json.dumps(self.st, indent=1, default=float))
 
 
+SETUP = None          # the campaign's current CFD setup (set by Store); runs of another setup need an offset
+OFFSETS = {}          # setup json -> mN added to bring it to the current setup (from the reference design)
+
+
+def setup_id(su):
+    return json.dumps(su or {}, sort_keys=True)
+
+
 def mean_score(rec, key):
-    v = [r[key] for r in rec["runs"] if r.get(key) is not None and r.get("converged", True)]
+    """Mean of the design's converged runs on the current setup; runs of another setup count only when the reference
+    design brought that setup over (the evolution branch's timed_rows): value + offset."""
+    v = []
+    for r in rec["runs"]:
+        if r.get(key) is None or not r.get("converged", True):
+            continue
+        sid = setup_id(r.get("setup"))
+        if SETUP is None or r.get("setup") is None or sid == SETUP:
+            v.append(r[key])
+        elif sid in OFFSETS:
+            v.append(r[key] + OFFSETS[sid])
     return (float(np.mean(v)), len(v)) if v else (np.inf, 0)
+
+
+def compute_offsets(st, key):
+    """Offsets from the reference design (the census's first seed) timed on both setups."""
+    global SETUP, OFFSETS
+    SETUP = setup_id(st.get("setup")) if st.get("setup") else None
+    OFFSETS = {}
+    ref = st["designs"].get(str(st.get("reference", st["seeds"][0])))
+    if ref is None or SETUP is None:
+        return OFFSETS
+    by = {}
+    for r in ref["runs"]:
+        if r.get(key) is not None and r.get("converged", True):
+            by.setdefault(setup_id(r.get("setup")), []).append(r[key])
+    if SETUP in by:
+        for sid, v in by.items():
+            if sid != SETUP:
+                OFFSETS[sid] = float(np.mean(by[SETUP]) - np.mean(v))
+    return OFFSETS
 
 
 # ------------------------------------------------------------------ commands
 def cmd_init(st_dir, seeds, space, n_explore=16, n_control=4, score="steady", rng_seed=1):
     S = Store(st_dir, space)
-    designs, fields = {}, {}
+    designs, fields, hashes = {}, {}, []
     for i, (name, f) in enumerate(seeds.items()):
         b = space.build(f)
         if not b["ok"]:
@@ -91,7 +130,8 @@ def cmd_init(st_dir, seeds, space, n_explore=16, n_control=4, score="steady", rn
         designs[str(i)] = {"name": name, "kind": "seed", "op": "", "parents": [], "desc": list(desc),
                            "niche": list(space.niche(desc)), "runs": [], "gen": 0, "changed_mm3": b["changed_mm3"]}
         fields[i] = b["f"]
-    S.st = {"gen": 0, "next_id": max(int(k) for k in designs) + 1, "designs": designs, "archive": {}, "duels": [],
+        hashes.append(shape_hash(b["B"]))
+    S.st = {"gen": 0, "hashes": sorted(set(hashes)), "next_id": max(int(k) for k in designs) + 1, "designs": designs, "archive": {}, "duels": [],
             "seeds": [k for k in designs], "score": score, "n_explore": n_explore, "n_control": n_control,
             "rng": rng_seed, "batches": []}
     req = {"gen": 0, "cases": [{"id": int(k), "k": 0} for k in designs]}
@@ -111,7 +151,9 @@ def cmd_ingest(st_dir, space, results):
         d = S.st["designs"].get(str(r["id"]))
         if d is None or any(x["k"] == r["k"] for x in d["runs"]):
             continue
-        d["runs"].append({k: r.get(k) for k in ("k", "steady", "prod", "converged", "layer_cov_pct", "error")})
+        d["runs"].append({k: r.get(k) for k in ("k", "steady", "prod", "converged", "layer_cov_pct", "error", "setup")})
+        if r.get("setup") and not S.st.get("setup"):
+            S.st["setup"] = r["setup"]                     # the first result fixes the campaign's setup
         n += 1
     S.save()
     print(json.dumps({"ingested": n}))
@@ -153,10 +195,30 @@ def _update_map(S):
     return log
 
 
-def cmd_next(st_dir, space, n_explore=None, n_control=None):
+_WSP = None
+
+
+def shape_hash(B):
+    import hashlib
+    return hashlib.sha1(np.packbits(np.asarray(B, bool)).tobytes()).hexdigest()[:16]
+
+
+def _winit():
+    global _WSP
+    from .space import RealSpace
+    _WSP = RealSpace()
+
+
+def _wbuild(f):
+    b = _WSP.build(f)
+    return {"ok": b["ok"], "f": b["f"].astype(np.float32), "B": np.packbits(b["B"]), "changed_mm3": b["changed_mm3"]}
+
+
+def cmd_next(st_dir, space, n_explore=None, n_control=None, workers=1):
     from . import operators as OP
     S = Store(st_dir, space)
     st = S.st
+    compute_offsets(st, st["score"])
     log = _update_map(S)
     rng = np.random.default_rng(st["rng"] * 1000 + st["gen"] + 1)
     key = st["score"]
@@ -174,34 +236,61 @@ def cmd_next(st_dir, space, n_explore=None, n_control=None):
         return min((pool[j] for j in idx), key=lambda i: mean_score(D[i], key)[0])
 
     made = 0
+    seen = set(st.get("hashes", []))
+    pool_exec = None
+    if workers > 1:
+        from concurrent.futures import ProcessPoolExecutor
+        pool_exec = ProcessPoolExecutor(workers, initializer=_winit)
+    shape = space.region.shape
+
+    def build_many(fields):
+        if pool_exec is None:
+            out = []
+            for f in fields:
+                b = space.build(f); out.append({"ok": b["ok"], "f": b["f"], "B": b["B"], "changed_mm3": b["changed_mm3"]})
+            return out
+        res = list(pool_exec.map(_wbuild, fields))
+        for r in res:
+            r["B"] = np.unpackbits(r["B"])[: int(np.prod(shape))].reshape(shape).astype(bool)
+            r["f"] = r["f"].astype(np.float64)
+        return res
+
     for kind, n, pool, tour in (("explore", n_explore or st["n_explore"], elites, True),
                                 ("control", n_control or st["n_control"], seeds, False)):
-        for _ in range(n):
-            for _try in range(8):
+        got, tries = 0, 0
+        while got < n and tries < 8 * n:
+            props = []
+            for _ in range(max(1, min(workers, n - got)) if pool_exec else 1):
                 a = pick(pool) if tour else pool[rng.integers(len(pool))]
                 others = [p for p in pool if D[p]["niche"] != D[a]["niche"]] or [p for p in pool if p != a]
                 use_x = bool(others) and rng.random() < 0.5
                 name = str(rng.choice([o for o in OP.OPS if (o in OP.CROSSOVER) == use_x]))
                 b = (pick(others) if tour else others[rng.integers(len(others))]) if use_x else None
-                fA = S.field(a); fB = S.field(b) if b is not None else None
-                f, meta = OP.OPS[name](space, rng, fA, fB, None)
-                if "skip" in meta:
+                f, meta = OP.OPS[name](space, rng, S.field(a), S.field(b) if b is not None else None, None)
+                tries += 1
+                if "skip" not in meta:
+                    props.append((a, b, name, meta, f))
+            if not props:
+                continue
+            built = build_many([p[4] for p in props])
+            for (a, b, name, meta, f), bl in zip(props, built):
+                if got >= n or not bl["ok"]:
                     continue
-                built = space.build(f)
-                if not built["ok"]:
+                h = shape_hash(bl["B"])
+                if h in seen:                              # a copy of a parent or of any design already made: no CFD
                     continue
-                Ba = space.build(fA)["B"]
-                if np.array_equal(built["B"], Ba):
-                    continue
+                seen.add(h)
                 i = str(st["next_id"]); st["next_id"] += 1
-                save_field(space, built["f"], S.d / "fields" / f"d{int(i):04d}.npz")
-                desc = space.describe(built["B"])
+                save_field(space, bl["f"], S.d / "fields" / f"d{int(i):04d}.npz")
+                desc = space.describe(bl["B"])
                 D[i] = {"name": f"g{st['gen'] + 1}_{kind}_{i}", "kind": kind, "op": name,
                         "parents": [a] + ([b] if b is not None else []), "desc": list(desc), "niche": list(space.niche(desc)),
-                        "runs": [], "gen": st["gen"] + 1, "changed_mm3": built["changed_mm3"],
+                        "runs": [], "gen": st["gen"] + 1, "changed_mm3": bl["changed_mm3"],
                         "meta": {k: v for k, v in meta.items() if isinstance(v, (int, float, str, bool))}}
-                cases.append({"id": int(i), "k": 0}); made += 1
-                break
+                cases.append({"id": int(i), "k": 0}); made += 1; got += 1
+    if pool_exec is not None:
+        pool_exec.shutdown()
+    st["hashes"] = sorted(seen)
     st["gen"] += 1
     req = {"gen": st["gen"], "cases": cases}
     st["batches"].append({"gen": st["gen"], "n": len(cases), "log": log})
@@ -236,7 +325,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd"); ap.add_argument("dir"); ap.add_argument("args", nargs="*")
     ap.add_argument("--n-explore", type=int, default=16); ap.add_argument("--n-control", type=int, default=4)
-    ap.add_argument("--score", default="steady")
+    ap.add_argument("--score", default="steady"); ap.add_argument("--workers", type=int, default=3)
     a = ap.parse_args()
     from .space import RealSpace
     sp = RealSpace()
@@ -255,7 +344,7 @@ def main():
     elif a.cmd == "ingest":
         cmd_ingest(a.dir, sp, Path(a.args[0]))
     elif a.cmd == "next":
-        cmd_next(a.dir, sp)
+        cmd_next(a.dir, sp, workers=a.workers)
     elif a.cmd == "show":
         cmd_show(a.dir, sp)
 

@@ -24,7 +24,9 @@ def forces(path):
 
 def main(cdir, i, k, out, mode="steady"):
     out = Path(out).resolve(); out.mkdir(parents=True, exist_ok=True)
-    rec = {"id": int(i), "k": int(k), "mode": mode, "converged": False}
+    rec = {"id": int(i), "k": int(k), "mode": mode, "converged": False,
+           "setup": {"res": "resolved", "wall_resolved": True, "prod_iters": 1000, "steady_iters": 1200 if mode == "steady" else 0,
+                     "score": "mean of the last 1000 (prod, five 200-blocks) / last 404 (steady)", "openfoam": "v2412"}}
     car = out / "design"
     py = sys.executable
     r = subprocess.run([py, "-W", "ignore", "-m", "seedevo.campaign", "build", cdir, str(i), str(car)], cwd=HERE,
