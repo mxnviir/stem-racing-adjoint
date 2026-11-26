@@ -250,6 +250,15 @@ cuts, and combine returns a parent when one pod's shape sits inside the other's.
 to 6 times) when the requested shape overlaps a parent at IoU > 0.98 before the builder. Re-test: same seeds,
 40 new draws (random seeds 300+), marks unchanged. Operators that fail stay out of the campaign.
 
+### TF The chosen configuration on the bench, with the final operators (written before the run)
+Configuration: evolution (amendment B, all nine operators as passed in T0b/T0b'/T0b''), then the end polish with
+the trust check (T3e' fix). New instances 11, 12, 13 (never run; half the seeds windowed, windowed targets), seeds
+1-5, budget 300, 12 reserved. `run_final.py`.
+- **TFa:** evolution beats random parents and mutation-only, each in >= 4 of 5 seeds, on >= 2 of 3 instances.
+- **TFb:** with a good adjoint (S1), the configuration beats evolution alone in >= 4 of 5 seeds on >= 2 of 3 instances.
+- **TFc:** with an adjoint that misleads on open pods (S3), it is no worse than evolution alone in >= 10 of 15 pairs.
+This is a regression check of the machinery (the operators changed after T3), not a physics result.
+
 ### T3e' re-test of the trust check (owner approved the fix and re-test 2026-11-26; written before the run)
 T3e failed as registered (instances 5-7, kept as failed). Fixes, developed on instance 0 only: (1) a downhill
 probe the morph refuses is retried at half size; if still unmeasurable the design stays **undecided** (re-checked
