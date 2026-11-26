@@ -255,12 +255,46 @@ def cmd_next(st_dir, space, n_explore=None, n_control=None, workers=1):
             r["f"] = r["f"].astype(np.float64)
         return res
 
+    def propose(pool, tour):
+        a = pick(pool) if tour else pool[rng.integers(len(pool))]
+        others = [p for p in pool if D[p]["niche"] != D[a]["niche"]] or [p for p in pool if p != a]
+        use_x = bool(others) and rng.random() < 0.5
+        name = str(rng.choice([o for o in OP.OPS if (o in OP.CROSSOVER) == use_x]))
+        b = (pick(others) if tour else others[rng.integers(len(others))]) if use_x else None
+        f, meta = OP.OPS[name](space, rng, S.field(a), S.field(b) if b is not None else None, None)
+        return None if "skip" in meta else (a, b, name, meta, f)
+
+    screen_info = None
+    scored = [i for i in D if np.isfinite(mean_score(D[i], key)[0])]
     for kind, n, pool, tour in (("explore", n_explore or st["n_explore"], elites, True),
                                 ("control", n_control or st["n_control"], seeds, False)):
         got, tries = 0, 0
+        ranked = None
+        if kind == "explore" and st.get("screen", True) and len(scored) >= st.get("screen_min", 12) and n > 0:
+            # model-screened batch (test TS): a pool of screen_pool x n unbuilt candidates, ranked by expected
+            # improvement with the kriging believer on a GP of every scored design; built in rank order
+            from .screen import Screen, block_occupancy
+            cands = [c for c in (propose(pool, tour) for _ in range(st.get("screen_pool", 4) * n)) if c is not None]
+            if cands:
+                vol = lambda f: float(((f > 0) & space.region).sum()) * space.h ** 3 / 1e3
+                Fs = [S.field(i) for i in scored]
+                Bs = np.array([block_occupancy(space, f) for f in Fs]); Bc = np.array([block_occupancy(space, c[4]) for c in cands])
+                sc = Screen(seed=int(rng.integers(1 << 30)))
+                sc.fit_basis(np.vstack([Bs, Bc]))
+                order = sc.pick(sc.feats(Bs, np.array([[vol(f)] for f in Fs])), np.array([mean_score(D[i], key)[0] for i in scored]),
+                                sc.feats(Bc, np.array([[vol(c[4])] for c in cands])), min(len(cands), 2 * n))
+                ranked = [cands[k] for k in order]
+                screen_info = {"pool": len(cands), "ranked": len(ranked), "model_noise": sc.last["noise"]}
         while got < n and tries < 8 * n:
+            if ranked is not None and not ranked:
+                ranked = None                              # the ranked pool is used up: breed the rest unscreened
             props = []
             for _ in range(max(1, min(workers, n - got)) if pool_exec else 1):
+                if ranked is not None:
+                    if ranked:
+                        props.append(ranked.pop(0))
+                    tries += 1
+                    continue
                 a = pick(pool) if tour else pool[rng.integers(len(pool))]
                 others = [p for p in pool if D[p]["niche"] != D[a]["niche"]] or [p for p in pool if p != a]
                 use_x = bool(others) and rng.random() < 0.5
@@ -291,6 +325,8 @@ def cmd_next(st_dir, space, n_explore=None, n_control=None, workers=1):
     if pool_exec is not None:
         pool_exec.shutdown()
     st["hashes"] = sorted(seen)
+    if screen_info:
+        st.setdefault("screen_log", []).append(dict(screen_info, gen=st["gen"] + 1))
     st["gen"] += 1
     req = {"gen": st["gen"], "cases": cases}
     st["batches"].append({"gen": st["gen"], "n": len(cases), "log": log})
