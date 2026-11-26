@@ -177,3 +177,8 @@ rule (5000 GMRES iterations). For reference, the hybrid campaign's earlier DAFoa
 The first re-run (45881629527) never reached the solver: the OpenFOAM package mirror served truncated files ("File has
 unexpected size ... Mirror sync in progress?") on all five install attempts, and the workflow went on without OpenFOAM.
 All seedevo workflows now retry the install eight times and stop if OpenFOAM is missing. Re-launched.
+The second re-run (45883073321) failed the same way on all eight attempts: every bad file came from one SourceForge
+mirror (82.71.205.33), and the repo script sometimes came back as a web page. The workflows now install OpenFOAM with
+.github/scripts/install_openfoam.sh: the seven v2412 (2412.260127-1) packages fetched from named mirrors in turn, each
+kept only if its SHA-256 matches the openfoam.com repo index (checked), cached between jobs; the apt repo is the last
+resort. Re-launched (attempt 3).
