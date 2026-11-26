@@ -140,3 +140,13 @@ end polish with trust check 3.005 (adjoint good) / 3.055 (adjoint misleading on 
 Across the two held-out rounds of "evolution beats random parents and mutation-only" (T3a on 2-4 with amendment B:
 PASS; TFa on 11-13 with the final operators: FAIL), the per-seed mark holds on 3 of 6 instances; on the mean it holds on
 all 6 (T3a means 1.35/3.46/2.38 against 2.11/3.64/3.16 and 1.58/3.49/2.80).
+
+## Reported, not marked (2026-11-26)
+**Morph-scored small children (part of amendment B) on or off** (instances 2-4, seeds 1-5, final operators, means):
+evolution 1.46 / 3.03 / 2.41 with, 1.60 / 3.16 / 2.29 without; evolve-then-polish 1.59 / 2.97 / 1.95 with, 1.27 / 2.73
+/ 2.04 without. No consistent effect, so the first campaign driver scores every child on a fresh mesh.
+
+**Campaign driver dry run** (`campaign.py`, `test_campaign.py`: batches of ~20 runs, results fed back between
+batches, budget 300; instances 2-4, seeds 1-3): driver vs engine 1.60/1.82, 1.61/1.27, 2.04/1.45 (instance 2);
+3.31/3.15, 3.33/3.34, 3.24/3.34 (3); 2.55/2.31, 2.40/2.62, 2.24/2.69 (4). Means 1.75/1.51, 3.29/3.28, 2.40/2.54: the
+batch driver reaches the engine's level; 13-14 batches per 300 runs; no design lost; 0-3 duels open at the end.
