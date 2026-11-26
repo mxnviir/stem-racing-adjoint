@@ -1,0 +1,11 @@
+{
+ "id": 1,
+ "k": 0,
+ "mode": "prod",
+ "converged": true,
+ "prod": 179.17602018585677,
+ "prod_block_se": 5.570378280034693,
+ "cells": 2124180,
+ "y_plus_max": 55.73049306133591,
+ "prod_converged": true
+}
