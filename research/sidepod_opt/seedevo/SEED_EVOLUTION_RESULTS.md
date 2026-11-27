@@ -262,3 +262,7 @@ restart 100, 5000 iterations, memory logged every minute.
 the field was stored as float16 and surface voxels moved on reload. 19 of 20 cases go ahead. From batch 2 on, fields
 are stored as float32 and every child is rebuilt from storage before it is accepted (a child that changes or fails
 is dropped).
+Checked on a copy of the POC campaign: `next` wrote a full batch of 20 in 524 s (3 workers; the storage rebuild is
+serial), and the four children spot-checked rebuild legal from storage. (A first version also demanded an identical
+shape on rebuild; the build is not bit-idempotent, so it rejected nearly every child and was replaced before any batch
+used it.)
