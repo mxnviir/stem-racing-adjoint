@@ -316,3 +316,10 @@ has to be race time (or the mass rule a hard limit) before a real campaign; not 
 - Caveats: one wall-resolved mesh size (2.1 M cells): the next check is the fine mesh. d7 is 1.5 g over the 48 g
   ballast target (race time is not the score for now, owner's choice). Four seeds only; the channel seed lost its
   archive place to the team pod in batch 1 and got children only as a control parent.
+
+## Approval test: census (run 46019374824)
+All 14 organic seeds converged and every one has more drag than the team pod (174.75 mN, 4 frames): worley1 185.51,
+cppn2 194.36, cppn1 194.50, snake1 195.62, worley2 197.81, gyroid2 200.80, teardrop1 205.47, lumpy1 209.63,
+snake2 210.22, lumpy2 211.59, teardrop2 215.80, blobs2 215.96, gyroid1 216.31, blobs1 218.78 (one frame each). None
+kept a through-opening after the rules. Batch 1 (24 cases) was written and started by the collect job unattended;
+`every_seed_once` gave each of the 15 seeds an explore child (team pod 2).
