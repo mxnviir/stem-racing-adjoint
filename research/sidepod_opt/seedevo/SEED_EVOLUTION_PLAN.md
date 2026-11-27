@@ -436,3 +436,15 @@ runs, against 5.2 / 5.6 with the transient in). T1 stays scored as registered (f
 200-1000 figure is added beside it as reported, not marked. Also: the campaign workflow now takes its run mode from the
 campaign's score key (the TW batch ran in mode prod on a campaign that ranked on steady, so nothing was scored), and
 ingest stops if a converged result lacks the score the campaign ranks on.
+
+### POC campaign (owner, 2026-11-27: "run a POC test"; written before the run)
+`campaign_poc`: the four seeds (team, channel, slotted, windowed pods); score production, single runs (T1/I2); seed
+census from the gate's 13 T1 production runs (same pipeline, rescored on iterations 200-1000); then two bred batches
+(16 explore + 4 control each, model screening on once 12 designs are scored) run unattended in auto mode; stop after
+batch 2 (`max_gen` 2). About 40 runner cases, ~6 h.
+- **P1 (unattended):** both batches run, commit, and hand over to the next batch with no manual step; >= 90 % of
+  cases converge.
+- **P2 (the archive works):** at the end the archive holds >= 3 niches.
+- **P3 (reported, not marked):** best design found against the best seed, in mN and in T1 sigmas (0.57 mN); a child is
+  called better only if it is lower by >= 2 SE of a single-run difference (2 x 0.57 x sqrt 2 = 1.6 mN), and a claim
+  needs a re-run on a second meshing frame. Operator and niche of every child that beats its parent.

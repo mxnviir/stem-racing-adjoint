@@ -115,7 +115,7 @@ def compute_offsets(st, key):
 
 
 # ------------------------------------------------------------------ commands
-def cmd_init(st_dir, seeds, space, n_explore=16, n_control=4, score="steady", rng_seed=1):
+def cmd_init(st_dir, seeds, space, n_explore=16, n_control=4, score="steady", rng_seed=1, max_gen=None):
     S = Store(st_dir, space)
     designs, fields, hashes = {}, {}, []
     for i, (name, f) in enumerate(seeds.items()):
@@ -133,7 +133,7 @@ def cmd_init(st_dir, seeds, space, n_explore=16, n_control=4, score="steady", rn
         hashes.append(shape_hash(b["B"]))
     S.st = {"gen": 0, "hashes": sorted(set(hashes)), "next_id": max(int(k) for k in designs) + 1, "designs": designs, "archive": {}, "duels": [],
             "seeds": [k for k in designs], "score": score, "n_explore": n_explore, "n_control": n_control,
-            "rng": rng_seed, "batches": []}
+            "rng": rng_seed, "batches": [], "max_gen": max_gen}
     req = {"gen": 0, "cases": [{"id": int(k), "k": 0} for k in designs]}
     S.st["batches"].append(req); S.save()
     (S.d / "request.json").write_text(json.dumps(req, indent=1))
@@ -223,6 +223,10 @@ def cmd_next(st_dir, space, n_explore=None, n_control=None, workers=1):
     st = S.st
     compute_offsets(st, st["score"])
     log = _update_map(S)
+    if st.get("max_gen") is not None and st["gen"] >= st["max_gen"]:
+        S.save(); (S.d / "STOP").write_text(f"max_gen {st['max_gen']} reached\n")
+        print(json.dumps({"stopped": True, "gen": st["gen"], "max_gen": st["max_gen"], "niches": len(st["archive"]), "log": log}, default=str))
+        return S
     rng = np.random.default_rng(st["rng"] * 1000 + st["gen"] + 1)
     key = st["score"]
     D = st["designs"]
@@ -365,6 +369,7 @@ def main():
     ap.add_argument("cmd"); ap.add_argument("dir"); ap.add_argument("args", nargs="*")
     ap.add_argument("--n-explore", type=int, default=16); ap.add_argument("--n-control", type=int, default=4)
     ap.add_argument("--score", default="steady"); ap.add_argument("--workers", type=int, default=3)
+    ap.add_argument("--max-gen", type=int, default=None)
     a = ap.parse_args()
     from .space import RealSpace
     sp = RealSpace()
@@ -377,7 +382,7 @@ def main():
                 seeds[p.stem] = np.load(p)["f"].astype(np.float64)
             else:
                 seeds[p.stem] = ingest.field_from_step(sp.car, p)[0]
-        cmd_init(a.dir, seeds, sp, a.n_explore, a.n_control, a.score)
+        cmd_init(a.dir, seeds, sp, a.n_explore, a.n_control, a.score, max_gen=a.max_gen)
     elif a.cmd == "build":
         cmd_build(a.dir, sp, a.args[0], a.args[1])
     elif a.cmd == "ingest":

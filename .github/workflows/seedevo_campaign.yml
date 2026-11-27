@@ -19,7 +19,7 @@ on:
 permissions: { contents: write, actions: write }
 
 env:
-  PY_DEPS: numpy==2.4.6 scipy==1.17.1 pandas trimesh==5.2.0 scikit-image shapely rtree==1.4.1 mapbox-earcut manifold3d==3.5.4 fast_simplification==0.2.0 jax jaxlib matplotlib pymeshlab==2025.7.post1 numba cadquery-ocp
+  PY_DEPS: scikit-learn==1.9.1 numpy==2.4.6 scipy==1.17.1 pandas trimesh==5.2.0 scikit-image shapely rtree==1.4.1 mapbox-earcut manifold3d==3.5.4 fast_simplification==0.2.0 jax jaxlib matplotlib pymeshlab==2025.7.post1 numba cadquery-ocp
   OMPI_MCA_rmaps_base_oversubscribe: "1"
   OMPI_MCA_hwloc_base_use_hwthreads_as_cpus: "1"
   OMPI_ALLOW_RUN_AS_ROOT: "1"

@@ -22,11 +22,21 @@ def forces(path):
     return np.array([r[1] for r in rows]) * 1e3
 
 
+def setup(mode):
+    """The record of how a case is scored; runs with another record count only through a reference offset."""
+    return {"res": "resolved", "wall_resolved": True, "prod_iters": 1000, "steady_iters": 1200 if mode == "steady" else 0,
+            "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)", "openfoam": "v2412"}
+
+
+def prod_score(D):
+    """Production drag from a 1000-iteration force history (mN): iterations 200-1000, four 200-blocks."""
+    b = np.asarray(D)[-800:].reshape(4, 200).mean(1)
+    return float(b.mean()), float(b.std(ddof=1) / 2)
+
+
 def main(cdir, i, k, out, mode="steady"):
     out = Path(out).resolve(); out.mkdir(parents=True, exist_ok=True)
-    rec = {"id": int(i), "k": int(k), "mode": mode, "converged": False,
-           "setup": {"res": "resolved", "wall_resolved": True, "prod_iters": 1000, "steady_iters": 1200 if mode == "steady" else 0,
-                     "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)", "openfoam": "v2412"}}
+    rec = {"id": int(i), "k": int(k), "mode": mode, "converged": False, "setup": setup(mode)}
     car = out / "design"
     py = sys.executable
     r = subprocess.run([py, "-W", "ignore", "-m", "seedevo.campaign", "build", cdir, str(i), str(car)], cwd=HERE,
@@ -44,9 +54,7 @@ def main(cdir, i, k, out, mode="steady"):
     if r.returncode != 0 or not f:
         rec["error"] = "production: " + (r.stdout + r.stderr)[-300:]
         (out / f"case_{i}_k{k}.json").write_text(json.dumps(rec, indent=1)); return 1
-    D = forces(f[-1])[-800:]                                # iterations 200-1000: the first 200 of a cold start are transient
-    rec["prod"] = float(D.reshape(4, 200).mean(1).mean())
-    rec["prod_block_se"] = float(D.reshape(4, 200).mean(1).std(ddof=1) / 2)
+    rec["prod"], rec["prod_block_se"] = prod_score(forces(f[-1]))   # the first 200 of a cold start are transient
     pj = next(out.glob("prodcheck_*.json"), None)
     if pj:
         j = json.loads(pj.read_text()); rec.update(cells=j.get("n_cells"), y_plus_max=j.get("y_plus_max"), prod_converged=j.get("converged"))
