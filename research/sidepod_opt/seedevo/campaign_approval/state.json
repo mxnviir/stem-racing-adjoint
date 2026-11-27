@@ -1,19 +1,33 @@
 {
- "gen": 1,
+ "gen": 2,
  "hashes": [
+  "01146fbd8e0eaa61",
   "06d35bea477486c7",
   "0d407078881b02eb",
+  "11611b698c7ec758",
+  "12fd95c187ffaa61",
+  "1fd69442a5b12e6b",
   "1fda4d271ffad08a",
+  "20d7dd36a8cb0773",
   "212edba0c87fde5a",
+  "23bee3a08c62e64e",
+  "25671a09ddf887e2",
+  "2d2a2094e4f15fe0",
   "2eced2ea6a885ba4",
   "2fc688e857328437",
   "30f1e2866a4073bb",
+  "3307787002cde680",
+  "3629149e8dcf7775",
   "36dc684acc6f4814",
   "4da08d7a40d1a771",
+  "5e8033b256842ccc",
   "5e93dc7aa2fb1730",
   "6998bd5c80cf7ca3",
+  "733cedce66c7fdfa",
+  "7821efbdeaee6026",
   "7b555373b9b3fa97",
   "81556ffa996e6235",
+  "8431dacbf766f2c7",
   "84a3430461e6f808",
   "8f331b56883c5c9f",
   "92624e647b10406d",
@@ -30,14 +44,20 @@
   "c4ce44f4f6561d59",
   "c5f12465f10d2cc6",
   "cef59efe03ad1f3f",
+  "d34405152903a8df",
+  "d629a0e59ea0f80a",
   "daa33f3ff61c6e22",
+  "e4361f1ee83f7c53",
+  "e5a08ec9ae5a85b7",
   "e5b9c931e4691171",
+  "ed8f5615689d7dc4",
   "f3be38b2de99b033",
   "f9556a16e6167e2f",
+  "fbd807e522d448cb",
   "fc31211a47131018",
   "fe138b1ff414f737"
  ],
- "next_id": 35,
+ "next_id": 55,
  "designs": {
   "0": {
    "name": "original",
@@ -151,6 +171,22 @@
       "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
       "openfoam": "v2412"
      }
+    },
+    {
+     "k": 1,
+     "steady": null,
+     "prod": 220.0909134625364,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
     }
    ],
    "gen": 0,
@@ -175,6 +211,22 @@
      "k": 0,
      "steady": null,
      "prod": 215.96464521314775,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    },
+    {
+     "k": 1,
+     "steady": null,
+     "prod": 218.73005121618542,
      "converged": true,
      "layer_cov_pct": null,
      "error": null,
@@ -291,6 +343,22 @@
       "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
       "openfoam": "v2412"
      }
+    },
+    {
+     "k": 1,
+     "steady": null,
+     "prod": 215.59429801831044,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
     }
    ],
    "gen": 0,
@@ -315,6 +383,22 @@
      "k": 0,
      "steady": null,
      "prod": 200.79901544663437,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    },
+    {
+     "k": 1,
+     "steady": null,
+     "prod": 203.01545284370354,
      "converged": true,
      "layer_cov_pct": null,
      "error": null,
@@ -628,13 +712,31 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 211.40359174504513,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 258.0,
    "meta": {
     "t": 0.15069358294810947,
     "amp": 0.6434346886526492
-   }
+   },
+   "placed": true
   },
   "16": {
    "name": "g1_explore_16",
@@ -651,14 +753,32 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 189.6872186728179,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 728.0,
    "meta": {
     "period": 12.431020599084018,
     "slot": 9.345807989805973,
     "R": 21.982840515241627
-   }
+   },
+   "placed": true
   },
   "17": {
    "name": "g1_explore_17",
@@ -675,12 +795,30 @@
     3,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 210.36861420070542,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 380.0,
    "meta": {
     "a": -1.557820594565402
-   }
+   },
+   "placed": true
   },
   "18": {
    "name": "g1_explore_18",
@@ -697,14 +835,32 @@
     3,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 210.99098107999225,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 154.0,
    "meta": {
     "kind": "rib",
     "guided": false,
     "redraws": 1
-   }
+   },
+   "placed": true
   },
   "19": {
    "name": "g1_explore_19",
@@ -721,14 +877,32 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 214.78468816796374,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 1544.0,
    "meta": {
     "period": 12.765438865534824,
     "slot": 8.29800755049685,
     "R": 22.63925735050212
-   }
+   },
+   "placed": true
   },
   "20": {
    "name": "g1_explore_20",
@@ -745,14 +919,32 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 202.40726519418303,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 3862.0,
    "meta": {
     "period": 11.862612063909483,
     "slot": 7.350465881639278,
     "R": 21.619443968272506
-   }
+   },
+   "placed": true
   },
   "21": {
    "name": "g1_explore_21",
@@ -770,12 +962,30 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 223.61415598472223,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 60.0,
    "meta": {
     "r": 16.611170921232194
-   }
+   },
+   "placed": true
   },
   "22": {
    "name": "g1_explore_22",
@@ -792,14 +1002,32 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 200.01723122075433,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 190.0,
    "meta": {
     "a": 3.8146156873464814,
     "r": 10.767453133535776,
     "guided": false
-   }
+   },
+   "placed": true
   },
   "23": {
    "name": "g1_explore_23",
@@ -816,14 +1044,32 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 211.35630143875363,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 274.0,
    "meta": {
     "a": 5.444167202646051,
     "r": 13.0452713924176,
     "guided": false
-   }
+   },
+   "placed": true
   },
   "24": {
    "name": "g1_explore_24",
@@ -840,14 +1086,32 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 222.01272442078331,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 574.0,
    "meta": {
     "kind": "groove_x",
     "rho": 6.750219749543492,
     "guided": false
-   }
+   },
+   "placed": true
   },
   "25": {
    "name": "g1_explore_25",
@@ -865,13 +1129,31 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 191.42643843333565,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 248.0,
    "meta": {
     "t": 0.2497435710999575,
     "amp": 0.30827400116836706
-   }
+   },
+   "placed": true
   },
   "26": {
    "name": "g1_explore_26",
@@ -889,13 +1171,31 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 191.60659812318843,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 216.0,
    "meta": {
     "t": 0.22305869408390522,
     "amp": 0.9197236929224875
-   }
+   },
+   "placed": true
   },
   "27": {
    "name": "g1_explore_27",
@@ -912,13 +1212,31 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 213.70173874350132,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 920.0,
    "meta": {
     "a": -0.5700612741844777,
     "whole": true
-   }
+   },
+   "placed": true
   },
   "28": {
    "name": "g1_explore_28",
@@ -935,14 +1253,32 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 214.1843873074346,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 2440.0,
    "meta": {
     "a": -4.30517380752635,
     "r": 18.23613275131388,
     "guided": false
-   }
+   },
+   "placed": true
   },
   "29": {
    "name": "g1_explore_29",
@@ -959,14 +1295,32 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 207.1047469553624,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 278.0,
    "meta": {
     "kind": "blob",
     "guided": false,
     "redraws": 0
-   }
+   },
+   "placed": true
   },
   "30": {
    "name": "g1_explore_30",
@@ -983,14 +1337,32 @@
     3,
     1
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 177.7353697429914,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 2340.0,
    "meta": {
     "kind": "window_z",
     "rho": 5.384095290537984,
     "guided": false
-   }
+   },
+   "placed": true
   },
   "31": {
    "name": "g1_control_31",
@@ -1007,7 +1379,24 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 215.63661891366016,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 398.0,
    "meta": {
@@ -1032,7 +1421,24 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 224.84575738623414,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 184.0,
    "meta": {
@@ -1057,7 +1463,24 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 207.54330359455327,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 2264.0,
    "meta": {
@@ -1080,7 +1503,24 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 240.98384226709453,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 1,
    "changed_mm3": 296.0,
    "meta": {
@@ -1088,22 +1528,496 @@
     "guided": false,
     "redraws": 1
    }
+  },
+  "35": {
+   "name": "g2_explore_35",
+   "kind": "explore",
+   "op": "line",
+   "parents": [
+    "30",
+    "0"
+   ],
+   "desc": [
+    60.594,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 1094.0,
+   "meta": {
+    "t": 0.26625228792965083,
+    "amp": 0.49717691276067993
+   }
+  },
+  "36": {
+   "name": "g2_explore_36",
+   "kind": "explore",
+   "op": "line",
+   "parents": [
+    "30",
+    "6"
+   ],
+   "desc": [
+    56.636,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 1176.0,
+   "meta": {
+    "t": 0.11646222777036033,
+    "amp": 0.9851751646557683
+   }
+  },
+  "37": {
+   "name": "g2_explore_37",
+   "kind": "explore",
+   "op": "splice",
+   "parents": [
+    "0",
+    "30"
+   ],
+   "desc": [
+    63.814,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 152.0,
+   "meta": {
+    "axis": 2,
+    "cut": 9.101295899810859
+   }
+  },
+  "38": {
+   "name": "g2_explore_38",
+   "kind": "explore",
+   "op": "offset",
+   "parents": [
+    "30"
+   ],
+   "desc": [
+    54.808,
+    1
+   ],
+   "niche": [
+    2,
+    1
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 280.0,
+   "meta": {
+    "a": -0.7572791283066383
+   }
+  },
+  "39": {
+   "name": "g2_explore_39",
+   "kind": "explore",
+   "op": "line",
+   "parents": [
+    "30",
+    "0"
+   ],
+   "desc": [
+    60.92,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 1466.0,
+   "meta": {
+    "t": 0.13097546429673837,
+    "amp": 0.854255250462588
+   }
+  },
+  "40": {
+   "name": "g2_explore_40",
+   "kind": "explore",
+   "op": "line",
+   "parents": [
+    "0",
+    "6"
+   ],
+   "desc": [
+    58.614,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 366.0,
+   "meta": {
+    "t": 0.28241851617832747,
+    "amp": 0.6369847795686974
+   }
+  },
+  "41": {
+   "name": "g2_explore_41",
+   "kind": "explore",
+   "op": "graft",
+   "parents": [
+    "0",
+    "30"
+   ],
+   "desc": [
+    57.698,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 302.0,
+   "meta": {
+    "r": 18.535840271137562
+   }
+  },
+  "42": {
+   "name": "g2_explore_42",
+   "kind": "explore",
+   "op": "graft",
+   "parents": [
+    "0",
+    "30"
+   ],
+   "desc": [
+    65.216,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 24.0,
+   "meta": {
+    "r": 8.688703007803102
+   }
+  },
+  "43": {
+   "name": "g2_explore_43",
+   "kind": "explore",
+   "op": "fill",
+   "parents": [
+    "30"
+   ],
+   "desc": [
+    58.382,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 308.0,
+   "meta": {
+    "kind": "close",
+    "redraws": 0
+   }
+  },
+  "44": {
+   "name": "g2_explore_44",
+   "kind": "explore",
+   "op": "cut",
+   "parents": [
+    "30"
+   ],
+   "desc": [
+    54.108,
+    1
+   ],
+   "niche": [
+    2,
+    1
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 152.0,
+   "meta": {
+    "kind": "groove_x",
+    "rho": 5.786943989918262,
+    "guided": false
+   }
+  },
+  "45": {
+   "name": "g2_explore_45",
+   "kind": "explore",
+   "op": "bump",
+   "parents": [
+    "30"
+   ],
+   "desc": [
+    57.938,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 374.0,
+   "meta": {
+    "a": 2.734544749588553,
+    "r": 9.46045156415941,
+    "guided": false
+   }
+  },
+  "46": {
+   "name": "g2_explore_46",
+   "kind": "explore",
+   "op": "graft",
+   "parents": [
+    "30",
+    "0"
+   ],
+   "desc": [
+    65.7,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 666.0,
+   "meta": {
+    "r": 18.65779560628753
+   }
+  },
+  "47": {
+   "name": "g2_explore_47",
+   "kind": "explore",
+   "op": "offset",
+   "parents": [
+    "30"
+   ],
+   "desc": [
+    58.226,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 196.0,
+   "meta": {
+    "a": 1.305149504151579
+   }
+  },
+  "48": {
+   "name": "g2_explore_48",
+   "kind": "explore",
+   "op": "fill",
+   "parents": [
+    "30"
+   ],
+   "desc": [
+    60.134,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 834.0,
+   "meta": {
+    "kind": "blob",
+    "guided": false,
+    "redraws": 0
+   }
+  },
+  "49": {
+   "name": "g2_explore_49",
+   "kind": "explore",
+   "op": "pattern",
+   "parents": [
+    "0"
+   ],
+   "desc": [
+    59.682,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 3196.0,
+   "meta": {
+    "period": 10.340437379253634,
+    "slot": 7.1063750885317765,
+    "R": 17.76802508129248
+   }
+  },
+  "50": {
+   "name": "g2_explore_50",
+   "kind": "explore",
+   "op": "line",
+   "parents": [
+    "0",
+    "30"
+   ],
+   "desc": [
+    65.236,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 334.0,
+   "meta": {
+    "t": 0.20294590735690549,
+    "amp": 0.6949358892348191
+   }
+  },
+  "51": {
+   "name": "g2_control_51",
+   "kind": "control",
+   "op": "splice",
+   "parents": [
+    "2",
+    "6"
+   ],
+   "desc": [
+    31.646,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 366.0,
+   "meta": {
+    "axis": 2,
+    "cut": 14.888528869460153
+   }
+  },
+  "52": {
+   "name": "g2_control_52",
+   "kind": "control",
+   "op": "bump",
+   "parents": [
+    "5"
+   ],
+   "desc": [
+    45.914,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 230.0,
+   "meta": {
+    "a": 4.22140544366657,
+    "r": 13.089277646712702,
+    "guided": false
+   }
+  },
+  "53": {
+   "name": "g2_control_53",
+   "kind": "control",
+   "op": "offset",
+   "parents": [
+    "7"
+   ],
+   "desc": [
+    51.182,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 126.0,
+   "meta": {
+    "a": 1.3014346584253471
+   }
+  },
+  "54": {
+   "name": "g2_control_54",
+   "kind": "control",
+   "op": "graft",
+   "parents": [
+    "2",
+    "5"
+   ],
+   "desc": [
+    36.562,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 2,
+   "changed_mm3": 732.0,
+   "meta": {
+    "r": 14.929178225009723
+   }
   }
  },
  "archive": {
   "3,0": "0",
-  "1,0": "1",
+  "1,0": "2",
   "4,0": "4",
-  "2,0": "5"
+  "2,0": "6",
+  "3,1": "30"
  },
  "duels": [
   {
-   "child": "2",
-   "inc": "1"
+   "child": "15",
+   "inc": "2"
   },
   {
-   "child": "6",
-   "inc": "5"
+   "child": "16",
+   "inc": "6"
+  },
+  {
+   "child": "23",
+   "inc": "4"
   }
  ],
  "seeds": [
@@ -1236,6 +2150,54 @@
      216.31152237963127
     ]
    ]
+  },
+  {
+   "gen": 2,
+   "n": 24,
+   "log": [
+    [
+     "replaced",
+     "2",
+     "1",
+     217.34734821466657,
+     219.4365953918425
+    ],
+    [
+     "replaced",
+     "6",
+     "5",
+     201.90723414516896,
+     215.95291019897087
+    ],
+    [
+     "duel",
+     "15",
+     "2",
+     211.40359174504513,
+     217.34734821466657
+    ],
+    [
+     "duel",
+     "16",
+     "6",
+     189.6872186728179,
+     201.90723414516896
+    ],
+    [
+     "duel",
+     "23",
+     "4",
+     211.35630143875363,
+     211.59441196585823
+    ],
+    [
+     "new",
+     "30",
+     null,
+     177.7353697429914,
+     null
+    ]
+   ]
   }
  ],
  "max_gen": 3,
@@ -1247,5 +2209,13 @@
   "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
   "openfoam": "v2412"
  },
- "every_seed_once": true
+ "every_seed_once": true,
+ "screen_log": [
+  {
+   "pool": 64,
+   "ranked": 32,
+   "model_noise": 8.658007539961341,
+   "gen": 2
+  }
+ ]
 }
