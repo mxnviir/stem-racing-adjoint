@@ -257,3 +257,8 @@ margin). Drag change from each seed's own zero-move probe, mN:
 smaller GMRES restart); channel seed's adjoint left refused; the probe/polish step stays at 0.5 mm for now (to be tuned
 later), no runs spent on the morph-bias check yet. Launched: DAFoam on slotted and windowed seeds, 2 ranks, GMRES
 restart 100, 5000 iterations, memory logged every minute.
+
+**POC batch 1 (run 45937827424):** design 5 failed its rebuild on the runner (thin foam 34 mm3); the same happens here:
+the field was stored as float16 and surface voxels moved on reload. 19 of 20 cases go ahead. From batch 2 on, fields
+are stored as float32 and every child is rebuilt from storage before it is accepted (a child that changes or fails
+is dropped).

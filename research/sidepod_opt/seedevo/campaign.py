@@ -36,7 +36,9 @@ sys.path.insert(0, str(HERE)); sys.path.insert(0, str(HERE.parents[1] / "part2-s
 # ------------------------------------------------------------------ field storage
 def save_field(sp, f, path):
     lo, hi = np.maximum(sp.region_lo - 3, 0), np.minimum(sp.region_hi + 3, f.shape)
-    np.savez_compressed(path, f=np.clip(f[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]], -20, 20).astype(np.float16), lo=lo, hi=hi)
+    np.savez_compressed(path, f=np.clip(f[lo[0]:hi[0], lo[1]:hi[1], lo[2]:hi[2]], -20, 20).astype(np.float32), lo=lo, hi=hi)
+    # float32: a float16 field moved surface voxels on reload and one stored child failed the thin-foam rule
+    # when a runner rebuilt it (POC batch 1, design 5)
 
 
 def load_field(sp, path, base):
@@ -320,9 +322,13 @@ def cmd_next(st_dir, space, n_explore=None, n_control=None, workers=1):
                 h = shape_hash(bl["B"])
                 if h in seen:                              # a copy of a parent or of any design already made: no CFD
                     continue
+                fp = S.d / "fields" / f"d{int(st['next_id']):04d}.npz"
+                save_field(space, bl["f"], fp)
+                rb = space.build(load_field(space, fp, S.base))      # what the runner will build from storage
+                if not rb["ok"] or shape_hash(rb["B"]) != h:
+                    fp.unlink(); continue
                 seen.add(h)
                 i = str(st["next_id"]); st["next_id"] += 1
-                save_field(space, bl["f"], S.d / "fields" / f"d{int(i):04d}.npz")
                 desc = space.describe(bl["B"])
                 D[i] = {"name": f"g{st['gen'] + 1}_{kind}_{i}", "kind": kind, "op": name,
                         "parents": [a] + ([b] if b is not None else []), "desc": list(desc), "niche": list(space.niche(desc)),
