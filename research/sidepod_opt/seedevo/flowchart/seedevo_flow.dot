@@ -1,0 +1,58 @@
+digraph seedevo {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=20, labelloc=t, nodesep=0.35, ranksep=0.42, pad=0.3,
+         label="Seed evolution + adjoint polish: where each part sits\n(orange = the only places the adjoint is used; blue = CFD decides; CFD always scores, the adjoint never does)"];
+  node  [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=13, fillcolor="#eef1f5", color="#5b6675", penwidth=1.2];
+  edge  [fontname="Helvetica", fontsize=11, color="#5b6675"];
+
+  subgraph cluster_seed {
+    label="1  Seeds"; fontsize=16; style="rounded,dashed"; color="#9aa4b2";
+    seeds  [label="Seed shapes\nteam STL/STEP, hand-made variants,\norganic generator (blobs, gyroid, snake ...)"];
+    rules  [label="Build rules on the 1 mm field\nmill (6.35 mm ball), 3 mm walls, one piece,\ncargo inside, track clearance"];
+    census [label="CFD census\nfresh wall-resolved mesh (2.1 M cells), production scheme,\n1000 its, drag = mean of its 200-1000", fillcolor="#dbe9fb", color="#2f6fb5"];
+    seeds -> rules -> census;
+  }
+
+  subgraph cluster_evo {
+    label="2  Evolution loop (gradient-free: no adjoint)"; fontsize=16; style="rounded,dashed"; color="#9aa4b2";
+    archive [label="Archive (MAP-Elites)\nbest design per niche:\npod volume x through-openings"];
+    select  [label="Pick parents\ntournament of 3 from the archive (explore)\nor a random seed (control)"];
+    ops     [label="Operators on the field\ncrossover: splice, graft, combine, line\nmutation: bump, cut, fill, pattern, offset"];
+    legal   [label="Rules + rebuild-from-storage check\n(illegal or duplicate -> discarded, no CFD)"];
+    screen  [label="Model screening\nGP on scored designs, expected improvement,\npicks 20 of ~80 candidates"];
+    cfd     [label="CFD every picked child\n(fresh mesh, same scoring as census)", fillcolor="#dbe9fb", color="#2f6fb5"];
+    duel    [label="Close call or new best?\nre-run on a shifted mesh (2nd frame)\nchallenger must win on the mean", shape=diamond, fillcolor="#dbe9fb", color="#2f6fb5", fontsize=12];
+    archive -> select -> ops -> legal -> screen -> cfd -> duel;
+    duel -> archive [label="update niche"];
+  }
+
+  census -> archive [label="seeds enter"];
+
+  subgraph cluster_polish {
+    label="3  End polish of the finalists (the adjoint's only job)"; fontsize=16; style="rounded,dashed"; color="#c9772b";
+    handover [label="Hand-over\nbest elites re-run up to 3 frames"];
+    daf      [label="Coarse DAFoam discrete adjoint\n(105 k cells: the only mesh it fits on)\nd drag / d surface, one solve", fillcolor="#fde5cc", color="#c9772b"];
+    conv     [label="Adjoint\nconverged?", shape=diamond, fillcolor="#fde5cc", color="#c9772b"];
+    trust    [label="Trust check (per design)\n0.5 mm probe ALONG and AGAINST the gradient\non the fine state; CFD both", fillcolor="#fde5cc", color="#c9772b"];
+    ok       [label="Along beats zero AND\nagainst by > margin?", shape=diamond, fillcolor="#dbe9fb", color="#2f6fb5"];
+    step     [label="Step along the adjoint\n(explicit morph of the mesh)", fillcolor="#fde5cc", color="#c9772b"];
+    accept   [label="CFD: lower drag?", shape=diamond, fillcolor="#dbe9fb", color="#2f6fb5"];
+    gf       [label="Gradient-free polish\nrandom smooth moves, CFD decides"];
+    handover -> daf -> conv;
+    conv -> trust [label="yes"];
+    conv -> gf [label="no (stall / runner lost)"];
+    trust -> ok;
+    ok -> step [label="trusted"];
+    ok -> gf [label="not trusted"];
+    step -> accept;
+    accept -> daf [label="accept: new shape,\nnew adjoint"];
+    accept -> gf [label="2 rejections in a row"];
+  }
+
+  duel -> handover [label="after the last batch", style=dashed];
+
+  final [label="4  Confirmation\nfresh meshes on several frames + fine mesh (3.36 M)\n-> final design", fillcolor="#dbe9fb", color="#2f6fb5"];
+  gf -> final; accept -> final [label="converged", style=dashed];
+
+  note [shape=note, fillcolor="#fff8e1", color="#c9a227", fontsize=11,
+        label="Status (2026-11-27)\n- Stages 1-2 tested on the real car (POC: 2 batches, 43 runs).\n- Stage 3 NOT run in the POC campaign yet.\n- Trust check passed on the team pod only (TR1, TR3);\n  DAFoam converged on 1 of 6 attempts on new shapes (TR2 fail)."];
+}

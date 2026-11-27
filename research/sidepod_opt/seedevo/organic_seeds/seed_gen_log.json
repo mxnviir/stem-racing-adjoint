@@ -1,0 +1,268 @@
+[
+ {
+  "kind": "blobs",
+  "try": 0,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 2.0,
+   "thin_foam_mm3": 10.0,
+   "ok": true
+  },
+  "name": "blobs1",
+  "pod_cm3": 30.746,
+  "openings": 0,
+  "changed_mm3": 6684.0
+ },
+ {
+  "kind": "blobs",
+  "try": 1,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 2.0,
+   "thin_foam_mm3": 22.0,
+   "ok": true
+  },
+  "name": "blobs2",
+  "pod_cm3": 26.84,
+  "openings": 0,
+  "changed_mm3": 4428.0
+ },
+ {
+  "kind": "lumpy",
+  "try": 0,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 2.0,
+   "thin_foam_mm3": 6.0,
+   "ok": true
+  },
+  "name": "lumpy1",
+  "pod_cm3": 67.788,
+  "openings": 0,
+  "changed_mm3": 3466.0
+ },
+ {
+  "kind": "lumpy",
+  "try": 1,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 2.0,
+   "thin_foam_mm3": 0.0,
+   "ok": true
+  },
+  "name": "lumpy2",
+  "pod_cm3": 77.156,
+  "openings": 0,
+  "changed_mm3": 4944.0
+ },
+ {
+  "kind": "gyroid",
+  "try": 0,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 6.0,
+   "thin_foam_mm3": 2.0,
+   "ok": true
+  },
+  "name": "gyroid1",
+  "pod_cm3": 41.826,
+  "openings": 0,
+  "changed_mm3": 18078.0
+ },
+ {
+  "kind": "gyroid",
+  "try": 1,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 6.0,
+   "thin_foam_mm3": 28.0,
+   "ok": true
+  },
+  "name": "gyroid2",
+  "pod_cm3": 45.472,
+  "openings": 0,
+  "changed_mm3": 29420.0
+ },
+ {
+  "kind": "snake",
+  "try": 0,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 3.0,
+   "thin_foam_mm3": 0.0,
+   "ok": true
+  },
+  "name": "snake1",
+  "pod_cm3": 45.922,
+  "openings": 0,
+  "changed_mm3": 1658.0
+ },
+ {
+  "kind": "snake",
+  "try": 1,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 6.0,
+   "thin_foam_mm3": 18.0,
+   "ok": true
+  },
+  "name": "snake2",
+  "pod_cm3": 27.362,
+  "openings": 0,
+  "changed_mm3": 4780.0
+ },
+ {
+  "kind": "teardrop",
+  "try": 0,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 6.0,
+   "thin_foam_mm3": 10.0,
+   "ok": true
+  },
+  "name": "teardrop1",
+  "pod_cm3": 25.546,
+  "openings": 0,
+  "changed_mm3": 6750.0
+ },
+ {
+  "kind": "teardrop",
+  "try": 1,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 8.0,
+   "thin_foam_mm3": 20.0,
+   "ok": true
+  },
+  "name": "teardrop2",
+  "pod_cm3": 37.804,
+  "openings": 0,
+  "changed_mm3": 2632.0
+ },
+ {
+  "kind": "cppn",
+  "try": 0,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 2.0,
+   "thin_foam_mm3": 0.0,
+   "ok": true
+  },
+  "name": "cppn1",
+  "pod_cm3": 53.344,
+  "openings": 0,
+  "changed_mm3": 2602.0
+ },
+ {
+  "kind": "cppn",
+  "try": 1,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 2.0,
+   "thin_foam_mm3": 12.0,
+   "ok": true
+  },
+  "name": "cppn2",
+  "pod_cm3": 38.76,
+  "openings": 0,
+  "changed_mm3": 4466.0
+ },
+ {
+  "kind": "worley",
+  "try": 0,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 6.0,
+   "thin_foam_mm3": 0.0,
+   "ok": true
+  },
+  "name": "worley1",
+  "pod_cm3": 52.224,
+  "openings": 0,
+  "changed_mm3": 6760.0
+ },
+ {
+  "kind": "worley",
+  "try": 1,
+  "ok": true,
+  "webbed": false,
+  "check": {
+   "pieces": 1,
+   "changed_outside_region_mm3": 0.0,
+   "foam_in_forced_air_mm3": 0.0,
+   "cargo_inside": true,
+   "track_clearance_mm": 7.0,
+   "thin_foam_mm3": 0.0,
+   "ok": true
+  },
+  "name": "worley2",
+  "pod_cm3": 47.052,
+  "openings": 0,
+  "changed_mm3": 3214.0
+ }
+]
