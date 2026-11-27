@@ -291,3 +291,11 @@ C), the slotted and windowed seeds are polished gradient-free; the adjoint stays
 surface out by 0.72 mm (26 % of the body's faces moved > 0.3 mm, none moved in), which closed the side window
 (through-openings 1 -> 0) and raised the pod volume from 65.7 to 79.2 cm3. Why that lowers drag is not known; the
 frame-1 re-run in batch 2 decides whether the 3.4 mN is real.
+
+**POC batch 1 counted in race time, not drag alone (found 2026-11-27):** the campaign scores drag only, and the
+ballast absorbs added foam only while lead is left. The seeds carry 0-0.2 g of lead, so a child that adds foam ends
+over the 48.0 g the others are ballasted to. d7 (offset +0.72 mm, +13.5 cm3) weighs 49.52 g with no lead: at the
+project's rates (0.18 ms per whole-car mN, 7.5 ms per g) its -3.39 mN half-car drag is -1.2 ms and its +1.52 g is
++11.4 ms: **about 10 ms slower** than the window seed. In race time the best child of batch 1 is d10 (bump, -2.33 mN,
++0.05 g: about -0.5 ms), then d11 (-0.2 ms); every other child is slower than the window seed. The campaign's score
+has to be race time (or the mass rule a hard limit) before a real campaign; not changed yet (owner's decision).
