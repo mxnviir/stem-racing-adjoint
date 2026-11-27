@@ -325,8 +325,12 @@ def cmd_next(st_dir, space, n_explore=None, n_control=None, workers=1):
                 fp = S.d / "fields" / f"d{int(st['next_id']):04d}.npz"
                 save_field(space, bl["f"], fp)
                 rb = space.build(load_field(space, fp, S.base))      # what the runner will build from storage
-                if not rb["ok"] or shape_hash(rb["B"]) != h:
+                if not rb["ok"]:
                     fp.unlink(); continue
+                h = shape_hash(rb["B"])                            # the build is not bit-idempotent: keep what the runner gets
+                if h in seen:
+                    fp.unlink(); continue
+                bl["B"] = rb["B"]
                 seen.add(h)
                 i = str(st["next_id"]); st["next_id"] += 1
                 desc = space.describe(bl["B"])
