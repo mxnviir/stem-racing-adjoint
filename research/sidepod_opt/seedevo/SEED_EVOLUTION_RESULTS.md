@@ -282,3 +282,12 @@ still running.
 - Archive after batch 1: 6 niches (P2's mark is >= 3). Duels opened by the driver: d10 vs window, d13 vs team.
 - d7 is 3.39 mN under the best seed, past the 1.6 mN bar; it took an empty niche, so the driver set no re-run. Per P3
   a claim needs a second meshing frame: d7 on frame 1 added to batch 2 by hand.
+Slotted seed, option B: the runner survived (memory 13.4 GB used of about 16, swap 0.1 GB at the end) but GMRES with
+restart 100 stalled: 1.53e-2 at 200 iterations, 1.024e-2 from 1000 to 5000 (reason -3). Restart 200 had reached 3.6e-5
+before. So fewer ranks keep the runner alive and the shorter restart stops convergence. As decided (option B, then
+C), the slotted and windowed seeds are polished gradient-free; the adjoint stays on shapes near the team pod.
+
+**POC d7, how it differs (renders in `campaign_poc/renders/`):** the `offset` operator grew the whole window pod's
+surface out by 0.72 mm (26 % of the body's faces moved > 0.3 mm, none moved in), which closed the side window
+(through-openings 1 -> 0) and raised the pod volume from 65.7 to 79.2 cm3. Why that lowers drag is not known; the
+frame-1 re-run in batch 2 decides whether the 3.4 mN is real.
