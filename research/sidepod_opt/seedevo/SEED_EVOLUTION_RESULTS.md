@@ -252,3 +252,8 @@ margin). Drag change from each seed's own zero-move probe, mN:
   not touch them).
 - **What it decides (as registered):** TR2 fails -> the end polish on shapes unlike the team pod is gradient-free, and
   the adjoint is used only where its own per-design check passes.
+
+**Owner, 2026-11-27:** campaign POC approved; DAFoam lost runners: option B (one retry with fewer MPI ranks and a
+smaller GMRES restart); channel seed's adjoint left refused; the probe/polish step stays at 0.5 mm for now (to be tuned
+later), no runs spent on the morph-bias check yet. Launched: DAFoam on slotted and windowed seeds, 2 ranks, GMRES
+restart 100, 5000 iterations, memory logged every minute.

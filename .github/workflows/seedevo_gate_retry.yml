@@ -30,6 +30,8 @@ jobs:
       iters: ${{ steps.r.outputs.iters }}
       state_run: ${{ steps.r.outputs.state_run }}
       daf_run: ${{ steps.r.outputs.daf_run }}
+      np: ${{ steps.r.outputs.np }}
+      restart: ${{ steps.r.outputs.restart }}
     steps:
       - uses: actions/checkout@v4
       - id: r
@@ -40,6 +42,7 @@ jobs:
           print('stage=' + r['stage']); print('designs=' + json.dumps(r['designs']))
           print('probes=' + json.dumps([{"design": d, "move": m, "field": f} for d in r['designs'] for m, f in r.get('moves', {}).items()] or [{"design": "-", "move": "-", "field": "-"}]))
           print('iters=' + str(r.get('gmres_iters', 5000))); print('state_run=' + str(r.get('state_run', ''))); print('daf_run=' + str(r.get('daf_run', '')))
+          print('np=' + str(r.get('np', 4))); print('restart=' + str(r.get('gmres_restart', 200)))
           PY
 
   dafoam:
@@ -47,7 +50,7 @@ jobs:
     needs: init
     if: needs.init.outputs.stage == 'dafoam'
     runs-on: ubuntu-24.04
-    timeout-minutes: 340
+    timeout-minutes: 358
     strategy:
       fail-fast: false
       matrix:
@@ -72,15 +75,16 @@ jobs:
           for i in 1 2 3; do docker pull dafoam/opt-packages:v5.1.1 && break; sleep 30; done
       - name: coarse steady state + DAFoam adjoint (more GMRES iterations)
         working-directory: research/sidepod_opt
-        timeout-minutes: 290
+        timeout-minutes: 320
         run: |
           D=${{ matrix.design }}; mkdir -p ../../out/daf-$D
           tar xzf seedevo/designs/$D.tgz -C seedevo/designs
           GATE_RES=coarse GATE_RESULTS=/tmp/gr CFD_DIV_U="bounded Gauss upwind" \
             python -W ignore -u hybrid/coarse_state.py seedevo/designs/$D/car gate/refA_hyb 5000 ../../out/daf-$D/state.json 2>&1 | tail -3
           python dafoam/make_case.py --src gate/refA_hyb --out gate/dafoam_case --iters 300 | tail -1
-          env DAF_ADJ=Krylov DAF_PC_FILL=0 DAF_PC_LEVEL=1 DAF_GMRES_ITERS=${{ needs.init.outputs.iters }} DAF_GMRES_RESTART=200 \
-            dafoam/run_docker.sh gate/dafoam_case 4 > ../../out/daf-$D/dafoam.out 2>&1 || true
+          (while true; do echo "$(date -u +%T) $(free -m | awk '/Mem:/{print "mem_used",$3,"avail",$7} /Swap:/{print "swap_used",$3}' | tr '\n' ' ')"; sleep 60; done) > ../../out/daf-$D/mem.log 2>&1 &
+          env DAF_ADJ=Krylov DAF_PC_FILL=0 DAF_PC_LEVEL=1 DAF_GMRES_ITERS=${{ needs.init.outputs.iters }} DAF_GMRES_RESTART=${{ needs.init.outputs.restart }} \
+            dafoam/run_docker.sh gate/dafoam_case ${{ needs.init.outputs.np }} > ../../out/daf-$D/dafoam.out 2>&1 || true
           grep -E "DAFOAM|Killed|Completed" ../../out/daf-$D/dafoam.out || tail -30 ../../out/daf-$D/dafoam.out
           cp gate/dafoam_case/dafoam_sens.npz gate/dafoam_case/dafoam_sens.json ../../out/daf-$D/ 2>/dev/null || true
           test -f ../../out/daf-$D/dafoam_sens.npz
