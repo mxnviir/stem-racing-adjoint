@@ -448,3 +448,18 @@ batch 2 (`max_gen` 2). About 40 runner cases, ~6 h.
 - **P3 (reported, not marked):** best design found against the best seed, in mN and in T1 sigmas (0.57 mN); a child is
   called better only if it is lower by >= 2 SE of a single-run difference (2 x 0.57 x sqrt 2 = 1.6 mN), and a claim
   needs a re-run on a second meshing frame. Operator and niche of every child that beats its parent.
+
+### Approval test (owner, 2026-11-27: "run an approval test in which the evolved geometry comes out to be significantly
+### lower drag than the initial seed geometry"; written before the run)
+`campaign_approval`: 15 seeds: the team pod (census = its 4 gate runs) and 14 organic seeds from `seed_gen.py` (blobs,
+lumpy, gyroid, snake, teardrop, cppn, worley; 2 each; all legal). Drag scoring (production, iterations 200-1000, fresh
+wall-resolved mesh). Census of the 14 organic seeds, then 3 bred batches of 16 explore + 4 control (`max_gen` 3), model
+screening from batch 2; in batch 1 every seed is the first parent of at least one explore child (`every_seed_once`).
+Then a confirmation batch: the 3 best final designs (by mean) and their root seeds are each brought to 3 meshing frames.
+A design's root seeds are found by following its parents back; with two roots it is compared with the better one.
+- **A1 (the approval mark):** the best confirmed design has lower drag than its own root seed by >= 3 SE of the
+  difference of two 3-frame means (SE = 0.57 x sqrt(2/3) = 0.47 mN, so >= 1.40 mN) and by >= 2 % of the seed's drag.
+- **A2:** at least 2 different root seeds have a confirmed descendant passing A1's bar.
+- **A3 (reported, not marked):** the best confirmed design against the team pod (174.75 mN); per seed family, the gain
+  from seed to best descendant.
+About 14 + 60 + ~12 runs (~13 h on 20 runners).

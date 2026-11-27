@@ -240,6 +240,12 @@ def cmd_next(st_dir, space, n_explore=None, n_control=None, workers=1):
     elites = [i for i in st["archive"].values()]
     seeds = [i for i in st["seeds"] if mean_score(D[i], key)[1] > 0]
 
+    # every_seed_once: in the first bred batch each scored seed is the first parent of at least one explore child
+    # (with many seeds in few niches the archive would otherwise keep only one seed per niche as a parent)
+    first = []
+    if st.get("every_seed_once") and st["gen"] == 0:
+        first = [i for i in seeds]; rng.shuffle(first)
+
     def pick(pool):
         idx = rng.choice(len(pool), min(3, len(pool)), replace=False)
         return min((pool[j] for j in idx), key=lambda i: mean_score(D[i], key)[0])
@@ -279,7 +285,7 @@ def cmd_next(st_dir, space, n_explore=None, n_control=None, workers=1):
                                 ("control", n_control or st["n_control"], seeds, False)):
         got, tries = 0, 0
         ranked = None
-        if kind == "explore" and st.get("screen", True) and len(scored) >= st.get("screen_min", 12) and n > 0:
+        if kind == "explore" and st.get("screen", True) and len(scored) >= st.get("screen_min", 12) and n > 0 and not first:
             # model-screened batch (test TS): a pool of screen_pool x n unbuilt candidates, ranked by expected
             # improvement with the kriging believer on a GP of every scored design; built in rank order
             from .screen import Screen, block_occupancy
@@ -304,7 +310,7 @@ def cmd_next(st_dir, space, n_explore=None, n_control=None, workers=1):
                         props.append(ranked.pop(0))
                     tries += 1
                     continue
-                a = pick(pool) if tour else pool[rng.integers(len(pool))]
+                a = first.pop() if (tour and first) else pick(pool) if tour else pool[rng.integers(len(pool))]
                 others = [p for p in pool if D[p]["niche"] != D[a]["niche"]] or [p for p in pool if p != a]
                 use_x = bool(others) and rng.random() < 0.5
                 name = str(rng.choice([o for o in OP.OPS if (o in OP.CROSSOVER) == use_x]))

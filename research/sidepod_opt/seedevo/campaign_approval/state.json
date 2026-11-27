@@ -1,0 +1,439 @@
+{
+ "gen": 0,
+ "hashes": [
+  "06d35bea477486c7",
+  "30f1e2866a4073bb",
+  "36dc684acc6f4814",
+  "5e93dc7aa2fb1730",
+  "81556ffa996e6235",
+  "92624e647b10406d",
+  "9393fc91c437f531",
+  "958d45e1b75bb99e",
+  "b8e77202977d7c2a",
+  "bad5a30758b43a8c",
+  "bb73faf937439689",
+  "c11876717fe1e7aa",
+  "c5f12465f10d2cc6",
+  "fc31211a47131018",
+  "fe138b1ff414f737"
+ ],
+ "next_id": 15,
+ "designs": {
+  "0": {
+   "name": "original",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    67.464,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 174.17782448608162,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    },
+    {
+     "k": 1,
+     "steady": null,
+     "prod": 175.26122095215854,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    },
+    {
+     "k": 2,
+     "steady": null,
+     "prod": 174.6281726415487,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    },
+    {
+     "k": 3,
+     "steady": null,
+     "prod": 174.9434679712144,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
+   "gen": 0,
+   "changed_mm3": 126.0
+  },
+  "1": {
+   "name": "blobs1",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    30.726,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 786.0
+  },
+  "2": {
+   "name": "blobs2",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    26.738,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 314.0
+  },
+  "3": {
+   "name": "lumpy1",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    67.79,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 162.0
+  },
+  "4": {
+   "name": "lumpy2",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    77.206,
+    0
+   ],
+   "niche": [
+    4,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 302.0
+  },
+  "5": {
+   "name": "gyroid1",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    41.598,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 122.0
+  },
+  "6": {
+   "name": "gyroid2",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    45.204,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 136.0
+  },
+  "7": {
+   "name": "snake1",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    45.746,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 118.0
+  },
+  "8": {
+   "name": "snake2",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    27.332,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 264.0
+  },
+  "9": {
+   "name": "teardrop1",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    25.402,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 752.0
+  },
+  "10": {
+   "name": "teardrop2",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    37.632,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 260.0
+  },
+  "11": {
+   "name": "cppn1",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    53.064,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 62.0
+  },
+  "12": {
+   "name": "cppn2",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    38.4,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 236.0
+  },
+  "13": {
+   "name": "worley1",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    52.226,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 166.0
+  },
+  "14": {
+   "name": "worley2",
+   "kind": "seed",
+   "op": "",
+   "parents": [],
+   "desc": [
+    46.8,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 0,
+   "changed_mm3": 66.0
+  }
+ },
+ "archive": {},
+ "duels": [],
+ "seeds": [
+  "0",
+  "1",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "11",
+  "12",
+  "13",
+  "14"
+ ],
+ "score": "prod",
+ "n_explore": 16,
+ "n_control": 4,
+ "rng": 1,
+ "batches": [
+  {
+   "gen": 0,
+   "cases": [
+    {
+     "id": 1,
+     "k": 0
+    },
+    {
+     "id": 2,
+     "k": 0
+    },
+    {
+     "id": 3,
+     "k": 0
+    },
+    {
+     "id": 4,
+     "k": 0
+    },
+    {
+     "id": 5,
+     "k": 0
+    },
+    {
+     "id": 6,
+     "k": 0
+    },
+    {
+     "id": 7,
+     "k": 0
+    },
+    {
+     "id": 8,
+     "k": 0
+    },
+    {
+     "id": 9,
+     "k": 0
+    },
+    {
+     "id": 10,
+     "k": 0
+    },
+    {
+     "id": 11,
+     "k": 0
+    },
+    {
+     "id": 12,
+     "k": 0
+    },
+    {
+     "id": 13,
+     "k": 0
+    },
+    {
+     "id": 14,
+     "k": 0
+    }
+   ]
+  }
+ ],
+ "max_gen": 3,
+ "setup": {
+  "res": "resolved",
+  "wall_resolved": true,
+  "prod_iters": 1000,
+  "steady_iters": 0,
+  "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+  "openfoam": "v2412"
+ },
+ "every_seed_once": true
+}
