@@ -270,3 +270,15 @@ used it.)
 **DAFoam option B (2 ranks, GMRES restart 100; run 45937335294):** windowed seed: runner lost again at 06:30 UTC,
 about 2 h 24 min into the step (no log, no artifact, so no memory log either). Third loss for this seed. Slotted seed
 still running.
+
+## POC campaign, batch 1 (run 45937827424)
+- 19 of 20 cases converged (design 5: storage bug, fixed). The collect job failed before committing: it installed
+  system libraries without `apt-get update`, and Ubuntu had replaced one package (404). Results taken from the run's
+  artifacts, ingested and batch 2 written here; collect now updates apt with retries. **P1 as registered fails**
+  (batch 1 needed a manual hand-over); batch 2's hand-over is the re-test.
+- Best seed: windowed pod 173.50 mN (mean of 3 frames). Children, production 200-1000, frame 0, lowest first:
+  d7 offset(window) **170.11** (-3.39), d10 bump(window) 171.17 (-2.33), d11 combine(window, team) 172.96, d13
+  splice(window, team) 174.63, d19 pattern(window) 174.73; worst: two `fill` children 221 / 228 (fill closes openings).
+- Archive after batch 1: 6 niches (P2's mark is >= 3). Duels opened by the driver: d10 vs window, d13 vs team.
+- d7 is 3.39 mN under the best seed, past the 1.6 mN bar; it took an empty niche, so the driver set no re-run. Per P3
+  a claim needs a second meshing frame: d7 on frame 1 added to batch 2 by hand.

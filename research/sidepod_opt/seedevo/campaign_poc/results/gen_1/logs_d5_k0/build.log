@@ -1,0 +1,1 @@
+design 5 is not legal on this machine: {'pieces': 1, 'changed_outside_region_mm3': 0.0, 'foam_in_forced_air_mm3': 0.0, 'cargo_inside': True, 'track_clearance_mm': 2.0, 'thin_foam_mm3': 34.0, 'ok': False}

@@ -1,0 +1,19 @@
+{
+ "id": 21,
+ "k": 0,
+ "mode": "prod",
+ "converged": true,
+ "setup": {
+  "res": "resolved",
+  "wall_resolved": true,
+  "prod_iters": 1000,
+  "steady_iters": 0,
+  "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+  "openfoam": "v2412"
+ },
+ "prod": 178.99481174751185,
+ "prod_block_se": 0.19164855395461458,
+ "cells": 2111692,
+ "y_plus_max": 57.320635311117556,
+ "prod_converged": true
+}

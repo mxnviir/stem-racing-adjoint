@@ -111,7 +111,8 @@ jobs:
           mkdir -p $R && cp -r /tmp/r/. $R/ 2>/dev/null || true
           find $R -name "*.log" -size +1M -exec sh -c 'tail -c 1000000 "$1" > "$1.t" && mv "$1.t" "$1"' _ {} \;
           if [ "${{ needs.init.outputs.auto }}" = "true" ]; then
-            sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 >/dev/null
+            (for i in 1 2 3 4 5 6; do timeout 90 sudo apt-get update -q >/dev/null && break; sleep 20; done) || true
+            for i in 1 2 3 4 5 6; do sudo apt-get install -y -q libopengl0 libglu1-mesa libegl1 libgl1 libgomp1 libxkbcommon0 >/dev/null && break; sleep 60; done
             pip install -q $PY_DEPS
             (cd research/sidepod_opt && python -W ignore -m seedevo.campaign ingest ${{ needs.init.outputs.dir }} ${{ needs.init.outputs.dir }}/results/gen_${{ needs.init.outputs.gen }} \
               && python -W ignore -m seedevo.campaign next ${{ needs.init.outputs.dir }}) | grep -v "Qt\|Cannot" | tail -3

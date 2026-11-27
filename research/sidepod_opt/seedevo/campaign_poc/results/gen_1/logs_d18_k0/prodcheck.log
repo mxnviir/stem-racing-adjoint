@@ -1,0 +1,2 @@
+[openfoam_case] partition sha e1a12616ba7bc612
+{"D20_half_N": 0.18172916143014042, "wall_s": 7173.7, "converged": true, "residual_p": 0.00354306648157403, "force_osc": 0.1186590887884415, "force_drift": 0.01152795829922288, "run_dir": "", "force_mean_stderr": 0.005918200134428809, "morph_fallback": false, "folder": "/tmp/case/design/car", "scheme": "production linearUpwind", "mesh": "fresh", "resolution": "resolved", "iterations": 1000, "n_proc": 4, "y_plus_min": 0.06621898424274941, "y_plus_max": 48.69248373418542, "n_cells": 2114430, "run_dir_kept": "/tmp/case/state_prod"}
