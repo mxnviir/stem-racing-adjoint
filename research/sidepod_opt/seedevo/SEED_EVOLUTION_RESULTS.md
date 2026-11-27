@@ -299,3 +299,20 @@ project's rates (0.18 ms per whole-car mN, 7.5 ms per g) its -3.39 mN half-car d
 +11.4 ms: **about 10 ms slower** than the window seed. In race time the best child of batch 1 is d10 (bump, -2.33 mN,
 +0.05 g: about -0.5 ms), then d11 (-0.2 ms); every other child is slower than the window seed. The campaign's score
 has to be race time (or the mass rule a hard limit) before a real campaign; not changed yet (owner's decision).
+
+## POC campaign verdict (batches 1-2; runs 45937827424, 45955823913; drag scoring, as the owner asked)
+- **P1 FAIL as registered**, for batch 1 only: its hand-over needed a manual step (apt 404 in collect). Batch 2 ran,
+  committed, ingested and stopped at `max_gen` 2 with no manual step (STOP written by the collect job). Convergence
+  42 of 43 child runs (98 %; the one failure was the float16 storage bug, fixed).
+- **P2 PASS:** 7 niches held at the end (mark >= 3).
+- **P3 (reported):** best seed: windowed pod 173.50 mN (3 meshing frames). Two children beat it on two frames each:
+  **d7** (offset +0.72 mm of the windowed pod, window closed) 170.11 / 171.44, mean **170.77 (-2.72 mN)**; **d10** (bump
+  on the windowed pod) 171.17 / 171.65, mean **171.41 (-2.09 mN)**. SE of a 2-run vs 3-run mean difference is
+  0.57 x sqrt(1/2 + 1/3) = 0.52 mN, so 5.2 and 4.0 SE, past the 1.6 mN bar. d13 (splice) 174.19, not better.
+  Single-run children under the best seed: d36 171.51, d27 171.66, d34 171.93, d24 172.02, d38 172.34 (all from d7),
+  d11 172.96.
+- Reported: explore children under the best seed: batch 1 3 of 16, batch 2 (model-screened) 6 of 16; control
+  children: 0 of 8. Every child under the best seed descends from the windowed pod.
+- Caveats: one wall-resolved mesh size (2.1 M cells): the next check is the fine mesh. d7 is 1.5 g over the 48 g
+  ballast target (race time is not the score for now, owner's choice). Four seeds only; the channel seed lost its
+  archive place to the team pod in batch 1 and got children only as a control parent.
