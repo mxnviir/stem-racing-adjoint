@@ -488,6 +488,22 @@
       "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
       "openfoam": "v2412"
      }
+    },
+    {
+     "k": 1,
+     "steady": null,
+     "prod": 171.44035409805247,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
     }
    ],
    "gen": 1,
@@ -602,6 +618,22 @@
      "k": 0,
      "steady": null,
      "prod": 171.1652097139213,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    },
+    {
+     "k": 1,
+     "steady": null,
+     "prod": 171.64826132199755,
      "converged": true,
      "layer_cov_pct": null,
      "error": null,
@@ -733,6 +765,22 @@
      "k": 0,
      "steady": null,
      "prod": 174.62817663858624,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    },
+    {
+     "k": 1,
+     "steady": null,
+     "prod": 173.76072425552397,
      "converged": true,
      "layer_cov_pct": null,
      "error": null,
@@ -1183,12 +1231,30 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 172.01641438344367,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 446.0,
    "meta": {
     "a": -0.729974068438808
-   }
+   },
+   "placed": true
   },
   "25": {
    "name": "g2_explore_25",
@@ -1205,14 +1271,32 @@
     3,
     1
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 175.17636277583009,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 1430.0,
    "meta": {
     "kind": "groove_x",
     "rho": 5.362451393735879,
     "guided": false
-   }
+   },
+   "placed": true
   },
   "26": {
    "name": "g2_explore_26",
@@ -1229,14 +1313,32 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 212.26487603900284,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 3024.0,
    "meta": {
     "kind": "blob",
     "guided": false,
     "redraws": 0
-   }
+   },
+   "placed": true
   },
   "27": {
    "name": "g2_explore_27",
@@ -1253,14 +1355,32 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 171.66263576820432,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 280.0,
    "meta": {
     "a": 2.177671727783752,
     "r": 10.756097242697109,
     "guided": false
-   }
+   },
+   "placed": true
   },
   "28": {
    "name": "g2_explore_28",
@@ -1277,14 +1397,32 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 187.14866113778595,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 224.0,
    "meta": {
     "a": 5.934386827434586,
     "r": 16.338224748576167,
     "guided": false
-   }
+   },
+   "placed": true
   },
   "29": {
    "name": "g2_explore_29",
@@ -1301,14 +1439,32 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 174.03788554601186,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 710.0,
    "meta": {
     "period": 11.399873725894697,
     "slot": 7.8777375377394065,
     "R": 12.876560945413082
-   }
+   },
+   "placed": true
   },
   "30": {
    "name": "g2_explore_30",
@@ -1325,14 +1481,32 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 175.98061113175433,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 448.0,
    "meta": {
     "a": 2.691244185364035,
     "r": 19.61346152962744,
     "guided": false
-   }
+   },
+   "placed": true
   },
   "31": {
    "name": "g2_explore_31",
@@ -1350,13 +1524,31 @@
     3,
     1
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 188.24925543059763,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 2128.0,
    "meta": {
     "t": 0.16033227232115502,
     "amp": 0.8232165348840581
-   }
+   },
+   "placed": true
   },
   "32": {
    "name": "g2_explore_32",
@@ -1374,13 +1566,31 @@
     3,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 188.47776745187826,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 620.0,
    "meta": {
     "axis": 2,
     "cut": 16.956200786370694
-   }
+   },
+   "placed": true
   },
   "33": {
    "name": "g2_explore_33",
@@ -1397,12 +1607,30 @@
     3,
     1
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 180.85649455526627,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 578.0,
    "meta": {
     "a": -1.1396161960650035
-   }
+   },
+   "placed": true
   },
   "34": {
    "name": "g2_explore_34",
@@ -1420,12 +1648,30 @@
     4,
     1
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 171.93280183039548,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 324.0,
    "meta": {
     "r": 18.65779560628753
-   }
+   },
+   "placed": true
   },
   "35": {
    "name": "g2_explore_35",
@@ -1442,12 +1688,30 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 174.4694399639702,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 356.0,
    "meta": {
     "a": 1.5707663790596897
-   }
+   },
+   "placed": true
   },
   "36": {
    "name": "g2_explore_36",
@@ -1464,14 +1728,32 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 171.5127547451068,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 3794.0,
    "meta": {
     "kind": "groove_x",
     "rho": 6.167773878587303,
     "guided": false
-   }
+   },
+   "placed": true
   },
   "37": {
    "name": "g2_explore_37",
@@ -1488,14 +1770,32 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 179.27283443320457,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 336.0,
    "meta": {
     "kind": "rib",
     "guided": false,
     "redraws": 2
-   }
+   },
+   "placed": true
   },
   "38": {
    "name": "g2_explore_38",
@@ -1513,12 +1813,30 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 172.33585840016613,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 64.0,
    "meta": {
     "r": 12.73649757167374
-   }
+   },
+   "placed": true
   },
   "39": {
    "name": "g2_explore_39",
@@ -1536,13 +1854,31 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 176.8398548066816,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 318.0,
    "meta": {
     "t": 0.21557284122032036,
     "amp": 0.7950866004066983
-   }
+   },
+   "placed": true
   },
   "40": {
    "name": "g2_control_40",
@@ -1559,7 +1895,24 @@
     2,
     1
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 195.81850230047775,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 6800.0,
    "meta": {
@@ -1584,7 +1937,24 @@
     3,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 179.23170082551144,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 246.0,
    "meta": {
@@ -1607,7 +1977,24 @@
     3,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 177.77138726546778,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 34.0,
    "meta": {
@@ -1631,7 +2018,24 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 185.3233059677804,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 2,
    "changed_mm3": 3384.0,
    "meta": {
@@ -1642,23 +2046,15 @@
   }
  },
  "archive": {
-  "3,0": "0",
+  "3,0": "13",
   "2,1": "2",
-  "3,1": "3",
+  "3,1": "10",
   "4,0": "7",
   "3,2": "8",
-  "2,2": "16"
+  "2,2": "16",
+  "4,1": "34"
  },
- "duels": [
-  {
-   "child": "10",
-   "inc": "3"
-  },
-  {
-   "child": "13",
-   "inc": "0"
-  }
- ],
+ "duels": [],
  "seeds": [
   "0",
   "1",
