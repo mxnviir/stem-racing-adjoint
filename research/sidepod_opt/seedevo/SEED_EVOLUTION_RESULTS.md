@@ -266,3 +266,7 @@ Checked on a copy of the POC campaign: `next` wrote a full batch of 20 in 524 s 
 serial), and the four children spot-checked rebuild legal from storage. (A first version also demanded an identical
 shape on rebuild; the build is not bit-idempotent, so it rejected nearly every child and was replaced before any batch
 used it.)
+
+**DAFoam option B (2 ranks, GMRES restart 100; run 45937335294):** windowed seed: runner lost again at 06:30 UTC,
+about 2 h 24 min into the step (no log, no artifact, so no memory log either). Third loss for this seed. Slotted seed
+still running.
