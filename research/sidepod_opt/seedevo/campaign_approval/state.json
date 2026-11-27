@@ -1,23 +1,43 @@
 {
- "gen": 0,
+ "gen": 1,
  "hashes": [
   "06d35bea477486c7",
+  "0d407078881b02eb",
+  "1fda4d271ffad08a",
+  "212edba0c87fde5a",
+  "2eced2ea6a885ba4",
+  "2fc688e857328437",
   "30f1e2866a4073bb",
   "36dc684acc6f4814",
+  "4da08d7a40d1a771",
   "5e93dc7aa2fb1730",
+  "6998bd5c80cf7ca3",
+  "7b555373b9b3fa97",
   "81556ffa996e6235",
+  "84a3430461e6f808",
+  "8f331b56883c5c9f",
   "92624e647b10406d",
   "9393fc91c437f531",
   "958d45e1b75bb99e",
+  "b03740113703c86e",
+  "b1d7b4f88f5d91e9",
+  "b3ec3eb42d2980ed",
+  "b88c82187d3af52d",
   "b8e77202977d7c2a",
   "bad5a30758b43a8c",
   "bb73faf937439689",
   "c11876717fe1e7aa",
+  "c4ce44f4f6561d59",
   "c5f12465f10d2cc6",
+  "cef59efe03ad1f3f",
+  "daa33f3ff61c6e22",
+  "e5b9c931e4691171",
+  "f3be38b2de99b033",
+  "f9556a16e6167e2f",
   "fc31211a47131018",
   "fe138b1ff414f737"
  ],
- "next_id": 15,
+ "next_id": 35,
  "designs": {
   "0": {
    "name": "original",
@@ -99,7 +119,8 @@
     }
    ],
    "gen": 0,
-   "changed_mm3": 126.0
+   "changed_mm3": 126.0,
+   "placed": true
   },
   "1": {
    "name": "blobs1",
@@ -114,9 +135,27 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 218.78227732114863,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 786.0
+   "changed_mm3": 786.0,
+   "placed": true
   },
   "2": {
    "name": "blobs2",
@@ -131,9 +170,27 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 215.96464521314775,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 314.0
+   "changed_mm3": 314.0,
+   "placed": true
   },
   "3": {
    "name": "lumpy1",
@@ -148,9 +205,27 @@
     3,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 209.62905465836354,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 162.0
+   "changed_mm3": 162.0,
+   "placed": true
   },
   "4": {
    "name": "lumpy2",
@@ -165,9 +240,27 @@
     4,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 211.59441196585823,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 302.0
+   "changed_mm3": 302.0,
+   "placed": true
   },
   "5": {
    "name": "gyroid1",
@@ -182,9 +275,27 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 216.31152237963127,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 122.0
+   "changed_mm3": 122.0,
+   "placed": true
   },
   "6": {
    "name": "gyroid2",
@@ -199,9 +310,27 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 200.79901544663437,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 136.0
+   "changed_mm3": 136.0,
+   "placed": true
   },
   "7": {
    "name": "snake1",
@@ -216,9 +345,27 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 195.61626844354282,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 118.0
+   "changed_mm3": 118.0,
+   "placed": true
   },
   "8": {
    "name": "snake2",
@@ -233,9 +380,27 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 210.21916653982902,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 264.0
+   "changed_mm3": 264.0,
+   "placed": true
   },
   "9": {
    "name": "teardrop1",
@@ -250,9 +415,27 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 205.46967004547227,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 752.0
+   "changed_mm3": 752.0,
+   "placed": true
   },
   "10": {
    "name": "teardrop2",
@@ -267,9 +450,27 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 215.8021896103026,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 260.0
+   "changed_mm3": 260.0,
+   "placed": true
   },
   "11": {
    "name": "cppn1",
@@ -284,9 +485,27 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 194.5030764668355,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 62.0
+   "changed_mm3": 62.0,
+   "placed": true
   },
   "12": {
    "name": "cppn2",
@@ -301,9 +520,27 @@
     1,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 194.36189065900498,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 236.0
+   "changed_mm3": 236.0,
+   "placed": true
   },
   "13": {
    "name": "worley1",
@@ -318,9 +555,27 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 185.50916621376075,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 166.0
+   "changed_mm3": 166.0,
+   "placed": true
   },
   "14": {
    "name": "worley2",
@@ -335,13 +590,522 @@
     2,
     0
    ],
-   "runs": [],
+   "runs": [
+    {
+     "k": 0,
+     "steady": null,
+     "prod": 197.80688028981803,
+     "converged": true,
+     "layer_cov_pct": null,
+     "error": null,
+     "setup": {
+      "res": "resolved",
+      "wall_resolved": true,
+      "prod_iters": 1000,
+      "steady_iters": 0,
+      "score": "mean of iterations 200-1000 (prod, four 200-blocks) / last 404 (steady)",
+      "openfoam": "v2412"
+     }
+    }
+   ],
    "gen": 0,
-   "changed_mm3": 66.0
+   "changed_mm3": 66.0,
+   "placed": true
+  },
+  "15": {
+   "name": "g1_explore_15",
+   "kind": "explore",
+   "op": "line",
+   "parents": [
+    "8",
+    "0"
+   ],
+   "desc": [
+    30.004,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 258.0,
+   "meta": {
+    "t": 0.15069358294810947,
+    "amp": 0.6434346886526492
+   }
+  },
+  "16": {
+   "name": "g1_explore_16",
+   "kind": "explore",
+   "op": "pattern",
+   "parents": [
+    "13"
+   ],
+   "desc": [
+    43.626,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 728.0,
+   "meta": {
+    "period": 12.431020599084018,
+    "slot": 9.345807989805973,
+    "R": 21.982840515241627
+   }
+  },
+  "17": {
+   "name": "g1_explore_17",
+   "kind": "explore",
+   "op": "offset",
+   "parents": [
+    "3"
+   ],
+   "desc": [
+    64.798,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 380.0,
+   "meta": {
+    "a": -1.557820594565402
+   }
+  },
+  "18": {
+   "name": "g1_explore_18",
+   "kind": "explore",
+   "op": "fill",
+   "parents": [
+    "0"
+   ],
+   "desc": [
+    69.064,
+    0
+   ],
+   "niche": [
+    3,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 154.0,
+   "meta": {
+    "kind": "rib",
+    "guided": false,
+    "redraws": 1
+   }
+  },
+  "19": {
+   "name": "g1_explore_19",
+   "kind": "explore",
+   "op": "pattern",
+   "parents": [
+    "2"
+   ],
+   "desc": [
+    23.212,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 1544.0,
+   "meta": {
+    "period": 12.765438865534824,
+    "slot": 8.29800755049685,
+    "R": 22.63925735050212
+   }
+  },
+  "20": {
+   "name": "g1_explore_20",
+   "kind": "explore",
+   "op": "pattern",
+   "parents": [
+    "6"
+   ],
+   "desc": [
+    40.278,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 3862.0,
+   "meta": {
+    "period": 11.862612063909483,
+    "slot": 7.350465881639278,
+    "R": 21.619443968272506
+   }
+  },
+  "21": {
+   "name": "g1_explore_21",
+   "kind": "explore",
+   "op": "graft",
+   "parents": [
+    "10",
+    "0"
+   ],
+   "desc": [
+    34.222,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 60.0,
+   "meta": {
+    "r": 16.611170921232194
+   }
+  },
+  "22": {
+   "name": "g1_explore_22",
+   "kind": "explore",
+   "op": "bump",
+   "parents": [
+    "9"
+   ],
+   "desc": [
+    28.88,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 190.0,
+   "meta": {
+    "a": 3.8146156873464814,
+    "r": 10.767453133535776,
+    "guided": false
+   }
+  },
+  "23": {
+   "name": "g1_explore_23",
+   "kind": "explore",
+   "op": "bump",
+   "parents": [
+    "4"
+   ],
+   "desc": [
+    83.75,
+    0
+   ],
+   "niche": [
+    4,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 274.0,
+   "meta": {
+    "a": 5.444167202646051,
+    "r": 13.0452713924176,
+    "guided": false
+   }
+  },
+  "24": {
+   "name": "g1_explore_24",
+   "kind": "explore",
+   "op": "cut",
+   "parents": [
+    "1"
+   ],
+   "desc": [
+    25.16,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 574.0,
+   "meta": {
+    "kind": "groove_x",
+    "rho": 6.750219749543492,
+    "guided": false
+   }
+  },
+  "25": {
+   "name": "g1_explore_25",
+   "kind": "explore",
+   "op": "line",
+   "parents": [
+    "12",
+    "0"
+   ],
+   "desc": [
+    41.648,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 248.0,
+   "meta": {
+    "t": 0.2497435710999575,
+    "amp": 0.30827400116836706
+   }
+  },
+  "26": {
+   "name": "g1_explore_26",
+   "kind": "explore",
+   "op": "line",
+   "parents": [
+    "11",
+    "0"
+   ],
+   "desc": [
+    53.606,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 216.0,
+   "meta": {
+    "t": 0.22305869408390522,
+    "amp": 0.9197236929224875
+   }
+  },
+  "27": {
+   "name": "g1_explore_27",
+   "kind": "explore",
+   "op": "offset",
+   "parents": [
+    "5"
+   ],
+   "desc": [
+    36.606,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 920.0,
+   "meta": {
+    "a": -0.5700612741844777,
+    "whole": true
+   }
+  },
+  "28": {
+   "name": "g1_explore_28",
+   "kind": "explore",
+   "op": "bump",
+   "parents": [
+    "14"
+   ],
+   "desc": [
+    38.344,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 2440.0,
+   "meta": {
+    "a": -4.30517380752635,
+    "r": 18.23613275131388,
+    "guided": false
+   }
+  },
+  "29": {
+   "name": "g1_explore_29",
+   "kind": "explore",
+   "op": "fill",
+   "parents": [
+    "7"
+   ],
+   "desc": [
+    49.176,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 278.0,
+   "meta": {
+    "kind": "blob",
+    "guided": false,
+    "redraws": 0
+   }
+  },
+  "30": {
+   "name": "g1_explore_30",
+   "kind": "explore",
+   "op": "cut",
+   "parents": [
+    "0"
+   ],
+   "desc": [
+    56.744,
+    1
+   ],
+   "niche": [
+    3,
+    1
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 2340.0,
+   "meta": {
+    "kind": "window_z",
+    "rho": 5.384095290537984,
+    "guided": false
+   }
+  },
+  "31": {
+   "name": "g1_control_31",
+   "kind": "control",
+   "op": "bump",
+   "parents": [
+    "10"
+   ],
+   "desc": [
+    30.936,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 398.0,
+   "meta": {
+    "a": -4.717051593329967,
+    "r": 17.167168141406123,
+    "guided": false
+   }
+  },
+  "32": {
+   "name": "g1_control_32",
+   "kind": "control",
+   "op": "combine",
+   "parents": [
+    "1",
+    "11"
+   ],
+   "desc": [
+    29.46,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 184.0,
+   "meta": {
+    "mode": "cuts",
+    "r": 25.412869875625184,
+    "redraws": 0
+   }
+  },
+  "33": {
+   "name": "g1_control_33",
+   "kind": "control",
+   "op": "splice",
+   "parents": [
+    "11",
+    "9"
+   ],
+   "desc": [
+    38.8,
+    0
+   ],
+   "niche": [
+    1,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 2264.0,
+   "meta": {
+    "axis": 2,
+    "cut": 12.809189858415769
+   }
+  },
+  "34": {
+   "name": "g1_control_34",
+   "kind": "control",
+   "op": "fill",
+   "parents": [
+    "5"
+   ],
+   "desc": [
+    43.32,
+    0
+   ],
+   "niche": [
+    2,
+    0
+   ],
+   "runs": [],
+   "gen": 1,
+   "changed_mm3": 296.0,
+   "meta": {
+    "kind": "rib",
+    "guided": false,
+    "redraws": 1
+   }
   }
  },
- "archive": {},
- "duels": [],
+ "archive": {
+  "3,0": "0",
+  "1,0": "1",
+  "4,0": "4",
+  "2,0": "5"
+ },
+ "duels": [
+  {
+   "child": "2",
+   "inc": "1"
+  },
+  {
+   "child": "6",
+   "inc": "5"
+  }
+ ],
  "seeds": [
   "0",
   "1",
@@ -423,6 +1187,54 @@
      "id": 14,
      "k": 0
     }
+   ]
+  },
+  {
+   "gen": 1,
+   "n": 24,
+   "log": [
+    [
+     "new",
+     "0",
+     null,
+     174.75267151275082,
+     null
+    ],
+    [
+     "new",
+     "1",
+     null,
+     218.78227732114863,
+     null
+    ],
+    [
+     "duel",
+     "2",
+     "1",
+     215.96464521314775,
+     218.78227732114863
+    ],
+    [
+     "new",
+     "4",
+     null,
+     211.59441196585823,
+     null
+    ],
+    [
+     "new",
+     "5",
+     null,
+     216.31152237963127,
+     null
+    ],
+    [
+     "duel",
+     "6",
+     "5",
+     200.79901544663437,
+     216.31152237963127
+    ]
    ]
   }
  ],
