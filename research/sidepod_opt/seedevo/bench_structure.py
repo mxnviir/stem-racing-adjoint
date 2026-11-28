@@ -82,8 +82,18 @@ class Instance:
             T1 = _open_window(sp, np.random.default_rng(8800 + 100 * pr + k), T0)
             if T1 is not None:
                 break
+        self.variant = "window"
+        if T1 is None:              # amendment (held-out run): a thin target takes no window; then any legal cut
+            rng1 = np.random.default_rng(8900 + pr)         # (window or groove) that removes >= 10 % of the pod
+            v0 = sp.build(T0)["pod_mm3"]
+            for k in range(400):
+                g, m = OP.cut(sp, rng1, T0, None, None)
+                bb = sp.build(g)
+                if bb["ok"] and bb["pod_mm3"] <= 0.9 * v0:
+                    T1, self.variant = bb["f"], "cut:" + m.get("kind", "")
+                    break
         if T1 is None:
-            raise RuntimeError("no windowed target variant")
+            raise RuntimeError("no target variant")
         self.occT = [occ(T0, sp.h), occ(T1, sp.h)]
         self.w = ToyEvaluator(sp, T0).w
         self.idx = np.indices(sp.shape).astype(float)
@@ -503,7 +513,7 @@ def main():
         heads = {}
         for pr in a.instances:
             I = instance(pr)
-            heads[pr] = {"A": I.A, "c": I.c.tolist(), "lam": I.lam.tolist(), "d": I.d.tolist(), "g_star": I.g_star(),
+            heads[pr] = {"variant": I.variant, "A": I.A, "c": I.c.tolist(), "lam": I.lam.tolist(), "d": I.d.tolist(), "g_star": I.g_star(),
                          "sigma": SIGMA, "best_seed_field": min(I.field_part(np.full(D, 0.5), I.sp.build(f)["f"]) for f in I.seeds.values())}
         json.dump({"head": heads, "rows": rows}, open(a.out, "w"), indent=1, default=float)
         V = verdict(rows); print_verdict(V)

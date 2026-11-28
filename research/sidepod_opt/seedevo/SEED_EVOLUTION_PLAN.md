@@ -501,3 +501,9 @@ result)? Bench only, no CFD (`bench_structure.py`, docstring = full spec).
 - Development (instance 30, seeds 1-2; mean regret at 100 / 200 / 400): A 3.81 / 3.41 / 3.21, Aplain 4.11 / 3.69 /
   3.13, B5x20 5.51 / 4.28 / 3.70, B10x10 5.09 / 5.03 / 3.42, B2x50 5.65 / 5.21 / 4.56. Nothing was tuned on it except
   fixing BLAS threads (one per worker).
+- **Amendment (2026-11-28, during the held-out run, before any result of the instances it touches):** the run stopped
+  at start-up because instances 32 and 33 have thin targets (0.9 and 1.9 cm3) that no window can be cut through with
+  3 mm walls, so switch s1 had no target variant. For such an instance only, s1's variant is the first legal cut of
+  any kind (window or groove, `operators.cut`, fixed seed) that removes >= 10 % of the target pod. Instances 31, 34, 35
+  keep the window variant (unchanged; the only results seen were three of instance 31's A runs). Marks unchanged; the
+  whole held-out set is re-run.
