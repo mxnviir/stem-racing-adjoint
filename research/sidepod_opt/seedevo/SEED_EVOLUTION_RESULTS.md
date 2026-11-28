@@ -323,3 +323,58 @@ cppn2 194.36, cppn1 194.50, snake1 195.62, worley2 197.81, gyroid2 200.80, teard
 snake2 210.22, lumpy2 211.59, teardrop2 215.80, blobs2 215.96, gyroid1 216.31, blobs1 218.78 (one frame each). None
 kept a through-opening after the rules. Batch 1 (24 cases) was written and started by the collect job unattended;
 `every_seed_once` gave each of the 15 seeds an explore child (team pod 2).
+
+## Structure test: one evolution (A) vs BO outside / evolution inside (B) (bench, instances 31-35, seeds 1-5, `results/structure_heldout.json`): **A**
+Marks: plan, "Structure test" (written before the run; one amendment for thin targets, before their results). Score =
+regret of the handed design (true J - J*, lower = better), mean (sd) over 25 runs; budgets count every evaluation.
+
+| arm | start (first 20) | 100 | 200 | 400 |
+|---|---|---|---|---|
+| **A** one evolution, screened | 5.77 (0.84) | **3.69** (0.88) | **3.01** (0.67) | **2.66** (0.70) |
+| Aplain (A, no screening; reported) | 5.91 (0.99) | 4.05 (0.86) | 3.46 (0.97) | 2.94 (0.90) |
+| **B5x20** (primary B) | 5.79 (0.90) | 4.45 (1.10) | 4.06 (1.20) | 3.55 (1.07) |
+| **B10x10** (registered alternative) | 5.93 (0.81) | 4.44 (1.04) | 3.81 (1.05) | 3.24 (0.84) |
+| B2x50 (reported) | 5.57 (0.97) | 4.19 (1.21) | 3.89 (1.13) | 3.60 (1.15) |
+
+Paired, A against each (A wins of 25; mark 18; mean A - B with its SE; Wilcoxon p):
+
+| budget | vs B5x20 | vs B10x10 | vs B2x50 | vs Aplain |
+|---|---|---|---|---|
+| 100 | **21** (-0.77 +- 0.18, 6e-5) | **20** (-0.76 +- 0.16, 1e-4) | 18 (-0.50 +- 0.18, 0.02) | 18 (-0.36 +- 0.12, 0.006) |
+| 200 | **23** (-1.05 +- 0.15, 3e-6) | **23** (-0.80 +- 0.12, 6e-7) | 22 (-0.88 +- 0.17) | 19 (-0.44 +- 0.11) |
+| 400 | **25** (-0.89 +- 0.11, 6e-8) | **23** (-0.58 +- 0.09, 6e-7) | 24 (-0.94 +- 0.15) | 19 (-0.28 +- 0.08) |
+
+No B variant wins more than 5 of 25 pairs at any budget. Per instance, A's mean is the lowest of the five arms on all 5
+instances at 200 and 400 except instance 33 at 400 (Aplain 1.56 vs A 1.66).
+- **Decision as registered: A.** A beats the primary B at all three budgets (21, 23, 25 of 25) and the alternative
+  split at all three (20, 23, 23); neither B variant beats A anywhere.
+- **Where B loses** (handed design's regret split into field part + numbers part, means at 400): A 1.97 + 0.68;
+  B5x20 2.21 + 1.34; B10x10 2.06 + 1.18; B2x50 2.22 + 1.37. B is worse on the **numbers** (twice A's numbers
+  regret) and no better on the field. At 200 B's numbers regret (1.38-1.60) is no better than at 100 (1.43-1.56). The
+  switches are right in the handed design in 15/25 runs for A, 9, 13, 7/25 for B5x20, B10x10, B2x50.
+- **Why (reading, not marked):** B's outer GP gets one point per inner evolution (20-40 points by 400 runs for 10
+  numbers) and that point is noisy, optimistic (the minimum of 4-10 measurements) and drifts upward in quality round by
+  round as the warm-start fields improve, which the GP reads as an effect of the numbers. A's GP is fit on every
+  evaluation (up to 400 points), numbers-only Gaussian steps are cheap children, and a good field travels with the
+  numbers it was good for, instead of being re-established at every new number-vector. The B splits rank as the
+  outer-sample count does (B10x10 better than B5x20: 17/25 at 400; B2x50 worst), so B's bottleneck is the outer loop.
+- **Screening** helps A (Aplain loses 18-19/25), but the structure matters more: A without screening still has a lower
+  mean than every B at 200 and 400 (2.94 vs 3.24-3.60 at 400; it beats B5x20 in 20 and 22/25, B10x10 in 15 and 16/25).
+- **Reported:** noise sd 0.3 against A's realised gain of 3.1 (first batch to 400) = 10 % (the lower end of the real
+  15-20 %). Winner's curse: every arm's handed design reads 0.35-0.7 better than its truth (1-2 sigma), A included;
+  a reserve batch of re-runs before hand-over would reduce it for either structure. Both structures stay far from the
+  optimum (regret 2.7 at 400; the toy field is hard). Compute: A 227 s per run (the GP), the others 11-23 s.
+- **Development (instance 30, seeds 1-2, `results/structure_dev_p30.json`)** pointed the same way (A 3.21 vs B
+  3.42-4.56 at 400).
+
+**Recommendation: keep ONE evolution (A)**, with the numbers in every design's genome (Gaussian steps, blend crossover)
+and the campaign's model screening extended to the numbers (GP features = field PCs + pod volume + the numbers). Do
+not wrap the field evolution in an outer BO. Caveats: (1) toy, not aerodynamics: the field term is a target mismatch
+and the interaction is a fixed move/stretch of the target; on the real car the field-numbers coupling may be weaker
+(which would help B less than it helps A, since B's loss is on the numbers) or stronger. (2) The real numbers include
+legality constraints (layout grid, `legal_layouts`) the bench does not have: A's numbers mutation must snap to them as
+Campaign.candidates does. (3) Noise was 10 % of the realised gain, under the real 15-20 %; at higher noise A's duels and
+B's optimistic inner minimum both get worse, untested. (4) B's inner evolution was plain (no screening: 4-10 points
+per number-vector are too few for a model); a B whose outer GP also took every inner evaluation would be a joint model,
+i.e. A's screening by another name. (5) Budgets of 100-400 runs (5-20 batches); a much larger budget could favour B's
+outer BO, not seen up to 400. (6) The handed design is chosen by its own noisy mean in every arm, with no reserve.
