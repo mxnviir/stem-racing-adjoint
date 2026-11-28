@@ -507,3 +507,12 @@ result)? Bench only, no CFD (`bench_structure.py`, docstring = full spec).
   any kind (window or groove, `operators.cut`, fixed seed) that removes >= 10 % of the target pod. Instances 31, 34, 35
   keep the window variant (unchanged; the only results seen were three of instance 31's A runs). Marks unchanged; the
   whole held-out set is re-run.
+
+### Approval test amendment (owner 2026-11-28, after the three bred batches, before any confirmation run)
+The registered confirmation set (the 3 best final designs by mean: d62, d50, d42) are all crossovers whose better
+root seed is the team pod; none is below it (175.1-175.3 against 174.75 mN), so A1 as registered is expected to fail.
+The organic lineages did improve on their own seeds (single runs): d53 offset(snake1) -6.83 mN (-3.5 %), d22
+bump(teardrop1) -5.45 (-2.7 %). Added by the owner's decision, **post hoc and reported separately from A1/A2**: d53 +
+snake1 and d22 + teardrop1 brought to 3 meshing frames each, judged with A1's bar (>= 1.40 mN and >= 2 %). Being
+picked after seeing their first runs, they carry a winner's curse; only the confirmation runs (new frames) are
+unbiased, and the verdict is read from the 3-frame means.
