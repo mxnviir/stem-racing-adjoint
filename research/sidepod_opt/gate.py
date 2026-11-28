@@ -23,6 +23,8 @@ ADJ = HERE / "gate_results"       # the adjoint was solved here (one machine); o
 ORIG0 = G / "original"            # exact CAD export (state A is solved on this)
 ORIG = G / "original_rm"          # the same surface re-meshed to even 1 mm triangles: zero run, bumps, adjoint
 DOMAIN = ((-0.005, 0.0, 0.0), (0.265, 0.045, 0.066))      # fixed for every car (trial car is 257 mm)
+if os.environ.get("GATE_DOMAIN"):                       # another fixed meshing frame (JSON [[x0,y0,z0],[x1,y1,z1]], m):
+    DOMAIN = tuple(tuple(float(v) for v in c) for c in json.loads(os.environ["GATE_DOMAIN"]))   # e.g. the layout search's longer cars
 # GATE_RES=coarse runs the same test on Part 2's coarse mesh (with GATE_RESULTS pointing elsewhere), e.g.
 # for the DAFoam test, whose adjoint memory (>150 kB/cell) does not fit the medium mesh on 16 GB
 RES = os.environ.get("GATE_RES", "medium")
