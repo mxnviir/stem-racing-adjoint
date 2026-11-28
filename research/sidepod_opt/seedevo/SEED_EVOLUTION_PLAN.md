@@ -463,3 +463,41 @@ A design's root seeds are found by following its parents back; with two roots it
 - **A3 (reported, not marked):** the best confirmed design against the team pod (174.75 mN); per seed family, the gain
   from seed to best descendant.
 About 14 + 60 + ~12 runs (~13 h on 20 runners).
+
+### Structure test (owner 2026-11-28: test both and come up with an answer; written before any held-out run)
+The question: with ~10 continuous numbers (layout + wing placement, a few 0/1 switches) and the free field, is it
+better to run (A) ONE evolution in which every design carries its numbers and its field (mutation/crossover change
+both; model-screened batches as in the campaign), or (B) a Bayesian optimiser (GP + EI + kriging believer) on the
+numbers OUTSIDE, with a fixed small field evolution INSIDE for each number-vector (the outer GP fed the best inner
+result)? Bench only, no CFD (`bench_structure.py`, docstring = full spec).
+- **Bench.** Design = (x, f): 8 dials + 2 switches in [0, 1] and a toy field. J = wf(x) * M(f, T(x)) + g(x) + noise:
+  M = toy.py's mismatch to a target T(x) that the numbers move along the car (+-6 mm), stretch (+-15 %), move up/down
+  (+-2.5 mm) and, with switch s1, give a through-window (the best field depends on the numbers); wf = 0.75 + 0.5 x3;
+  g = a rotated, ill-conditioned, slightly rippled bowl + switch offsets, scaled so the median of g - min g over random
+  x is 2.0 (about what field evolution gains on the toy in a few hundred runs). Known answer J* = min g. Noise sd 0.3
+  = 15 % of that typical gain (real: 0.6 mN against gains of a few mN). 12 seeds per instance, half windowed.
+- **Arms** (every evaluation counted, initial designs included; batches of 20): **A** (the campaign driver's rules:
+  map, tournament of 3, duels to 2 runs, no control children; numbers: BLX crossover, Gaussian steps; screening of
+  4 x 20 bred candidates on a GP over [field PCs, pod volume, numbers] from batch 2); **B5x20** (primary B: 5
+  number-vectors per outer round, each an inner evolution of 20 evaluations = 5 inner generations of 4); **B10x10**
+  (registered alternative: 10 vectors x 10 evaluations, generations of 2). Reported, not marked: **Aplain** (A without
+  screening), **B2x50** (2 vectors x 50). One outer round of B = 100 evaluations; round 1 is Sobol.
+- **Score** of an arm at budget b in {100, 200, 400}: the TRUE J (as regret J - J*) of the design it hands over = its
+  lowest mean measurement among the designs evaluated within b. No arm uses the total budget, so one run to 400 gives
+  the three hand-overs exactly.
+- **Held-out:** instances 31-35 (never run before this commit), seeds 1-5: 25 pairs per budget, paired by (instance,
+  seed). Development was on instance 30, seeds 1-2 only (reported below, not evidence).
+- **"X beats Y at b":** X's regret lower in **>= 18 of the 25 pairs** (one-sided sign test p = 0.022).
+- **Decision rule:**
+  - **A** if A beats B5x20 at >= 2 of the 3 budgets including 400, and neither B variant beats A at any budget.
+  - **B** (naming the variant) if B5x20 or B10x10 beats A at >= 2 budgets including 400, and A beats that variant at
+    no budget.
+  - **Budget-dependent** if A beats B at some budgets and a B variant beats A at others: stated per budget; the
+    campaign follows the result at the budget nearest its planned size (200-400 runs).
+  - Otherwise **no difference shown: keep A** (tie rule: A is what the campaign driver already runs; B needs a new
+    outer loop and spends runs re-establishing fields at every new number-vector).
+- Reported, not marked: mean / sd per budget, Wilcoxon p, per-instance wins, the split of the handed design's regret
+  into field part and numbers part, the best true design evaluated (oracle), Aplain against A, B2x50.
+- Development (instance 30, seeds 1-2; mean regret at 100 / 200 / 400): A 3.81 / 3.41 / 3.21, Aplain 4.11 / 3.69 /
+  3.13, B5x20 5.51 / 4.28 / 3.70, B10x10 5.09 / 5.03 / 3.42, B2x50 5.65 / 5.21 / 4.56. Nothing was tuned on it except
+  fixing BLAS threads (one per worker).
