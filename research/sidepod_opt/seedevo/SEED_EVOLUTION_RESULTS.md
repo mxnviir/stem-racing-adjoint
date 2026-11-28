@@ -378,3 +378,38 @@ B's optimistic inner minimum both get worse, untested. (4) B's inner evolution w
 per number-vector are too few for a model); a B whose outer GP also took every inner evaluation would be a joint model,
 i.e. A's screening by another name. (5) Budgets of 100-400 runs (5-20 batches); a much larger budget could favour B's
 outer BO, not seen up to 400. (6) The handed design is chosen by its own noisy mean in every arm, with no reserve.
+
+## Approval test: confirmation and verdict (run 46122239718; 13 cases, all converged)
+Marks: plan, "Approval test" and its amendment (both written before any confirmation run). Drag = production score,
+half car, mN; every design below has 3 meshing frames (team pod 4).
+
+| design | lineage | runs (frames 0, 1, 2) | mean | root seed (mean) | gain | A1 bar (>= 1.40 mN and >= 2 %) |
+|---|---|---|---|---|---|---|
+| d62 | crossover, team pod root | 175.11, 178.23, 175.22 | 176.19 | team pod (174.75) | -1.44 (-0.82 %) | fail |
+| d50 | crossover, team pod root | 174.59, 175.75, 178.77 | 176.37 | team pod (174.75) | -1.62 (-0.93 %) | fail |
+| d42 | crossover, team pod root | 175.25, 175.94, 177.26 | 176.15 | team pod (174.75) | -1.40 (-0.80 %) | fail |
+| d53 (post hoc) | offset of snake1 | 188.78, 189.28, 188.56 | **188.87** | snake1 (195.62, 191.39, 195.01: 194.00) | **+5.13 (+2.64 %)** | pass |
+| d22 (post hoc) | bump of teardrop1 | 200.02, 202.67, 200.61 | **201.10** | teardrop1 (205.47, 207.24, 207.33: 206.68) | **+5.58 (+2.70 %)** | pass |
+
+- **A1 (registered): FAIL.** The best confirmed design (d42, 176.15) is 1.40 mN *worse* than its root, the team pod.
+  All three registered finalists got worse on new frames (winner's curse: each was ranked on a lucky first run).
+- **A2 (registered): FAIL** (no confirmed design passes A1's bar from any root among the registered set).
+- **Post hoc (owner's amendment, reported separately): both organic lineages PASS A1's bar.** d53 is 5.13 mN (2.6 %)
+  below snake1 and d22 is 5.58 mN (2.7 %) below teardrop1, on 3-frame means. On the two new frames only (the unbiased
+  part, since both were picked on frame 0): d53 -4.28 mN (-2.2 %), d22 -5.64 mN (-2.7 %); both still clear the bar.
+- **A3 (reported):** no design beats the team pod (174.75); the best confirmed is d42 at 176.15. Per seed family
+  (single-root lineages, best descendant by mean; most only 1-2 runs, so noisy): snake1 -5.13, teardrop1 -5.58,
+  lumpy2 -3.16, blobs2 -2.56, gyroid1 -2.25, teardrop2 -0.17; no gain for blobs1, lumpy1, gyroid2, worley1, worley2.
+- **Noise finding (important for every later mark):** the frame-to-frame scatter of these designs is far larger than
+  T1's 0.57 mN, which was measured on the team pod only (its own sd here: 0.46). Per-design sd: snake1 2.29, d50 2.16,
+  d62 1.77, d22 1.39, teardrop1 1.05, d42 1.02, d53 0.37; pooled over every multi-run design in the campaign: **2.11 mN
+  (27 dof)**, about 3.7x T1. A1's bar (built on 0.57) is therefore too lenient for organic shapes. Re-judged with each
+  pair's own measured scatter (Welch SE of the difference): d53 vs snake1 5.13 / 1.34 = **3.8 SE**; d22 vs teardrop1
+  5.58 / 1.01 = **5.5 SE**. Both gains survive the honest noise; the team-pod crossovers' "gains" of earlier batches
+  do not.
+- **Reading:** the evolution reliably improves a weak organic seed by 2.5-3.5 % within 1-2 generations (two confirmed
+  cases, 3.8 and 5.5 SE), but in 3 batches (~60 runs) it found nothing better than the team pod, and its ranking on
+  single runs is fooled by a ~2 mN frame noise. For a campaign meant to beat the team pod: (1) use the measured 2.1 mN,
+  not 0.57, in duels and screening; (2) re-run every candidate for the archive to >= 2 frames before it can be
+  selected (the registered top 3 all regressed by 1-3 mN); (3) the organic seeds start 10-45 mN behind the team pod, so
+  beating it needs either many more generations or seeds nearer to it.
